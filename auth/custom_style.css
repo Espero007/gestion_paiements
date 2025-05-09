@@ -1,0 +1,28 @@
+.form-group{
+    margin-bottom: 1rem;
+}
+.form-label{
+    /* margin-bottom: 0.5rem; */
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #333;
+}
+.form-label, .col-form-label{
+    /* font-size: 0.75rem; */
+    text-transform: uppercase;
+    letter-spacing: inherit;
+}
+
+.form-control {
+    font-size: 0.9375rem;
+}
+
+.input-group-text i {
+    font-size: 0.9375rem;
+}
+.cursor-pointer {
+    cursor: pointer !important;
+}
+a{
+    text-decoration: none;
+}
