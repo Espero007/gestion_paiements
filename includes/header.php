@@ -23,6 +23,29 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
     $_SESSION['previous_url'] = $current_url;
 
     header('location:/auth/connexion.php');
+} else {
+    // L'utilisateur est connecté, du moins on a ses informations dans notre variable session mais on va ajouter ici un autre niveau de sécurité : on va tester si les informations contenues dans la variable session sont effectivement en base de données. ça peut paraître superflu mais lors des tests j'ai remarqué que lorsque je me connectais, même en supprimant mes informations en bdd je restais connecté puisqu'une copie de mes informations sont déjà dans la variable session donc bof, je vais rajouter ce niveau de sécurité pour gérer ce cas de figure
+
+    // On vérifie la présence de l'individu dans la base de données
+    $stmt = $bdd->prepare("SELECT user_id FROM connexion WHERE user_id = :user_id AND nom = :nom AND prenoms = :prenoms");
+    $stmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+    $stmt->bindParam(':nom', $_SESSION['nom']);
+    $stmt->bindParam(':prenoms', $_SESSION['prenoms']);
+
+    if (!$stmt->execute()) {
+        // La récupération de l'information en base de données a rencontré un problème donc on va rediriger vers la page d'erreur avec comme erreur 500
+        $_SESSION['code_erreur'] = 500;
+        header('location:erreur.php');
+    } else {
+        // La récupération n'a pas eu de problèmes
+        $lignes = $stmt->fetchAll(PDO::FETCH_NUM);
+        if (empty($lignes)) {
+            // Il y a un souci, l'utilisateur n'a pas été retrouvé en bdd donc on redirige vers la page de connexion sans préavis en supprimant la session en cours
+            session_unset();
+            session_destroy();
+            header('location:../auth/connexion.php');
+        }
+    }
 }
 
 ?>

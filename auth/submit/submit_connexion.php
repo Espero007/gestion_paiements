@@ -26,16 +26,19 @@ if (isset($_POST['connexion'])) {
     if(!isset($erreurs)) {
         // Tout va bien avec les données car il n'y a pas d'erreurs
 
+        // On vérifie la présence de l'individu dans la base de données
         $check_data = $bdd->prepare("SELECT user_id, nom, prenoms FROM connexion WHERE email = :email AND password = :password");
         $check_data->execute([
             "email" => $_POST["email"],
             "password" => $_POST["password"],
         ]);
-
         $resultat = $check_data->fetchAll(PDO::FETCH_ASSOC);
+
         if (count($resultat) == 0) {
             $echec_connexion = true;
         } elseif (count($resultat) == 1) {
+            
+            // L'individu est présent donc on ajoute ses informations dans notre session
             $logged_user = $resultat[0];
             $_SESSION['user_id'] = $logged_user['user_id'];
             $_SESSION['nom'] = $logged_user['nom'];
