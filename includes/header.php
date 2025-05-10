@@ -22,7 +22,7 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
 
     $_SESSION['previous_url'] = $current_url;
 
-    header('location:/auth/connexion.php');
+    header('location:./auth/connexion.php');
 } else {
     // L'utilisateur est connecté, du moins on a ses informations dans notre variable session mais on va ajouter ici un autre niveau de sécurité : on va tester si les informations contenues dans la variable session sont effectivement en base de données. ça peut paraître superflu mais lors des tests j'ai remarqué que lorsque je me connectais, même en supprimant mes informations en bdd je restais connecté puisqu'une copie de mes informations sont déjà dans la variable session donc bof, je vais rajouter ce niveau de sécurité pour gérer ce cas de figure
 
@@ -43,7 +43,7 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
             // Il y a un souci, l'utilisateur n'a pas été retrouvé en bdd donc on redirige vers la page de connexion sans préavis en supprimant la session en cours
             session_unset();
             session_destroy();
-            header('location:../auth/connexion.php');
+            header('location:./auth/connexion.php');
         }
     }
 }
