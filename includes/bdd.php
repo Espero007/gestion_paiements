@@ -59,7 +59,9 @@ try {
         nom VARCHAR(100) NOT NULL,
         prenoms VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
-        password VARCHAR(100) NOT NULL
+        password VARCHAR(100) NOT NULL,
+        token_verification VARCHAR(255),
+        est_verifie BOOLEAN DEFAULT FALSE
         );
 
         CREATE TABLE IF NOT EXISTS diplomes

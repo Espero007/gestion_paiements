@@ -37,7 +37,7 @@
 
 
             <p> <label for="new_password"> Nouveau mot de passe</label></p>
-            <input type="password" name="new_password" id ="new_password" value="<?php htmlspecialchars($_POST["new_password"] ?? "") ?>"> <br>
+            <input type="password" name="new_password" id ="new_password" value="<?php echo htmlspecialchars($_POST["new_password"] ?? "") ?>"> <br>
             <small style = "color:red"> <?php  if ((isset($_SESSION["password"]))){
                 echo $_SESSION["password"];
                 unset($_SESSION["password"]);
@@ -45,7 +45,7 @@
 
 
             <p> <label for="password"> Confirmer le mot de passe</label></p>
-            <input type="password" name="password" id ="password" value="<?php htmlspecialchars($_POST["password"] ?? "") ?> "> <br>
+            <input type="password" name="password" id ="password" value="<?php echo htmlspecialchars($_POST["password"] ?? "") ?> "> <br>
             <small  style = "color:red"> <?php  if ((isset($_SESSION["invalid_password"]))){
                 echo $_SESSION["invalid_password"];
                 unset($_SESSION["invalid_password"]);
