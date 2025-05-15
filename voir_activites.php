@@ -1,13 +1,11 @@
 <?php
 require_once('includes/header.php');
 
-const NBR_ACTIVITES_A_AFFICHER = 6;
-
 $stmt = 'SELECT id, nom, description FROM activites ORDER BY id DESC LIMIT ' . NBR_ACTIVITES_A_AFFICHER;
 $resultat = $bdd->query($stmt);
 
 if (!$resultat) {
-    $erreur_recuperation = true;
+    redirigerVersPageErreur(500, $current_url);
 } else {
     // Les données sont récupérées
     while ($ligne = $resultat->fetch(PDO::FETCH_ASSOC)) {

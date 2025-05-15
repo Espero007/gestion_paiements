@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter un participant</title>
-    <link rel="stylesheet" href="auth/assets/bootstrap-5.3.5-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/bootstrap-5.3.5-dist/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -203,8 +203,7 @@
 
                                             // 3 - Echapper les valeurs reçues (ce n'est plus nécessaire en raison de l'expression régulière employées)
                                             if ($champ == "nom" || $champ == "prenoms" || $champ == "lieu_naissance" || str_contains($champ, 'banque_')) {
-
-                                                if (preg_match('/^[p{L} -]+$/u', $_POST[$champ])) {
+                                                if (!preg_match('/^[p{L} -]+$/u', $_POST[$champ])) {
                                                     $erreurs[$champ][] = "Ce champ doit être une chaîne de caractères alphabétiques !";
                                                 } elseif (strlen($champ) > 50) {
                                                     $erreurs[$champ][] = "La valeur de ce champ ne doit pas excéder 50 caractères";
@@ -668,7 +667,8 @@
                                                 } ?>"
                                                 <?php if (isset($erreurs)) {
                                                     echo "value = \"" . $_POST["date_naissance"] . "\"";
-                                                } ?>>
+                                                } ?>
+                                                placeholder="bonjour">
 
                                             <?php if (isset($erreurs["date_naissance"])) {
                                             ?>
@@ -701,7 +701,7 @@
 
                                     <!-- Diplôme -->
 
-                                    <div class="mb-2 row">
+                                    <!-- <div class="mb-2 row">
                                         <label for="diplome" class="col-form-label col-sm-4">Diplôme le plus élevé</label>
                                         <div class="col-sm-8">
                                             <select name="diplome" id="diplome" class="form-select
@@ -737,11 +737,11 @@
                                                 <div id="diplomeAide" class="form-text"><?php echo $erreurs["diplome"][0] ?></div>
                                             <?php } ?>
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                     <!-- Titre -->
 
-                                    <div class="mb-2 row">
+                                    <!-- <div class="mb-2 row">
                                         <label for="role" class="col-form-label col-sm-3">Titre</label>
                                         <div class="col-sm-9">
 
@@ -778,7 +778,7 @@
                                                 <div id="roleAide" class="form-text"><?php echo $erreurs["role"][0] ?></div>
                                             <?php } ?>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </fieldset>
                                 <br>
 

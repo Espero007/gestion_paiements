@@ -10,9 +10,13 @@
 <body>
 
     <?php
-        $var = 1;
-        $var++;
-        echo $var;
+        // if(is_dir('build/assets')){
+        //     echo "Répertoire retrouvé ";
+        // }else{
+        //     echo "Répertoire non retrouvé";
+        // }
+
+        echo __DIR__;
     ?>
 </body>
 

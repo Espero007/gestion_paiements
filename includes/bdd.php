@@ -60,7 +60,7 @@ try {
         prenoms VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
         password VARCHAR(100) NOT NULL,
-        token_verification VARCHAR(255),
+        token_verification VARCHAR(255) NOT NULL,
         est_verifie BOOLEAN DEFAULT FALSE
         );
 
@@ -84,7 +84,7 @@ try {
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         id_participant INT NOT NULL,
         banque VARCHAR(100) NOT NULL,
-        numero_compte VARCHAR(100) NOT NULL,
+        numero_compte VARCHAR(100) UNIQUE NOT NULL,
         id_rib INT NOT NULL
         );
 
@@ -93,7 +93,7 @@ try {
         id_participant INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         nom VARCHAR(100) NOT NULL,
         prenoms VARCHAR(100) NOT NULL,
-        matricule_ifu VARCHAR(100) NOT NULL,
+        matricule_ifu VARCHAR(100) UNIQUE NOT NULL,
         date_naissance DATE NOT NULL,
         lieu_naissance VARCHAR(100) NOT NULL,
         id_diplome INT NOT NULL
