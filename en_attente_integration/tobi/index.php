@@ -38,7 +38,7 @@
                                     <?php
                                     if (isset($email_envoye)) {
                                     ?>
-                                        <div class="alert alert-success">Un lien de vérification a été envoyé dans votre mail </div>
+                                        <div class="form-text">Un lien de vérification a été envoyé dans votre mail </div>
                                     <?php
                                         unset($_SESSION['inscription_reussie']);
                                     }
@@ -63,7 +63,7 @@
                                     ?>
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Contents de vous revoir !</h1>
-                                        <p>Connectez-vous à votre compte pour retourner à la gestion de vos activités.</h2>
+                                        <p>Connectez-vous à votre compte pour retourner à la gestion de vos activités.</p>
                                     </div>
                                     <form action="" method="post">
                                         <div class="form-group">

@@ -14,7 +14,7 @@ if ($utilisateur) {
     $stmt = $bdd->prepare("UPDATE connexion SET est_verifie = 1, token_verification = NULL WHERE email = ?");
     $stmt->execute([$email]);
     echo "Compte vérifié avec succès.";
-    header("location:index.php");
+    header("Location:index.php");
     exit;
 } 
 
