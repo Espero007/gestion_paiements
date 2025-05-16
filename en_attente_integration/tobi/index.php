@@ -31,16 +31,27 @@
                                     <?php
                                     if (isset($echec_connexion)) {
                                     ?>
-                                        <div class="alert alert-danger">Echec de la connexion ! Assurez-vous d'indiquer correctement vos identifiants de connexion !</div>
+                                        <div class="alert alert-danger">Echec de la connexion ! Assurez-vous d'indiquer correctement vos identifiants de connexion ou d'avoir validé votre email en 
+                                            cliquant sur le lien envoyé à votre adresse mail !</div>
                                     <?php
                                     }
                                     ?>
+                                    
                                     <?php
-                                    if (isset($email_envoye)) {
+                                    if (isset($_SESSION['email_verifie'])) {
+                                    ?>
+                                        <div class="alert alert-success"> Compte vérifié avec succès.</div>
+                                    <?php
+                                        unset($_SESSION['email_verifie']);
+                                    }
+                                    ?>
+                                
+                                    <?php
+                                    if (isset($_SESSION['email_envoye'])) {
                                     ?>
                                         <div class="form-text">Un lien de vérification a été envoyé dans votre mail </div>
                                     <?php
-                                        unset($_SESSION['inscription_reussie']);
+                                        unset($_SESSION['email_envoye']);
                                     }
                                     ?>
                                     <?php

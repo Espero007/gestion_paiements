@@ -33,7 +33,7 @@ if (isset($_POST['connexion'])) {
            
         ]);
         $resultat = $check_data->fetchAll(PDO::FETCH_ASSOC);
-        var_dump($resultat);
+       
 
         if (count($resultat) == 0) {
             $echec_connexion = true;

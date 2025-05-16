@@ -71,9 +71,9 @@ if (isset($_POST['inscription'])) {
 
             $mail->send();
 
-            $email_envoye = true;
+            $_SESSION["email_envoye"] = true;
         } catch (Exception $e) {
-            die("Erreur : " . $e->ErrorInfo);
+            die("Erreur : " . $e->getMessage());
         }
 
         if (!$resultat) {
