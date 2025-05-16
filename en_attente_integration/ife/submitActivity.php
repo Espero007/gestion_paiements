@@ -19,15 +19,15 @@ catch (Exception $exception) {
 }   
 */
 
-require_once(__DIR__ . '/variables.php');
+//require_once(__DIR__ . '/variables.php');
 //require_once(__DIR__ . '/header.php');
 
-
+/*
 $loggedUser = $_SESSION['loguser'] ?? null;
 if (!$loggedUser) {
     header('Location: connexion.php');
     exit; }
-
+*/
 
 $errors = [];
 $success = false;
@@ -36,12 +36,16 @@ $diplomes = [];
 $titres = [];
 $forfaires = [];
 
+/*
 // Vérifier si le type d'activité est défini dans la session
 if (!isset($_SESSION['type_activite']) || !in_array($_SESSION['type_activite'], ['1', '2', '3'])) {
     header('Location: select_type.php');
     exit;
-}
-$type_activite = $_SESSION['type_activite'];
+} */
+
+//$type_activite = $_SESSION['type_activite'];
+
+$type_activite = 1;
 
 // Initialisation des données à vide
 $data = [

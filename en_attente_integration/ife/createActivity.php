@@ -17,11 +17,11 @@ catch (Exception $exception) {
     die('Erreur : ' . $exception->getMessage());
 }   */
 
-require_once(__DIR__ . '/variables.php');
+//require_once(__DIR__ . '/variables.php');
 
 
 
-
+/*
 $loggedUser = $_SESSION['loguser'] ?? null;
 if (!$loggedUser) {
     header('Location: connexion.php');
@@ -32,10 +32,12 @@ if (!$loggedUser) {
 if (!isset($_SESSION['type_activite']) || !in_array($_SESSION['type_activite'], ['1', '2', '3'])) {
     header('Location: select_type.php');
     exit;
-}
+}*/
 
 
-$type_activite = $_SESSION['type_activite'];
+//$type_activite = $_SESSION['type_activite'];
+
+$type_activite = 1;
 
 // Initialisation des données pour le formulaire
 $data = [
@@ -88,7 +90,7 @@ unset($_SESSION['success_data']);
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="container py-4">
-<?php echo "<h2>Bienvenue sur notre site <i style='color:blue'>" . $loggedUser["nom"] . " " . $loggedUser["prenoms"] . "</i></h2>"; ?>
+<?php // echo "<h2>Bienvenue sur notre site <i style='color:blue'>" . $loggedUser["nom"] . " " . $loggedUser["prenoms"] . "</i></h2>"; ?>
     <h2>Création d'une Activité - Type <?= htmlspecialchars($type_activite) ?></h2>
     <?php if ($success): ?>
         <div class="alert alert-success">
