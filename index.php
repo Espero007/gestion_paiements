@@ -1,43 +1,30 @@
 <?php
-
+$titre = "Tableau de bord";
 require_once('includes/header.php');
+$_SESSION['racine_projet'] = __DIR__;
 
-const NBR_ACTIVITES_A_AFFICHER = 3;
+// L'idéal serait ici que je récupère les trois derniers et non tout à vrai dire
 
-$stmt = "SELECT nom, description, periode, centre FROM activites";
+$stmt = 'SELECT nom, description, date_debut , date_fin, centre FROM activites WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id DESC LIMIT ' . NBR_ACTIVITES_A_AFFICHER;
 $resultat = $bdd->query($stmt);
 
 if (!$resultat) {
-    $erreur_recuperation = true;
-} else {
-    $nbr_activites = $resultat->rowCount();
-    // L'idéal serait ici que je récupère les trois derniers et non tout à vrai dire
-
-    $stmt = 'SELECT nom, description, periode, centre FROM activites ORDER BY id DESC LIMIT ' . NBR_ACTIVITES_A_AFFICHER;
-
-    $resultat = $bdd->query($stmt);
-    if (!$resultat) {
-        $erreur_recuperation = true;
-    } else {
-        while ($ligne = $resultat->fetch(PDO::FETCH_ASSOC)) {
-            $activites[] = $ligne;
-        }
-    }
+    redirigerVersPageErreur(500, $current_url);
 }
 
-$resultat->closeCursor();
+$activites = $resultat->fetchAll(PDO::FETCH_ASSOC);
+$nbr_activites = count($activites);
 
 // Récupération du nombre de participants enregistrés
 
-$stmt = "SELECT id_participant FROM participants";
+$stmt = "SELECT id_participant FROM participants WHERE id_user=" . $_SESSION['user_id'];
 $resultat = $bdd->query($stmt);
 
 if (!$resultat) {
-    $erreur_recuperation = true;
-} else {
-    $nbr_participants = $resultat->rowCount();
+    redirigerVersPageErreur(500, $current_url);
 }
 
+$nbr_participants = $resultat->rowCount();
 $resultat->closeCursor();
 
 ?>
@@ -62,12 +49,6 @@ $resultat->closeCursor();
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <?php
-                    if (isset($erreur_recuperation)) {
-                        echo "<div class=\"alert alert-danger\">La récupération des données a rencontré un problème.</div>";
-                    }
-                    ?>
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Tableau de bord</h1>
@@ -88,11 +69,7 @@ $resultat->closeCursor();
                                                 Nombre d'activités</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
-                                                if (isset($erreur_recuperation)) {
-                                                    echo "0"; // Valeur par défaut
-                                                } else {
-                                                    echo $nbr_activites;
-                                                }
+                                                echo $nbr_activites;
                                                 ?>
                                             </div>
                                         </div>
@@ -132,11 +109,7 @@ $resultat->closeCursor();
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
-                                                if (isset($erreur_recuperation)) {
-                                                    echo "0"; // Valeur par défaut
-                                                } else {
-                                                    echo $nbr_participants;
-                                                }
+                                                echo $nbr_participants;
                                                 ?>
                                             </div>
                                             <!-- <div class="row no-gutters align-items-center">
@@ -225,9 +198,9 @@ $resultat->closeCursor();
 
                         <!-- Area Chart -->
                         <!-- <div class="col-xl-8 col-lg-7"> -->
-                            <!-- <div class="card shadow mb-4"> -->
-                                <!-- Card Header - Dropdown -->
-                                <!-- <div
+                        <!-- <div class="card shadow mb-4"> -->
+                        <!-- Card Header - Dropdown -->
+                        <!-- <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
                                     <div class="dropdown no-arrow">
@@ -245,13 +218,13 @@ $resultat->closeCursor();
                                         </div>
                                     </div>
                                 </div> -->
-                                <!-- Card Body -->
-                                <!-- <div class="card-body">
+                        <!-- Card Body -->
+                        <!-- <div class="card-body">
                                     <div class="chart-area">
                                         <canvas id="myAreaChart"></canvas>
                                     </div>
                                 </div> -->
-                            <!-- </div> -->
+                        <!-- </div> -->
                         <!-- </div> -->
 
                         <!-- Pie Chart -->
@@ -456,11 +429,10 @@ $resultat->closeCursor();
                     <!-- </div> -->
                     <!-- </div> -->
 
-                    <?php if (isset($nbr_activites)) {
-                        if ($nbr_activites == 0) {
-                            echo "<p class=\"mt-2\">Il semble que vous n'avez aucune activité à votre actif. Pensez à en ajouter !</p>";
-                        }
-                    } ?>
+                    <?php if (isset($nbr_activites) && $nbr_activites == 0) : ?>
+                        <p class="mt-2">Il semble que vous n'avez aucune activité à votre actif. Pensez à en ajouter !</p>
+                        <a href="/gestion_activites/creer_activite.php">Créer une activité</a>
+                    <?php endif; ?>
                 </div>
                 <!-- /.container-fluid -->
 

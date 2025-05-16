@@ -1,30 +1,29 @@
 <?php
 
 session_start();
-require_once('includes/bdd.php');
+require_once('bdd.php');
+require_once('constantes_utilitaires.php');
+
+// Récupération de l'adresse courante
+
+// Récupération du protocole (http ou https)
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+// Récupération du nom de domaine + port si nécessaire
+$host = $_SERVER['HTTP_HOST'];
+// Récupération du chemin URI
+$request_uri = $_SERVER['REQUEST_URI'];
+// URL complète
+$current_url = $protocol . $host . $request_uri;
+
+$_SESSION['previous_url'] = $current_url;
+
 
 if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION['prenoms']))) {
     // Utilisateur non connecté
 
     // On le dirige vers la page de connexion en sauvegardant l'url à laquelle il voulait accéder de base. Ainsi on s'arrange pour qu'il revienne sur cette page une fois qu'il se sera connecté
-
-    // Récupération du protocole (http ou https)
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
-
-    // Récupération du nom de domaine + port si nécessaire
-    $host = $_SERVER['HTTP_HOST'];
-
-    // Récupération du chemin URI
-    $request_uri = $_SERVER['REQUEST_URI'];
-
-    // URL complète
-    $current_url = $protocol . $host . $request_uri;
-
-    $_SESSION['previous_url'] = $current_url;
-
-    header('location:./auth/connexion.php');
+    header('location:/auth/connexion.php');
 } else {
-    // L'utilisateur est connecté, du moins on a ses informations dans notre variable session mais on va ajouter ici un autre niveau de sécurité : on va tester si les informations contenues dans la variable session sont effectivement en base de données. ça peut paraître superflu mais lors des tests j'ai remarqué que lorsque je me connectais, même en supprimant mes informations en bdd je restais connecté puisqu'une copie de mes informations sont déjà dans la variable session donc bof, je vais rajouter ce niveau de sécurité pour gérer ce cas de figure
 
     // On vérifie la présence de l'individu dans la base de données
     $stmt = $bdd->prepare("SELECT user_id FROM connexion WHERE user_id = :user_id AND nom = :nom AND prenoms = :prenoms");
@@ -34,8 +33,7 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
 
     if (!$stmt->execute()) {
         // La récupération de l'information en base de données a rencontré un problème donc on va rediriger vers la page d'erreur avec comme erreur 500
-        $_SESSION['code_erreur'] = 500;
-        header('location:erreur.php');
+        redirigerVersPageErreur(500, $current_url);
     } else {
         // La récupération n'a pas eu de problèmes
         $lignes = $stmt->fetchAll(PDO::FETCH_NUM);
@@ -47,7 +45,6 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -61,15 +58,19 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Gestionnaire de Paiements - Tableau de bord</title>
+    <?php if (isset($titre)) : ?>
+        <title><?php echo $titre; ?></title>
+    <?php else: ?>
+        <title>Document</title>
+    <?php endif; ?>
 
     <!-- Custom fonts for this template-->
-    <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+
+
+    <link rel="stylesheet" href="/assets/vendor/fontawesome-free/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
 
 </head>

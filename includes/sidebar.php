@@ -13,9 +13,10 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-        <a class="nav-link" href="index.php">
+        <a class="nav-link" href="/index.php">
             <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Tableau de bord</span></a>
+            <span>Tableau de bord</span>
+        </a>
     </li>
 
     <!-- Divider -->
@@ -36,7 +37,7 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
-                <a class="collapse-item" href="creer_activite.php">Ajouter une activité</a>
+                <a class="collapse-item" href="/gestion_activites/creer_activite.php">Créer une activité</a>
                 <a class="collapse-item" href="voir_activites.php">Voir toutes les activités</a>
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
