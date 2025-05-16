@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once(__DIR__ . '/variables.php');
+//require_once(__DIR__ . '/variables.php');
 //require_once(__DIR__ . '/header.php');
 
 $loggedUser = $_SESSION['loguser'] ?? null;
