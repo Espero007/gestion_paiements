@@ -9,10 +9,10 @@ const MYSQL_USER = 'root';
 const MYSQL_PASSWORD = '';
 
 try {
-    $mySqlClient = new PDO (sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8',MYSQL_HOST,MYSQL_NAME,MYSQL_PORT),MYSQL_USER,MYSQL_PASSWORD) ;
+    $bdd = new PDO (sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8',MYSQL_HOST,MYSQL_NAME,MYSQL_PORT),MYSQL_USER,MYSQL_PASSWORD) ;
     
     
-    $mySqlClient->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 }
 catch (Exception $exception) {
     die('Erreur : ' . $exception->getMessage());
@@ -31,7 +31,7 @@ if (!$loggedUser) {
 
 $errors = [];
 $success = false;
-$id_user = $loggedUser['user_id'];
+$id_user = $_SESSION['user_id'];
 $diplomes = [];
 $titres = [];
 $forfaires = [];
@@ -199,19 +199,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                 // Insérer la note génératrice dans la table fichiers
                 $sql = 'INSERT INTO fichiers (chemin_acces, nom_original, date_upload, type_fichier) 
                         VALUES (:chemin_acces, :nom_original, :date_upload, :type_fichier)';
-                $stmt = $mySqlClient->prepare($sql);
+                $stmt = $bdd->prepare($sql);
                 $stmt->execute([
                     'chemin_acces' => $dest_path,
                     'nom_original' => $fileName,
                     'date_upload' => date('Y-m-d H:i:s'),
                     'type_fichier' => 'note_generatrice'
                 ]);
-                $id_note_generatrice = $mySqlClient->lastInsertId();
+                $id_note_generatrice = $bdd->lastInsertId();
 
                 // Insérer l'activité
                 $sql = 'INSERT INTO activites(type_activite, id_user, nom, description, date_debut, date_fin, centre, premier_responsable, titre_responsable, organisateur, titre_organisateur, financier, titre_financier, id_note_generatrice, taux_journalier, taux_taches, frais_deplacement_journalier)
                         VALUES (:type_activite, :id_user, :nom, :description, :periode_debut, :periode_fin, :centre, :premier_responsable, :titre_responsable, :organisateur, :titre_organisateur, :financier, :titre_financier, :id_note_generatrice, :taux_journalier, :taux_taches, :frais_deplacement_journalier)';
-                $stmt = $mySqlClient->prepare($sql);
+                $stmt = $bdd->prepare($sql);
                 $stmt->execute([
                     'type_activite' => $type_activite,
                     'id_user' => $id_user,
@@ -232,11 +232,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                     'frais_deplacement_journalier' => $type_activite === '3' ? $data['frais_deplacement_journalier'] : null
                 ]);
 
-                $last_id = $mySqlClient->lastInsertId();
+                $last_id = $bdd->lastInsertId();
 
                 // Insertion des diplômes
                 $sql_diplome = 'INSERT INTO diplomes(id_activite, nom) VALUES (:id_activite, :nom)';
-                $stmt_diplome = $mySqlClient->prepare($sql_diplome);
+                $stmt_diplome = $bdd->prepare($sql_diplome);
                 foreach ($diplomes as $diplome) {
                     $stmt_diplome->execute([
                         'id_activite' => $last_id,
@@ -246,7 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
 
                 // Insertion des titres associés
                 $sql_titre = 'INSERT INTO titres(id_activite, nom, indemnite_forfaitaire) VALUES (:id_activite, :nom, :indemnite_forfaitaire)';
-                $stmt_titre = $mySqlClient->prepare($sql_titre);
+                $stmt_titre = $bdd->prepare($sql_titre);
                 if ($type_activite === '1') {
                     foreach ($titres as $titre) {
                         $stmt_titre->execute([
