@@ -8,26 +8,27 @@ const MYSQL_USER = 'root';
 const MYSQL_PASSWORD = '';
 
 try {
-    $mySqlClient = new PDO (sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8',MYSQL_HOST,MYSQL_NAME,MYSQL_PORT),MYSQL_USER,MYSQL_PASSWORD) ;
+    bdd = new PDO (sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8',MYSQL_HOST,MYSQL_NAME,MYSQL_PORT),MYSQL_USER,MYSQL_PASSWORD) ;
     
-    $mySqlClient->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 }
 catch (Exception $exception) {
     die('Erreur : ' . $exception->getMessage());
 }    */
 
-require_once(__DIR__ . '/variables.php');
+require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php'));
 
+/*
 $loggedUser = $_SESSION['loguser'] ?? null;
 if (!$loggedUser) {
     header('Location: connexion.php');
     exit;
-}
+} */
 
 /*
 // Vérifier si l'ID de l'activité est fourni
 if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-    header('Location: dashboard.php');
+    header('Location: .php');
     exit;
 }
 $activity_id = $_GET['id'];
@@ -41,25 +42,25 @@ try {
             FROM activites a 
             LEFT JOIN fichiers f ON a.id_note_generatrice = f.id_fichier 
             WHERE a.id = :id AND a.id_user = :id_user';
-    $stmt = $mySqlClient->prepare($sql);
+    $stmt = bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id, 'id_user' => $loggedUser['user_id']]);
     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$activity) {
-        header('Location: .php'); // Je ne sais pas trop où envoyer l'utilisateur dans ce cas
+        header('Location: changeActivity.php'); // Je ne sais pas trop où envoyer l'utilisateur dans ce cas
         exit;
     }
 
     // Récupérer les diplômes
     $sql = 'SELECT nom FROM diplomes WHERE id_activite = :id';
-    $stmt = $mySqlClient->prepare($sql);
+    $stmt = bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id]);
     $diplomes = $stmt->fetchAll(PDO::FETCH_COLUMN);
     $niveaux_diplome = implode(',', $diplomes);
 
     // Récupérer les titres et indemnités
     $sql = 'SELECT nom, indemnite_forfaitaire FROM titres WHERE id_activite = :id';
-    $stmt = $mySqlClient->prepare($sql);
+    $stmt = bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id]);
     $titres_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $titres_associes = implode(',', array_column($titres_data, 'nom'));
@@ -67,7 +68,7 @@ try {
 
 } catch (PDOException $e) {
     $_SESSION['form_errors'] = ['database' => "Erreur lors de la récupération des données. Veuillez réessayer."];
-    header('Location: dashboard.php');
+    header('Location: changeActivity.php');
     exit;
 }
 
@@ -124,7 +125,6 @@ unset($_SESSION['success_data']);
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="container py-4">
-<?php echo "<h2>Bienvenue sur notre site <i style='color:blue'>" . $loggedUser["nom"] . " " . $loggedUser["prenoms"] . "</i></h2>"; ?>
     <h2>Modification de l'Activité - Type <?= htmlspecialchars($type_activite) ?></h2>
     <?php if ($success): ?>
         <div class="alert alert-success">
