@@ -7,9 +7,9 @@ const MYSQL_USER = 'root';
 const MYSQL_PASSWORD = '';
 
 try {
-    bdd = new PDO (sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8',MYSQL_HOST,MYSQL_NAME,MYSQL_PORT),MYSQL_USER,MYSQL_PASSWORD) ;
+    $bdd = new PDO (sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8',MYSQL_HOST,MYSQL_NAME,MYSQL_PORT),MYSQL_USER,MYSQL_PASSWORD) ;
     
-    bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 }
 catch (Exception $exception) {
     die('Erreur : ' . $exception->getMessage());
@@ -25,7 +25,7 @@ if (!$loggedUser) {
 }
 */
 
-require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php'));
+require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/$bdd.php'));
 
 
 $errors = [];
@@ -50,7 +50,7 @@ $activity_id = 2;
 // Vérifier si l'activité existe et appartient à l'utilisateur
 try {
     $sql = 'SELECT id_note_generatrice, type_activite FROM activites WHERE id = :id AND id_user = :id_user';
-    $stmt = bdd->prepare($sql);
+    $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id, 'id_user' => $id_user]);
     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                 // Récupérer l'ancien chemin du fichier pour suppression
                 if ($current_id_note_generatrice) {
                     $sql = 'SELECT chemin_acces FROM fichiers WHERE id_fichier = :id_fichier';
-                    $stmt = bdd->prepare($sql);
+                    $stmt = $bdd->prepare($sql);
                     $stmt->execute(['id_fichier' => $current_id_note_generatrice]);
                     $old_file = $stmt->fetch(PDO::FETCH_ASSOC);
                     $old_file_path = $old_file['chemin_acces'] ?? null;
@@ -231,14 +231,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                 if (isset($fileName) && isset($dest_path)) {
                     $sql = 'INSERT INTO fichiers (chemin_acces, nom_original, date_upload, type_fichier) 
                             VALUES (:chemin_acces, :nom_original, :date_upload, :type_fichier)';
-                    $stmt = bdd->prepare($sql);
+                    $stmt = $bdd->prepare($sql);
                     $stmt->execute([
                         'chemin_acces' => $dest_path,
                         'nom_original' => $fileName,
                         'date_upload' => date('Y-m-d H:i:s'),
                         'type_fichier' => 'note_generatrice'
                     ]);
-                    $new_id_note_generatrice = bdd->lastInsertId();
+                    $new_id_note_generatrice = $bdd->lastInsertId();
 
                     // Supprimer l'ancien fichier physique
                     if ($old_file_path && file_exists($old_file_path)) {
@@ -264,7 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                         taux_taches = :taux_taches, 
                         frais_deplacement_journalier = :frais_deplacement_journalier 
                         WHERE id = :id AND id_user = :id_user';
-                $stmt = bdd->prepare($sql);
+                $stmt = $bdd->prepare($sql);
                 $stmt->execute([
                     'nom' => $data['nom'],
                     'description' => $data['description'],
@@ -287,12 +287,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
 
                 // Supprimer les anciens diplômes
                 $sql = 'DELETE FROM diplomes WHERE id_activite = :id_activite';
-                $stmt = bdd->prepare($sql);
+                $stmt = $bdd->prepare($sql);
                 $stmt->execute(['id_activite' => $activity_id]);
 
                 // Insérer les nouveaux diplômes
                 $sql_diplome = 'INSERT INTO diplomes(id_activite, nom) VALUES (:id_activite, :nom)';
-                $stmt_diplome = bdd->prepare($sql_diplome);
+                $stmt_diplome = $bdd->prepare($sql_diplome);
                 foreach ($diplomes as $diplome) {
                     $stmt_diplome->execute([
                         'id_activite' => $activity_id,
@@ -302,12 +302,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
 
                 // Supprimer les anciens titres
                 $sql = 'DELETE FROM titres WHERE id_activite = :id_activite';
-                $stmt = bdd->prepare($sql);
+                $stmt = $bdd->prepare($sql);
                 $stmt->execute(['id_activite' => $activity_id]);
 
                 // Insérer les nouveaux titres
                 $sql_titre = 'INSERT INTO titres(id_activite, nom, indemnite_forfaitaire) VALUES (:id_activite, :nom, :indemnite_forfaitaire)';
-                $stmt_titre = bdd->prepare($sql_titre);
+                $stmt_titre = $bdd->prepare($sql_titre);
                 if ($type_activite === '1') {
                     foreach ($titres as $titre) {
                         $stmt_titre->execute([

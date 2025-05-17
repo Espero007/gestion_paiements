@@ -8,15 +8,15 @@ const MYSQL_USER = 'root';
 const MYSQL_PASSWORD = '';
 
 try {
-    bdd = new PDO (sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8',MYSQL_HOST,MYSQL_NAME,MYSQL_PORT),MYSQL_USER,MYSQL_PASSWORD) ;
+    $bdd = new PDO (sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8',MYSQL_HOST,MYSQL_NAME,MYSQL_PORT),MYSQL_USER,MYSQL_PASSWORD) ;
     
-    bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 }
 catch (Exception $exception) {
     die('Erreur : ' . $exception->getMessage());
 }    */
 
-require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php'));
+require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/$bdd.php'));
 
 /*
 $loggedUser = $_SESSION['loguser'] ?? null;
@@ -42,7 +42,7 @@ try {
             FROM activites a 
             LEFT JOIN fichiers f ON a.id_note_generatrice = f.id_fichier 
             WHERE a.id = :id AND a.id_user = :id_user';
-    $stmt = bdd->prepare($sql);
+    $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id, 'id_user' => $loggedUser['user_id']]);
     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -53,14 +53,14 @@ try {
 
     // Récupérer les diplômes
     $sql = 'SELECT nom FROM diplomes WHERE id_activite = :id';
-    $stmt = bdd->prepare($sql);
+    $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id]);
     $diplomes = $stmt->fetchAll(PDO::FETCH_COLUMN);
     $niveaux_diplome = implode(',', $diplomes);
 
     // Récupérer les titres et indemnités
     $sql = 'SELECT nom, indemnite_forfaitaire FROM titres WHERE id_activite = :id';
-    $stmt = bdd->prepare($sql);
+    $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id]);
     $titres_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $titres_associes = implode(',', array_column($titres_data, 'nom'));
