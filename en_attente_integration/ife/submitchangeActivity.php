@@ -25,7 +25,7 @@ if (!$loggedUser) {
 }
 */
 
-require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/$bdd.php'));
+require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php'));
 
 
 $errors = [];
