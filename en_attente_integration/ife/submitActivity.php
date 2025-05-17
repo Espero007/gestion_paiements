@@ -19,7 +19,8 @@ catch (Exception $exception) {
 }   
 */
 
-//require_once(__DIR__ . '/variables.php');
+realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php');
+
 //require_once(__DIR__ . '/header.php');
 
 /*

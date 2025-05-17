@@ -17,8 +17,7 @@ catch (Exception $exception) {
     die('Erreur : ' . $exception->getMessage());
 }   */
 
-//require_once(__DIR__ . '/variables.php');
-
+realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php');
 
 
 /*
@@ -27,15 +26,16 @@ if (!$loggedUser) {
     header('Location: connexion.php');
     exit;
 } 
+*/
 
+/*
 // Vérifier si le type d'activité est défini dans la session
-if (!isset($_SESSION['type_activite']) || !in_array($_SESSION['type_activite'], ['1', '2', '3'])) {
-    header('Location: select_type.php');
-    exit;
+if (!isset($_GET['type_activite']) || !in_array($_GET['type_activite'], ['1', '2', '3'])) {
+echo "Vous ne pouvez pas accédez à cette page";
 }*/
 
 
-//$type_activite = $_SESSION['type_activite'];
+//$type_activite = $_GET['type_activite'];
 
 $type_activite = 1;
 
@@ -90,7 +90,6 @@ unset($_SESSION['success_data']);
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="container py-4">
-<?php // echo "<h2>Bienvenue sur notre site <i style='color:blue'>" . $loggedUser["nom"] . " " . $loggedUser["prenoms"] . "</i></h2>"; ?>
     <h2>Création d'une Activité - Type <?= htmlspecialchars($type_activite) ?></h2>
     <?php if ($success): ?>
         <div class="alert alert-success">
