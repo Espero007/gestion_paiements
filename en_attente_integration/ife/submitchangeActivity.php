@@ -54,17 +54,18 @@ try {
     $stmt->execute(['id' => $activity_id, 'id_user' => $id_user]);
     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    /*
     if (!$activity) {
         $_SESSION['form_errors'] = ['database' => "Activité non trouvée ou vous n'avez pas les permissions pour la modifier."];
         header('Location: connexion.php'); // Je ne sais pas trop où envoyer l'utilisateur dans ce cas.
         exit;
-    }
+    } */
     $type_activite = $activity['type_activite'];
     $current_id_note_generatrice = $activity['id_note_generatrice'];
 } catch (PDOException $e) {
     $_SESSION['form_errors'] = ['database' => "Erreur lors de la vérification de l'activité. Veuillez réessayer."];
-    header('Location: dashboard.php');
-    exit;
+    //header('Location: dashboard.php');
+    //exit;
 }
 
 // Initialisation des données à vide

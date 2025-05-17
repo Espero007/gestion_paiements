@@ -34,7 +34,7 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 $activity_id = $_GET['id'];
 */
 
-$activity_id =2;
+$activity_id =1;
 
 // Récupérer les données de l'activité
 try {
@@ -43,13 +43,14 @@ try {
             LEFT JOIN fichiers f ON a.id_note_generatrice = f.id_fichier 
             WHERE a.id = :id AND a.id_user = :id_user';
     $stmt = $bdd->prepare($sql);
-    $stmt->execute(['id' => $activity_id, 'id_user' => $loggedUser['user_id']]);
+    $stmt->execute(['id' => $activity_id, 'id_user' => $_SESSION['user_id']]);
     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    /*
     if (!$activity) {
         header('Location: changeActivity.php'); // Je ne sais pas trop où envoyer l'utilisateur dans ce cas
         exit;
-    }
+    }*/
 
     // Récupérer les diplômes
     $sql = 'SELECT nom FROM diplomes WHERE id_activite = :id';
@@ -68,8 +69,8 @@ try {
 
 } catch (PDOException $e) {
     $_SESSION['form_errors'] = ['database' => "Erreur lors de la récupération des données. Veuillez réessayer."];
-    header('Location: changeActivity.php');
-    exit;
+   // header('Location: changeActivity.php');
+    //exit;
 }
 
 $type_activite = $activity['type_activite'];
