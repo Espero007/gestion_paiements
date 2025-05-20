@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once(__DIR__ . '/../../../includes/bdd.php');
 require_once(__DIR__ . '/../../../includes/constantes_utilitaires.php');
 // Récupération du protocole (http ou https)

@@ -84,11 +84,13 @@ unset($_SESSION['success_data']);
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Créer une Activité - Type <?= htmlspecialchars($type_activite) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="container py-4">
     <h2>Création d'une Activité - Type <?= htmlspecialchars($type_activite) ?></h2>
     <?php if ($success): ?>
@@ -213,13 +215,13 @@ unset($_SESSION['success_data']);
 
             <div class="mb-3">
                 <label class="form-label">Date de début</label>
-                <input type="date" name="date_debut" class="form-control" value="<?= htmlspecialchars($data['date_debut']) ?>" min="<?= date('Y-m-d') ?>">
+                <input type="date" name="date_debut" class="form-control" value="<?= htmlspecialchars($data['date_debut']) ?>" min="<?//= //date('Y-m-d') ?>">
                 <small class="text-danger"><?= $errors['date_debut'] ?? '' ?></small>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Date de fin</label>
-                <input type="date" name="date_fin" class="form-control" value="<?= htmlspecialchars($data['date_fin']) ?>" min="<?= date('Y-m-d') ?>">
+                <input type="date" name="date_fin" class="form-control" value="<?= htmlspecialchars($data['date_fin']) ?>" min="<?//= date('Y-m-d') ?>">
                 <small class="text-danger"><?= $errors['date_fin'] ?? '' ?></small>
             </div>
 
@@ -249,4 +251,5 @@ unset($_SESSION['success_data']);
         });
     </script>
 </body>
+
 </html>

@@ -1,11 +1,10 @@
 <?php
 $titre = "Tableau de bord";
 require_once('includes/header.php');
-$_SESSION['racine_projet'] = __DIR__;
 
 // L'idéal serait ici que je récupère les trois derniers et non tout à vrai dire
 
-$stmt = 'SELECT nom, description, date_debut , date_fin, centre FROM activites WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id DESC LIMIT ' . NBR_ACTIVITES_A_AFFICHER;
+$stmt = 'SELECT nom, description, date_debut, date_fin, centre FROM activites WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id DESC LIMIT ' . NBR_ACTIVITES_A_AFFICHER;
 $resultat = $bdd->query($stmt);
 
 if (!$resultat) {

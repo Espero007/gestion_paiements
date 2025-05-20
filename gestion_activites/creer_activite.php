@@ -1,6 +1,6 @@
 <?php
 $titre = "Création d'une activité";
-require_once(__DIR__.'/../includes/header.php');
+require_once(__DIR__ . '/../includes/header.php');
 require_once('traitements/submit_creer_activite.php');
 
 ?>
@@ -34,15 +34,18 @@ require_once('traitements/submit_creer_activite.php');
 
                     <!-- Page Heading -->
                     <div>
-                        <h1 class="h3 mb-4 text-gray-800">Création d'une activité</h1>
+                        <h1 class="h3 mb-4 text-gray-800">
+                            Création d'une activité
+                            <?php if (isset($type_activite)) {
+                                echo "de type " . $type_activite;
+                            } ?>
+                        </h1>
                         <p class="mt-2">Vous êtes sur le point de créer une activité. Nous allons vous guider tout au long du processus.</p>
                         <hr>
                     </div>
 
-                    <?php
-                    if (isset($recuperation_type_activite) && !$recuperation_type_activite) {
-                        // Le type de l'activité n'a pas encore été choisi
-                    ?>
+                    <?php if (isset($recuperation_type_activite) && !$recuperation_type_activite) : ?>
+                        <!-- Le type de l'activité n'a pas encore été choisi -->
                         <p class="mt-2">Commencez par nous dire quel type d'activité vous aimeriez créer. Nous disposons de trois types qui ont chacun leurs particularités.</p>
 
                         <!-- Content Row -->
@@ -51,10 +54,9 @@ require_once('traitements/submit_creer_activite.php');
                             <div class="col-lg-12 mb-4">
                                 <!-- Color System -->
                                 <div class="row">
-
                                     <div class="col-lg-6 mb-4">
                                         <div class="card bg-light text-black shadow">
-                                            <a href="creer_activite.php?id_activite=1" class="no-decoration">
+                                            <a href="creer_activite.php?type_activite=1" class="no-decoration">
                                                 <div class="card-body">
                                                     1
                                                     <div class="text-black-50 small no-decoration">Ce type d'activité est défini par le montant par jour et le nombre de jour de travail. </div>
@@ -62,11 +64,10 @@ require_once('traitements/submit_creer_activite.php');
                                             </a>
                                         </div>
                                     </div>
-                                    <!-- </a> -->
 
                                     <div class="col-lg-6 mb-4">
                                         <div class="card bg-light text-black shadow">
-                                            <a href="creer_activite.php?id_activite=2" class="no-decoration">
+                                            <a href="creer_activite.php?type_activite=2" class="no-decoration">
                                                 <div class="card-body">
                                                     2
                                                     <div class="text-black-50 small">Ce type d'activité est défini par le montant par jour, le nombre de jour de travail et une indemnité forfaitaire pour certains acteurs. </div>
@@ -77,7 +78,7 @@ require_once('traitements/submit_creer_activite.php');
 
                                     <div class="col-lg-6 mb-4">
                                         <div class="card bg-light text-black shadow">
-                                            <a href="creer_activite.php?id_activite=3" class="no-decoration">
+                                            <a href="creer_activite.php?type_activite=3" class="no-decoration">
                                                 <div class="card-body">
                                                     3
                                                     <div class="text-black-50 small">Ce dernier type d'activité est défini par le nombre de tache, le montant par tache, les frais de déplacement par jour, le nombre de jours et un forfait pour certains acteurs.</div>
@@ -88,66 +89,229 @@ require_once('traitements/submit_creer_activite.php');
                                 </div>
                             </div>
                         </div>
-                    <?php
-                    } elseif (isset($recuperation_type_activite) && $recuperation_type_activite) {
-                        // Le type de l'activité a été récupéré et est valide
-                    ?>
-                        <p class="mt-2">Dîtes-nous en plus sur votre activité à présent.</p>
+                    <?php elseif (isset($recuperation_type_activite) && $recuperation_type_activite): ?>
+                        <!-- Le type de l'activité a été récupéré et est valide -->
+                        <p class="mt-2">Dîtes-nous en plus sur votre activité en renseignant le formulaire ci-dessous</p>
+
                         <div class="row">
                             <div class="col-12">
-                                <!-- Basic Card Example -->
                                 <div class="card shadow mb-4">
                                     <div class="card-header py-3">
-                                        <h6 class="m-0 font-weight-bold text-primary">Formulaire d'ajout</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">Formulaire de création</h6>
                                     </div>
                                     <div class="card-body">
+                                        <!-- Messages d'erreur divers -->
+
+                                        <!-- Le formulaire est soumis un trop grand nombre de fois dans un intervalle de temps de moins de 10s -->
+                                        <?php if (isset($errors['duplicate'])) : ?>
+                                            <div class="alert alert-danger">
+                                                <strong>Erreur :</strong> <?= htmlspecialchars($errors['database']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if($success) : ?>
+                                        
+                                        <div class="alert alert-success">
+                                            Votre activité a été enregistrée avec succès ! Pensez à y associer des participants (lien vers l'association des participants à l'activité).
+                                        </div>
+                                        <?php endif; ?>
 
                                         <!-- Formulaire -->
+                                        <form action="" method="post" enctype="multipart/form-data" id="activityForm">
+                                            <!-- <input type="hidden" name="form_submitted" value="1"> -->
 
-                                        <form action="" method="post">
-
+                                            <!-- Informations générales -->
                                             <fieldset>
-                                                <legend class="h6">Informations générales</legend>
+                                                <legend class="h6"><strong>Informations générales</strong></legend>
                                                 <hr>
+                                                <!-- Nom -->
                                                 <div class="mb-2 row">
                                                     <label for="nom" class="col-sm-3 col-form-label">Nom</label>
                                                     <div class="col-sm-9">
-                                                        <input
-                                                            type="text"
-                                                            name="nom"
-                                                            maxlength="50"
-                                                            id="nom"
-                                                            class="form-control
-                                                <?php if (isset($erreurs["nom"])) {
-                                                    echo "is-invalid\" aria-describedby=\"nomAide";
-                                                } ?>"
-                                                            placeholder="Entrez le nom de l'activité"
-                                                            <?php if (isset($erreurs)) {
-                                                                echo "value = \"" . $_POST["nom"] . "\"";
-                                                            } ?>>
-
-                                                        <?php if (isset($erreurs["nom"])) {
-                                                        ?>
-                                                            <div id="nomAide" class="form-text"><?php echo $erreurs["nom"][0] ?></div>
-                                                        <?php } ?>
+                                                        <input id="nom" type="text" name="nom" class="form-control" value="<?= htmlspecialchars($data['nom']) ?>">
+                                                        <small class="text-danger"><?= $errors['nom'] ?? '' ?></small>
                                                     </div>
                                                 </div>
 
-                                                <button type="submit" class="btn btn-primary mt-5 mb-4" name="creer">Créer l'activité</button>
+                                                <!-- Description -->
+                                                <div class="mb-2 row">
+                                                    <label for="description" class="col-sm-3 col-form-label">Description</label>
+                                                    <div class="col-sm-9">
+                                                        <input id="description" type="text" name="description" class="form-control" value="<?= htmlspecialchars($data['description']) ?>">
+                                                        <small class="text-danger"><?= $errors['description'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Centre -->
+                                                <div class="mb-2 row">
+                                                    <label for="centre" class="col-sm-3 col-form-label">Centre</label>
+                                                    <div class="col-sm-9">
+                                                        <input id="centre" type="text" name="centre" class="form-control" value="<?= htmlspecialchars($data['centre']) ?>">
+                                                        <small class="text-danger"><?= $errors['centre'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Premier responsable -->
+                                                <div class="mb-2 row">
+                                                    <label for="premier_responsable" class="col-sm-3 col-form-label">Premier responsable</label>
+                                                    <div class="col-sm-9">
+                                                        <input id="premier_responsable" type="text" name="premier_responsable" class="form-control" value="<?= htmlspecialchars($data['premier_responsable']) ?>">
+                                                        <small class="text-danger"><?= $errors['premier_responsable'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Titre du responsable -->
+                                                <div class="mb-2 row">
+                                                    <label for="titre_responsable" class="col-sm-3 col-form-label">Titre du responsable <small class="text-muted">(facultatif)</small></label>
+                                                    <div class="col-sm-9">
+                                                        <input id="titre_responsable" type="text" name="titre_responsable" class="form-control" value="<?= htmlspecialchars($data['titre_responsable']) ?>">
+                                                        <small class="text-danger"><?= $errors['titre_responsable'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Organisateur -->
+                                                <div class="mb-2 row">
+                                                    <label for="organisateur" class="col-sm-3 col-form-label">Organisateur</label>
+                                                    <div class="col-sm-9">
+                                                        <input id="organisateur" type="text" name="organisateur" class="form-control" value="<?= htmlspecialchars($data['organisateur']) ?>">
+                                                        <small class="text-danger"><?= $errors['organisateur'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Titre de l'orgnisateur -->
+                                                <div class="mb-2 row">
+                                                    <label for="titre_organisateur" class="col-sm-3 col-form-label">Titre de l'organisateur <small class="text-muted">(facultatif)</small> </label>
+                                                    <div class="col-sm-9">
+                                                        <input id="titre_organisateur" type="text" name="titre_organisateur" class="form-control" value="<?= htmlspecialchars($data['titre_organisateur']) ?>">
+                                                        <small class="text-danger"><?= $errors['titre_organisateur'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Financier -->
+                                                <div class="mb-2 row">
+                                                    <label for="financier" class="col-sm-3 col-form-label">Financier</label>
+                                                    <div class="col-sm-9">
+                                                        <input id="financier" type="text" name="financier" class="form-control" value="<?= htmlspecialchars($data['financier']) ?>">
+                                                        <small class="text-danger"><?= $errors['financier'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Titre du financier -->
+                                                <div class="mb-2 row">
+                                                    <label for="titre_financier" class="col-sm-3 col-form-label">Titre du financier <small class="text-muted">(facultatif)</small></label>
+                                                    <div class="col-sm-9">
+                                                        <input id="titre_financier" type="text" name="titre_financier" class="form-control" value="<?= htmlspecialchars($data['titre_financier']) ?>">
+                                                        <small class="text-danger"><?= $errors['titre_financier'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Diplômes -->
+                                                <div class="mb-2 row">
+                                                    <label for="niveaux_diplome" class="col-sm-3 col-form-label">Niveaux de diplome <small class="text-muted">(séparés par des virgules, lettres accentutées autorisées, sans chiffres, ex. : Licence,Master,Ingénieur)</small></label>
+                                                    <div class="col-sm-9">
+                                                        <input id="niveaux_diplome" type="text" name="niveaux_diplome" class="form-control" value="<?= htmlspecialchars($data['niveaux_diplome']) ?>">
+                                                        <small class="text-danger"><?= $errors['niveaux_diplome'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Titres associés -->
+                                                <div class="mb-2 row">
+                                                    <label for="titres_associes" class="col-sm-3 col-form-label">Titres associés <small class="text-muted">(séparés par des virgules, lettres uniquement, ex. : R/DEC,Superviseur)</small></label>
+                                                    <div class="col-sm-9">
+                                                        <input id="titres_associes" type="text" name="titres_associes" class="form-control" value="<?= htmlspecialchars($data['titres_associes']) ?>">
+                                                        <small class="text-danger"><?= $errors['titres_associes'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
                                             </fieldset>
 
+                                            <!-- Informations financières -->
+                                            <fieldset class="mt-4">
+                                                <legend class="h6"><strong>Informations financières</strong></legend>
+                                                <hr>
 
+                                                <!-- Champ spécifique aux types 1 et 2 -->
+                                                <?php if (in_array($type_activite, [1, 2])) : ?>
+                                                    <!-- Taux journalier -->
+                                                    <div class="mb-2 row">
+                                                        <label for="taux_journalier" class="col-sm-3 col-form-label">Taux journalier (FCFA)</label>
+                                                        <div class="col-sm-9">
+                                                            <input id="taux_journalier" type="text" name="taux_journalier" class="form-control" value="<?= htmlspecialchars($data['taux_journalier']) ?>">
+                                                            <small class="text-danger"><?= $errors['taux_journalier'] ?? '' ?></small>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
 
+                                                <!-- Champs spécifiques aux types 2 et 3 -->
+                                                <?php if (in_array($type_activite, [2, 3])) : ?>
+                                                    <!-- Indemnité(s) forfaitaire(s) -->
+                                                    <div class="mb-2 row">
+                                                        <label for="indemnite_forfaitaire" class="col-sm-3 col-form-label">Indemnité(s) forfaitaire(s) (FCFA) <small class="text-muted">(séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75)</small></label>
+                                                        <div class="col-sm-9">
+                                                            <input id="indemnite_forfaitaire" type="text" name="indemnite_forfaitaire" class="form-control" value="<?= htmlspecialchars($data['indemnite_forfaitaire']) ?>">
+                                                            <small class="text-danger"><?= $errors['indemnite_forfaitaire'] ?? '' ?></small>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+
+                                                <!-- Champ spécifique au type 3 -->
+                                                <?php if ($type_activite == 3) : ?>
+                                                    <!-- Taux par tâches -->
+                                                    <div class="mb-2 row">
+                                                        <label for="taux_taches" class="col-sm-3 col-form-label">Taux par tâche (FCFA)</label>
+                                                        <div class="col-sm-9">
+                                                            <input id="taux_taches" type="text" name="taux_taches" class="form-control" value="<?= htmlspecialchars($data['taux_taches']) ?>">
+                                                            <small class="text-danger"><?= $errors['taux_taches'] ?? '' ?></small>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Frais de déplacement -->
+                                                    <div class="mb-2 row">
+                                                        <label for="frais_deplacement_journalier" class="col-sm-3 col-form-label">Frais de déplacement journaliers (FCFA)</label>
+                                                        <div class="col-sm-9">
+                                                            <input id="frais_deplacement_journalier" type="text" name="frais_deplacement_journalier" class="form-control" value="<?= htmlspecialchars($data['frais_deplacement_journalier']) ?>">
+                                                            <small class="text-danger"><?= $errors['frais_deplacement_journalier'] ?? '' ?></small>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </fieldset>
+
+                                            <!-- Autres informations -->
+                                            <fieldset class="mt-4">
+                                                <legend class="h6"><strong>Autres informations</strong></legend>
+                                                <hr>
+                                                <!-- Note génératrice -->
+                                                <div class="mb-2 row">
+                                                    <label for="note_generatrice" class="col-sm-3 col-form-label">Note génératrice <small class="text-muted">(fichier, obligatoire)</small></label>
+                                                    <div class="col-sm-9">
+                                                        <input id="note_generatrice" type="file" name="note_generatrice" class="form-control">
+                                                        <small class="text-danger"><?= $errors['note_generatrice'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Date de début -->
+                                                <div class="mb-2 row">
+                                                    <label for="date_debut" class="col-sm-3 col-form-label">Date de début</label>
+                                                    <div class="col-sm-9">
+                                                        <input id="date_debut" type="date" name="date_debut" class="form-control" value="<?= htmlspecialchars($data['date_debut']) ?>">
+                                                        <small class="text-danger"><?= $errors['date_debut'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Date de fin -->
+                                                <div class="mb-2 row">
+                                                    <label for="date_fin" class="col-sm-3 col-form-label">Date de fin</label>
+                                                    <div class="col-sm-9">
+                                                        <input id="date_fin" type="date" name="date_fin" class="form-control" value="<?= htmlspecialchars($data['date_fin']) ?>">
+                                                        <small class="text-danger"><?= $errors['date_fin'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                            <button class="btn btn-primary mt-4" id="submitButton" type="submit" name="form_submitted">Créer l'activité</button>
                                         </form>
-
+                                        <a href="/gestion_activites/creer_activite.php"><button class="btn btn-primary mt-4">Ajouter une autre activité</button></a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    <?php
-                    }
-
-                    ?>
+                    <?php endif; ?>
 
 
                 </div>
@@ -174,6 +338,31 @@ require_once('traitements/submit_creer_activite.php');
     <!-- Logout Modal-->
     <?php require_once('includes/logoutModal.php') ?>
     <?php require_once('includes/scripts.php') ?>
+
+    <!-- Bootstrap JS -->
+    <!-- <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.min.js"></script> -->
+
+    <!-- <script>
+        // Désactiver le bouton après le premier clic
+        document.getElementById('activityForm').addEventListener('submit', function() {
+            document.getElementById('submitButton').disabled = true;
+        });
+
+        // Validation des dates avant soumission
+        document.getElementById('activityForm').addEventListener('submit', function(e) {
+            const dateDebut = document.querySelector('input[name="date_debut"]').value;
+            const dateFin = document.querySelector('input[name="date_fin"]').value;
+            if (dateDebut && dateFin && dateFin < dateDebut) {
+                alert("La date de fin doit être égale ou postérieure à la date de début.");
+                e.preventDefault();
+            }
+        });
+
+        // Mettre à jour la date minimale de date_fin en fonction de date_debut
+        document.querySelector('input[name="date_debut"]').addEventListener('change', function() {
+            document.querySelector('input[name="date_fin"]').min = this.value;
+        });
+    </script> -->
 </body>
 
 </html>

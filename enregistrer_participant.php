@@ -948,7 +948,7 @@
         }
         ?>
 
-        <script src="./bootstrap-5.3.5-dist/js/bootstrap.min.js"></script>
+        <!-- <script src="./bootstrap-5.3.5-dist/js/bootstrap.min.js"></script> -->
     </div>
 </body>
 

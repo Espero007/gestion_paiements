@@ -1,15 +1,17 @@
 <?php
+// Constantes
+
+define('BASE_PATH', realpath(__DIR__.'/../'));
 const NBR_ACTIVITES_A_AFFICHER = 6;
 const NOMBRE_MAXIMAL_COMPTES = 3;
-// const RACINE_PROJET = __DIR__.'/..';
-
-// echo RACINE_PROJET;
-
-// require_once(RACINE_PROJET.'/auth/connexion.php');
+define('TIMEOUT', 320*60); // 20 min soit 20*60 secondes. J'ai mis 320 pour ne pas avoir de problèmes avec ça pour l'instant. Après quand j'aurai mis en place le système de "se souvenir de moi" je vais remettre la valeur "20"
+// const PERMISSIONS = 0777;
 
 // Gestion du timezone pour qu'il s'adapte au Bénin
 
 date_default_timezone_set('Africa/Lagos');
+
+// Fonctions utilitaires
 
 function redirigerVersPageErreur($code_erreur, $url)
 {
@@ -19,7 +21,7 @@ function redirigerVersPageErreur($code_erreur, $url)
     exit;
 }
 
-function creer_dossiers_upload($repertoire_racine, $permissions)
+function creer_dossiers_upload($repertoire_racine, $permissions=0777)
 {
     // Création des dossier s'ils n'existent pas
 
@@ -31,6 +33,7 @@ function creer_dossiers_upload($repertoire_racine, $permissions)
         if (!is_dir($dir)) {
             // Le dossier n'existe pas
             if (!mkdir($dir, $permissions)) {
+                // $erreurs['creation_dossiers'] = "Une erreur s'est produite lors de la création des dossiers de sauvegarde des fichiers. Vérifiez les permissions.";
                 echo "<div class=\"alert alert-danger mt-2\">Une erreur s'est produite lors de la création des dossiers de sauvegarde des fichiers. Vérifiez les permissions.</div>";
                 die(-1);
             }
@@ -79,6 +82,27 @@ function modifier_nom($fichier, $matricule_ifu)
     return $nom_fichier . $matricule_ifu . "_" . $chiffre_fin . ".pdf"; // Je constitue le nom final et je le retourne
 }
 
+function valider_valeur_numerique($cle, $conteneur){
+    // $val est le nom de la valeur dans $conteneur donc cette fonction se base sur le principe que le conteneur est un tableau associatif avec des couples clés/valeurs. Dans les faits elle est construite pour vérifier les différentes valeurs qui seront passées par GET mais gardons cet aspect général avec $conteneur
+
+    // 1- On s'assure que la valeur recherchée est bien dans le conteneur
+
+    if(!isset($conteneur[$cle])){
+        return false;
+    }
+
+    // 2 - On s'assure que la valeur si elle est là est un nombre (ici, prenons pour hypothèse que ce nombre quelqu'il soit doit être supérieur à 0)
+
+    $val = intval($conteneur[$cle]);
+    if($val == 0){
+        echo "Je suis ici";
+        return false; // La valeur que nous avons reçue est une chaîne de caractère
+    }
+
+    // Tout va bien
+    return true;
+}
+
 function valider_id_participant($valeur, $bdd, $current_url){
     $valeur = intval($valeur);
 
@@ -100,4 +124,25 @@ function valider_id_participant($valeur, $bdd, $current_url){
         }
 
     }
+}
+
+function obtenirURLcourant(){
+    // Récupération du protocole (http ou https)
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+    // Récupération du nom de domaine + port si nécessaire
+    $host = $_SERVER['HTTP_HOST'];
+    // Récupération du chemin URI
+    $request_uri = $_SERVER['REQUEST_URI'];
+    // URL complète
+    $current_url = $protocol . $host . $request_uri;
+
+    return $current_url;
+}
+
+// Fonctions liées à la génération de pdfs
+
+function configuration_pdf($pdf, $auteur, $titre){
+    $pdf->setCreator(PDF_CREATOR);
+    $pdf->setAuthor($auteur);
+    $pdf->setTitle($titre);
 }
