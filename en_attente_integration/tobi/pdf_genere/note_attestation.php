@@ -56,14 +56,10 @@ td, th { border: 1px solid #000; padding: 5px; }
 <table width="100%" style=" margin-bottom: 20px;" border="0">
 <tr>
 <td style="width: 50%; font-size: 10pt; text-align:center;border: none; ">
-    <p><b>REPUBLIQUE DU BENIN 
-     <br/> **********</b> </p>
-    <p> <b>MINISTÈRE ...
-    <br/> **********</b></p>
-    <p><b> DIRECTION ... 
-    <br/> </b>**********</b></p>
-     <p> <b> SERVICE ...
-     <br/> **********</b></p>
+    <p><b>REPUBLIQUE DU BENIN </b><br/> ********** </p>
+    <p> <b>MINISTÈRE ... </b><br/> **********</p>
+    <p><b> DIRECTION ...  </b><br/> </b>**********</p>
+    <p> <b> SERVICE ... </b><br/> **********</p>
 </td>
 <td style="width: 50%; font-size: 10pt; text-align:center; border: none;">
     <p>Cotonou, le'. $dateFr .'. </p>
@@ -72,13 +68,13 @@ td, th { border: 1px solid #000; padding: 5px; }
 </td>
 </tr>
 </table>';
+
 $html .='
 
     <h4><b>N° :</b> /DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD </h4>
 <p>
     <b style="text-decoration:underline;"> Réf :</b> NS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA DU 29 DECEMBRE 2023
 </p> <br><br> ';
-
 
 
 $html .= ' <table border="1" cellpadding="4"  align="center">
@@ -115,7 +111,7 @@ $titre_responsable = !empty($participants[0]['titre_responsable']) ? htmlspecial
 $html .= '<br><br>';
 
 $html .= '
-<h4 style="text-align:center">' .$titre_responsable . '</h4>
+<h4 style="text-align:center;">' .$titre_responsable . '</h4>
 <h4 style="text-align:center ; text-decoration:underline;"> '. $premier_responsable.'</h4> ';
 
 // Écriture du contenu HTML dans le PDF
