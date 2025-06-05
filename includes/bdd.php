@@ -43,14 +43,19 @@ try {
         id_user INT NOT NULL,
         nom VARCHAR(100) NOT NULL,
         description VARCHAR(255) NOT NULL,
-        periode INT(100) NOT NULL,
+        date_debut DATE NOT NULL,
+        date_fin DATE NOT NULL,
         centre VARCHAR(100) NOT NULL,
-        premier_responsable_titre VARCHAR(100) NOT NULL,
-        organisateur_titre VARCHAR(100) NOT NULL,
-        financier_titre VARCHAR(100) NOT NULL,
-        note_generatrice LONGTEXT NULL,
+        premier_responsable VARCHAR(100) NOT NULL,
+        titre_responsable VARCHAR(100) NULL,
+        organisateur VARCHAR(100) NOT NULL,
+        titre_organisateur VARCHAR(100) NULL,
+        financier VARCHAR(100) NOT NULL,
+        titre_financier VARCHAR(100) NULL,
+        id_note_generatrice INT NOT NULL,
         taux_journalier DECIMAL(50) NOT NULL,
-        taux_taches DECIMAL(50) NULL, frais_deplacement_journaliers DECIMAL(50) NULL
+        frais_deplacement_journalier DECIMAL(50) NULL,
+        taux_taches DECIMAL(50) NULL
         );
 
         CREATE TABLE IF NOT EXISTS connexion
@@ -91,6 +96,7 @@ try {
         CREATE TABLE IF NOT EXISTS participants
         (
         id_participant INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id_user INT NOT NULL,
         nom VARCHAR(100) NOT NULL,
         prenoms VARCHAR(100) NOT NULL,
         matricule_ifu VARCHAR(100) UNIQUE NOT NULL,
@@ -114,7 +120,7 @@ try {
         id_titre INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         nom VARCHAR(100) NOT NULL,
         id_activite INT NOT NULL,
-        indemnites_forfaitaires VARCHAR(100) NULL
+        indemnite_forfaitaire VARCHAR(100) NULL
         );
     ";
 

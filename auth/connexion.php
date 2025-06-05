@@ -42,12 +42,19 @@
                                     ?>
 
                                     <?php
-                                    if (isset($_SESSION['deconnexion'])) {
+                                    if (isset($_SESSION['deconnexion']) && !isset($_SESSION['timeout_atteint'])) {
                                     ?>
                                         <div class="alert alert-success">Vous êtes à présent déconnecté(e) !</div>
                                     <?php
                                         session_unset(); // On détruit les varaibles de la session
                                         session_destroy(); // On détruit la session
+                                    } elseif (isset($_SESSION['deconnexion']) && isset($_SESSION['timeout_atteint'])) {
+                                        // déconnexion due au timeout
+                                    ?>
+                                        <div class="alert alert-info text-center">Vous avez été déconnecté(e) pour cause d'inactivité. Veuillez vous reconnecter avant de poursuivre.</div>
+                                    <?php
+                                        session_unset();
+                                        session_destroy();
                                     }
                                     ?>
                                     <div class="text-center">
@@ -109,7 +116,7 @@
         </div>
     </div>
 
-    <?php require_once(__DIR__.'/../includes/footer.php') ?>
+    <?php require_once(__DIR__ . '/../includes/footer.php') ?>
 
     <script>
         (function() {

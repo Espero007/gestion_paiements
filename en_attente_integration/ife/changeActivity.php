@@ -69,6 +69,7 @@ try {
 
 } catch (PDOException $e) {
     $_SESSION['form_errors'] = ['database' => "Erreur lors de la récupération des données. Veuillez réessayer."];
+    die("Erreur : " . $e->getMessage());
    // header('Location: changeActivity.php');
     //exit;
 }

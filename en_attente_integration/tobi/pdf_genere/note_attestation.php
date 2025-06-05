@@ -1,14 +1,22 @@
 <?php
+// Activer le mode debug temporairement (à désactiver en production)
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+ob_start();
 // Inclusion de la bibliothèque TCPDF
-require_once(__DIR__.'/../../../tcpdf/tcpdf.php');
-require_once(__DIR__.'/../../../includes/bdd.php');
+require_once(__DIR__ . '/../../../tcpdf/tcpdf.php');
+require_once(__DIR__ . '/../../../includes/bdd.php');
 
-// Connexion à la base de données MySQL
+// Vérifier que $bdd est un objet PDO
+if (!($bdd instanceof PDO)) {
+    ob_end_clean();
+    die('Erreur : la connexion à la base de données a échoué.');
+}
 
-
-// Requête SQL pour récupérer les informations des participants et de leurs activités
-$id_type_activite = 1; // Remplace par le type d'activité que tu veux filtrer (ou prends-le d'un formulaire)
-
+// Requête SQL pour récupérer les informations
+$id_type_activite = 1;
 $sql = "
     SELECT 
         p.id_participant,
@@ -29,6 +37,7 @@ $sql = "
     LEFT JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
     WHERE a.type_activite = :type_activite
 ";
+<<<<<<< HEAD
 
 $stmt = $bdd->prepare($sql);
 $stmt->execute(['type_activite' => $id_type_activite]); // Passe la valeur du type d'activité ici
@@ -189,40 +198,175 @@ foreach ($participants as $p) {
                 <td width="15%">' . htmlspecialchars($p['banque']) . '</td>
                 <td width="33%">' . htmlspecialchars($p['numero_compte']) . '</td>
               </tr>';
+=======
+try {
+    $stmt = $bdd->prepare($sql);
+    $stmt->execute(['type_activite' => $id_type_activite]);
+    $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    ob_end_clean();
+    die('Erreur lors de l’exécution de la requête SQL : ' . $e->getMessage());
 }
 
-$html .= '</tbody></table>';
+if (empty($participants)) {
+    ob_end_clean();
+    die('Aucun participant trouvé pour ce type d’activité.');
+>>>>>>> afa46153a0a0895e3ead2c3b42facfad76bf1e13
+}
 
-// Ajouter les informations du premier responsable et son titre sous le tableau
-$premier_responsable = !empty($participants[0]['premier_responsable']) ? htmlspecialchars($participants[0]['premier_responsable']) : ''; // Si nul, mettre vide
-$titre_responsable = !empty($participants[0]['titre_responsable']) ? htmlspecialchars($participants[0]['titre_responsable']) : ''; // Si nul, mettre vide
-$financier = !empty($participants[0]['financier']) ? htmlspecialchars($participants[0]['financier']) : ''; // Si nul, mettre vide
-$titre_financier = !empty($participants[0]['titre_financier']) ? htmlspecialchars($participants[0]['titre_financier']) : ''; // Si nul, mettre vide
+// Vérifier quel document afficher
+$document = isset($_GET['document']) ? $_GET['document'] : '';
 
-$html .= '<br><br><br><br>';
+$formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE, "Europe/Paris", IntlDateFormatter::GREGORIAN);
+$dateFr = $formatter->format(new DateTime());
+$nom_activite = isset($participants[0]["nom_activite"]) ? htmlspecialchars($participants[0]["nom_activite"]) : '';
 
-$html .= '
+if ($document === 'note') {
+    // *** Note de Service PDF ***
+    $pdf = new TCPDF();
+    $pdf->AddPage();
+    $pdf->SetFont('dejavusans', '', 10);
 
-<table border="0"  align="center">
-<tr>
-<td style="width: 50%; font-size: 10pt;border: none; ">
-    <h4 style="margin-bottom:3em"> ' . $titre_responsable . '</h4>
-    <h4 style="text-decoration:underline;">'. $premier_responsable .' </h4>
-</td>
-<td style="width: 50%; font-size: 10pt; border: none;">
-    <h4 style="margin-bottom:3em"> ' . $financier . '</h4>
-    <h4 style="text-decoration:underline;">'. $titre_financier .' </h4>
-</td>
-</tr>
-</table> 
- ';
+    $html = '
+    <style>
+    thead tr { background-color: #eeeeee; }
+    h1 { text-align: center; font-size: 16pt; }
+    h2 { text-align: center; font-size: 14pt; }
+    table { border-collapse: collapse; width: 100%; }
+    td, th { border: 1px solid #000; padding: 5px; }
+    </style>
+    <table style="margin-bottom: 20px;" border="0">
+        <tr>
+            <td style="width: 50%; font-size: 10pt; text-align:center; border: none;">
+                <p><b>REPUBLIQUE DU BENIN<br/>**********</b></p>
+                <p><b>MINISTÈRE ...<br/>**********</b></p>
+                <p><b>DIRECTION ...<br/>**********</b></p>
+                <p><b>SERVICE ...<br/>**********</b></p>
+            </td>
+            <td style="width: 50%; font-size: 10pt; text-align:center; border: none;">
+                <p>Cotonou, le ' . $dateFr . '</p>
+                <h2>NOTE DE SERVICE</h2>
+                <h4>PORTANT CONSTITUTION DES MEMBRES DE LA COMMISSION CHARGÉE DE ' . mb_strtoupper($nom_activite) . '</h4>
+            </td>
+        </tr>
+    </table>
+    <h4><b>N° :</b> /DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD</h4>
+    <p><b style="text-decoration:underline;">Réf :</b> NS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA DU 29 DECEMBRE 2023</p><br><br>
+    <table border="1" cellpadding="4" style="width: 100%;">
+        <thead>
+            <tr style="background-color: #eeeeee;">
+                <th style="width: 7%;">N°</th>
+                <th style="width: 15%;">Nom</th>
+                <th style="width: 15%;">Prénoms</th>
+                <th style="width: 15%;">Titre</th>
+                <th style="width: 15%;">Banque</th>
+                <th style="width: 33%;">Numéro de Compte</th>
+            </tr>
+        </thead>
+        <tbody>';
+    $i = 1;
+    foreach ($participants as $p) {
+        $html .= '<tr>
+                    <td style="width: 7%;">' . $i++ . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['nom'] ?? '') . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['prenoms'] ?? '') . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['titre_participant'] ?? '') . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['banque'] ?? '') . '</td>
+                    <td style="width: 33%;">' . htmlspecialchars($p['numero_compte'] ?? '') . '</td>
+                  </tr>';
+    }
+    $html .= '</tbody></table>';
 
-// Écriture du contenu HTML dans le PDF
-$pdf1->writeHTML($html, true, false, true, false, '');
+    $premier_responsable = isset($participants[0]['premier_responsable']) ? htmlspecialchars($participants[0]['premier_responsable']) : '';
+    $titre_responsable = isset($participants[0]['titre_responsable']) ? htmlspecialchars($participants[0]['titre_responsable']) : '';
+    $html .= '<br><br>
+    <h4 style="text-align:center">' . $titre_responsable . '</h4>
+    <h4 style="text-align:center; text-decoration:underline;">' . $premier_responsable . '</h4>';
 
+    $pdf->writeHTML($html, true, false, true, false, '');
+    ob_clean();
+    ob_end_clean();
+    $pdf->Output('Note_de_service.pdf', 'I');
+} elseif ($document === 'attestation') {
+    // *** Attestation Collective PDF ***
+    $pdf1 = new TCPDF();
+    $pdf1->AddPage();
+    $pdf1->SetFont('dejavusans', '', 10);
 
-// Affichage du PDF dans le navigateur
-$pdf1->Output(__DIR__.'/Attestation_collective.pdf', 'F'); // 'F' sauvegarder sur le disque
+    $html = '
+    <style>
+    h1 { text-align: center; font-size: 16pt; }
+    h2 { text-align: center; font-size: 14pt; }
+    table { border-collapse: collapse; width: 100%; }
+    td, th { border: 1px solid #000; padding: 5px; }
+    </style>
+    <table style="margin-bottom: 20px;" border="0">
+        <tr>
+            <td style="width: 50%; font-size: 10pt; text-align:center; border: none;">
+                <p><b>REPUBLIQUE DU BENIN<br/>**********</b></p>
+                <p><b>MINISTÈRE ...<br/>**********</b></p>
+                <p><b>DIRECTION ...<br/>**********</b></p>
+                <p><b>SERVICE ...<br/>**********</b></p>
+            </td>
+            <td style="width: 50%; font-size: 10pt; text-align:center; border: none;">
+                <p>Cotonou, le ' . $dateFr . '</p>
+                <h2>ATTESTATION COLLECTIVE DE TRAVAIL</h2>
+                <h4>DES MEMBRES DE LA COMMISSION CHARGÉE DE ' . mb_strtoupper($nom_activite) . '</h4>
+            </td>
+        </tr>
+    </table><br><br><br><br>
+    <table border="1" cellpadding="4" style="width: 100%;">
+        <thead>
+            <tr style="background-color: #eeeeee;">
+                <th style="width: 7%;">N°</th>
+                <th style="width: 15%;">Nom</th>
+                <th style="width: 15%;">Prénoms</th>
+                <th style="width: 15%;">Titre</th>
+                <th style="width: 15%;">Banque</th>
+                <th style="width: 33%;">Numéro de Compte</th>
+            </tr>
+        </thead>
+        <tbody>';
+    $i = 1;
+    foreach ($participants as $p) {
+        $html .= '<tr>
+                    <td style="width: 7%;">' . $i++ . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['nom'] ?? '') . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['prenoms'] ?? '') . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['titre_participant'] ?? '') . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['banque'] ?? '') . '</td>
+                    <td style="width: 33%;">' . htmlspecialchars($p['numero_compte'] ?? '') . '</td>
+                  </tr>';
+    }
+    $html .= '</tbody></table>';
 
-echo '<br> <a href="Attestation_collective.pdf" target="_blank"> Attestation collective de travail </a>';
+    $premier_responsable = isset($participants[0]['premier_responsable']) ? htmlspecialchars($participants[0]['premier_responsable']) : '';
+    $titre_responsable = isset($participants[0]['titre_responsable']) ? htmlspecialchars($participants[0]['titre_responsable']) : '';
+    $financier = isset($participants[0]['financier']) ? htmlspecialchars($participants[0]['financier']) : '';
+    $titre_financier = isset($participants[0]['titre_financier']) ? htmlspecialchars($participants[0]['titre_financier']) : '';
+    $html .= '<br><br><br><br>
+    <table border="0" style="width: 100%;">
+        <tr>
+            <td style="width: 50%; font-size: 10pt; border: none;">
+                <h4 style="margin-bottom:3em">' . $titre_responsable . '</h4>
+                <h4 style="text-decoration:underline;">' . $premier_responsable . '</h4>
+            </td>
+            <td style="width: 50%; font-size: 10pt; border: none;">
+                <h4 style="margin-bottom:3em">' . $titre_financier . '</h4>
+                <h4 style="text-decoration:underline;">' . $financier . '</h4>
+            </td>
+        </tr>
+    </table>';
+
+    $pdf1->writeHTML($html, true, false, true, false, '');
+    ob_clean();
+    ob_end_clean();
+    $pdf1->Output('Attestation_collective.pdf', 'I');
+} else {
+    // Afficher une interface pour choisir le document
+    ob_end_clean();
+    echo '<h2>Choisir un document à afficher :</h2>';
+    echo '<p><a href="?document=note">Afficher la Note de service</a></p>';
+    echo '<p><a href="?document=attestation">Afficher l’Attestation collective</a></p>';
+}
 ?>

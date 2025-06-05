@@ -43,6 +43,7 @@ if (isset($_POST['connexion'])) {
             $_SESSION['user_id'] = $logged_user['user_id'];
             $_SESSION['nom'] = $logged_user['nom'];
             $_SESSION['prenoms'] = $logged_user['prenoms'];
+            $_SESSION['dernier_signe_activite'] = time();
 
             // Redirection vers la page d'accueil par défaut mais s'il y avait une url on la chope
 

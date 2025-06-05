@@ -6,16 +6,12 @@ require_once('constantes_utilitaires.php');
 
 // Récupération de l'adresse courante
 
-// Récupération du protocole (http ou https)
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
-// Récupération du nom de domaine + port si nécessaire
-$host = $_SERVER['HTTP_HOST'];
-// Récupération du chemin URI
-$request_uri = $_SERVER['REQUEST_URI'];
-// URL complète
-$current_url = $protocol . $host . $request_uri;
+$_SESSION['previous_url'] = obtenirURLcourant();
 
-$_SESSION['previous_url'] = $current_url;
+?>
+<!-- <pre><?php //var_dump($_SESSION);
+            ?></pre> -->
+<?php
 
 
 if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION['prenoms']))) {
@@ -23,6 +19,10 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
 
     // On le dirige vers la page de connexion en sauvegardant l'url à laquelle il voulait accéder de base. Ainsi on s'arrange pour qu'il revienne sur cette page une fois qu'il se sera connecté
     header('location:/auth/connexion.php');
+} elseif ((time() - $_SESSION['dernier_signe_activite']) > TIMEOUT) {
+    // Le timeout est atteint
+    $_SESSION['timeout_atteint'] = true;
+    header('location:/auth/deconnexion.php');
 } else {
 
     // On vérifie la présence de l'individu dans la base de données
@@ -42,6 +42,9 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
             session_unset();
             session_destroy();
             header('location:./auth/connexion.php');
+        } else {
+            // Le gars est bien retrouvé dans la bdd et n'a pas de soucis
+            $_SESSION['dernier_signe_activite'] = time();
         }
     }
 }
@@ -66,11 +69,14 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
 
     <!-- Custom fonts for this template-->
 
-
     <link rel="stylesheet" href="/assets/vendor/fontawesome-free/css/all.min.css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
+
     <!-- Custom styles for this template-->
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom CSS link -->
+    <link rel="stylesheet" href="/assets/css/style.css">
 
 </head>
