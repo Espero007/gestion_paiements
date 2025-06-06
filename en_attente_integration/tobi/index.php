@@ -49,7 +49,7 @@
                                     <?php
                                     if (isset($_SESSION['email_envoye'])) {
                                     ?>
-                                        <div class="form-text">Un lien de vérification a été envoyé dans votre mail </div>
+                                        <div class="form-text text-center mb-2">Un lien de vérification a été envoyé dans votre mail </div>
                                     <?php
                                         unset($_SESSION['email_envoye']);
                                     }

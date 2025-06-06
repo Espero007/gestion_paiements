@@ -59,7 +59,7 @@ if (isset($_POST['inscription'])) {
             $mail->Host       = 'smtp.gmail.com';  // Serveur SMTP de Gmail
             $mail->SMTPAuth   = true;
             $mail->Username   = 'onellemonsiotojisca@gmail.com';  // Ton adresse Gmail
-            $mail->Password   = 'tyow hrqi htrc upcc';  // Mot de passe d'application
+            $mail->Password   = 'stqj sjsr wiwq mlgi';  // Mot de passe d'application
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Sécuriser la connexion
             $mail->Port       = 587;
 
