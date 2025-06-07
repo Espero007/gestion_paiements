@@ -12,10 +12,6 @@ if ($_SESSION['current_url'] != obtenirURLcourant()) {
 // Récupération de l'adresse courante
 $_SESSION['current_url'] = obtenirURLcourant();
 
-?>
-<pre><?php var_dump($_SESSION); ?></pre>
-<?php
-
 // $_SESSION['previous_url'] = obtenirURLcourant();
 // $_SESSION['current_url'] = obtenirURLcourant();
 

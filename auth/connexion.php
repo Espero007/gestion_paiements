@@ -1,8 +1,4 @@
-<?php require_once(__DIR__ . "/submit/submit_connexion.php"); 
-
-?>
-    <pre><?php var_dump($_SESSION);?></pre>
-<?php
+<?php require_once(__DIR__ . "/submit/submit_connexion.php");
 ?>
 
 <!DOCTYPE html>
