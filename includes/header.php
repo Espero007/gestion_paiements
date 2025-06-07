@@ -4,25 +4,35 @@ session_start();
 require_once('bdd.php');
 require_once('constantes_utilitaires.php');
 
-// Récupération de l'adresse courante
+if ($_SESSION['current_url'] != obtenirURLcourant()) {
+    // L'url a changé donc on stocke l'url passé
+    $_SESSION['previous_url'] = $_SESSION['current_url'];
+}
 
-$_SESSION['previous_url'] = obtenirURLcourant();
+// Récupération de l'adresse courante
+$_SESSION['current_url'] = obtenirURLcourant();
 
 ?>
-<!-- <pre><?php //var_dump($_SESSION);
-            ?></pre> -->
+<pre><?php var_dump($_SESSION); ?></pre>
 <?php
+
+// $_SESSION['previous_url'] = obtenirURLcourant();
+// $_SESSION['current_url'] = obtenirURLcourant();
 
 
 if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION['prenoms']))) {
     // Utilisateur non connecté
 
     // On le dirige vers la page de connexion en sauvegardant l'url à laquelle il voulait accéder de base. Ainsi on s'arrange pour qu'il revienne sur cette page une fois qu'il se sera connecté
+    $_SESSION['previous_url'] = obtenirURLcourant();
     header('location:/auth/connexion.php');
+    exit;
 } elseif ((time() - $_SESSION['dernier_signe_activite']) > TIMEOUT) {
     // Le timeout est atteint
     $_SESSION['timeout_atteint'] = true;
+    $_SESSION['previous_url'] = obtenirURLcourant();
     header('location:/auth/deconnexion.php');
+    exit;
 } else {
 
     // On vérifie la présence de l'individu dans la base de données
@@ -42,9 +52,11 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
             session_unset();
             session_destroy();
             header('location:./auth/connexion.php');
+            exit;
         } else {
             // Le gars est bien retrouvé dans la bdd et n'a pas de soucis
             $_SESSION['dernier_signe_activite'] = time();
+            $_SESSION['current_url'] = obtenirURLcourant();
         }
     }
 }

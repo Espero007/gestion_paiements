@@ -100,7 +100,7 @@ if ($recuperation_type_activite) {
             } else {
                 $fileTmpPath = $_FILES['note_generatrice']['tmp_name'];
                 $fileName = basename($_FILES['note_generatrice']['name']);
-                $uploadFileDir = creer_dossiers_upload(BASE_PATH . '/fichiers');
+                $uploadFileDir = creer_dossiers_upload();
                 $dest_path = $uploadFileDir . $fileName;
             }
 

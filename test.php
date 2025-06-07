@@ -11,32 +11,20 @@
 <body>
 
     <?php
-    // if(is_dir('build/assets')){
-    //     echo "Répertoire retrouvé ";
-    // }else{
-    //     echo "Répertoire non retrouvé";
-    // }
-
-    // echo getcwd();
-
-    // echo realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php');
-
-    // $fmt = datefmt_create(
-    //     'fr-FR',
-    //     IntlDateFormatter::FULL,
-    //     IntlDateFormatter::FULL,
-    //     'Africa/Lagos',
-    //     IntlDateFormatter::GREGORIAN,
-    // );
-
-    // echo $fmt->format(0);
+    var_dump('bob@example.com', FILTER_VALIDATE_EMAIL);
+    echo '<br>';
+    var_dump('https://example.com', FILTER_VALIDATE_URL);
+    echo '<br>';
+    var_dump('0755', FILTER_VALIDATE_INT);
+    echo '<br>';
+    var_dump('011', FILTER_VALIDATE_INT);
     ?>
 </body>
 
-<div class="container-md">
+<!-- <div class="container-md">
     <div class="alert alert-danger mt-4 text-center">
         Voici une information
     </div>
-</div>
+</div> -->
 
 </html>

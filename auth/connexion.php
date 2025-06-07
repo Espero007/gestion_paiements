@@ -1,4 +1,9 @@
-<?php require_once(__DIR__ . "/submit/submit_connexion.php"); ?>
+<?php require_once(__DIR__ . "/submit/submit_connexion.php"); 
+
+?>
+    <pre><?php var_dump($_SESSION);?></pre>
+<?php
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -43,11 +48,12 @@
 
                                     <?php
                                     if (isset($_SESSION['deconnexion']) && !isset($_SESSION['timeout_atteint'])) {
+                                        // echo "bonjour";
+                                        session_unset(); // On détruit les varaibles de la session
+                                        session_destroy(); // On détruit la session
                                     ?>
                                         <div class="alert alert-success">Vous êtes à présent déconnecté(e) !</div>
                                     <?php
-                                        session_unset(); // On détruit les varaibles de la session
-                                        session_destroy(); // On détruit la session
                                     } elseif (isset($_SESSION['deconnexion']) && isset($_SESSION['timeout_atteint'])) {
                                         // déconnexion due au timeout
                                     ?>

@@ -1,4 +1,7 @@
-<?php require_once('submit_ajout_participant.php') ?>
+<?php
+$elements_a_inclure = ['infos_generales', 'infos_bancaires'];
+require_once('submit_ajout_participant.php');
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -30,13 +33,19 @@
 
         <form action="" method="post" enctype="multipart/form-data">
 
+            <?php
+            require_once(__DIR__.'/includes/fieldsets.php');
+            ?>
             <!-- Fieldset : Informations générales début -->
-            <?php require_once('includes/fieldset_infos_generales.php') ?>
+            <?php //require_once('includes/fieldset_infos_generales.php') 
+            ?>
             <!-- Fieldset : Informations générales fin -->
             <hr>
-            <?php require_once('includes/fieldset_informations_bancaires.php') ?>
+            <?php
+            // require_once('includes/fieldsets_formulaire.php');
+            ?>
 
-            <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $taille_admissible_fichiers_pdf; ?>">
+            
             <button type="submit" name="ajouter_participant" class="btn btn-primary mt-5 mb-4">Ajouter le participant</button>
             <br>
             <a href="index.php" class="btn btn-primary mb-4">Revenir à la page principale</a>

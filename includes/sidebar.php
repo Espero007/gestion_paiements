@@ -1,7 +1,7 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-start" href="index.html">
+    <a class="sidebar-brand d-flex align-items-center justify-content-start" href="index.php">
         <!-- <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
         </div> -->
@@ -38,7 +38,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
                 <a class="collapse-item" href="/gestion_activites/creer_activite.php">Créer une activité</a>
-                <a class="collapse-item" href="voir_activites.php">Voir toutes les activités</a>
+                <a class="collapse-item" href="/gestion_activites/voir_activites.php">Vos activités</a>
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
         </div>
@@ -53,8 +53,8 @@
         <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
-                <a class="collapse-item" href="ajouter_participant.php">Ajouter un participant</a>
-                <a class="collapse-item" href="voir_participants.php">Voir tous les participants</a>
+                <a class="collapse-item" href="/gestion_participants/ajouter_participant.php">Ajouter un participant</a>
+                <a class="collapse-item" href="/gestion_participants/voir_participants.php">Voir les participants</a>
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
         </div>

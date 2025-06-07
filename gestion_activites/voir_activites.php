@@ -1,11 +1,12 @@
 <?php
+$titre = "Liste des activités";
 require_once('includes/header.php');
 
 $stmt = 'SELECT id, nom, description FROM activites ORDER BY id DESC LIMIT ' . NBR_ACTIVITES_A_AFFICHER;
 $resultat = $bdd->query($stmt);
 
 if (!$resultat) {
-    redirigerVersPageErreur(500, $current_url);
+    redirigerVersPageErreur(500, obtenirURLcourant());
 } else {
     // Les données sont récupérées
     while ($ligne = $resultat->fetch(PDO::FETCH_ASSOC)) {
@@ -93,7 +94,8 @@ $resultat->closeCursor();
                                                         aria-labelledby="dropdownMenuLink">
                                                         <div class="dropdown-header">Actions</div>
                                                         <a class="dropdown-item" href="#">Voir</a>
-                                                        <a class="dropdown-item" href="#">Ajouter des participants</a>
+                                                        <a class="dropdown-item" href="/gestion_activites/modifier_infos.php?id_activite=<?= $activite_courante['id']?>">Modifier</a>
+                                                        <a class="dropdown-item" href="#">Associer des participants</a>
                                                         <!-- <a class="dropdown-item" href="#">Another action</a> -->
                                                         <div class="dropdown-divider"></div>
                                                         <?php

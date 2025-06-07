@@ -18,12 +18,9 @@
         <hr>
         <form action="" method="post" enctype="multipart/form-data">
             <!-- Fieldset : Informations générales début -->
-            <?php require_once('includes/fieldset_infos_generales.php') ?>
+            <?php require_once('includes/fieldsets.php') ?>
             <!-- Fieldset : Informations générales fin -->
             <hr>
-            <!-- Fieldset : Informations bancaires début -->
-            <?php require_once('includes/fieldset_informations_bancaires.php') ?>
-            <!-- Fieldset : Informations bancaires fin -->
 
             <button type="submit" name="modifier_infos" class="btn btn-primary mt-5 mb-4">Modifier les informations</button>
             <br>

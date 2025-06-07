@@ -1,6 +1,23 @@
 <?php
 session_start();
 require_once(__DIR__ . "/../../includes/bdd.php");
+require_once(__DIR__ . "/../../includes/constantes_utilitaires.php");
+
+$_SESSION['current_url'] = obtenirURLcourant();
+
+// Redirection vers la page d'accueil si l'utilisateur est déjà connecté
+
+if(isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])){
+    // L'utilisateur est connecté
+    header('location:/index.php');
+    exit;
+}
+
+// if (isset($_SESSION['current_url'])) {
+//     $_SESSION['current_url'] = obtenirURLcourant();
+// }
+
+
 
 // if(isset($_SESSION['previous_url'])) {
 //     echo $_SESSION['previous_url'];
@@ -49,11 +66,13 @@ if (isset($_POST['connexion'])) {
 
             if(isset($_SESSION['previous_url'])){
                 $url = $_SESSION['previous_url'];
-                unset($_SESSION['previous_url']);
+                // unset($_SESSION['previous_url']);
                 header('location:'.$url);
+                exit;
 
             }else{
-                header('location:../index.php');
+                header('location:/index.php');
+                exit;
             }
         }
     }

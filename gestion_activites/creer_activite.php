@@ -1,6 +1,6 @@
 <?php
 $titre = "Création d'une activité";
-require_once(__DIR__ . '/../includes/header.php');
+require_once('includes/header.php');
 require_once('traitements/submit_creer_activite.php');
 
 ?>
@@ -339,8 +339,6 @@ require_once('traitements/submit_creer_activite.php');
     <?php require_once('includes/logoutModal.php') ?>
     <?php require_once('includes/scripts.php') ?>
 
-    <!-- Bootstrap JS -->
-    <!-- <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.min.js"></script> -->
 
     <!-- <script>
         // Désactiver le bouton après le premier clic

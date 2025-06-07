@@ -33,12 +33,11 @@ if(!isset($_GET['id_participant'])){
     }
 }
 
-// Inclusion des informations générales
-require_once('includes/entete_infos_generales.php');
-
-// Inclusion des informations bancaires
+$elements_a_inclure = ['infos_generales', 'infos_bancaires'];
 $page_modification = true;
-require_once('includes/entete_infos_bancaires.php');
+
+// Inclusion des informations générales et/ou bancaires
+require_once('includes/entetes.php');
 
 /** Validation des informations reçues */
 

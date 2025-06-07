@@ -1,32 +1,18 @@
 <?php
-session_start();
-require_once(__DIR__ . '/../../../includes/bdd.php');
-require_once(__DIR__ . '/../../../includes/constantes_utilitaires.php');
 
-// On prend en mémoire l'url actuel pour qu'il puisse tenter d'y accéder s'il le veut
-// Récupération du protocole (http ou https)
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
-// Récupération du nom de domaine + port si nécessaire
-$host = $_SERVER['HTTP_HOST'];
-// Récupération du chemin URI
-$request_uri = $_SERVER['REQUEST_URI'];
-// URL complète
-$current_url = $protocol . $host . $request_uri;
-
+$elements_a_inclure = ['infos_generales', 'infos_bancaires'];
+$page_ajout_participant = true;
 
 // Inclusion des entêtes
-require_once('includes/entetes.php');
+require_once('entetes.php');
 
 /** Validation des informations du formulaire */
 
 if (isset($_POST['ajouter_participant'])) {
 
-    /** Traitement des informations textuelles */
-    require_once('includes/validation_infos_generales.php');
+    /** Traitement des informations */
 
-    /** Traitement du ou des fichier(s) */
-
-    require_once('includes/validation_infos_bancaires.php');
+    require_once('validations.php');
 
     /** Préparatifs pour l'enregistrement des données */
 
@@ -51,7 +37,7 @@ if (isset($_POST['ajouter_participant'])) {
 
         if (!$resultat) {
             // Une erreur s'est produite lors de l'enregistrement des informations
-            redirigerVersPageErreur(500, $current_url);
+            redirigerVersPageErreur(500, obtenirURLcourant());
         }
         // Le premier enregistrement a été effectué
 
@@ -65,7 +51,7 @@ if (isset($_POST['ajouter_participant'])) {
         // 3- Je sauvegarde son id
         // 4- J'enregistre en même temps les informations dans la table informations_bancaires
 
-        require_once('includes/enregistrement_fichiers.php');
+        require_once('enregistrement_fichiers.php');
     }
 }
 
