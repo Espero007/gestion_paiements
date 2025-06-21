@@ -4,11 +4,13 @@
 
 if (!isset($_GET['id_participant'])) {
     // L'id du participant n'est pas présent
-    redirigerVersPageErreur(404, obtenirURLcourant());
+    // redirigerVersPageErreur(404, obtenirURLcourant());
+    header('location:voir_participants.php');
+    exit;
 } else {
     // Nous avons une valeur
 
-    if(valider_id_participant($_GET['id_participant'], $bdd, obtenirURLcourant())){
+    if(valider_id('get', 'id_participant', $bdd)){
         // id valide
         $stmt = "SELECT nom, prenoms, matricule_ifu FROM participants WHERE id_participant=".$_GET['id_participant'];
         $resultat = $bdd->query($stmt);
@@ -103,7 +105,6 @@ if ($nombre_comptes_bancaires_permis == 0) {
                 $upload_path = creer_dossiers_upload();
 
                 // Mon travail ici va se faire sur les tables "informations bancaires" et "fichiers". Donc on va commencer par enregistrer les fichiers
-
                 require_once('enregistrement_fichiers.php');
             }
         }
@@ -112,5 +113,5 @@ if ($nombre_comptes_bancaires_permis == 0) {
 
 if(isset($traitement_fichiers_ok) && $traitement_fichiers_ok){
     $_SESSION['comptes_ajoutes'] = true;
-    header('location:ajouter_participant.php');
+    header('location:voir_participants.php');
 }

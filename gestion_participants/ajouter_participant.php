@@ -44,15 +44,6 @@ require_once(__DIR__ . '/includes/traitements_ajout_participant.php');
                                     <h6 class="m-0 font-weight-bold text-primary">Formulaire d'ajout</h6>
                                 </div>
                                 <div class="card-body">
-
-                                    <?php
-                                    if (isset($_SESSION['comptes_ajoutes'])) {
-                                    ?>
-                                        <div class="alert alert-success mt-2">Le(s) compte(s) bancaire(s) a(ont) été ajouté(s) avec succès !</div>
-                                    <?php
-                                        unset($_SESSION['comptes_ajoutes']);
-                                    }
-                                    ?>
                                     <?php if (isset($message_succes)) : ?>
                                         <div class="alert alert-success mt-2">Le participant a été enregistré avec succès ! <a href="./ajouter_comptes.php?id_participant=<?php echo $id_participant; ?>">Cliquez ici</a> si vous souhaitez lui ajouter des comptes bancaires.</div>
                                     <?php endif; ?>

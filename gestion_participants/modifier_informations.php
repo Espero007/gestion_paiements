@@ -26,32 +26,32 @@ require_once('includes/traitements_modifier_infos.php');
                 <div class="container-fluid">
                     <!-- Page Heading -->
                     <div>
-                        <h1 class="h3 mb-4 text-gray-800">
-                            Modification des informations </strong>
+                        <h1 class="h4 mb-4 text-gray-800"> Participants / <strong>Modification des informations</strong>
                         </h1>
-                        <p class="mt-2">Vous avez fait une erreur lors de l'enregistrement ? Des paramètres de la fiche du participant ont changé ? Ici vous pouvez rectifier la tir et corriger les informations de <strong><?= $infos_participant['nom'] . ' ' . $infos_participant['prenoms'] ?></strong></p>
-                        <hr>
-                        <p class="mt-2">Faîtes vos modifications...</p>
+                        <p class="mt-2">Vous avez fait une erreur lors de l'enregistrement ? Des paramètres de la fiche du participant ont changé ? Ici vous pouvez rectifier la tir et corriger les informations de <strong><?= $infos_participant['nom'] . ' ' . $infos_participant['prenoms'] ?></strong>.</p>
                     </div>
 
                     <div class="row">
                         <div class="col-12">
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Formulaire de modifications</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Formulaire de modification</h6>
                                 </div>
                                 <div class="card-body">
-                                    <?php if (isset($message_succes)) : ?>
-                                        <div class="alert alert-success mt-2">Les informations du participant ont été modifiées avec succès !</div>
-                                    <?php endif; ?>
 
                                     <!-- Formulaire : Début -->
-                                     <form action="" method="post" enctype="multipart/form-data">
+                                    <form action="" method="post" enctype="multipart/form-data">
                                         <!-- Fieldsets -->
-                                         <?php require_once('includes/fieldsets.php') ?>
-                                         <button type="submit" name="modifier_infos" class="btn btn-primary mt-4">Enregistrer les modifications</button>
+                                        <?php require_once('includes/fieldsets.php') ?>
 
-                                     </form>
+                                        <!-- Boutons d'action -->
+                                         <div class="mt-4">
+
+                                             <button type="submit" name="modifier_infos" class="btn btn-primary mr-2">Enregistrer les modifications</button>
+                                             <a href="gerer_participant.php?id=<?= $id_participant ?>" class="btn btn-outline-primary">Annuler</a>
+                                         </div>
+
+                                    </form>
                                     <!-- Formulaire : Fin -->
                                 </div>
                             </div>

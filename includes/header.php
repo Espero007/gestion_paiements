@@ -1,6 +1,7 @@
 <?php
 
 session_start();
+// session_unset();
 require_once('bdd.php');
 require_once('constantes_utilitaires.php');
 
@@ -82,9 +83,11 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
 
 
     <!-- Custom styles for this template-->
+     <!-- <link rel="stylesheet" href="/assets/bootstrap-5.3.5-dist/css/bootstrap.min.css"> -->
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
 
     <!-- Custom CSS link -->
     <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/bootstrap-icons-1.13.1/bootstrap-icons.min.css">
 
 </head>

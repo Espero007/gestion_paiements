@@ -111,7 +111,7 @@ function valider_id($methode, $cle, $bdd, $table = 'participants')
     // S'assurer que la méthode, et la table sont valides
 
     $allowed_methods = ['get', 'post'];
-    $allowed_tables = ['participants', 'autre_table'];
+    $allowed_tables = ['participants', 'activites', 'autre_table'];
     // $allowed_columns = ['id_participant', 'id_autre'];
 
     if (!in_array($table, $allowed_tables) || !in_array($methode, $allowed_methods)) {
@@ -134,6 +134,9 @@ function valider_id($methode, $cle, $bdd, $table = 'participants')
         case 'participants':
             $type_id = 'id_participant';
             break;
+        case 'activites':
+            $type_id = 'id';
+            break;
     }
 
     if (!filter_input($const_superglobale, $cle, FILTER_VALIDATE_INT)) {
@@ -142,9 +145,9 @@ function valider_id($methode, $cle, $bdd, $table = 'participants')
     } else {
         $valeur = $superglobale[$cle];
 
-        $stmt = $bdd->prepare("SELECT $type_id FROM $table WHERE $type_id=:valeur_id AND id_user=".$_SESSION['user_id']);
+        $stmt = $bdd->prepare("SELECT $type_id FROM $table WHERE $type_id=:valeur_id AND id_user=" . $_SESSION['user_id']);
         $stmt->bindParam(':valeur_id', $valeur, PDO::PARAM_INT);
-        
+
         if (!$stmt->execute()) {
             // Une erreur s'est produite lors de la récupération
             redirigerVersPageErreur(500, obtenirURLcourant());
@@ -176,4 +179,30 @@ function configuration_pdf($pdf, $auteur, $titre)
     $pdf->setCreator(PDF_CREATOR);
     $pdf->setAuthor($auteur);
     $pdf->setTitle($titre);
+}
+
+function determinerPeriode($date_debut, $date_fin)
+{
+    $fmt = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE, 'Africa/Lagos', IntlDateFormatter::GREGORIAN);
+    return "Du " . $fmt->format(new DateTime($date_debut)) . " au " . $fmt->format(new DateTime($date_fin));
+}
+
+function couperTexte($texte, $nbr_mots, $nbr_caractères)
+{
+    $modifie = false;
+    $texte = explode(' ', $texte);
+    if (count($texte) > $nbr_mots) {
+        $texte = array_splice($texte, 0, $nbr_mots);
+        $modifie = true;
+    } else if (strlen($texte[0]) > $nbr_caractères) {
+        // Le texte ne contient pas d'espace mais juste une chaîne de caractères hyper longue
+        $texte = substr($texte[0], 0, $nbr_caractères);
+        $modifie = true;
+    }
+    
+    if($modifie){
+        return implode(' ', $texte).'...'; // Si le texte a été modifié, on rajoute les trois points de suspension à la fin après avior recollé le tableau
+    }else{
+        return implode(' ', $texte); // Autrement on ne fait rien
+    }
 }

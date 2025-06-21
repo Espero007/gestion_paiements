@@ -2,7 +2,7 @@
 $titre = "Liste des activités";
 require_once('includes/header.php');
 
-$stmt = 'SELECT id, nom, description FROM activites ORDER BY id DESC LIMIT ' . NBR_ACTIVITES_A_AFFICHER;
+$stmt = 'SELECT id, nom, description, date_debut, date_fin FROM activites ORDER BY id DESC LIMIT ' . NBR_ACTIVITES_A_AFFICHER;
 $resultat = $bdd->query($stmt);
 
 if (!$resultat) {
@@ -11,6 +11,25 @@ if (!$resultat) {
     // Les données sont récupérées
     while ($ligne = $resultat->fetch(PDO::FETCH_ASSOC)) {
         $activites[] = $ligne;
+    }
+
+    foreach ($activites as $index => $activite) {
+
+        # Traitement de la description pour qu'elle n'excède pas 18 mots
+        // $nbr_mots = 18;
+        // $description = explode(' ', $activite['description']); // retourne dans un tableau les mots de la description
+
+        // if (count($description) > $nbr_mots) {
+        //     $description = array_slice($description, 0, $nbr_mots); // retourne les $nbr_mots premiers éléments du tableau
+        //     $description[count($description)-1] = '...';
+        // }
+
+        // $description = implode(' ', $description);
+        // $activites[$index]['description'] = $description;
+
+        # Traitement des dates de début et de fin pour obtenir la période de l'activité
+        $fmt = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE, 'Africa/Lagos', IntlDateFormatter::GREGORIAN);
+        $activites[$index]['periode'] = "Du " . $fmt->format(new DateTime($activite['date_debut'])) . " au " . $fmt->format(new DateTime($activite['date_fin']));
     }
 }
 $resultat->closeCursor();
@@ -37,103 +56,70 @@ $resultat->closeCursor();
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <?php
-                    if (isset($erreur_recuperation)) {
-                        echo "<div class=\"alert alert-danger\">La récupération des données a rencontré un problème.</div>";
-                    }
-                    ?>
-
-                    <!-- Page Heading -->
-                    <div>
-                        <h1 class="h3 mb-4 text-gray-800">Vos activités</h1>
-                        <p class="mt-2">Ici vous avez accès à toutes les activités que vous avez créé pour en avoir une vue globale. A partir des options disponibles vous pouvez les modifier, y ajouter des participants, en retirer des participants, les supprimer, etc...</p>
-                        <hr>
-
-                    </div>
+                    <?php if (isset($erreur_recuperation)) : ?>
+                        <div class="alert alert-danger">La récupération des données a rencontré un problème.</div>
+                    <?php endif; ?>
 
                     <?php
 
                     /** Bon je vais définir le mécanisme d'affichage des activités. Il faudra penser à un système de voir plus plus tard mais pour l'instant on se limite à trois activités
                      * 
-                     * 1- Je détermine le nombre de rangées à faire apparaître. On affiche deux activités par ranger donc si le nombre d'activités est un multiple de 2, le nombre de rangées à afficher correspond tout simplement au nombre d'activités divisé par 2. Si ce nombre n'est pas un multiple, c'est qu'il y a un surplus donc ajoute dans ce cas le nombre de rangées initial + 1
+                     * 1- Je détermine le nombre de rangées à faire apparaître. On affiche trois activités par ranger donc si le nombre d'activités est un multiple de 3, le nombre de rangées à afficher correspond tout simplement au nombre d'activités divisé par 3. Si ce nombre n'est pas un multiple, c'est qu'il y a un surplus donc ajoute dans ce cas le nombre de rangées initial + 1
                      * 
-                     * 2- A présent il faut qu'on soit capable d'afficher uniquement deux activités par rangée. A cet effet on peut donc essayer une variable nombre d'activités affiché. QUand on affiche une activté on l'incrémente. S'il arrive à deux on saute le for actuel et on passe au suivant et on le réinitialise
+                     * 2- A présent il faut qu'on soit capable d'afficher uniquement trois activités par rangée. A cet effet on peut donc essayer une variable nombre d'activités affiché. QUand on affiche une activté on l'incrémente. S'il arrive à deux on saute le for actuel et on passe au suivant et on le réinitialise
                      * 
                      */
-
-                    if (isset($activites)) {
-                        $nbr_activites = count($activites);
-                        $nbr_rows = ($nbr_activites % 2 == 0) ? $nbr_activites / 2 : $nbr_activites / 2 + 1;
-                        $nbr_activites_affichees = 0;
-
-                        $activites_temp = $activites; // activites_temp sera détruit donc il me permet de conserver les activités pour des usages ultérieurs
-                        
-                        for ($i = 1; $i <= $nbr_rows; $i++) { // Affichage de chaque rangée
                     ?>
+                    <?php if (isset($activites)) : ?>
+                        <!-- Page Heading -->
+                        <h1 class="h4 mb-4 text-gray-800">Activités / <strong>Vos activités</strong></h1>
+                        <p class="mt-2">Ici vous avez accès à toutes les activités que vous avez créées. (Cliquez <a href="creer_activite.php">ici</a> pour en créer une autre)</p>
+
+                        <?php
+                        $valeur = 3; // nombre d'activités à afficher par ligne
+                        $nbr_activites = count($activites);
+                        $nbr_rangees = ($nbr_activites % $valeur == 0) ? $nbr_activites / $valeur : $nbr_activites / $valeur + 1;
+                        $activites_affichees = 0; // nombre d'activités affichées
+                        $activites_temp = $activites; // activites_temp sera détruit donc il me permet de conserver les activités pour des usages ultérieurs
+                        ?>
+                        <?php for ($i = 1; $i <= $nbr_rangees; $i++) : ?>
+                            <?php // Affichage de chaque rangée 
+                            ?>
                             <div class="row">
-                                <?php
-                                while (count($activites_temp) != 0) {
-                                    // Il y a encore des activités à afficher
-
-                                    $activite_courante = array_shift($activites_temp); // on prend la première activité dans le tableau. Je précise que les activités sont classées dans le table dans l'ordre décroissant donc du plus récemment enregistré au plus anciennement enregistré
-                                ?>
-                                    <div class="col-lg-6">
-                                        <!-- Dropdown Card Example -->
-                                        <div class="card shadow mb-4">
-                                            <!-- Card Header - Dropdown -->
-                                            <div
-                                                class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                                <h6 class="m-0 font-weight-bold text-primary"><?php echo $activite_courante['nom'] ?></h6>
-                                                <div class="dropdown no-arrow">
-                                                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                                        aria-labelledby="dropdownMenuLink">
-                                                        <div class="dropdown-header">Actions</div>
-                                                        <a class="dropdown-item" href="#">Voir</a>
-                                                        <a class="dropdown-item" href="/gestion_activites/modifier_infos.php?id_activite=<?= $activite_courante['id']?>">Modifier</a>
-                                                        <a class="dropdown-item" href="#">Associer des participants</a>
-                                                        <!-- <a class="dropdown-item" href="#">Another action</a> -->
-                                                        <div class="dropdown-divider"></div>
-                                                        <?php
-                                                        // Il me faut l'id de l'activité
-                                                        $url = 'http://localhost:3000/supprimer_activite.php?id_activite=' . $activite_courante['id'];
-                                                        ?>
-
-                                                        <a class="dropdown-item" href="<?php echo $url; ?>">Supprimer</a>
-                                                    </div>
+                                <?php for ($j = 1; $j <= $valeur; $j++) : ?>
+                                    <?php if (count($activites_temp) != 0) : ?>
+                                        <?php $activite_courante = array_shift($activites_temp) //on prend la première activité dans le tableau. Je précise que les activités sont classées dans le table dans l'ordre décroissant donc du plus récemment enregistré au plus anciennement enregistré
+                                        ?>
+                                        <div class="col-lg-<?= 12 / $valeur ?>">
+                                            <div class="card mb-4">
+                                                <div class="card-header">
+                                                    <h6 class="text-primary font-weight-bold"><?= htmlspecialchars($activite_courante['nom']) ?></h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <!-- <h5 class="card-title mb-3 text-primary"><strong><?= $activite_courante['nom'] ?></strong></h5> -->
+                                                    <div class="card-subtitle text-muted mb-3"><strong>Période</strong> : <?= htmlspecialchars($activite_courante['periode']) ?></div>
+                                                    <p class="card-text">
+                                                        <?= htmlspecialchars(couperTexte($activite_courante['description'],18,100)) ?>
+                                                    </p>
+                                                    <a href="gerer_activite.php?id=<?= $activite_courante['id'] ?>" class="btn btn-outline-primary">Gérer l'activité</a>
                                                 </div>
                                             </div>
-                                            <!-- Card Body -->
-                                            <div class="card-body">
-                                                <?php echo $activite_courante['description'] ?>
-                                            </div>
                                         </div>
-                                    </div>
-                                <?php
-                                    $nbr_activites_affichees++; // Le nombre d'activités augmente
-                                    if ($nbr_activites_affichees == 2) {
-                                        // On quitte la boucle while
-                                        break;
-                                    } // Autrement on continue la boucle while    
-                                }
-                                ?>
+                                    <?php endif; ?>
+                                <?php endfor; ?>
                             </div>
-                        <?php
-                        $nbr_activites_affichees == 0;
-                        }
-                    } else {
-                        // Il n'y a pas d'activités
-                        ?>
-                        <p class="mt-4">Il semble que vous n'ayiez aucune activité déjà créée. Pourquoi ne pas corriger le tir et en créer dès maintenant ?</p>
-                        <a href="creer_activite.php" class="mt-4"><button class="btn btn-primary">Créer une activité</button></a>
-                    <?php
-                    }
+                        <?php endfor; ?>
+                    <?php else : ?>
+                        <div class="text-center">
+                            <h3 class="font-weight-bold">Aucune activité retrouvée !</h1>
+                                <p class="mt-4 text-center">Il semble que vous n'ayiez aucune activité déjà créée. Pourquoi ne pas corriger le tir et en créer dès maintenant ?</p>
+                                <a href="creer_activite.php" class="mt-4"><button class="btn btn-outline-primary">Créer une activité</button></a>
+                                <div class="mt-5 mb-5">
+                                    <img src="/assets/illustrations/no-results.png" alt="no results" class="img-fluid" width="400">
+                                </div>
+                        </div>
+                    <?php endif; ?>
 
-                    ?>
 
                 </div>
                 <!-- /.container-fluid -->

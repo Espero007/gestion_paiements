@@ -49,43 +49,42 @@ require_once('traitements/submit_creer_activite.php');
                         <p class="mt-2">Commencez par nous dire quel type d'activité vous aimeriez créer. Nous disposons de trois types qui ont chacun leurs particularités.</p>
 
                         <!-- Content Row -->
-                        <div class="row">
+                        <div class="row mb-5">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card text-center shadow">
+                                    <div class="card-body">
+                                        <div class="card-title font-weight-bold text-primary">Type 1</div>
+                                        <p class="card-text">Ce genre d'activité est défini par le montant par jour et le nombre de jours de travail.</p>
+                                        <a href="creer_activite.php?type_activite=1" class="btn btn-primary">Créer ce type d'activité</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card text-center shadow">
+                                    <div class="card-body">
+                                        <div class="card-title font-weight-bold text-primary">Type 2</div>
+                                        <p class="card-text">Ce genre d'activité est défini par le montant par jour, le nombre de jours de travail et une indemnité forfaitaire pour certains acteurs.</p>
+                                        <a href="creer_activite.php?type_activite=2" class="btn btn-primary">Créer ce type d'activité</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card text-center shadow">
+                                    <div class="card-body">
+                                        <div class="card-title font-weight-bold text-primary">Type 3</div>
+                                        <p class="card-text">Ce genre d'activité est défini par le nombre de tâches, le montant par tâche, les frais de déplacement par jour, le nombre de jours de travail et un forfait pour certains acteurs.</p>
+                                        <a href="creer_activite.php?type_activite=3" class="btn btn-primary">Créer ce type d'activité</a>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Content Column -->
                             <div class="col-lg-12 mb-4">
                                 <!-- Color System -->
                                 <div class="row">
-                                    <div class="col-lg-6 mb-4">
-                                        <div class="card bg-light text-black shadow">
-                                            <a href="creer_activite.php?type_activite=1" class="no-decoration">
-                                                <div class="card-body">
-                                                    1
-                                                    <div class="text-black-50 small no-decoration">Ce type d'activité est défini par le montant par jour et le nombre de jour de travail. </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
 
-                                    <div class="col-lg-6 mb-4">
-                                        <div class="card bg-light text-black shadow">
-                                            <a href="creer_activite.php?type_activite=2" class="no-decoration">
-                                                <div class="card-body">
-                                                    2
-                                                    <div class="text-black-50 small">Ce type d'activité est défini par le montant par jour, le nombre de jour de travail et une indemnité forfaitaire pour certains acteurs. </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6 mb-4">
-                                        <div class="card bg-light text-black shadow">
-                                            <a href="creer_activite.php?type_activite=3" class="no-decoration">
-                                                <div class="card-body">
-                                                    3
-                                                    <div class="text-black-50 small">Ce dernier type d'activité est défini par le nombre de tache, le montant par tache, les frais de déplacement par jour, le nombre de jours et un forfait pour certains acteurs.</div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -108,11 +107,11 @@ require_once('traitements/submit_creer_activite.php');
                                                 <strong>Erreur :</strong> <?= htmlspecialchars($errors['database']) ?>
                                             </div>
                                         <?php endif; ?>
-                                        <?php if($success) : ?>
-                                        
-                                        <div class="alert alert-success">
-                                            Votre activité a été enregistrée avec succès ! Pensez à y associer des participants (lien vers l'association des participants à l'activité).
-                                        </div>
+                                        <?php if ($success) : ?>
+
+                                            <div class="alert alert-success">
+                                                Votre activité a été enregistrée avec succès ! Pensez à y associer des participants (lien vers l'association des participants à l'activité).
+                                            </div>
                                         <?php endif; ?>
 
                                         <!-- Formulaire -->
@@ -304,9 +303,13 @@ require_once('traitements/submit_creer_activite.php');
                                                     </div>
                                                 </div>
                                             </fieldset>
-                                            <button class="btn btn-primary mt-4" id="submitButton" type="submit" name="form_submitted">Créer l'activité</button>
+
+                                            <!-- Boutons d'action -->
+                                            <div class="mt-4">
+                                                <button class="btn btn-primary mr-3" id="submitButton" type="submit" name="form_submitted">Créer l'activité</button>
+                                                <a href="voir_activites.php" class="btn btn-outline-primary">Annuler</a>
+                                            </div>
                                         </form>
-                                        <a href="/gestion_activites/creer_activite.php"><button class="btn btn-primary mt-4">Ajouter une autre activité</button></a>
                                     </div>
                                 </div>
                             </div>

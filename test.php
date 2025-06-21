@@ -11,13 +11,16 @@
 <body>
 
     <?php
-    var_dump('bob@example.com', FILTER_VALIDATE_EMAIL);
-    echo '<br>';
-    var_dump('https://example.com', FILTER_VALIDATE_URL);
-    echo '<br>';
-    var_dump('0755', FILTER_VALIDATE_INT);
-    echo '<br>';
-    var_dump('011', FILTER_VALIDATE_INT);
+        $date = new DateTime();
+        $formatter = new IntlDateFormatter(
+            'fr_FR',
+            IntlDateFormatter::FULL,
+            IntlDateFormatter::NONE,
+            'Africa/Lagos',
+            IntlDateFormatter::GREGORIAN
+        );
+
+        echo $formatter->format($date);
     ?>
 </body>
 

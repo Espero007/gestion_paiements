@@ -47,7 +47,6 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                         <?php endif; ?>>
 
                     <?php if (isset($erreurs[$champ])) : ?>
-
                         <div id="<?php echo $champ; ?>Aide" class="form-text">
                             <small class="text-danger"><?php echo $erreurs[$champ][0]; ?></small>
                         </div>
@@ -65,7 +64,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
 if (in_array('infos_bancaires', $elements_a_inclure)) {
 ?>
     <!-- Fieldset : Informations bancaires début -->
-    <fieldset class="
+    <fieldset class="mt-4
     <?php if (isset($page_ajout_participant)) {
         echo "mt-4";
     } ?>">

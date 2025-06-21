@@ -2,9 +2,10 @@
 // Validation id
 
 if (!isset($_GET['id_participant'])) {
-    redirigerVersPageErreur(404, $current_url);
+    header('location:voir_participants.php');
+    exit;
 } else {
-    if (valider_id_participant($_GET['id_participant'], $bdd, obtenirURLcourant())) {
+    if (valider_id('get', 'id_participant', $bdd)) {
         // L'id est valide. Je vais prendre les informations du participant
         $id_participant = $_GET['id_participant'];
 
@@ -17,7 +18,8 @@ if (!isset($_GET['id_participant'])) {
         $infos_participant = $resultat->fetch(PDO::FETCH_ASSOC);
         $resultat->closeCursor();
     } else {
-        redirigerVersPageErreur(404, obtenirURLcourant());
+        header('location:voir_participants.php');
+        exit;
     }
 }
 
@@ -59,5 +61,7 @@ if (isset($_POST['modifier_infos'])) {
 }
 
 if (isset($traitement_fichiers_ok) && $traitement_fichiers_ok) {
-    $message_succes = true;
+    $_SESSION['modification_ok'] = true;
+    header('location:gerer_participant.php?id='.$id_participant);
+    exit;
 }
