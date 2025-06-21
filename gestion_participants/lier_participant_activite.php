@@ -57,25 +57,19 @@ require_once('includes/traitements_lier_participant_activite.php');
                                                         <td><?= htmlspecialchars(determinerPeriode($activite['date_debut'], $activite['date_fin'])) ?></td>
                                                         <td><?= htmlspecialchars(couperTexte($activite['description'], 18, 100)) ?></td>
                                                     </tr>
-
-
                                                 <?php endforeach; ?>
                                             </tbody>
                                         </table>
                                     </div>
-
-                                    <!-- <hr> -->
                                     <!-- Boutons d'actions -->
                                     <div class="mt-2">
-                                        <button type="submit" class="btn btn-primary mr-2">Continuer</button>
+                                        <button type="submit" class="btn btn-primary mr-2" id="submitBtn1">Continuer</button>
                                         <a href="gerer_participant.php?id=<?= $id_participant ?>" class="btn btn-outline-primary">Annuler</a>
                                     </div>
                                 </form>
                             </div>
                         </div>
-
                     <?php else: ?>
-
 
                         <div class="card shadow mb-4">
                             <div class="card-header">
@@ -84,46 +78,72 @@ require_once('includes/traitements_lier_participant_activite.php');
                             <div class="card-body">
                                 <p>Sélectionnez le titre pour lequel le participant sera associé à l'activité et le compte bancaire qu'on devra considérer</p>
                                 <form action="" method="post">
+
+                                    <!-- Titre -->
+
                                     <div class="mb-2 row">
                                         <label for="titre" class="col-form-label col-sm-4">Titre</label>
                                         <div class="col-sm-8">
-                                            <select name="titre" id="titre" class="form-control">
-                                                <option value="" selected>Choisissez le titre du participant...</option>
+                                            <select name="titre" id="titre" class="form-control <?= isset($erreurs['titre']) ? 'is-invalid' : '' ?>" aria-describdly=" titreAide">
+                                                <option value="defaut" <?= (!isset($_POST['titre']) || !in_array($_POST['titre'], $titres_intitules)) ? 'selected' : '' ?>>Choisissez le titre du participant...</option>
                                                 <?php foreach ($titres as $titre) : ?>
-                                                    <option value="<?= $titre['nom'] ?>"><?= htmlspecialchars($titre['nom']) ?></option>
+                                                    <option value="<?= $titre['nom'] ?>" <?= (isset($erreurs) && $titre['nom'] == $_POST['titre']) ? 'selected' : '' ?>><?= htmlspecialchars($titre['nom']) ?></option>
                                                 <?php endforeach; ?>
                                             </select>
 
                                             <?php if (isset($erreurs['titre'])) : ?>
-                                                <div class="form-text">
-                                                    <small class="text-danger"><?= $erreurs['titre'] ?></small>
+                                                <div class="form-text" id="titreAide">
+                                                    <small class="text-danger"><?= $erreurs['titre'][0] ?></small>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
                                     </div>
-                                    <div class="mb-2 row d-flex align-items-center">
-                                        <label for="comptes_bancaires" class="col-form-label col-sm-4">Compte(s) bancaire(s)</label>
+
+                                    <!-- Compte bancaire -->
+
+                                    <div class="mb-2 row">
+                                        <span class="col-form-label col-sm-4">Compte(s) bancaire(s)</span>
                                         <div class="col-sm-8">
-                                            <div class="d-flex">
+                                            <div class="d-flex col-form-label pb-0">
                                                 <?php $index = 0; ?>
                                                 <?php foreach ($comptes as $compte) : ?>
                                                     <?php $index++; ?>
                                                     <div class="form-check mr-4">
-                                                        <input name="compte_bancaire" class="form-check-input" type="radio" value="<?= $compte['id'] ?>" id="compte<?= $index ?>">
+                                                        <input name="compte_bancaire" class="form-check-input" type="radio" value="<?= $compte['id'] ?>" id="compte<?= $index ?>" <?= (isset($_POST['compte_bancaire']) && $compte['id'] == $_POST['compte_bancaire'] && isset($erreurs)) ? 'checked' : '' ?> aria-describedby="compte_bancaireAide">
                                                         <label class="form-check-label" for="compte<?= $index ?>"> <?= htmlspecialchars($compte['banque']) . ' (<i>' . htmlspecialchars($compte['numero_compte']) . '</i>)' ?></label>
                                                     </div>
                                                 <?php endforeach; ?>
                                             </div>
-                                            <div class="form-text">
-                                                <small class="text-danger">Bonjour</small>
-                                            </div>
-                                            <?php if (isset($erreurs['titre'])) : ?>
-                                                <div class="form-text">
-                                                    <small class="text-danger"><?= $erreurs['titre'] ?></small>
+                                            <?php if (isset($erreurs['compte_bancaire'])) : ?>
+                                                <div class="form-text" id="compte_bancaireAide">
+                                                    <small class="text-danger"><?= $erreurs['compte_bancaire'][0] ?></small>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
                                     </div>
+
+                                    <?php if ($type_activite != 1) : ?>
+                                        <!-- Champs additionnels -->
+                                        <?php $champs = [
+                                            'nbr_jours' => 'Nombre de jours de travail',
+                                            'nbr_taches' => 'Nombre de tâches'
+                                        ]
+                                        ?>
+
+                                        <?php foreach ($champs as $champ => $label) : ?>
+                                            <div class="mb-2 row">
+                                                <label for="<?= $champ ?>" class="col-form-label col-sm-4"><?= $label ?></label>
+                                                <div class="col-sm-8">
+                                                    <input type="number" name="<?= $champ ?>" id="<?= $champ ?>" class="form-control <?= isset($erreurs[$champ]) ? 'is-invalid' : '' ?> " aria-describedby="<?= $champ ?>Aide" <?= (isset($erreurs) && isset($_POST[$champ])) ? 'value ="' . htmlspecialchars($_POST[$champ]) . '"' : '' ?> placeholder="Indiquez le <?= strtolower($label) ?>">
+                                                    <?php if (isset($erreurs[$champ])) : ?>
+                                                        <div class="form-text" id="<?= $champ ?>Aide">
+                                                            <small class="text-danger"><?= $erreurs[$champ][0] ?></small>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
 
                                     <!-- Boutons d'action -->
                                     <div class="mt-4">
@@ -134,35 +154,6 @@ require_once('includes/traitements_lier_participant_activite.php');
                             </div>
                         </div>
                     <?php endif; ?>
-
-
-                    <!-- <div class="container-md pt-4">
-                        <h5>Page de liaison d'un participant à une activité</h5>
-                        <p>En cours de développement...</p>
-
-                        <?php foreach ($activites as $activite) : ?>
-                            <hr>
-                            <div class="mb-4">
-                                <p> <strong>Nom : </strong><?= $activite['nom'] ?></p>
-                                <p> <strong>Description : </strong><?= $activite['description'] ?></p>
-                                <p> <strong>Date_debut : </strong><?= $activite['date_debut'] ?></p>
-                                <p> <strong>Date_fin : </strong><?= $activite['date_fin'] ?></p>
-                                <p> <strong>Centre : </strong><?= $activite['centre'] ?></p>
-
-
-                                <button class="btn btn-primary">Choisir</button>
-                            </div>
-                        <?php endforeach; ?>
-                    </div> -->
-
-
-                    <!-- 
-
-    1- Récupérer la liste des activités créées par cet utilisateur
-    2 - permettre le choix d'une activité
-    3
-    
-    -->
                 </div>
                 <!-- /.container-fluid -->
 
@@ -190,7 +181,7 @@ require_once('includes/traitements_lier_participant_activite.php');
 
     <script>
         let cbxes = document.querySelectorAll('input[type=checkbox]');
-        const submitBtn = document.querySelector('button[type=submit]');
+        const submitBtn1 = document.querySelector('#submitBtn1'); // Le bouton pour choisir l'activité
         // submitBtn.disabled = true;
         // console.log(submitBtn);
 
@@ -210,7 +201,7 @@ require_once('includes/traitements_lier_participant_activite.php');
 
         let submit = false;
 
-        submitBtn.addEventListener('click', (e) => {
+        submitBtn1.addEventListener('click', (e) => {
             cbxes.forEach(cbx => {
                 if (cbx.checked == true)
                     submit = true;
@@ -219,7 +210,6 @@ require_once('includes/traitements_lier_participant_activite.php');
                 e.preventDefault();
         })
     </script>
-
 </body>
 
 </html>

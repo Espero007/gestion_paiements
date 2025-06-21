@@ -57,11 +57,27 @@ $resultat->closeCursor();
                                 <h6 class="m-0 font-weight-bold text-primary">Liste des participants</h6>
                             </div>
                             <div class="card-body">
-                                <?php if(isset($_SESSION['comptes_ajoutes'])) : ?>
+                                <!-- Messages de succès -->
+
+                                <!-- Ajout de comptes -->
+                                <?php if (isset($_SESSION['comptes_ajoutes'])) : ?>
                                     <div class="alert alert-success mt-2">Le(s) compte(s) bancaire(s) a(ont) été ajouté(s) avec succès !</div>
                                     <?php unset($_SESSION['comptes_ajoutes']); ?>
                                 <?php endif; ?>
-                               
+
+                                <!-- Liaison participant-activité réussie -->
+                                <?php if (isset($_SESSION['liaison_reussie'])) : ?>
+                                    <div class="alert alert-success mt-2">La liaison a été faite avec succès !</div>
+                                    <?php unset($_SESSION['liaison_reussie']); ?>
+                                <?php endif; ?>
+
+                                <!-- Liaison participant-activité non autorisée -->
+                                <?php if (isset($_SESSION['liaison_non_autorisee'])) : ?>
+                                    <div class="alert alert-danger mt-2">Ce participant a déjà été lié à cette activité !</div>
+                                    <?php unset($_SESSION['liaison_non_autorisee']); ?>
+                                <?php endif; ?>
+
+
                                 <form action="">
                                     <div class="">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
