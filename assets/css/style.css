@@ -1,0 +1,43 @@
+.form-control[type=file]:not(:disabled):not([readonly]) {
+    cursor: pointer;
+}
+
+.form-control[type=file] {
+    overflow: hidden;
+}
+
+.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.form-control::file-selector-button {
+    padding: 0.375rem 0.75rem;
+    margin: -0.375rem -0.75rem;
+    -webkit-margin-end: 0.75rem;
+    margin-inline-end: 0.75rem;
+    color: #333;
+    background-color: #f8f9fa;
+    pointer-events: none;
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+    border-inline-end-width: 1px;
+    border-radius: 0;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:hover:not(:disabled):not([readonly])::file-selector-button {
+    background-color: var(#e9ecef);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .form-control::file-selector-button {
+        transition: none;
+    }
+}
+
+.fs-6{
+    font-size: 0.9375rem!important;
+}
