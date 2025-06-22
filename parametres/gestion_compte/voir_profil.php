@@ -14,15 +14,25 @@ require_once('includes/header.php');
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
-            <!-- Main Content -->
-            <div id="content">
-                <!-- Topbar -->
-                <?php require_once('includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
+                    <!-- Page Heading -->
+
+                    <div>
+                        <h1 class="h4 mb-4 text-gray-800">Paramètres / <strong>Mon compte</strong></h1>
+                        <div class="card mb-4">
+                            <h6 class="h6 card-header custom-card-header">Détails du profil</h5>
+                                <!-- Informations du compte -->
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start align-items-sm-center gap-4">
+                                        <img src="/assets/img/undraw_profile.svg" alt="">
+                                    </div>
+                                </div>
+                                <!-- Informations du compte -->
+                        </div>
+                    </div>
 
                 </div>
                 <!-- /.container-fluid -->

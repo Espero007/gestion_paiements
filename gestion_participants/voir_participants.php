@@ -2,10 +2,6 @@
 $titre = "Liste des participants";
 require_once('includes/header.php');
 
-<<<<<<< HEAD
-=======
-
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
 $stmt = 'SELECT id_participant, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance FROM participants WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id_participant';
 $resultat = $bdd->query($stmt);
 
@@ -81,10 +77,6 @@ $resultat->closeCursor();
                                     <?php unset($_SESSION['liaison_non_autorisee']); ?>
                                 <?php endif; ?>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                 <form action="">
                                     <div class="">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">

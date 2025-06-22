@@ -78,13 +78,13 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
             aria-expanded="true" aria-controls="collapseFour">
-            <i class="fas fa-fw fa-clipboard-list"></i>
-            <span>Mon compte</span>
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Paramètres</span>
         </a>
         <div id="collapseFour" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
-                <a class="collapse-item" href="/mon_compte/voir_profil.php">Accéder</a>
+                <a class="collapse-item" href="/parametres/gestion_compte/voir_profil.php">Mon compte</a>
                 <!-- <a class="collapse-item" href="/gestion_participants/voir_participants.php">Voir les participants</a> -->
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
