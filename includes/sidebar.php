@@ -28,6 +28,12 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
+<<<<<<< HEAD
+=======
+
+    <!-- Gestion des activités -->
+
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
             aria-expanded="true" aria-controls="collapseTwo">
@@ -44,6 +50,11 @@
         </div>
     </li>
 
+<<<<<<< HEAD
+=======
+    <!-- Gestion des participants -->
+
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
             aria-expanded="true" aria-controls="collapseThree">
@@ -60,6 +71,27 @@
         </div>
     </li>
 
+<<<<<<< HEAD
+=======
+    <!-- Gestion du compte utiisateur -->
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
+            aria-expanded="true" aria-controls="collapseFour">
+            <i class="fas fa-fw fa-clipboard-list"></i>
+            <span>Mon compte</span>
+        </a>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Actions</h6>
+                <a class="collapse-item" href="/mon_compte/voir_profil.php">Accéder</a>
+                <!-- <a class="collapse-item" href="/gestion_participants/voir_participants.php">Voir les participants</a> -->
+                <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
+            </div>
+        </div>
+    </li>
+
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
     <!-- Nav Item - Utilities Collapse Menu -->
     <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"

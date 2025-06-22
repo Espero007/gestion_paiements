@@ -65,13 +65,21 @@ require_once('includes/gerer_participant.php');
 
                                     <ul class="dropdown-menu shadow">
                                         <?php if (!$quota_comptes_bancaires_atteint) : ?>
+<<<<<<< HEAD
                                             <li><a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item fs-6">Ajouter des comptes bancaires</a></li>
+=======
+                                            <li><a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a></li>
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                         <?php endif; ?>
                                         <li>
                                             <hr class="dropwdown-divider">
                                         </li>
                                         <li>
+<<<<<<< HEAD
                                             <a href="#" class="dropdown-item text-danger fs-6">Supprimer</a>
+=======
+                                            <a href="#" class="dropdown-item text-danger custom-dropdown-item">Supprimer</a>
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                         </li>
                                     </ul>
                                 </div>

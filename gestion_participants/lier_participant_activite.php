@@ -3,7 +3,10 @@ $titre = 'Liaison Participant - Activité';
 require_once('includes/header.php');
 require_once('includes/traitements_lier_participant_activite.php');
 ?>
+<<<<<<< HEAD
 <!-- <link rel="stylesheet" href="/assets/bootstrap-5.3.5-dist/css/bootstrap.min.css"> -->
+=======
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
 
 <body id="page-top">
 
@@ -29,6 +32,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                     <h1 class="h4 mb-4 text-gray-800">Participants / <strong>Liaison Participant - Activité</strong></h1>
                     <p class="mt-2">Liez vos participants à vos activités pour profiter de toutes les fonctionnalités disponibles !</p>
 
+<<<<<<< HEAD
                     <?php if (!isset($id_activite)) : ?>
                         <div class="card shadow mb-4">
                             <div class="card-header">
@@ -62,11 +66,76 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         </table>
                                     </div>
                                     <!-- Boutons d'actions -->
+=======
+                    <div class="card shadow mb-4">
+                        <div class="card-header">
+                            <h6 class="text-primary font-weight-bold">
+                                <?= (isset($sens)) ? 'Etape 1' : 'Etape 2' ?>
+                            </h6>
+                        </div>
+
+                        <div class="card-body">
+                            <?php if (isset($sens)) : ?>
+                                <!-- On est encore à l'étape 1 -->
+                                <p>Sélectionnez <?= ($sens == 0) ? 'l\'activité.' : 'le participant.' ?></p>
+                                <form action="" method="get">
+                                    <input type="hidden" name="<?= ($sens == 0) ? 'id_participant' : 'id_activite' ?>" value="<?= ($sens == 0) ? $id_participant : $id_activite ?>">
+
+                                    <div class="table">
+                                        <table class="table">
+                                            <?php if ($sens == 0) : ?>
+                                                <!-- Participant vers activité -->
+                                                <thead>
+                                                    <tr>
+                                                        <th>Choix</th>
+                                                        <th>Nom</th>
+                                                        <th>Période</th>
+                                                        <th>Descritption</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ($activites as $activite) : ?>
+                                                        <tr>
+                                                            <td><input type="checkbox" name="id_activite" value="<?= $activite['id'] ?>"></td>
+                                                            <td><?= htmlspecialchars($activite['nom']) ?></td>
+                                                            <td><?= htmlspecialchars(determinerPeriode($activite['date_debut'], $activite['date_fin'])) ?></td>
+                                                            <td><?= htmlspecialchars(couperTexte($activite['description'], 13, 100)) ?></td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
+                                            <?php elseif ($sens == 1): ?>
+                                                <!-- Activité vers participant -->
+                                                <thead>
+                                                    <tr>
+                                                        <th>Choix</th>
+                                                        <th>Nom</th>
+                                                        <th>Prénom(s)</th>
+                                                        <th>Matricule/IFU</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ($participants as $participant) : ?>
+                                                        <tr>
+                                                            <td><input type="checkbox" name="id_participant" value="<?= $participant['id_participant'] ?>"></td>
+                                                            <td><?= htmlspecialchars($participant['nom']) ?></td>
+                                                            <td><?= htmlspecialchars($participant['prenoms']) ?></td>
+                                                            <td><?= htmlspecialchars($participant['matricule_ifu']) ?></td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
+                                            <?php endif; ?>
+                                        </table>
+                                    </div>
+
+                                    <!-- Boutons d'actions -->
+
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                     <div class="mt-2">
                                         <button type="submit" class="btn btn-primary mr-2" id="submitBtn1">Continuer</button>
                                         <a href="gerer_participant.php?id=<?= $id_participant ?>" class="btn btn-outline-primary">Annuler</a>
                                     </div>
                                 </form>
+<<<<<<< HEAD
                             </div>
                         </div>
                     <?php else: ?>
@@ -76,11 +145,18 @@ require_once('includes/traitements_lier_participant_activite.php');
                                 <h6 class="text-primary font-weight-bold">Etape 2</h6>
                             </div>
                             <div class="card-body">
+=======
+                            <?php else: ?>
+                                <!-- Etape 2 -->
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                 <p>Sélectionnez le titre pour lequel le participant sera associé à l'activité et le compte bancaire qu'on devra considérer</p>
                                 <form action="" method="post">
 
                                     <!-- Titre -->
+<<<<<<< HEAD
 
+=======
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                     <div class="mb-2 row">
                                         <label for="titre" class="col-form-label col-sm-4">Titre</label>
                                         <div class="col-sm-8">
@@ -100,7 +176,10 @@ require_once('includes/traitements_lier_participant_activite.php');
                                     </div>
 
                                     <!-- Compte bancaire -->
+<<<<<<< HEAD
 
+=======
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                     <div class="mb-2 row">
                                         <span class="col-form-label col-sm-4">Compte(s) bancaire(s)</span>
                                         <div class="col-sm-8">
@@ -129,7 +208,10 @@ require_once('includes/traitements_lier_participant_activite.php');
                                             'nbr_taches' => 'Nombre de tâches'
                                         ]
                                         ?>
+<<<<<<< HEAD
 
+=======
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                         <?php foreach ($champs as $champ => $label) : ?>
                                             <div class="mb-2 row">
                                                 <label for="<?= $champ ?>" class="col-form-label col-sm-4"><?= $label ?></label>
@@ -151,9 +233,15 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         <a href="voir_participants.php" class="btn btn-outline-primary">Annuler</a>
                                     </div>
                                 </form>
+<<<<<<< HEAD
                             </div>
                         </div>
                     <?php endif; ?>
+=======
+                            <?php endif; ?>
+                        </div>
+                    </div>
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                 </div>
                 <!-- /.container-fluid -->
 
@@ -163,10 +251,17 @@ require_once('includes/traitements_lier_participant_activite.php');
             <!-- Footer -->
             <?php require_once('includes/footer.php') ?>
             <!-- End of Footer -->
+<<<<<<< HEAD
 
         </div>
         <!-- End of Content Wrapper -->
 
+=======
+        </div>
+        <!-- End of Content Wrapper -->
+
+
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
     </div>
     <!-- End of Page Wrapper -->
 

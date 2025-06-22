@@ -2,7 +2,11 @@
 $titre = "Liste des activités";
 require_once('includes/header.php');
 
+<<<<<<< HEAD
 $stmt = 'SELECT id, nom, description, date_debut, date_fin FROM activites ORDER BY id DESC LIMIT ' . NBR_ACTIVITES_A_AFFICHER;
+=======
+$stmt = 'SELECT id, nom, description, centre FROM activites ORDER BY id DESC';
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
 $resultat = $bdd->query($stmt);
 
 if (!$resultat) {
@@ -28,13 +32,24 @@ if (!$resultat) {
         // $activites[$index]['description'] = $description;
 
         # Traitement des dates de début et de fin pour obtenir la période de l'activité
+<<<<<<< HEAD
         $fmt = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE, 'Africa/Lagos', IntlDateFormatter::GREGORIAN);
         $activites[$index]['periode'] = "Du " . $fmt->format(new DateTime($activite['date_debut'])) . " au " . $fmt->format(new DateTime($activite['date_fin']));
+=======
+        // $fmt = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE, 'Africa/Lagos', IntlDateFormatter::GREGORIAN);
+        // $activites[$index]['periode'] = "Du " . $fmt->format(new DateTime($activite['date_debut'])) . " au " . $fmt->format(new DateTime($activite['date_fin']));
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
     }
 }
 $resultat->closeCursor();
 ?>
 
+<<<<<<< HEAD
+=======
+<!-- Custom styles for this page -->
+<link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
 <body id="page-top">
 
     <!-- Page Wrapper -->
@@ -60,6 +75,7 @@ $resultat->closeCursor();
                         <div class="alert alert-danger">La récupération des données a rencontré un problème.</div>
                     <?php endif; ?>
 
+<<<<<<< HEAD
                     <?php
 
                     /** Bon je vais définir le mécanisme d'affichage des activités. Il faudra penser à un système de voir plus plus tard mais pour l'instant on se limite à trois activités
@@ -70,10 +86,13 @@ $resultat->closeCursor();
                      * 
                      */
                     ?>
+=======
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                     <?php if (isset($activites)) : ?>
                         <!-- Page Heading -->
                         <h1 class="h4 mb-4 text-gray-800">Activités / <strong>Vos activités</strong></h1>
                         <p class="mt-2">Ici vous avez accès à toutes les activités que vous avez créées. (Cliquez <a href="creer_activite.php">ici</a> pour en créer une autre)</p>
+<<<<<<< HEAD
 
                         <?php
                         $valeur = 3; // nombre d'activités à afficher par ligne
@@ -109,6 +128,79 @@ $resultat->closeCursor();
                                 <?php endfor; ?>
                             </div>
                         <?php endfor; ?>
+=======
+                        <hr>
+
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Liste des activités</h6>
+                            </div>
+                            <div class="card-body">
+                                <form action="">
+                                    <div class="">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Choix</th>
+                                                    <th>Titre</th>
+                                                    <th>Description</th>
+                                                    <th>Centre</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Choix</th>
+                                                    <th>Titre</th>
+                                                    <th>Description</th>
+                                                    <th>Centre</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                <?php foreach ($activites as $activite) : ?>
+                                                    <tr>
+                                                        <td><input type="checkbox" name="bref" id="bref"></th>
+                                                        <td><?= htmlspecialchars($activite['nom']) ?></td>
+                                                        <td><?= couperTexte(htmlspecialchars($activite['description']), 15, 200) ?></td>
+                                                        <td><?= htmlspecialchars($activite['centre']) ?></td>
+                                                        <td>
+                                                            <div class="btn-group">
+                                                                <a href="gerer_activite.php?id=<?= $activite['id'] ?>" class="btn btn-primary">Gérer</a>
+
+                                                                <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                                                <ul class="dropdown-menu">
+                                                                    <li>
+                                                                        <a href="gerer_activite.php?id=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Voir</a>
+                                                                    </li>
+                                                                    <!-- <li>
+                                                                        <a href="modifier_infos.php?id=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Modifier</a>
+                                                                    </li> -->
+                                                                    <!-- <li>
+                                                                        <a href="ajouter_comptes.php?id_participant=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>
+                                                                    </li> -->
+                                                                    <li>
+                                                                        <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer des participants</a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <hr class="dropdown-divider">
+                                                                    </li>
+                                                                    <li>
+                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item"></i>Supprimer</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                     <?php else : ?>
                         <div class="text-center">
                             <h3 class="font-weight-bold">Aucune activité retrouvée !</h1>
@@ -144,6 +236,17 @@ $resultat->closeCursor();
     <!-- Logout Modal-->
     <?php require_once('includes/logoutModal.php') ?>
     <?php require_once('includes/scripts.php') ?>
+<<<<<<< HEAD
+=======
+
+    <!-- Page level plugins -->
+    <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="/assets/js/demo/datatables-demo.js"></script>
+    <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
 </body>
 
 </html>

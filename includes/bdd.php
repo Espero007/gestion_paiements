@@ -8,7 +8,11 @@ const BDD_NAME = 'gestion_paiements';
 const BDD_USER = 'root';
 const BDD_PASSWORD = '';
 
+<<<<<<< HEAD
 qualite
+=======
+
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
 try {
     // Connexion au serveur MySQL
     $bdd = new PDO('mysql:host=' . BDD_HOST, BDD_USER, BDD_PASSWORD);

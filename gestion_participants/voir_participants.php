@@ -2,6 +2,10 @@
 $titre = "Liste des participants";
 require_once('includes/header.php');
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
 $stmt = 'SELECT id_participant, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance FROM participants WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id_participant';
 $resultat = $bdd->query($stmt);
 
@@ -77,7 +81,10 @@ $resultat->closeCursor();
                                     <?php unset($_SESSION['liaison_non_autorisee']); ?>
                                 <?php endif; ?>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                 <form action="">
                                     <div class="">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -97,7 +104,10 @@ $resultat->closeCursor();
                                                     <th>Prénom(s)</th>
                                                     <th>Matricule/IFU</th>
                                                     <th>Actions</th>
+<<<<<<< HEAD
                                                     <!-- <th>Associer à une activité</th> -->
+=======
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -105,9 +115,15 @@ $resultat->closeCursor();
 
                                                     <tr>
                                                         <td><input type="checkbox" name="bref" id="bref"></th>
+<<<<<<< HEAD
                                                         <td><?= $participant['nom'] ?></td>
                                                         <td><?= $participant['prenoms'] ?></td>
                                                         <td><?= $participant['matricule_ifu'] ?></td>
+=======
+                                                        <td><?= htmlspecialchars($participant['nom']) ?></td>
+                                                        <td><?= htmlspecialchars($participant['prenoms']) ?></td>
+                                                        <td><?= htmlspecialchars($participant['matricule_ifu']) ?></td>
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                                         <!-- <td>
                                                             Gérer
                                                             <a href="/gestion_participants/modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>"><button class="btn btn-primary">Modifier</button></a>
@@ -117,6 +133,7 @@ $resultat->closeCursor();
                                                             <!-- <a href="/gestion_participants/">Associer à une activité</a> -->
                                                             <div class="btn-group">
                                                                 <a href="/gestion_participants/gerer_participant.php?id=<?= $participant['id_participant'] ?>" class="btn btn-primary">Gérer</a><br>
+<<<<<<< HEAD
                                                                 <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                                                 <ul class="dropdown-menu">
                                                                     <li>
@@ -130,15 +147,37 @@ $resultat->closeCursor();
                                                                     </li>
                                                                     <li>
                                                                         <a href="lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item d-flex align-items-center fs-6"><i class="bi bi-link mr-2"></i>Associer à une activité</a>
+=======
+                                                                
+                                                                <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                                                <ul class="dropdown-menu">
+                                                                    <li>
+                                                                        <a href="gerer_participant.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Voir</a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a href="modifier_infos.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Modifier</a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a href="lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer à une activité</a>
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                                                     </li>
                                                                     <li>
                                                                         <hr class="dropdown-divider">
                                                                     </li>
                                                                     <li>
+<<<<<<< HEAD
                                                                         <a href="#" class="dropdown-item d-flex align-items-center text-danger fs-6"><i class="bi bi-trash mr-2"></i>Supprimer</a>
                                                                     </li>
                                                                 </ul>
 
+=======
+                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item"></i>Supprimer</a>
+                                                                    </li>
+                                                                </ul>
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                                             </div>
                                                         </td>
                                                     </tr>

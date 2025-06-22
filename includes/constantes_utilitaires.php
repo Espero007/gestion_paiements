@@ -199,6 +199,7 @@ function couperTexte($texte, $nbr_mots, $nbr_caractères)
         $texte = substr($texte[0], 0, $nbr_caractères);
         $modifie = true;
     }
+<<<<<<< HEAD
     
     if($modifie){
         return implode(' ', $texte).'...'; // Si le texte a été modifié, on rajoute les trois points de suspension à la fin après avior recollé le tableau
@@ -206,3 +207,50 @@ function couperTexte($texte, $nbr_mots, $nbr_caractères)
         return implode(' ', $texte); // Autrement on ne fait rien
     }
 }
+=======
+
+    if ($modifie) {
+        return implode(' ', $texte) . '...'; // Si le texte a été modifié, on rajoute les trois points de suspension à la fin après avior recollé le tableau
+    } else {
+        return implode(' ', $texte); // Autrement on ne fait rien
+    }
+}
+
+// En cours de développement
+
+function afficherSousFormeTableau($elements, $style)
+{
+    // $elements : les éléments à afficher sous la forme d'un tableau. Je considère que dans $elements est constitué de deux tableaux, un pour l'entête du tableau et un second pour le body
+
+    // $style correspond au style additionnel qu'on pourrait ajouter au tableau
+    $head = $elements[0];
+    $body = $elements[1];
+
+?>
+    <div class="table-responsive text-no-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Choix</th>
+                    <?php foreach ($head as $valeur) : ?>
+                        <th><?= htmlspecialchars($valeur) ?></th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-1">
+                <?php foreach ($body as $ligne) : ?>
+                    <tr>
+                        <td><input type="checkbox" name="id_activite" <?= 'bonjour' ?> value="<?= 'bonjour' //$activite['id'] 
+                                                                                                ?>"></td>
+                        <?php foreach ($ligne as $cellule) : ?>
+                            td
+                        <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; ?>
+
+            </tbody>
+        </table>
+    </div>
+<?php
+}
+>>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
