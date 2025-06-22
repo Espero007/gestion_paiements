@@ -62,6 +62,7 @@
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
                 <!-- <a class="dropdown-item" href="#">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -70,6 +71,9 @@
                 <a class="dropdown-item" href="#">
 =======
                 <a class="dropdown-item" href="/mon_compte/voir_profil.php">
+=======
+                <a class="dropdown-item" href="/parametres/gestion_compte/voir_profil.php">
+>>>>>>> Stashed changes
 =======
                 <a class="dropdown-item" href="/parametres/gestion_compte/voir_profil.php">
 >>>>>>> Stashed changes
