@@ -38,6 +38,7 @@
     }
 }
 
-.fs-6{
+.custom-dropdown-item{
     font-size: 0.9375rem!important;
+    padding: 0.532rem 1.25rem;
 }

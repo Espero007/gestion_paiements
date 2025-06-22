@@ -28,6 +28,9 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
+
+    <!-- Gestion des activités -->
+
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
             aria-expanded="true" aria-controls="collapseTwo">
@@ -44,6 +47,8 @@
         </div>
     </li>
 
+    <!-- Gestion des participants -->
+
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
             aria-expanded="true" aria-controls="collapseThree">
@@ -55,6 +60,24 @@
                 <h6 class="collapse-header">Actions</h6>
                 <a class="collapse-item" href="/gestion_participants/ajouter_participant.php">Ajouter un participant</a>
                 <a class="collapse-item" href="/gestion_participants/voir_participants.php">Voir les participants</a>
+                <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
+            </div>
+        </div>
+    </li>
+
+    <!-- Gestion du compte utiisateur -->
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
+            aria-expanded="true" aria-controls="collapseFour">
+            <i class="fas fa-fw fa-clipboard-list"></i>
+            <span>Mon compte</span>
+        </a>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Actions</h6>
+                <a class="collapse-item" href="/mon_compte/voir_profil.php">Accéder</a>
+                <!-- <a class="collapse-item" href="/gestion_participants/voir_participants.php">Voir les participants</a> -->
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
         </div>
