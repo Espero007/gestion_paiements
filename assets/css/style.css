@@ -38,25 +38,13 @@
     }
 }
 
-<<<<<<< HEAD
 .fs-6{
     font-size: 0.9375rem!important;
-=======
+}
+
 .custom-dropdown-item{
     font-size: 0.9375rem!important;
     padding: 0.532rem 1.25rem;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 }
 
 /* Styles pour la page du profil. Je veux un card-header différent de celui du template */
@@ -65,14 +53,4 @@
     background-color: transparent;
     border-width: 0;
     font-weight: 500;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 }

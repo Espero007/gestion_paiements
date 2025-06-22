@@ -199,15 +199,6 @@ function couperTexte($texte, $nbr_mots, $nbr_caractères)
         $texte = substr($texte[0], 0, $nbr_caractères);
         $modifie = true;
     }
-<<<<<<< HEAD
-    
-    if($modifie){
-        return implode(' ', $texte).'...'; // Si le texte a été modifié, on rajoute les trois points de suspension à la fin après avior recollé le tableau
-    }else{
-        return implode(' ', $texte); // Autrement on ne fait rien
-    }
-}
-=======
 
     if ($modifie) {
         return implode(' ', $texte) . '...'; // Si le texte a été modifié, on rajoute les trois points de suspension à la fin après avior recollé le tableau
@@ -253,4 +244,3 @@ function afficherSousFormeTableau($elements, $style)
     </div>
 <?php
 }
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc

@@ -83,11 +83,6 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
 
 
     <!-- Custom styles for this template-->
-<<<<<<< HEAD
-     <!-- <link rel="stylesheet" href="/assets/bootstrap-5.3.5-dist/css/bootstrap.min.css"> -->
-=======
-    <!-- <link rel="stylesheet" href="/assets/bootstrap-5.3.5-dist/css/bootstrap.min.css"> -->
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
 
     <!-- Custom CSS link -->

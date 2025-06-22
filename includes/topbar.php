@@ -59,35 +59,22 @@
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown">
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< HEAD
+
                 <!-- <a class="dropdown-item" href="#">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Profile
                 </a>
                 <a class="dropdown-item" href="#">
-=======
                 <a class="dropdown-item" href="/mon_compte/voir_profil.php">
-=======
                 <a class="dropdown-item" href="/parametres/gestion_compte/voir_profil.php">
->>>>>>> Stashed changes
-=======
                 <a class="dropdown-item" href="/parametres/gestion_compte/voir_profil.php">
->>>>>>> Stashed changes
-=======
                 <a class="dropdown-item" href="/parametres/gestion_compte/voir_profil.php">
->>>>>>> Stashed changes
-=======
+
                 <a class="dropdown-item" href="/parametres/gestion_compte/voir_profil.php">
->>>>>>> Stashed changes
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Profil
                 </a>
-                <!-- <a class="dropdown-item" href="#">
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
+                 <a class="dropdown-item" href="#">
                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                     Settings
                 </a>

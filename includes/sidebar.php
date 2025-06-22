@@ -28,12 +28,10 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
-<<<<<<< HEAD
-=======
+
 
     <!-- Gestion des activités -->
 
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
             aria-expanded="true" aria-controls="collapseTwo">
@@ -50,11 +48,9 @@
         </div>
     </li>
 
-<<<<<<< HEAD
-=======
+
     <!-- Gestion des participants -->
 
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
             aria-expanded="true" aria-controls="collapseThree">
@@ -71,8 +67,6 @@
         </div>
     </li>
 
-<<<<<<< HEAD
-=======
     <!-- Gestion du compte utiisateur -->
 
     <li class="nav-item">
@@ -91,7 +85,6 @@
         </div>
     </li>
 
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
     <!-- Nav Item - Utilities Collapse Menu -->
     <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
