@@ -158,16 +158,24 @@ function valider_id($methode, $cle, $bdd, $table = 'participants')
     }
 }
 
-function obtenirURLcourant()
+function obtenirURLcourant($debut_url = false)
 {
+    // $debut_url : pour savoir si je veux juste le début de l'url sans l'uri ou pas
+
     // Récupération du protocole (http ou https)
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
     // Récupération du nom de domaine + port si nécessaire
     $host = $_SERVER['HTTP_HOST'];
     // Récupération du chemin URI
     $request_uri = $_SERVER['REQUEST_URI'];
+
     // URL complète
-    $current_url = $protocol . $host . $request_uri;
+
+    if ($debut_url) {
+        $current_url = $protocol . $host;
+    } else {
+        $current_url = $protocol . $host . $request_uri;
+    }
 
     return $current_url;
 }
@@ -243,4 +251,36 @@ function afficherSousFormeTableau($elements, $style)
         </table>
     </div>
 <?php
+}
+
+require_once('PHPMailer/autoload.php');
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+function envoyerLienValidationEmail($lien_verif, $email)
+{
+    $mail = new PHPMailer(true);
+    try {
+
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';  // Serveur SMTP de Gmail
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'gpaiements229@gmail.com';  // adresse Gmail
+        $mail->Password   = 'rxop lqyz scjl hiqd';  // Mot de passe d'application
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Sécuriser la connexion
+        $mail->Port       = 587;
+        $mail->CharSet = 'utf-8';
+        $mail->setFrom('gpaiements229@gmail.com', 'GPaiements');
+        $mail->addAddress($email, 'GPaiements'); // L'email de l'utilisateur
+        $mail->isHTML(true);
+
+        $mail->Subject = 'Confirmez votre adresse email';
+        $mail->Body    = 'Cliquez sur ce lien pour confirmer votre adresse email : <a href="'.$lien_verif.'">Confirmez votre email</a>';
+        
+        $mail->SMTPDebug = 0; // Pour désactiver le débug
+        $mail->send();
+    } catch (Exception $e) {
+        die("Erreur : " . $e->getMessage());
+    }
 }

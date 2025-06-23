@@ -11,16 +11,9 @@
 <body>
 
     <?php
-        $date = new DateTime();
-        $formatter = new IntlDateFormatter(
-            'fr_FR',
-            IntlDateFormatter::FULL,
-            IntlDateFormatter::NONE,
-            'Africa/Lagos',
-            IntlDateFormatter::GREGORIAN
-        );
-
-        echo $formatter->format($date);
+       ?>
+        <pre><?php var_dump($_SERVER);?></pre>
+       <?php
     ?>
 </body>
 

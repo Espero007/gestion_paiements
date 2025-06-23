@@ -16,7 +16,7 @@
 
 <body>
     <!-- Helpers -->
-    <div class="container-xxl">
+    <div class="container-xxl mt-4">
         <!-- Outer Row -->
         <div class="row justify-content-center">
             <div class="col-md-6 col-sm-10">
@@ -26,6 +26,7 @@
                         <div class="row justify-content-center">
                             <div class="col-12">
                                 <div class="p-5">
+                                    <!-- Messages divers -->
                                     <?php
                                     if (isset($echec_connexion)) {
                                     ?>
@@ -34,11 +35,11 @@
                                     }
                                     ?>
                                     <?php
-                                    if (isset($_SESSION['inscription_reussie'])) {
+                                    if (isset($_SESSION['email_envoye'])) {
                                     ?>
-                                        <div class="alert alert-success text-center">Vos informations ont été enregistrées avec succès ! Vous pouvez à présent vous connecter à votre compte.</div>
+                                        <div class="alert alert-info text-center">Un lien de vérification a été envoyé à votre mail. Confirmez le pour accéder à votre compte.</div>
                                     <?php
-                                        unset($_SESSION['inscription_reussie']);
+                                        unset($_SESSION['email_envoye']);
                                     }
                                     ?>
 
@@ -59,6 +60,10 @@
                                         session_destroy();
                                     }
                                     ?>
+                                    <?php if (isset($email_non_valide)) : ?>
+                                        <div class="alert alert-info text-center">Votre email n'a pas encore été confirmé. Veuillez consulter votre boite mail ou <a href="<?= 'renvoyerLienConfirmation.php?email='.$_POST['email'] ?>">renvoyer un lien de confirmation</a> si vous n'avez pas reçu de lien.</div>
+                                    <?php endif; ?>
+
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Contents de vous revoir !</h1>
                                         <p>Connectez-vous à votre compte pour retourner à la gestion de vos activités.</h2>

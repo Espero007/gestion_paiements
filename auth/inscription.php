@@ -15,10 +15,10 @@
     <!-- Helpers -->
 
 
-    <div class="container-xxl">
+    <div class="container-xxl ">
         <!-- Outer Row -->
         <div class="row justify-content-center">
-            <div class="col-md-6 col-sm-10">
+            <div class="col-md-5 col-sm-10">
                 <div class="card o-hidden border-0 shadow-lg my-5">
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->

@@ -37,7 +37,7 @@ if (isset($_POST['inscription'])) {
 
     if (!isset($erreurs)) {
         // Pas d'erreurs
-        $token = bin2hex(random_bytes(16)); // Token de vérificatio
+        $token = bin2hex(random_bytes(16)); // Token de vérification
 
         $stmt = $bdd->prepare("INSERT INTO connexion(nom,prenoms,email,password,token_verification) VALUES (:val1,:val2,:val3,:val4,:val5)");
 

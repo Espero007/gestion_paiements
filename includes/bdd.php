@@ -111,7 +111,7 @@ try {
         id_participant INT NOT NULL,
         id_activite INT NOT NULL,
         id_titre INT NOT NULL,
-        id_diplome,
+        id_diplome INT NOT NULL,
         id_compte_bancaire INT NOT NULL,
         nombre_jours INT NULL,
         nombre_taches INT NULL
