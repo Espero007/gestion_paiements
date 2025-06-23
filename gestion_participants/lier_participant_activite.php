@@ -3,10 +3,6 @@ $titre = 'Liaison Participant - Activité';
 require_once('includes/header.php');
 require_once('includes/traitements_lier_participant_activite.php');
 ?>
-<<<<<<< HEAD
-<!-- <link rel="stylesheet" href="/assets/bootstrap-5.3.5-dist/css/bootstrap.min.css"> -->
-=======
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
 
 <body id="page-top">
 
@@ -32,41 +28,6 @@ require_once('includes/traitements_lier_participant_activite.php');
                     <h1 class="h4 mb-4 text-gray-800">Participants / <strong>Liaison Participant - Activité</strong></h1>
                     <p class="mt-2">Liez vos participants à vos activités pour profiter de toutes les fonctionnalités disponibles !</p>
 
-<<<<<<< HEAD
-                    <?php if (!isset($id_activite)) : ?>
-                        <div class="card shadow mb-4">
-                            <div class="card-header">
-                                <h6 class="text-primary font-weight-bold">Etape 1</h6>
-                            </div>
-
-                            <div class="card-body">
-                                <p>Sélectionnez l'activité.</p>
-                                <form action="" method="get">
-                                    <input type="hidden" name="id_participant" value="<?= $id_participant ?>">
-                                    <div class="table-responsive text-no-wrap">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Choix</th>
-                                                    <th>Nom</th>
-                                                    <th>Période</th>
-                                                    <th>Description</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="table-border-bottom-1">
-                                                <?php foreach ($activites as $activite) : ?>
-                                                    <tr>
-                                                        <td><input type="checkbox" name="id_activite" value="<?= $activite['id'] ?>"></td>
-                                                        <td><?= htmlspecialchars($activite['nom']) ?></td>
-                                                        <td><?= htmlspecialchars(determinerPeriode($activite['date_debut'], $activite['date_fin'])) ?></td>
-                                                        <td><?= htmlspecialchars(couperTexte($activite['description'], 18, 100)) ?></td>
-                                                    </tr>
-                                                <?php endforeach; ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <!-- Boutons d'actions -->
-=======
                     <div class="card shadow mb-4">
                         <div class="card-header">
                             <h6 class="text-primary font-weight-bold">
@@ -129,34 +90,17 @@ require_once('includes/traitements_lier_participant_activite.php');
 
                                     <!-- Boutons d'actions -->
 
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                     <div class="mt-2">
                                         <button type="submit" class="btn btn-primary mr-2" id="submitBtn1">Continuer</button>
                                         <a href="gerer_participant.php?id=<?= $id_participant ?>" class="btn btn-outline-primary">Annuler</a>
                                     </div>
                                 </form>
-<<<<<<< HEAD
-                            </div>
-                        </div>
-                    <?php else: ?>
-
-                        <div class="card shadow mb-4">
-                            <div class="card-header">
-                                <h6 class="text-primary font-weight-bold">Etape 2</h6>
-                            </div>
-                            <div class="card-body">
-=======
                             <?php else: ?>
                                 <!-- Etape 2 -->
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                 <p>Sélectionnez le titre pour lequel le participant sera associé à l'activité et le compte bancaire qu'on devra considérer</p>
                                 <form action="" method="post">
 
                                     <!-- Titre -->
-<<<<<<< HEAD
-
-=======
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                     <div class="mb-2 row">
                                         <label for="titre" class="col-form-label col-sm-4">Titre</label>
                                         <div class="col-sm-8">
@@ -176,10 +120,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                     </div>
 
                                     <!-- Compte bancaire -->
-<<<<<<< HEAD
 
-=======
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                     <div class="mb-2 row">
                                         <span class="col-form-label col-sm-4">Compte(s) bancaire(s)</span>
                                         <div class="col-sm-8">
@@ -208,10 +149,6 @@ require_once('includes/traitements_lier_participant_activite.php');
                                             'nbr_taches' => 'Nombre de tâches'
                                         ]
                                         ?>
-<<<<<<< HEAD
-
-=======
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                         <?php foreach ($champs as $champ => $label) : ?>
                                             <div class="mb-2 row">
                                                 <label for="<?= $champ ?>" class="col-form-label col-sm-4"><?= $label ?></label>
@@ -233,15 +170,9 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         <a href="voir_participants.php" class="btn btn-outline-primary">Annuler</a>
                                     </div>
                                 </form>
-<<<<<<< HEAD
-                            </div>
-                        </div>
-                    <?php endif; ?>
-=======
                             <?php endif; ?>
                         </div>
                     </div>
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                 </div>
                 <!-- /.container-fluid -->
 
@@ -251,17 +182,8 @@ require_once('includes/traitements_lier_participant_activite.php');
             <!-- Footer -->
             <?php require_once('includes/footer.php') ?>
             <!-- End of Footer -->
-<<<<<<< HEAD
-
         </div>
         <!-- End of Content Wrapper -->
-
-=======
-        </div>
-        <!-- End of Content Wrapper -->
-
-
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
     </div>
     <!-- End of Page Wrapper -->
 

@@ -41,17 +41,14 @@ $resultat->closeCursor();
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <!-- Page Heading -->
 
-                    <h1 class="h4 mb-4 text-gray-800">Participants / <strong>Vos participants</strong></h1>
-                    <p class="mt-2">Ici vous avez la liste de tous les participants que vous avez déjà ajouter. A partir des options disponibles vous pouvez modifier leurs informations, en supprimer, les associer à des activités, etc...</p>
-                    <hr>
+                    <?php if (isset($participants)) : ?>
+                        <!-- Nous avons des participants -->
 
-                    <?php if (count($participants) == 0) : ?>
-                        <p>Il semble que vous n'avez encore aucun participant d'enregistré. <a href="/gestion_participants/ajouter_participant.php">Ajoutez-en ici</a></p>
-                    <?php else: ?>
-                        <?php // Nous avons des participants déjà enregistrés 
-                        ?>
+                        <!-- Page Heading -->
+                        <h1 class="h4 mb-4 text-gray-800">Participants / <strong>Vos participants</strong></h1>
+                        <p class="mt-2">Ici vous avez la liste de tous les participants que vous avez déjà ajouter. A partir des options disponibles vous pouvez modifier leurs informations, en supprimer, les associer à des activités, etc...</p>
+
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Liste des participants</h6>
@@ -115,7 +112,7 @@ $resultat->closeCursor();
                                                             <!-- <a href="/gestion_participants/">Associer à une activité</a> -->
                                                             <div class="btn-group">
                                                                 <a href="/gestion_participants/gerer_participant.php?id=<?= $participant['id_participant'] ?>" class="btn btn-primary">Gérer</a><br>
-                                                                
+
                                                                 <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                                                 <ul class="dropdown-menu">
                                                                     <li>
@@ -129,7 +126,6 @@ $resultat->closeCursor();
                                                                     </li>
                                                                     <li>
                                                                         <a href="lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer à une activité</a>
->>>>>>> e12d5757bb365b7b037ae4ba343c4f948fc300dc
                                                                     </li>
                                                                     <li>
                                                                         <hr class="dropdown-divider">
@@ -150,6 +146,17 @@ $resultat->closeCursor();
                                 </form>
                             </div>
                         </div>
+                    <?php else: ?>
+                        <div class="text-center">
+                            <h3 class="font-weight-bold">Aucun participant retrouvé !</h3>
+                            <p class="mt-3 text-center">Il semble que vous n'ayiez aucun participant déjà ajouté. Pourquoi ne pas remédier à celà et en ajouter dès maintenant ?</p>
+                            <a href="ajouter_participant.php" class="btn btn-outline-primary">Ajouter un participant</a>
+                            <div class="mt-5 mb-5">
+                                <img src="/assets/illustrations/no-results-1.png" alt="no results" class="img-fluid" width="500">
+                            </div>
+                        </div>
+
+
                     <?php endif; ?>
                 </div>
                 <!-- /.container-fluid -->

@@ -29,14 +29,14 @@
                                     <?php
                                     if (isset($echec_connexion)) {
                                     ?>
-                                        <div class="alert alert-danger">Echec de la connexion ! Assurez-vous d'indiquer correctement vos identifiants de connexion !</div>
+                                        <div class="alert alert-danger text-center">Echec de la connexion ! Assurez-vous d'indiquer correctement vos identifiants de connexion !</div>
                                     <?php
                                     }
                                     ?>
                                     <?php
                                     if (isset($_SESSION['inscription_reussie'])) {
                                     ?>
-                                        <div class="alert alert-success">Vos informations ont été enregistrées avec succès ! Vous pouvez à présent vous connecter à votre compte.</div>
+                                        <div class="alert alert-success text-center">Vos informations ont été enregistrées avec succès ! Vous pouvez à présent vous connecter à votre compte.</div>
                                     <?php
                                         unset($_SESSION['inscription_reussie']);
                                     }
@@ -48,7 +48,7 @@
                                         session_unset(); // On détruit les varaibles de la session
                                         session_destroy(); // On détruit la session
                                     ?>
-                                        <div class="alert alert-success">Vous êtes à présent déconnecté(e) !</div>
+                                        <div class="alert alert-success text-center">Vous êtes à présent déconnecté(e) !</div>
                                     <?php
                                     } elseif (isset($_SESSION['deconnexion']) && isset($_SESSION['timeout_atteint'])) {
                                         // déconnexion due au timeout

@@ -29,12 +29,11 @@ require_once(__DIR__ . '/includes/traitements_ajout_participant.php');
 
                     <!-- Page Heading -->
                     <div>
-                        <h1 class="h3 mb-4 text-gray-800">
-                            Ajout d'un participant
+                        <h1 class="h4 mb-4 text-gray-800">
+                            Participants /
+                            <strong>Ajout d'un participant</strong>
                         </h1>
-                        <p class="mt-2">Vous êtes sur la page d'ajout de participants. C'est ici que vous nous donnez les informations sur les différents participants que vous associerez à vos activités.</p>
-                        <hr>
-                        <p class="mt-2">Dîtes-nous en plus sur vos participants alors...</p>
+                        <p class="mt-2 mb-4">Vous êtes sur la page d'ajout de participants. C'est ici que vous nous donnez les informations sur le participant à ajouter.</p>
                     </div>
 
                     <div class="row">
@@ -45,14 +44,25 @@ require_once(__DIR__ . '/includes/traitements_ajout_participant.php');
                                 </div>
                                 <div class="card-body">
                                     <?php if (isset($message_succes)) : ?>
-                                        <div class="alert alert-success mt-2">Le participant a été enregistré avec succès ! <a href="./ajouter_comptes.php?id_participant=<?php echo $id_participant; ?>">Cliquez ici</a> si vous souhaitez lui ajouter des comptes bancaires.</div>
+                                        <div class="alert alert-success alert-dismissible mt-2 text-center">
+                                            <div>
+                                                <!-- Message proprement dit -->
+                                                <p class="m-0">Le participant a été enregistré avec succès !</p>
+                                                <p class="m-0"><a href="ajouter_comptes.php?id_participant=<?php echo $id_participant; ?>">Cliquez ici</a> si vous souhaitez lui ajouter des comptes bancaires ou préférez vous l'<a href="#">associer</a> directement à une activité ?</p>
+                                            </div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                        </div>
                                     <?php endif; ?>
 
                                     <!-- Formulaire : Début -->
 
                                     <form action="" method="post" enctype="multipart/form-data">
                                         <?php require_once(__DIR__ . '/includes/fieldsets.php') ?>
-                                        <button type="submit" name="ajouter_participant" class="btn btn-primary mt-4">Ajouter le participant</button>
+                                        <div class="mt-4">
+                                            <button type="submit" name="ajouter_participant" class="btn btn-primary mr-2">Ajouter le participant</button>
+                                            <a href="voir_participants.php" class="btn btn-outline-primary">Annuler</a>
+                                        </div>
+
                                     </form>
                                     <!-- Formulaire : Fin -->
 
