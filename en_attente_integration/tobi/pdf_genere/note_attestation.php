@@ -37,7 +37,6 @@ $sql = "
     LEFT JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
     WHERE a.type_activite = :type_activite
 ";
-<<<<<<< HEAD
 
 $stmt = $bdd->prepare($sql);
 $stmt->execute(['type_activite' => $id_type_activite]); // Passe la valeur du type d'activité ici
@@ -198,22 +197,23 @@ foreach ($participants as $p) {
                 <td width="15%">' . htmlspecialchars($p['banque']) . '</td>
                 <td width="33%">' . htmlspecialchars($p['numero_compte']) . '</td>
               </tr>';
-=======
-try {
-    $stmt = $bdd->prepare($sql);
+}
+
+/* try {
+   $stmt = $bdd->prepare($sql);
     $stmt->execute(['type_activite' => $id_type_activite]);
     $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    ob_end_clean();
+   ob_end_clean();
     die('Erreur lors de l’exécution de la requête SQL : ' . $e->getMessage());
 }
 
 if (empty($participants)) {
     ob_end_clean();
     die('Aucun participant trouvé pour ce type d’activité.');
->>>>>>> afa46153a0a0895e3ead2c3b42facfad76bf1e13
-}
 
+}
+*/
 // Vérifier quel document afficher
 $document = isset($_GET['document']) ? $_GET['document'] : '';
 
@@ -265,6 +265,8 @@ if ($document === 'note') {
         </thead>
         <tbody>';
     $i = 1;
+    
+    
     foreach ($participants as $p) {
         $html .= '<tr>
                     <td style="width: 7%;">' . $i++ . '</td>
@@ -287,7 +289,8 @@ if ($document === 'note') {
     ob_clean();
     ob_end_clean();
     $pdf->Output('Note_de_service.pdf', 'I');
-} elseif ($document === 'attestation') {
+}
+ elseif ($document === 'attestation') {
     // *** Attestation Collective PDF ***
     $pdf1 = new TCPDF();
     $pdf1->AddPage();

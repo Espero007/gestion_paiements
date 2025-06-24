@@ -71,8 +71,10 @@ function formaterPeriode($dateDebut, $dateFin) {
     $jourDebut = $debut->format('j');
     $jourFin   = $fin->format('j');
 
-    $moisDebut = strftime('%B', $debut->getTimestamp());
-    $moisFin   = strftime('%B', $fin->getTimestamp());
+    $formatterMois = new IntlDateFormatter("fr_FR", IntlDateFormatter::NONE, IntlDateFormatter::NONE,null,null,'MMMM');
+
+    $moisDebut = $formatterMois->format($debut);
+    $moisFin   = $formatterMois->format($fin);
 
     $anneeDebut = $debut->format('Y');
     $anneeFin   = $fin->format('Y');
@@ -96,6 +98,7 @@ setlocale(LC_TIME, 'fr_FR.UTF-8');
 
 $html = '
 <style>
+    
     h1 { text-align: center; font-size: 16pt; }
     h2 { text-align: center; font-size: 14pt; }
     table { border-collapse: collapse; width: 100%; }
@@ -143,7 +146,7 @@ $i = 0;
 function startTable() {
     return '<table border="1" cellpadding="4" align="center">
         <thead>
-            <tr style="background-color:#f0f0f0; font-size:7px; ">
+            <tr  style="background-color:#eeeeee; font-size:7px; ">
             <th width="6%">N°</th>
             <th width="13%">Nom & Prénoms</th>
             <th width="10%">Titre</th>
@@ -154,13 +157,23 @@ function startTable() {
             <th width="7%">Indemnité forfaitaire</th>
             <th width="9%">Montant</th>
             <th width="9%">Banque</th>
-            <th width="17%">RIB</th>
+            <th width="19%">RIB</th>
             </tr>
         </thead>
         <tbody>';
 }
 
 $html .= startTable();
+
+if (empty($data)) {
+    // Fermer le tableau proprement même s'il est vide
+    $html .= '<tr>
+        <td colspan="12" style="text-align:center;">Aucune donnée disponible</td>
+    </tr>';
+    $html .= '</tbody></table>';
+
+    $pdf->writeHTML($html, true, false, true, false, '');
+} else {
 
 foreach ($data as $index => $row) {
     $i++;
@@ -179,7 +192,7 @@ foreach ($data as $index => $row) {
         <td width="7%">' . number_format($indemnite, 2, ',', ' ') . '</td>
         <td width="9%">' . number_format($montant, 2, ',', ' ') . '</td>
         <td width="9%">' . htmlspecialchars($row['banque']) . '</td>
-        <td width="17%">' . htmlspecialchars($row['rib']) . '</td>
+        <td width="19%">' . htmlspecialchars($row['rib']) . '</td>
     </tr>';
 
     $isLastLine = ($index + 1 === count($data));
@@ -208,6 +221,7 @@ foreach ($data as $index => $row) {
             $html .= startTable();
         }
     }
+}
 }
 
 // Total général (sous le dernier tableau, sans saut de page ni <br><br>)

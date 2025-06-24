@@ -36,9 +36,9 @@ $stmt->execute(['type_activite' => $id_type_activite]);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-if (empty($data)) {
+/*if (empty($data)) {
     die('Aucune donnée trouvée pour générer le PDF.');
-}
+}*/
 
 $nom_activite = isset($data[0]['nom_activite']) ? htmlspecialchars($data[0]['nom_activite']) : '';
 
@@ -113,6 +113,16 @@ function startTable() {
 
 $html .= startTable();
 
+if (empty($data)) {
+    // Fermer le tableau proprement même s'il est vide
+    $html .= '<tr>
+        <td colspan="9" style="text-align:center;">Aucune donnée disponible</td>
+    </tr>';
+    $html .= '</tbody></table>';
+
+    
+} else {
+
 foreach ($data as $index => $row) {
     $i++;
     $pageTotal += $row['montant'];
@@ -152,6 +162,7 @@ foreach ($data as $index => $row) {
             $html .= startTable();
         }
     }
+}
 }
 
 // Total général
