@@ -70,8 +70,8 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <?php if (isset($titre)) : ?>
-        <title><?php echo $titre; ?></title>
+    <?php if (isset($titre_page)) : ?>
+        <title><?php echo $titre_page; ?></title>
     <?php else: ?>
         <title>Document</title>
     <?php endif; ?>

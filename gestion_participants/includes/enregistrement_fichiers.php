@@ -51,11 +51,13 @@ foreach ($fichiers_attendus as $fichier) {
                 // echo "Je suis ici et voici l'id fichier : ". $id_ribs[$chiffre_fin - 1];
             }
 
+            
+            $type_fichier = 'copie_rib';
             $stmt->bindParam(':val2', $infos_fichier['name']); // nom original
-            $date_upload = date("Y-m-d"); //  peut être : 2001-03-10
+            $date_upload = date("Y-m-d H:i:s"); //  peut être : 2001-03-10
             $stmt->bindParam(':val3', $date_upload);
-            $extension = strtolower(pathinfo($infos_fichier['name'], PATHINFO_EXTENSION));
-            $stmt->bindParam(':val4', $extension); // extension
+            // $extension = strtolower(pathinfo($infos_fichier['name'], PATHINFO_EXTENSION)); // Je n'en ai plus besoin
+            $stmt->bindParam(':val4', $type_fichier); // type du fichier
 
             if (!$stmt->execute()) {
                 redirigerVersPageErreur(500, obtenirURLcourant());

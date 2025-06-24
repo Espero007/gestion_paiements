@@ -1,4 +1,5 @@
 <?php
+$section = 'Activités';
 $titre = "Liste des activités";
 require_once('includes/header.php');
 

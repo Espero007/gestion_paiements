@@ -1,4 +1,5 @@
 <?php
+$section = 'Activités';
 $titre = "Gestion de l'activité";
 require_once('includes/header.php');
 require_once('traitements/gerer_activite.php');

@@ -38,11 +38,11 @@
             <i class="fas fa-fw fa-clipboard-list"></i>
             <span>Activités</span>
         </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseTwo" class="collapse <?= ($section == "Activités") ? 'show' : '' ?>" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
-                <a class="collapse-item" href="/gestion_activites/creer_activite.php">Créer une activité</a>
-                <a class="collapse-item" href="/gestion_activites/voir_activites.php">Vos activités</a>
+                <a class="collapse-item <?= $titre_page == "Création d'une activité" ? 'active' : '' ?>" href="/gestion_activites/creer_activite.php">Créer une activité</a>
+                <a class="collapse-item <?= $titre_page == "Liste des activités" ? 'active' : '' ?>" href="/gestion_activites/voir_activites.php">Vos activités</a>
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
         </div>
@@ -54,14 +54,14 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
             aria-expanded="true" aria-controls="collapseThree">
-            <i class="fas fa-fw fa-clipboard-list"></i>
+            <i class="fas fa-fw bi bi-person-fill"></i>
             <span>Participants</span>
         </a>
-        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
+        <div id="collapseThree" class="collapse <?= $section == 'Participants' ? 'show' : '' ?>" aria-labelledby="headingThree" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
-                <a class="collapse-item" href="/gestion_participants/ajouter_participant.php">Ajouter un participant</a>
-                <a class="collapse-item" href="/gestion_participants/voir_participants.php">Voir les participants</a>
+                <a class="collapse-item <?= $titre_page == 'Ajout d\'un participant' ? 'active' : '' ?>" href="/gestion_participants/ajouter_participant.php">Ajouter un participant</a>
+                <a class="collapse-item <?= $titre_page == 'Liste des participants' ? 'active' : '' ?>" href="/gestion_participants/voir_participants.php">Voir les participants</a>
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
         </div>

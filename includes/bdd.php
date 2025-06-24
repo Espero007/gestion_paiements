@@ -54,8 +54,8 @@ try {
         titre_financier VARCHAR(100) NULL,
         id_note_generatrice INT NOT NULL,
         taux_journalier DECIMAL(50) NOT NULL,
-        frais_deplacement_journalier DECIMAL(50) NULL,
-        taux_taches DECIMAL(50) NULL
+        taux_taches DECIMAL(50) NULL,
+        frais_deplacement_journalier DECIMAL(50) NULL
         );
 
         CREATE TABLE IF NOT EXISTS connexion
@@ -72,13 +72,14 @@ try {
         CREATE TABLE IF NOT EXISTS diplomes
         (
         id_diplome INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        nom VARCHAR(100) NOT NULL,
+        noms VARCHAR(100) NOT NULL,
         id_activite INT NOT NULL
         );
 
         CREATE TABLE IF NOT EXISTS fichiers
         (
-        id_fichier INT NOT NULL AUTO_INCREMENT PRIMARY KEY, chemin_acces VARCHAR(100) NOT NULL,
+        id_fichier INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        chemin_acces VARCHAR(500) NOT NULL,
         nom_original VARCHAR(100) NOT NULL,
         date_upload DATE NOT NULL,
         type_fichier VARCHAR(50) NOT NULL

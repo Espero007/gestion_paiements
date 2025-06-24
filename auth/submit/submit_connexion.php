@@ -3,6 +3,7 @@ session_start();
 require_once(__DIR__.'/../../includes/bdd.php');
 require_once(__DIR__.'/../../includes/constantes_utilitaires.php');
 
+
 $_SESSION['current_url'] = obtenirURLcourant();
 
 // Redirection vers la page d'accueil si l'utilisateur est déjà connecté

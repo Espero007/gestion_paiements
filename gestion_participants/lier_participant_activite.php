@@ -1,6 +1,6 @@
 <?php
-$titre = 'Liaison Participant - Activité';
-require_once('includes/header.php');
+$titre_page = 'Liaison Participant - Activité';
+require_once(__DIR__.'/../includes/header.php');
 require_once('includes/traitements_lier_participant_activite.php');
 ?>
 
@@ -10,7 +10,7 @@ require_once('includes/traitements_lier_participant_activite.php');
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once('includes/sidebar.php') ?>
+        <?php require_once(__DIR__.'/../includes/sidebar.php') ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -19,7 +19,7 @@ require_once('includes/traitements_lier_participant_activite.php');
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
-                <?php require_once('includes/topbar.php') ?>
+                <?php require_once(__DIR__.'/../includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -180,7 +180,7 @@ require_once('includes/traitements_lier_participant_activite.php');
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once('includes/footer.php') ?>
+            <?php require_once(__DIR__.'/../includes/footer.php') ?>
             <!-- End of Footer -->
         </div>
         <!-- End of Content Wrapper -->
@@ -193,8 +193,8 @@ require_once('includes/traitements_lier_participant_activite.php');
     </a>
 
     <!-- Logout Modal-->
-    <?php require_once('includes/logoutModal.php') ?>
-    <?php require_once('includes/scripts.php') ?>
+    <?php require_once(__DIR__.'/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__.'/../includes/scripts.php') ?>
 
     <script>
         let cbxes = document.querySelectorAll('input[type=checkbox]');

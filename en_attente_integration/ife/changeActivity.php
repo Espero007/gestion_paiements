@@ -40,6 +40,8 @@ $activity_id = $_GET['id'];
 
 $activity_id =1;
 
+// $activity_id =1099;
+
 // Récupérer les données de l'activité
 try {
     $sql = 'SELECT a.*, f.nom_original AS note_generatrice_name 
@@ -61,11 +63,11 @@ try {
     }*/
 
     // Récupérer les diplômes
-    $sql = 'SELECT nom FROM diplomes WHERE id_activite = :id';
+    $sql = 'SELECT noms FROM diplomes WHERE id_activite = :id';
     $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id]);
     $diplomes = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    $niveaux_diplome = implode(',', $diplomes);
+    $niveaux_diplome = $diplomes[0];
 
     // Récupérer les titres et indemnités
     $sql = 'SELECT nom, indemnite_forfaitaire FROM titres WHERE id_activite = :id';

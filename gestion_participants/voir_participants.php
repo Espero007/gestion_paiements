@@ -1,6 +1,7 @@
 <?php
-$titre = "Liste des participants";
-require_once('includes/header.php');
+$section = 'Participants';
+$titre_page = "Liste des participants";
+require_once(__DIR__.'/../includes/header.php');
 
 $stmt = 'SELECT id_participant, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance FROM participants WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id_participant';
 $resultat = $bdd->query($stmt);
@@ -27,7 +28,7 @@ $resultat->closeCursor();
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once('includes/sidebar.php') ?>
+        <?php require_once(__DIR__.'/../includes/sidebar.php') ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -36,7 +37,7 @@ $resultat->closeCursor();
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
-                <?php require_once('includes/topbar.php') ?>
+                <?php require_once(__DIR__.'/../includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -165,7 +166,7 @@ $resultat->closeCursor();
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once('includes/footer.php') ?>
+            <?php require_once(__DIR__.'/../includes/footer.php') ?>
             <!-- End of Footer -->
 
         </div>
@@ -180,8 +181,8 @@ $resultat->closeCursor();
     </a>
 
     <!-- Logout Modal-->
-    <?php require_once('includes/logoutModal.php') ?>
-    <?php require_once('includes/scripts.php') ?>
+    <?php require_once(__DIR__.'/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__.'/../includes/scripts.php') ?>
 
     <!-- Page level plugins -->
     <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
