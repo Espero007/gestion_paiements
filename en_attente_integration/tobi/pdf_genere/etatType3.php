@@ -172,7 +172,7 @@ if (empty($data)) {
     </tr>';
     $html .= '</tbody></table>';
 
-    $pdf->writeHTML($html, true, false, true, false, '');
+    
 } else {
 
 foreach ($data as $index => $row) {
