@@ -14,19 +14,14 @@ $request_uri = $_SERVER['REQUEST_URI'];
 $current_url = $protocol . $host . $request_uri;
 
 
-// Inclusion des informations générales
-require_once('includes/entete_infos_generales.php');
-
-// Inclusion des informations bancaires
-$page_ajout_participant = true;
-require_once('includes/entete_infos_bancaires.php');
+// Inclusion des entêtes
+require_once('includes/entetes.php');
 
 /** Validation des informations du formulaire */
 
 if (isset($_POST['ajouter_participant'])) {
 
     /** Traitement des informations textuelles */
-
     require_once('includes/validation_infos_generales.php');
 
     /** Traitement du ou des fichier(s) */

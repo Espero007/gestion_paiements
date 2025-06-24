@@ -741,7 +741,7 @@
 
                                     <!-- Titre -->
 
-                                    <!-- <div class="mb-2 row">
+                                    <div class="mb-2 row">
                                         <label for="role" class="col-form-label col-sm-3">Titre</label>
                                         <div class="col-sm-9">
 
@@ -778,7 +778,7 @@
                                                 <div id="roleAide" class="form-text"><?php echo $erreurs["role"][0] ?></div>
                                             <?php } ?>
                                         </div>
-                                    </div> -->
+                                    </div>
                                 </fieldset>
                                 <br>
 

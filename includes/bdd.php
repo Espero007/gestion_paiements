@@ -102,7 +102,7 @@ try {
         matricule_ifu VARCHAR(100) UNIQUE NOT NULL,
         date_naissance DATE NOT NULL,
         lieu_naissance VARCHAR(100) NOT NULL,
-        id_diplome INT NOT NULL
+        diplome_le_plus_eleve VARCHAR(100) NOT NULL
         );
 
         CREATE TABLE IF NOT EXISTS participations
@@ -111,7 +111,9 @@ try {
         id_participant INT NOT NULL,
         id_activite INT NOT NULL,
         id_titre INT NOT NULL,
-        nombre_jours INT NOT NULL,
+        id_diplome INT NOT NULL,
+        id_compte_bancaire INT NOT NULL,
+        nombre_jours INT NULL,
         nombre_taches INT NULL
         );
 

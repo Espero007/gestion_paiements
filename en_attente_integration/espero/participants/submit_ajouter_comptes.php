@@ -21,7 +21,7 @@ if (!isset($_GET['id_participant'])) {
 } else {
     // Nous avons une valeur
 
-    if(valider_id_participant($_GET['id_participant'], $bdd, $current_url)){
+    if(valider_id('get', 'id_participant', $bdd)){
         // id valide
         $stmt = "SELECT matricule_ifu FROM participants WHERE id_participant=".$_GET['id_participant'];
         $resultat = $bdd->query($stmt);
@@ -37,30 +37,30 @@ if (!isset($_GET['id_participant'])) {
     
 
     // On vérifie si c'est bien un nombre
-    $id_participant = intval($_GET['id_participant']);
-    if ($id_participant == 0) {
-        // C'est une chaîne de caractères que j'ai reçue
-        redirigerVersPageErreur(404, $current_url);
-    } else {
-        // On vérifie si l'id que j'ai est dans la base de données
+    // $id_participant = intval($_GET['id_participant']);
+    // if ($id_participant == 0) {
+    //     // C'est une chaîne de caractères que j'ai reçue
+    //     redirigerVersPageErreur(404, $current_url);
+    // } else {
+    //     // On vérifie si l'id que j'ai est dans la base de données
 
-        $stmt = "SELECT matricule_ifu FROM participants WHERE id_participant=".$_GET['id_participant'];
-        $resultat = $bdd->query($stmt);
+    //     $stmt = "SELECT matricule_ifu FROM participants WHERE id_participant=".$_GET['id_participant'];
+    //     $resultat = $bdd->query($stmt);
 
-        if (!$resultat) {
-            // Une erreur s'est produite lors de la récupération
-            redirigerVersPageErreur(500, $current_url);
-        } else {
-            // On a pu récupérer la dernière ligne, on checke maintenant si elle correspond à l'id du participant que nous avons chez nous
-            if ($resultat->rowCount() == 0) {
-                redirigerVersPageErreur(404, $current_url);
-            }
+    //     if (!$resultat) {
+    //         // Une erreur s'est produite lors de la récupération
+    //         redirigerVersPageErreur(500, $current_url);
+    //     } else {
+    //         // On a pu récupérer la dernière ligne, on checke maintenant si elle correspond à l'id du participant que nous avons chez nous
+    //         if ($resultat->rowCount() == 0) {
+    //             redirigerVersPageErreur(404, $current_url);
+    //         }
 
-            $ligne = $resultat->fetch(PDO::FETCH_NUM);
-            $matricule_ifu = $ligne[0];
-        }
-        $resultat->closeCursor();
-    }
+    //         $ligne = $resultat->fetch(PDO::FETCH_NUM);
+    //         $matricule_ifu = $ligne[0];
+    //     }
+    //     $resultat->closeCursor();
+    // }
 }
 
 // Nous avons l'id du participant. On vérifie alors si on peut encore lui ajouter des comptes bancaires;

@@ -84,7 +84,7 @@ if ($recuperation_type_activite) {
             $common_fields = ['nom', 'description', 'centre', 'premier_responsable', 'organisateur', 'financier', 'niveaux_diplome', 'titres_associes', 'date_debut', 'date_fin'];
             foreach ($common_fields as $field) {
                 if (empty($data[$field])) {
-                    echo "Je suis ici";
+                    // echo "Je suis ici";
                     $errors[$field] = "Le " . str_replace('_', ' ', $field) . " est requis.";
                 }
             }
@@ -100,7 +100,7 @@ if ($recuperation_type_activite) {
             } else {
                 $fileTmpPath = $_FILES['note_generatrice']['tmp_name'];
                 $fileName = basename($_FILES['note_generatrice']['name']);
-                $uploadFileDir = creer_dossiers_upload(BASE_PATH . '/fichiers');
+                $uploadFileDir = creer_dossiers_upload();
                 $dest_path = $uploadFileDir . $fileName;
             }
 

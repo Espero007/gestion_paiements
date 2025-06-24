@@ -25,7 +25,6 @@ if (!$resultat) {
 
 $nbr_participants = $resultat->rowCount();
 $resultat->closeCursor();
-
 ?>
 
 <body id="page-top">

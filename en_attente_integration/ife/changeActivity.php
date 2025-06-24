@@ -34,7 +34,7 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 $activity_id = $_GET['id'];
 */
 
-$activity_id =1;
+$activity_id =13;
 
 // Récupérer les données de l'activité
 try {

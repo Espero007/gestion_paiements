@@ -11,32 +11,16 @@
 <body>
 
     <?php
-    // if(is_dir('build/assets')){
-    //     echo "Répertoire retrouvé ";
-    // }else{
-    //     echo "Répertoire non retrouvé";
-    // }
-
-    // echo getcwd();
-
-    // echo realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php');
-
-    // $fmt = datefmt_create(
-    //     'fr-FR',
-    //     IntlDateFormatter::FULL,
-    //     IntlDateFormatter::FULL,
-    //     'Africa/Lagos',
-    //     IntlDateFormatter::GREGORIAN,
-    // );
-
-    // echo $fmt->format(0);
+       ?>
+        <pre><?php var_dump($_SERVER);?></pre>
+       <?php
     ?>
 </body>
 
-<div class="container-md">
+<!-- <div class="container-md">
     <div class="alert alert-danger mt-4 text-center">
         Voici une information
     </div>
-</div>
+</div> -->
 
 </html>
