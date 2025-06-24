@@ -1,5 +1,5 @@
 <?php
-require_once('../../tcpdf/tcpdf.php');
+require_once('tcpdf/tcpdf.php');
 
 try {
     $pdo = new PDO('mysql:host=localhost;dbname=gestion_paiements;charset=utf8', 'root', '');
