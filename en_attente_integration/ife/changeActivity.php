@@ -16,7 +16,11 @@ catch (Exception $exception) {
     die('Erreur : ' . $exception->getMessage());
 }    */
 
-require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php'));
+require_once(__DIR__.'/../../includes/bdd.php');
+?>
+
+   <pre><?php var_dump($_SESSION); ?></pre> 
+    <?php
 
 /*
 $loggedUser = $_SESSION['loguser'] ?? null;
@@ -34,7 +38,7 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 $activity_id = $_GET['id'];
 */
 
-$activity_id =13;
+$activity_id =1;
 
 // Récupérer les données de l'activité
 try {
@@ -45,6 +49,10 @@ try {
     $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id, 'id_user' => $_SESSION['user_id']]);
     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
+    ?>
+
+   <pre><?php var_dump($activity); ?></pre> 
+    <?php
 
     /*
     if (!$activity) {

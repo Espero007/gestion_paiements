@@ -1,6 +1,6 @@
 <?php
 $titre = "Création d'une activité";
-require_once('includes/header.php');
+require_once(__DIR__.'/../includes/header.php');
 require_once('traitements/submit_creer_activite.php');
 
 ?>

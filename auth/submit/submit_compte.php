@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once("includes/bdd.php");
-require_once("includes/constantes_utilitaires.php");
+require_once(__DIR__.'/../../includes/bdd.php');
+require_once(__DIR__.'/../../includes/constantes_utilitaires.php');
 
 // // FIchiers pour envoi de mail
 // require_once('PHPMailer/autoload.php');
@@ -40,7 +40,6 @@ if (isset($_POST['inscription'])) {
         // Pas d'erreurs
 
         $token = bin2hex(random_bytes(16)); // token de vérification
-
         $stmt = $bdd->prepare("INSERT INTO connexion(nom,prenoms,email,password,token_verification) VALUES (:val1,:val2,:val3,:val4,:val5)");
 
         $resultat = $stmt->execute([
@@ -87,6 +86,7 @@ if (isset($_POST['inscription'])) {
             // Insertion réussie
             // $_SESSION['inscription_reussie'] = true;
             header('location:connexion.php');
+            exit;
         }
     }
 }

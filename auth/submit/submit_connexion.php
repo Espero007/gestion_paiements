@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once('includes/bdd.php');
-require_once('includes/constantes_utilitaires.php');
+require_once(__DIR__.'/../../includes/bdd.php');
+require_once(__DIR__.'/../../includes/constantes_utilitaires.php');
 
 $_SESSION['current_url'] = obtenirURLcourant();
 
