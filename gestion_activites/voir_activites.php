@@ -1,7 +1,7 @@
 <?php
 $section = 'Activités';
-$titre = "Liste des activités";
-require_once('includes/header.php');
+$titre_page = "Liste des activités";
+require_once(__DIR__.'/../includes/header.php');
 
 $stmt = 'SELECT id, nom, description, centre FROM activites ORDER BY id DESC';
 $resultat = $bdd->query($stmt);
@@ -17,7 +17,6 @@ if (!$resultat) {
         while ($ligne = $resultat->fetch(PDO::FETCH_ASSOC)) {
             $activites[] = $ligne;
         }
-
 
         foreach ($activites as $index => $activite) {
 
@@ -52,7 +51,7 @@ $resultat->closeCursor();
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once('includes/sidebar.php') ?>
+        <?php require_once(__DIR__.'/../includes/sidebar.php') ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -62,7 +61,7 @@ $resultat->closeCursor();
             <div id="content">
 
                 <!-- Topbar -->
-                <?php require_once('includes/topbar.php') ?>
+                <?php require_once(__DIR__.'/../includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -76,9 +75,7 @@ $resultat->closeCursor();
                         <!-- Page Heading -->
                         <h1 class="h4 mb-4 text-gray-800">Activités / <strong>Vos activités</strong></h1>
                         <p class="mt-2">Ici vous avez accès à toutes les activités que vous avez créées. (Cliquez <a href="creer_activite.php">ici</a> pour en créer une autre)</p>
-
                         <hr>
-
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Liste des activités</h6>
@@ -166,7 +163,7 @@ $resultat->closeCursor();
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once('includes/footer.php') ?>
+            <?php require_once(__DIR__.'/../includes/footer.php') ?>
             <!-- End of Footer -->
 
         </div>
@@ -181,8 +178,8 @@ $resultat->closeCursor();
     </a>
 
     <!-- Logout Modal-->
-    <?php require_once('includes/logoutModal.php') ?>
-    <?php require_once('includes/scripts.php') ?>
+    <?php require_once(__DIR__.'/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__.'/../includes/scripts.php') ?>
 
     <!-- Page level plugins -->
     <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>

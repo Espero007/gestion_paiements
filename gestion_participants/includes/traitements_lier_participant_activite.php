@@ -7,27 +7,46 @@ if (!isset($_GET['id_participant']) && !isset($_GET['id_activite'])) {
     exit;
 }
 
+// Quelques booléens
+$aucune_activite_1 = false; // pas d'activités en bdd
+$aucune_activite_2 = false; // pas d'activités non associés au participant
+
 if (isset($_GET['id_participant']) && !isset($_GET['id_activite'])) {
     //Participant vers activité
     $sens = 0;
 
     // Assurons-nous que l'id du participant est valide
     if (valider_id('get', 'id_participant', $bdd, 'participants')) {
-        // J'ai besoin des activités auxquelles le participant n'est pas encore associé
         $id_participant = $_GET['id_participant'];
 
-        $stmt = $bdd->prepare('
-        SELECT id, nom, date_debut, date_fin, description
-        FROM activites
-        WHERE id_user =' . $_SESSION['user_id'] . '
-        AND id NOT IN (SELECT id_activite FROM participations WHERE id_participant=' . $id_participant . ')');
-        $stmt->execute();
-        $activites = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // On vérifie s'il y a des activités en bdd
+        $stmt = $bdd->query('SELECT * FROM activites WHERE id_user=' . $_SESSION['user_id']);
+        if($stmt->rowCount() == 0){
+            $aucune_activite_1 = true;
+        }else{
+            // J'ai besoin des activités auxquelles le participant n'est pas encore associé
+
+            $stmt = $bdd->prepare('
+            SELECT id, nom, date_debut, date_fin, description
+            FROM activites
+            WHERE id_user =' . $_SESSION['user_id'] . '
+            AND id NOT IN (SELECT id_activite FROM participations WHERE id_participant=' . $id_participant . ')');
+            $stmt->execute();
+            $activites = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if(count($activites) == 0){
+                $aucune_activite_2 = true; // Il n'y a plus d'activités auxquelles le participant ne soit pas associé
+            }
+        }
+       
     } else {
         header('location:voir_participants.php');
         exit;
     }
 }
+
+$aucun_participant_1 = false; // pas de participants en bdd
+$aucun_participant_2 = false; // pas de participants non associés à l'activité
 
 if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
     // Activité vers participant
@@ -36,14 +55,26 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
     if (valider_id('get', 'id_activite', $bdd, 'activites')) {
         $id_activite = $_GET['id_activite'];
 
-        // J'ai besoin des participants qui ne sont pas encore associés à l'activité
-        $stmt = $bdd->prepare('
-        SELECT id_participant, nom, prenoms, matricule_ifu
-        FROM participants
-        WHERE id_user =' . $_SESSION['user_id'] . '
-        AND id_participant NOT IN (SELECT id_participant FROM participations WHERE id_activite=' . $id_activite . ')');
-        $stmt->execute();
-        $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Je dois tout d'abord vérifier qu'il y a des participants
+        $stmt= $bdd->query('SELECT * FROM participants WHERE id_user='.$_SESSION['user_id']);
+        if($stmt->rowCount() == 0){
+            // Pas de participants en bdd
+            $aucun_participant_1 = true;
+        }else{
+            // J'ai besoin des participants qui ne sont pas encore associés à l'activité
+            $stmt = $bdd->prepare('
+            SELECT id_participant, nom, prenoms, matricule_ifu
+            FROM participants
+            WHERE id_user =' . $_SESSION['user_id'] . '
+            AND id_participant NOT IN (SELECT id_participant FROM participations WHERE id_activite=' . $id_activite . ')');
+            $stmt->execute();
+            $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (count($participants) == 0) {
+                $aucun_participant_2 = true;
+            }
+        }
+        
     } else {
         header('location:voir_activites.php');
         exit;

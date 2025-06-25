@@ -113,7 +113,7 @@ require_once('traitements/gerer_activite.php');
                             <!-- Boutons d'action -->
                             <div class="mt-4">
                                 <a href="modifier_infos.php?id=<?= $activite['id'] ?>" class="btn btn-primary mr-2">Modifier</a>
-                                <a href="#" class="btn btn-outline-primary mr-2">Associer des participants</a>
+                                <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="btn btn-outline-primary mr-2">Associer des participants</a>
 
                                 <!-- Autres options -->
 

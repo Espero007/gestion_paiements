@@ -90,15 +90,6 @@ require_once('traitements/submit_creer_activite.php');
                                     <div class="card-body">
                                         <!-- Messages d'erreur divers -->
 
-                                        <!-- Le formulaire est soumis un trop grand nombre de fois dans un intervalle de temps de moins de 10s -->
-                                        <?php // if (isset($errors['duplicate'])) : 
-                                        ?>
-                                        <!-- <div class="alert alert-danger">
-                                                <strong>Erreur :</strong> <?php //htmlspecialchars($errors['database']) 
-                                                                            ?>
-                                            </div> -->
-                                        <?php //endif; 
-                                        ?>
                                         <?php if ($success) : ?>
                                             <div class="alert alert-success alert-dismissible">
                                                 Votre activité a été enregistrée avec succès ! Pensez à y associer des participants (lien vers l'association des participants à l'activité).

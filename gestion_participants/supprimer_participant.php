@@ -51,4 +51,9 @@ if (!valider_id('get', 'id', $bdd, 'participants')) {
     // Je supprime les lignes dans la table participations
     $stmt = "DELETE FROM participations WHERE id_participant=$id_participant";
     $bdd->exec($stmt);
+
+    // Je redirige vers la page des participants avec le message de succès
+    $_SESSION['suppression_ok'] = true;
+    header('location:voir_participants.php');
+    exit;
 }

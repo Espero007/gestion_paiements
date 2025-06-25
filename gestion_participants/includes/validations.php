@@ -197,6 +197,7 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
         if (!array_key_exists($fichier, $_FILES)) {
             // Le fichier est absent
             // redirigerVersPageErreur(404, $current_url);
+            // Ici pas besoin de mettre un message, ce cas est aussi pris en compte dans $erreursUploadFichier
         } else {
             // Le fichier est présent
             $infos_fichier = $_FILES[$fichier];

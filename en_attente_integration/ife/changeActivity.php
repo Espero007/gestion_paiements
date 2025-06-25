@@ -150,6 +150,7 @@ unset($_SESSION['success_data']);
             </ul>
         </div>
     <?php endif; ?>
+
     <?php if (isset($errors['database'])): ?>
         <div class="alert alert-danger">
             <strong>Erreur :</strong> <?= htmlspecialchars($errors['database']) ?>
@@ -160,6 +161,7 @@ unset($_SESSION['success_data']);
             <strong>Erreur :</strong> <?= htmlspecialchars($errors['duplicate']) ?>
         </div>
     <?php endif; ?>
+    
     <div class="container">
         <form method="POST" enctype="multipart/form-data" id="activityForm" action="submitchangeActivity.php">
             <input type="hidden" name="form_submitted" value="1">
