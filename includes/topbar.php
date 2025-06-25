@@ -52,9 +52,9 @@
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"> <?php echo $_SESSION['nom']." ".$_SESSION['prenoms'] ?></span>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"> <?php echo $_SESSION['nom'] . " " . $_SESSION['prenoms'] ?></span>
                 <img class="img-profile rounded-circle"
-                    src="/assets/img/undraw_profile.svg">
+                    src="<?= (!empty($_SESSION['photo_profil'])) ? '/photos_profil/' . $_SESSION['photo_profil'] : '/assets/img/undraw_profile.svg' ?>" style="aspect-ratio: 1;">
             </a>
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"

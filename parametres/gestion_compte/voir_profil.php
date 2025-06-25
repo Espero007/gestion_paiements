@@ -5,11 +5,17 @@ require_once(__DIR__ . '/../../includes/header.php');
 require_once('traitements/voir_profil.php');
 
 // Récupération des informations de l'utilisateur
-$stmt = $bdd->query('SELECT nom, prenoms, email FROM connexion WHERE user_id=' . $_SESSION['user_id']);
+$stmt = $bdd->query('SELECT nom, prenoms, email, photo_profil FROM connexion WHERE user_id=' . $_SESSION['user_id']);
 $utilisateur = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $utilisateur = $utilisateur[0];
-
 ?>
+
+<style>
+    .card-header {
+        background-color: transparent;
+        font-weight: 700;
+    }
+</style>
 
 <body id="page-top">
 
@@ -36,27 +42,41 @@ $utilisateur = $utilisateur[0];
                     <div>
                         <h1 class="h4 mb-4 text-gray-800">Paramètres / <strong>Mon compte</strong></h1>
                         <div class="card mb-4">
-                            <h6 class="h6 card-header custom-card-header">Détails du profil</h5>
+                            <h6 class="h6 card-header">Détails du profil</h5>
                                 <!-- Informations du compte -->
                                 <div class="card-body">
+
+                                    <!-- Messages divers -->
+                                    <?php if (isset($photo_modifie)) : ?>
+                                        <div class="alert alert-success alert-dismissible text-center">
+                                            Votre photo a été modifiée avec succès !
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                        </div>
+                                    <?php endif; ?>
+
                                     <div class="d-flex align-items-start align-items-sm-center gap-4">
-                                        <img src="/assets/img/undraw_profile.svg" alt="photo-profil" class="d-block rounded" height="100" width="100">
+                                        <img src=" <?= (!empty($utilisateur['photo_profil'])) ? '/photos_profil/'.$utilisateur['photo_profil'] : '/assets/img/undraw_profile.svg' ?>" alt="photo-profil" class="d-block rounded" height="100" width="100" style="aspect-ratio: 1;">
                                         <div class="button-wrapper">
                                             <div class="mb-4">
                                                 <div>
-                                                    <label for="upload" class="btn btn-primary mr-2" tabindex="0">
-                                                        <span class="d-none d-sm-block">Choisir une nouvelle photo</span>
-                                                        <i class="bx bx-upload d-block d-sm-none"></i>
-                                                        <input type="file" name="choisir_photo" id="upload" class="account-file-input" hidden accept='image/png, image/jpeg, image/jpg'>
-                                                        <button type="button" class="btn btn-outline-secondary account-image-reset">
+                                                    <form action="" method="post" enctype="multipart/form-data">
+                                                        <label for="upload" class="btn btn-primary mr-2 mb-0" tabindex="0">
+                                                            <span class="d-none d-sm-block">Choisir une nouvelle photo</span>
+                                                            <i class="bx bx-upload d-block d-sm-none"></i>
+                                                            <input type="file" name="photo" id="upload" class="account-file-input" hidden accept='image/png, image/jpeg, image/jpg'>
+                                                        </label>
+                                                        <button type="submit" class="btn btn-outline-secondary account-image-reset" name='choisir_photo'>
                                                             <i class="bx bx-reset d-block d-sm-none"></i>
-                                                            <span class="d-none d-sm-block">Réinitialiser</span>
+                                                            <span class="d-none d-sm-block">Changer</span>
                                                         </button>
-                                                    </label>
+                                                    </form>
                                                 </div>
-                                                <p class="text-danger"><small>Bonjour</small></p>
+                                                <?php if (isset($erreurs['photo'])) : ?>
+                                                    <p class="text-danger"><small><?= $erreurs['photo'][0] ?></small></p>
+                                                <?php endif; ?>
                                             </div>
                                             <p class="text-muted mb-0">JPG, JPEG ou PNG autorisés (Taille maximale de 2Mo) </p>
+                                            <input type="hidden" name="MAX_FILE_SIZE" value="<?= $taille_image; ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -89,7 +109,7 @@ $utilisateur = $utilisateur[0];
 
                         <!-- Suppresion compte -->
                         <div class="card">
-                            <h5 class="card-header h6 card-header custom-card-header">Suppression du compte</h5>
+                            <h5 class="card-header h6">Suppression du compte</h5>
                             <div class="card-body">
                                 <div class="mb-3 col-12 mb-0">
                                     <div class="alert alert-warning">

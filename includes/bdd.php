@@ -65,6 +65,7 @@ try {
         prenoms VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
         password VARCHAR(100) NOT NULL,
+        photo_profil VARCHAR(500) NULL,
         token_verification VARCHAR(255) NOT NULL,
         est_verifie BOOLEAN DEFAULT FALSE
         );
