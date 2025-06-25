@@ -17,10 +17,6 @@ catch (Exception $exception) {
 }    */
 
 require_once(__DIR__.'/../../includes/bdd.php');
-?>
-
-   <pre><?php var_dump($_SESSION); ?></pre> 
-    <?php
 
 /*
 $loggedUser = $_SESSION['loguser'] ?? null;
