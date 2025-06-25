@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-require_once('includes/bdd.php');
+require_once(__DIR__.'/../../includes/bdd.php');
 
 $email = $_GET['email'] ?? '';
 $token = $_GET['token'] ?? '';
@@ -33,6 +33,6 @@ if($utilisateur){
     header('location:/index.php');
     exit;
 }else{
-    header('location:../connexion.php');
-    exit;
+    // header('location:../connexion.php');
+    // exit;
 }

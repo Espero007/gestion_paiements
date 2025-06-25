@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 /*
 const MYSQL_HOST = 'localhost' ;
 const MYSQL_PORT = 3306;
@@ -25,13 +27,13 @@ if (!$loggedUser) {
 }
 */
 
-require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php'));
+require_once(__DIR__.'/../../includes/bdd.php');
 
 
 $errors = [];
 $success = false;
-//$id_user = $loggedUser['user_id'];
-$id_user = 2;
+$id_user = $_SESSION['user_id'];
+// $id_user = 1;
 $diplomes = [];
 $titres = [];
 $forfaires = [];
@@ -45,7 +47,7 @@ if (!isset($_POST['activity_id']) || !filter_var($_POST['activity_id'], FILTER_V
 $activity_id = $_POST['activity_id'];
 */
 
-$activity_id = 2;
+$activity_id = 1;
 
 // Vérifier si l'activité existe et appartient à l'utilisateur
 try {
@@ -53,6 +55,11 @@ try {
     $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id, 'id_user' => $id_user]);
     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
+
+     ?>
+
+   <pre><?php var_dump($activity); ?></pre> 
+    <?php
 
     /*
     if (!$activity) {
@@ -269,8 +276,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                 $stmt->execute([
                     'nom' => $data['nom'],
                     'description' => $data['description'],
-                    'periode_debut' => $data['date_debut'],
-                    'periode_fin' => $data['date_fin'],
+                    'date_debut' => $data['date_debut'],
+                    'date_fin' => $data['date_fin'],
                     'centre' => $data['centre'],
                     'premier_responsable' => $data['premier_responsable'],
                     'titre_responsable' => $data['titre_responsable'] ?: null,
@@ -292,7 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                 $stmt->execute(['id_activite' => $activity_id]);
 
                 // Insérer les nouveaux diplômes
-                $sql_diplome = 'INSERT INTO diplomes(id_activite, nom) VALUES (:id_activite, :nom)';
+                $sql_diplome = 'INSERT INTO diplomes(id_activite, noms) VALUES (:id_activite, :nom)';
                 $stmt_diplome = $bdd->prepare($sql_diplome);
                 foreach ($diplomes as $diplome) {
                     $stmt_diplome->execute([
@@ -340,6 +347,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                 header('Location: changeActivity.php?id=' . urlencode($activity_id) . '&success=1');
                 exit;
             } catch (PDOException $e) {
+                die('Erreur : ' . $e->getMessage());
                 $errors['database'] = "Une erreur s'est produite. Veuillez réessayer.";
                 // Supprimer le nouveau fichier si l'insertion échoue
                 if (isset($dest_path) && file_exists($dest_path)) {

@@ -19,9 +19,8 @@ catch (Exception $exception) {
 }   
 */
 
-realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php');
 
-require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php'));
+require_once(__DIR__.'/../../includes/bdd.php');
 
 /*
 $loggedUser = $_SESSION['loguser'] ?? null;

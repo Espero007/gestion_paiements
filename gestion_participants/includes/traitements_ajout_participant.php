@@ -24,7 +24,7 @@ if (isset($_POST['ajouter_participant'])) {
 
         // Participants
 
-        $stmt = $bdd->prepare("INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome) VALUES (:val1, :val2, :val3, :val4, :val5, :val6, :val7)");
+        $stmt = $bdd->prepare("INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome_le_plus_eleve) VALUES (:val1, :val2, :val3, :val4, :val5, :val6, :val7)");
 
         $stmt->bindParam(':val1', $_SESSION['user_id']);
         $stmt->bindParam(':val2', $_POST['nom']);

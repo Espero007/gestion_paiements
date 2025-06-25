@@ -1,8 +1,8 @@
 <?php
-
-$titre = "Ajout d'un participant";
-require_once('includes/header.php');
-require_once(__DIR__ . '/includes/traitements_ajout_participant.php');
+$section = 'Participants';
+$titre_page = "Ajout d'un participant";
+require_once(__DIR__.'/../includes/header.php');
+require_once('includes/traitements_ajout_participant.php');
 ?>
 
 <body id="page-top">
@@ -11,7 +11,7 @@ require_once(__DIR__ . '/includes/traitements_ajout_participant.php');
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once('includes/sidebar.php') ?>
+        <?php require_once(__DIR__.'/../includes/sidebar.php') ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -21,7 +21,7 @@ require_once(__DIR__ . '/includes/traitements_ajout_participant.php');
             <div id="content">
 
                 <!-- Topbar -->
-                <?php require_once('includes/topbar.php') ?>
+                <?php require_once(__DIR__.'/../includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -57,7 +57,7 @@ require_once(__DIR__ . '/includes/traitements_ajout_participant.php');
                                     <!-- Formulaire : Début -->
 
                                     <form action="" method="post" enctype="multipart/form-data">
-                                        <?php require_once(__DIR__ . '/includes/fieldsets.php') ?>
+                                        <?php require_once('includes/fieldsets.php') ?>
                                         <div class="mt-4">
                                             <button type="submit" name="ajouter_participant" class="btn btn-primary mr-2">Ajouter le participant</button>
                                             <a href="voir_participants.php" class="btn btn-outline-primary">Annuler</a>
@@ -76,7 +76,7 @@ require_once(__DIR__ . '/includes/traitements_ajout_participant.php');
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once('includes/footer.php') ?>
+            <?php require_once(__DIR__.'/../includes/footer.php') ?>
             <!-- End of Footer -->
         </div>
         <!-- End of Content Wrapper -->
@@ -89,8 +89,8 @@ require_once(__DIR__ . '/includes/traitements_ajout_participant.php');
     </a>
 
     <!-- Logout Modal-->
-    <?php require_once('includes/logoutModal.php') ?>
-    <?php require_once('includes/scripts.php') ?>
+    <?php require_once(__DIR__.'/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__.'/../includes/scripts.php') ?>
 </body>
 
 </html>

@@ -1,6 +1,7 @@
 <?php
-$titre = "Liste des participants";
-require_once('includes/header.php');
+$section = 'Participants';
+$titre_page = "Liste des participants";
+require_once(__DIR__ . '/../includes/header.php');
 
 $stmt = 'SELECT id_participant, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance FROM participants WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id_participant';
 $resultat = $bdd->query($stmt);
@@ -14,7 +15,6 @@ if (!$resultat) {
     }
 }
 $resultat->closeCursor();
-
 // $participants = [];
 ?>
 
@@ -27,7 +27,7 @@ $resultat->closeCursor();
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once('includes/sidebar.php') ?>
+        <?php require_once(__DIR__ . '/../includes/sidebar.php') ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -36,7 +36,7 @@ $resultat->closeCursor();
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
-                <?php require_once('includes/topbar.php') ?>
+                <?php require_once(__DIR__ . '/../includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -47,7 +47,7 @@ $resultat->closeCursor();
 
                         <!-- Page Heading -->
                         <h1 class="h4 mb-4 text-gray-800">Participants / <strong>Vos participants</strong></h1>
-                        <p class="mt-2">Ici vous avez la liste de tous les participants que vous avez déjà ajouter. A partir des options disponibles vous pouvez modifier leurs informations, en supprimer, les associer à des activités, etc...</p>
+                        <p class="mt-2">Ici vous avez la liste de tous les participants que vous avez déjà ajouter. A partir des options disponibles vous pouvez modifier leurs informations, les supprimer, les associer à des activités, et bien plus.</p>
 
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
@@ -58,20 +58,38 @@ $resultat->closeCursor();
 
                                 <!-- Ajout de comptes -->
                                 <?php if (isset($_SESSION['comptes_ajoutes'])) : ?>
-                                    <div class="alert alert-success mt-2">Le(s) compte(s) bancaire(s) a(ont) été ajouté(s) avec succès !</div>
+                                    <div class="alert alert-success mt-2 text-center alert-dismissible">
+                                        Le(s) compte(s) bancaire(s) a(ont) été ajouté(s) avec succès !
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                    </div>
                                     <?php unset($_SESSION['comptes_ajoutes']); ?>
                                 <?php endif; ?>
 
                                 <!-- Liaison participant-activité réussie -->
                                 <?php if (isset($_SESSION['liaison_reussie'])) : ?>
-                                    <div class="alert alert-success mt-2">La liaison a été faite avec succès !</div>
+                                    <div class="alert alert-success mt-2 text-cente alert-dismissibler">
+                                        La liaison a été faite avec succès !
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                    </div>
                                     <?php unset($_SESSION['liaison_reussie']); ?>
                                 <?php endif; ?>
 
                                 <!-- Liaison participant-activité non autorisée -->
                                 <?php if (isset($_SESSION['liaison_non_autorisee'])) : ?>
-                                    <div class="alert alert-danger mt-2">Ce participant a déjà été lié à cette activité !</div>
+                                    <div class="alert alert-danger mt-2 text-center alert-dismissible">
+                                        Ce participant a déjà été lié à cette activité !
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                    </div>
                                     <?php unset($_SESSION['liaison_non_autorisee']); ?>
+                                <?php endif; ?>
+
+                                <!-- Participant supprimé avec succès -->
+                                <?php if (isset($_SESSION['suppression_ok'])) : ?>
+                                    <div class="alert alert-success mt-2 text-center alert-dismissible">
+                                        Le participant a été supprimé avec succès !
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                    </div>
+                                    <?php unset($_SESSION['suppression_ok']); ?>
                                 <?php endif; ?>
 
                                 <form action="">
@@ -131,8 +149,7 @@ $resultat->closeCursor();
                                                                         <hr class="dropdown-divider">
                                                                     </li>
                                                                     <li>
-
-                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item"></i>Supprimer</a>
+                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item del-btn" id='<?= $participant['id_participant'] ?>' data-toggle="modal" data-target="#deletionModal"></i>Supprimer</a>
                                                                     </li>
                                                                 </ul>
                                                             </div>
@@ -165,7 +182,7 @@ $resultat->closeCursor();
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once('includes/footer.php') ?>
+            <?php require_once(__DIR__ . '/../includes/footer.php') ?>
             <!-- End of Footer -->
 
         </div>
@@ -179,9 +196,29 @@ $resultat->closeCursor();
         <i class="fas fa-angle-up"></i>
     </a>
 
+    <!-- Suppression Modal -->
+    <div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="deletionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Êtes-vous sûr(e) de vouloir continuer ?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">En appuyant sur "Supprimer" vous ne pourrez plus faire marche arrière.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Annuler</button>
+                    <a class="btn btn-danger" href="#" id='deletionModalBtn'>Supprimer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Logout Modal-->
-    <?php require_once('includes/logoutModal.php') ?>
-    <?php require_once('includes/scripts.php') ?>
+    <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
 
     <!-- Page level plugins -->
     <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
@@ -190,6 +227,18 @@ $resultat->closeCursor();
     <!-- Page level custom scripts -->
     <script src="/assets/js/demo/datatables-demo.js"></script>
     <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const deleteBtns = document.querySelectorAll('.del-btn'); // boutons de suppression des participants
+        const deletionModalBtn = document.getElementById('deletionModalBtn');
+
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id_participant = btn.id;
+                deletionModalBtn.href = '/gestion_participants/supprimer_participant.php?id=' + id_participant;
+            })
+        })
+    </script>
 </body>
 
 </html>

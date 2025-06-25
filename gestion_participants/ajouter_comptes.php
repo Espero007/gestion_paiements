@@ -56,16 +56,16 @@ require_once('includes/traitements_ajout_comptes.php');
                             <?php if ($recuperer_nbr_comptes_bancaires) : ?>
                                 <!-- Le quota bancaire n'est pas atteint donc on se retrouve dans deux, soit on prend le nombre de comptes bancaires intéressants soit on affiche le formulaire d'ajout des informations du/des compte(s) bancaires  -->
 
-                                <div class="col-6">
+                                <div class="col-12">
                                     <div class="card shadow mb-4">
                                         <div class="card-header py-3">
                                             <h6 class="m-0 font-weight-bold text-primary">Formulaire d'ajout</h6>
                                         </div>
                                         <div class="card-body">
                                             <form action="" method="get">
-                                                <div class="mb-2">
-                                                    <label for="nombre_comptes_bancaires">Nombre de comptes à ajouter</label>
-                                                    <div>
+                                                <div class="mb-2 row align-items-center">
+                                                    <label for="nombre_comptes_bancaires" class="col-form-label col-sm-4">Nombre de comptes à ajouter</label>
+                                                    <div class="col-sm-8">
                                                         <input type="hidden" name="id_participant" value="<?= $id_participant ?>">
                                                         <input type="number" class="form-control" id="nombre_comptes_bancaires" name="nombre_comptes_bancaires" placeholder="Indiquez le nombre" max="<?php echo $nombre_comptes_bancaires_permis; ?>" min="1" required>
                                                     </div>

@@ -1,4 +1,7 @@
-<?php require_once(__DIR__ . "/submit/submit_connexion.php");
+<?php
+require_once(__DIR__ . '/../includes/bdd.php');
+require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
+require_once("submit/submit_connexion.php");
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +64,7 @@
                                     }
                                     ?>
                                     <?php if (isset($email_non_valide)) : ?>
-                                        <div class="alert alert-info text-center">Votre email n'a pas encore été confirmé. Veuillez consulter votre boite mail ou <a href="<?= 'renvoyerLienConfirmation.php?email='.$_POST['email'] ?>">renvoyer un lien de confirmation</a> si vous n'avez pas reçu de lien.</div>
+                                        <div class="alert alert-info text-center">Votre email n'a pas encore été confirmé. Veuillez consulter votre boite mail ou <a href="<?= 'renvoyerLienConfirmation.php?email=' . $_POST['email'] ?>">renvoyer un lien de confirmation</a> si vous n'avez pas reçu de lien.</div>
                                     <?php endif; ?>
 
                                     <div class="text-center">

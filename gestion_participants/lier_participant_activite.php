@@ -1,6 +1,7 @@
 <?php
-$titre = 'Liaison Participant - Activité';
-require_once('includes/header.php');
+$section = 'Participants';
+$titre_page = 'Liaison Participant - Activité';
+require_once(__DIR__ . '/../includes/header.php');
 require_once('includes/traitements_lier_participant_activite.php');
 ?>
 
@@ -10,7 +11,7 @@ require_once('includes/traitements_lier_participant_activite.php');
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once('includes/sidebar.php') ?>
+        <?php require_once(__DIR__ . '/../includes/sidebar.php') ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -19,7 +20,7 @@ require_once('includes/traitements_lier_participant_activite.php');
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
-                <?php require_once('includes/topbar.php') ?>
+                <?php require_once(__DIR__ . '/../includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -30,7 +31,7 @@ require_once('includes/traitements_lier_participant_activite.php');
 
                     <div class="card shadow mb-4">
                         <div class="card-header">
-                            <h6 class="text-primary font-weight-bold">
+                            <h6 class="font-weight-bold text-primary">
                                 <?= (isset($sens)) ? 'Etape 1' : 'Etape 2' ?>
                             </h6>
                         </div>
@@ -39,61 +40,75 @@ require_once('includes/traitements_lier_participant_activite.php');
                             <?php if (isset($sens)) : ?>
                                 <!-- On est encore à l'étape 1 -->
                                 <p>Sélectionnez <?= ($sens == 0) ? 'l\'activité.' : 'le participant.' ?></p>
+                                <?= ($aucun_participant_1 || $aucun_participant_2 || $aucune_activite_1 || $aucune_activite_2) ? '<hr>' : '' ?>
                                 <form action="" method="get">
                                     <input type="hidden" name="<?= ($sens == 0) ? 'id_participant' : 'id_activite' ?>" value="<?= ($sens == 0) ? $id_participant : $id_activite ?>">
 
                                     <div class="table">
                                         <table class="table">
                                             <?php if ($sens == 0) : ?>
-                                                <!-- Participant vers activité -->
-                                                <thead>
-                                                    <tr>
-                                                        <th>Choix</th>
-                                                        <th>Nom</th>
-                                                        <th>Période</th>
-                                                        <th>Descritption</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php foreach ($activites as $activite) : ?>
+                                                <?php if ($aucune_activite_1) : ?>
+                                                    <p>Il semble que vous ne disposez d'aucune activité ajoutée. <a href="/gestion_activites/creer_activite.php">Cliquez ici</a> pour créer de nouvelles activités auxquelles vous pourrez ensuite des participants. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                                                <?php elseif ($aucune_activite_2): ?>
+                                                    <p class="">Il semble que vous avez déjà associé à ce participant toutes les activités que vous avez créés. <a href="/gestion_activites/creer_activite.php">Cliquez ici</a> pour créer une nouvelle activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                                                <?php else: ?>
+                                                    <!-- Participant vers activité -->
+                                                    <thead>
                                                         <tr>
-                                                            <td><input type="checkbox" name="id_activite" value="<?= $activite['id'] ?>"></td>
-                                                            <td><?= htmlspecialchars($activite['nom']) ?></td>
-                                                            <td><?= htmlspecialchars(determinerPeriode($activite['date_debut'], $activite['date_fin'])) ?></td>
-                                                            <td><?= htmlspecialchars(couperTexte($activite['description'], 13, 100)) ?></td>
+                                                            <th>Choix</th>
+                                                            <th>Nom</th>
+                                                            <th>Période</th>
+                                                            <th>Descritption</th>
                                                         </tr>
-                                                    <?php endforeach; ?>
-                                                </tbody>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php foreach ($activites as $activite) : ?>
+                                                            <tr>
+                                                                <td><input type="checkbox" name="id_activite" value="<?= $activite['id'] ?>"></td>
+                                                                <td><?= htmlspecialchars($activite['nom']) ?></td>
+                                                                <td><?= htmlspecialchars(determinerPeriode($activite['date_debut'], $activite['date_fin'])) ?></td>
+                                                                <td><?= htmlspecialchars(couperTexte($activite['description'], 13, 100)) ?></td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                    </tbody>
+                                                <?php endif; ?>
                                             <?php elseif ($sens == 1): ?>
                                                 <!-- Activité vers participant -->
-                                                <thead>
-                                                    <tr>
-                                                        <th>Choix</th>
-                                                        <th>Nom</th>
-                                                        <th>Prénom(s)</th>
-                                                        <th>Matricule/IFU</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php foreach ($participants as $participant) : ?>
+                                                <?php if ($aucun_participant_1) : ?>
+                                                    <p>Il semble que vous ne disposez d'aucun participant ajouté./ <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter de nouveaux participants, ensuite vous pourrez les associer à l'activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                                                <?php elseif ($aucun_participant_2): ?>
+                                                    <p class="">Il semble que vous avez déjà associé à cette activité tous les participants que vous avez créés. <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter un nouveau participant, ensuite vous pourrez l'associer à l'activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                                                <?php else: ?>
+                                                    <thead>
                                                         <tr>
-                                                            <td><input type="checkbox" name="id_participant" value="<?= $participant['id_participant'] ?>"></td>
-                                                            <td><?= htmlspecialchars($participant['nom']) ?></td>
-                                                            <td><?= htmlspecialchars($participant['prenoms']) ?></td>
-                                                            <td><?= htmlspecialchars($participant['matricule_ifu']) ?></td>
+                                                            <th>Choix</th>
+                                                            <th>Nom</th>
+                                                            <th>Prénom(s)</th>
+                                                            <th>Matricule/IFU</th>
                                                         </tr>
-                                                    <?php endforeach; ?>
-                                                </tbody>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php foreach ($participants as $participant) : ?>
+                                                            <tr>
+                                                                <td><input type="checkbox" name="id_participant" value="<?= $participant['id_participant'] ?>"></td>
+                                                                <td><?= htmlspecialchars($participant['nom']) ?></td>
+                                                                <td><?= htmlspecialchars($participant['prenoms']) ?></td>
+                                                                <td><?= htmlspecialchars($participant['matricule_ifu']) ?></td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                    </tbody>
+                                                <?php endif; ?>
                                             <?php endif; ?>
                                         </table>
                                     </div>
 
                                     <!-- Boutons d'actions -->
-
-                                    <div class="mt-2">
-                                        <button type="submit" class="btn btn-primary mr-2" id="submitBtn1">Continuer</button>
-                                        <a href="gerer_participant.php?id=<?= $id_participant ?>" class="btn btn-outline-primary">Annuler</a>
-                                    </div>
+                                    <?php if (!$aucun_participant_1 && !$aucun_participant_2) : ?>
+                                        <div class="mt-2">
+                                            <button type="submit" class="btn btn-primary mr-2" id="submitBtn1">Continuer</button>
+                                            <a href="gerer_participant.php?id=<?= $id_participant ?>" class="btn btn-outline-primary">Annuler</a>
+                                        </div>
+                                    <?php endif; ?>
                                 </form>
                             <?php else: ?>
                                 <!-- Etape 2 -->
@@ -180,7 +195,7 @@ require_once('includes/traitements_lier_participant_activite.php');
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once('includes/footer.php') ?>
+            <?php require_once(__DIR__ . '/../includes/footer.php') ?>
             <!-- End of Footer -->
         </div>
         <!-- End of Content Wrapper -->
@@ -193,8 +208,8 @@ require_once('includes/traitements_lier_participant_activite.php');
     </a>
 
     <!-- Logout Modal-->
-    <?php require_once('includes/logoutModal.php') ?>
-    <?php require_once('includes/scripts.php') ?>
+    <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
 
     <script>
         let cbxes = document.querySelectorAll('input[type=checkbox]');

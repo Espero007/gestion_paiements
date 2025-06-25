@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once('includes/bdd.php');
-require_once('includes/constantes_utilitaires.php');
+require_once(__DIR__.'/../includes/bdd.php');
+require_once(__DIR__.'/../includes/constantes_utilitaires.php');
 
 $check_data = $bdd->prepare("SELECT email, token_verification FROM connexion WHERE email = :email AND est_verifie=0");
 $check_data->bindParam('email', $_GET['email']);

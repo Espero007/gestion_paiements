@@ -1,5 +1,5 @@
 <?php
-$titre = "Tableau de bord";
+$titre_page = "Tableau de bord";
 require_once('includes/header.php');
 
 // L'idéal serait ici que je récupère les trois derniers et non tout à vrai dire
@@ -428,8 +428,14 @@ $resultat->closeCursor();
                     <!-- </div> -->
 
                     <?php if (isset($nbr_activites) && $nbr_activites == 0) : ?>
-                        <p class="mt-2">Il semble que vous n'avez aucune activité à votre actif. Pensez à en ajouter !</p>
-                        <a href="/gestion_activites/creer_activite.php">Créer une activité</a>
+                        <div class="text-center">
+                            <p class="mt-2">Il semble que vous n'avez aucune activité à votre actif. Pensez à en ajouter ! Ou préférez-vous commencer par l'ajout de participants ?</p>
+                            <div>
+                                <a href="/gestion_activites/creer_activite.php" class="btn btn-outline-primary mr-2">Créer une activité</a>
+                                <a href="/gestion_participants/ajouter_participant.php" class="btn btn-outline-primary">Ajouter un participant</a>
+
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </div>
                 <!-- /.container-fluid -->

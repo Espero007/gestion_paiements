@@ -64,7 +64,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
 if (in_array('infos_bancaires', $elements_a_inclure)) {
 ?>
     <!-- Fieldset : Informations bancaires début -->
-    <fieldset class="mt-4
+    <fieldset class="
     <?php if (isset($page_ajout_participant)) {
         echo "mt-4";
     } ?>">

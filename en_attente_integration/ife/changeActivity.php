@@ -16,7 +16,7 @@ catch (Exception $exception) {
     die('Erreur : ' . $exception->getMessage());
 }    */
 
-require_once(realpath($_SERVER['DOCUMENT_ROOT'] . '/includes/bdd.php'));
+require_once(__DIR__.'/../../includes/bdd.php');
 
 /*
 $loggedUser = $_SESSION['loguser'] ?? null;
@@ -34,7 +34,9 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 $activity_id = $_GET['id'];
 */
 
-$activity_id =13;
+$activity_id =1;
+
+// $activity_id =1099;
 
 // Récupérer les données de l'activité
 try {
@@ -45,6 +47,10 @@ try {
     $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id, 'id_user' => $_SESSION['user_id']]);
     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
+    ?>
+
+   <pre><?php var_dump($activity); ?></pre> 
+    <?php
 
     /*
     if (!$activity) {
@@ -53,11 +59,11 @@ try {
     }*/
 
     // Récupérer les diplômes
-    $sql = 'SELECT nom FROM diplomes WHERE id_activite = :id';
+    $sql = 'SELECT noms FROM diplomes WHERE id_activite = :id';
     $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id]);
     $diplomes = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    $niveaux_diplome = implode(',', $diplomes);
+    $niveaux_diplome = $diplomes[0];
 
     // Récupérer les titres et indemnités
     $sql = 'SELECT nom, indemnite_forfaitaire FROM titres WHERE id_activite = :id';
@@ -140,6 +146,7 @@ unset($_SESSION['success_data']);
             </ul>
         </div>
     <?php endif; ?>
+
     <?php if (isset($errors['database'])): ?>
         <div class="alert alert-danger">
             <strong>Erreur :</strong> <?= htmlspecialchars($errors['database']) ?>
@@ -150,6 +157,7 @@ unset($_SESSION['success_data']);
             <strong>Erreur :</strong> <?= htmlspecialchars($errors['duplicate']) ?>
         </div>
     <?php endif; ?>
+    
     <div class="container">
         <form method="POST" enctype="multipart/form-data" id="activityForm" action="submitchangeActivity.php">
             <input type="hidden" name="form_submitted" value="1">
