@@ -32,7 +32,7 @@
                echo ' <div class="alert alert-success">'. htmlspecialchars($info).'</div>';
                unset($info);
             
-            }
+            }else { echo '';}
         ?>
 
         <div>

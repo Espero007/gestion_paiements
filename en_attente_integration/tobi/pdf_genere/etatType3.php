@@ -103,6 +103,7 @@ $html = '
     h2 { text-align: center; font-size: 14pt; }
     table { border-collapse: collapse; width: 100%; }
     td, th { border: 1px solid #000; padding: 5px; }
+    tr {font-size:8px; }
     
 </style>
 <table border="0">
@@ -122,8 +123,8 @@ $html = '
     <tr>
     <td style="border:none;"></td>
     <td style="text-align:left; border:none;">
-    <p> <b><span style="text-decoration:underline">  PERIODE: </span> DU '.formaterPeriode($debut,$fin) .' </b></p>
-    <p> <b><span style="text-decoration:underline"> CENTRE: </span> '. mb_strtoupper($centre) .'</b> </p>
+    <p> <b><u>PERIODE:</u> DU '.formaterPeriode($debut,$fin) .' </b></p>
+    <p> <b><u>CENTRE:</u> '. mb_strtoupper($centre) .'</b> </p>
     </td>
 </tr>
 </table>';
@@ -147,16 +148,16 @@ function startTable() {
     return '<table border="1" cellpadding="4" align="center">
         <thead>
             <tr  style="background-color:#eeeeee; font-size:7px; ">
-            <th width="6%">N°</th>
+            <th width="5%">N°</th>
             <th width="13%">Nom & Prénoms</th>
-            <th width="10%">Titre</th>
-            <th width="6%">Taux/Tâche</th>
-            <th width="6%">Nombre de Tâches</th>
-            <th width="8%">Frais Entretiens par jours</th>
+            <th width="9%">Titre</th>
+            <th width="6%">Taux/ Tâche</th>
+            <th width="7%">Nombre de Tâches</th>
+            <th width="9%">Frais Entretiens par jours</th>
             <th width="7%">Nombre de Jours</th>
-            <th width="7%">Indemnité forfaitaire</th>
-            <th width="9%">Montant</th>
-            <th width="9%">Banque</th>
+            <th width="9%">Indemnité forfaitaire</th>
+            <th width="8%">Montant</th>
+            <th width="8%">Banque</th>
             <th width="19%">RIB</th>
             </tr>
         </thead>
@@ -182,16 +183,16 @@ foreach ($data as $index => $row) {
     $montant = $row['montant'];
 
     $html .= '<tr>
-        <td width="6%">' . $i . '</td>
+        <td width="5%">' . $i . '</td>
         <td width="13%">' . htmlspecialchars($row['nom_participant']) . ' '.htmlspecialchars($row['prenoms']) .'</td>
-        <td width="10%">' . htmlspecialchars($row['titre_participant']) . '</td>
+        <td width="9%">' . htmlspecialchars($row['titre_participant']) . '</td>
         <td width="6%">' . number_format($row['taux_taches'], 2, ',', ' ') . '</td>
-        <td width="6%">' . (int)$row['nombre_taches'] . '</td>
-        <td width="8%">' . number_format($row['frais_deplacement_journalier'], 2, ',', ' ') . '</td>
+        <td width="7%">' . (int)$row['nombre_taches'] . '</td>
+        <td width="9%">' . number_format($row['frais_deplacement_journalier'], 2, ',', ' ') . '</td>
         <td width="7%">' . (int)$row['nombre_jours'] . '</td>
-        <td width="7%">' . number_format($indemnite, 2, ',', ' ') . '</td>
-        <td width="9%">' . number_format($montant, 2, ',', ' ') . '</td>
-        <td width="9%">' . htmlspecialchars($row['banque']) . '</td>
+        <td width="9%">' . number_format($indemnite, 2, ',', ' ') . '</td>
+        <td width="8%">' . number_format($montant, 2, ',', ' ') . '</td>
+        <td width="8%">' . htmlspecialchars($row['banque']) . '</td>
         <td width="19%">' . htmlspecialchars($row['rib']) . '</td>
     </tr>';
 
@@ -201,9 +202,9 @@ foreach ($data as $index => $row) {
     if ($isPageFull || $isLastLine) {
         // Total de la page
         $html .= '<tr>
-            <td colspan="8" ><strong>Total de cette page</strong></td>
-            <td><strong>' . number_format($pageTotal, 2, ',', ' ') . '</strong></td>
-            <td colspan="2"></td>
+            <td colspan="8" width="65%" ><strong>Total de cette page</strong></td>
+            <td width="8%"><strong>' . number_format($pageTotal, 2, ',', ' ') . '</strong></td>
+            <td colspan="2" width="27%"></td>
         </tr>';
 
         $cumulativeTotal += $pageTotal;
@@ -229,9 +230,9 @@ $total = $cumulativeTotal;
 
 $html .= '<br><br><table border="1" cellpadding="4"  align="center">
 <tr>
-    <td colspan="6" width="63%"><strong>Total général</strong></td>
-    <td width="9%"><strong>' . number_format($total, 2, ',', ' ') . '</strong></td>
-    <td colspan="2" width="26%"></td>
+    <td colspan="8" width="65%"><strong>Total général</strong></td>
+    <td width="8%"><strong>' . number_format($total, 2, ',', ' ') . '</strong></td>
+    <td colspan="2" width="27%"></td>
 </tr>
 </table>';
 
@@ -251,7 +252,7 @@ $html .= '
 <br><br><table border="0"  align="center">
      <tr>
         <td style=" border:none;">
-           <h4 style="margin-bottom:3em"> ' . htmlspecialchars($fin_titre) .' </h4>  
+           <h4 style="margin-bottom:3em">' . htmlspecialchars($fin_titre) .'</h4>  
            <h4 style="text-decoration:underline">' . htmlspecialchars($fin_nom) . '</h4>
         </td>
         <td style=" border:none;">
