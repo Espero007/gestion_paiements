@@ -68,6 +68,7 @@ $headerHtml = <<<HTML
     h2 { text-align: center; font-size: 14pt; }
     table { border-collapse: collapse; width: 100%; }
     td, th { border: 1px solid #000; padding: 5px; }
+    tr {font-size:8px; }
 </style>
 <table>
 <tr>
@@ -104,12 +105,12 @@ function generateTableHeader() {
     <table border="1" cellpadding="4" align="center">
         <thead>
             <tr style="background-color:#f0f0f0; font-size:8px;">
-                <th width="7%">N°</th>
-                <th width="19%">Nom et Prénoms</th>
+                <th width="5%">N°</th>
+                <th width="18%">Nom et Prénoms</th>
                 <th width="12%">Qualité</th>
                 <th width="6%">Taux/Jour</th>
-                <th width="6%">Nbre_Jours</th>
-                <th width="8%">Indemnité forfaitaire</th>
+                <th width="7%">Nombre de Jours</th>
+                <th width="10%">Indemnité forfaitaire</th>
                 <th width="12%">Montant</th>
                 <th width="10%">Banque</th>
                 <th width="20%">RIB</th>
@@ -157,12 +158,12 @@ foreach ($data as $index => $row) {
     $total_partiel += $montant;
 
     $tableHtml .= '<tr>
-        <td width="7%">' . $numero . '</td>
-        <td width="19%">' . htmlspecialchars($row['nom_participant'] . ' ' . $row['prenoms']) . '</td>
+        <td width="5%">' . $numero . '</td>
+        <td width="18%">' . htmlspecialchars($row['nom_participant'] . ' ' . $row['prenoms']) . '</td>
         <td width="12%">' . htmlspecialchars($row['titre_participant']) . '</td>
         <td  width="6%">' . number_format($row['taux_journalier'], 2, ',', ' ') . '</td>
-        <td width="6%">' . (int)$row['nombre_jours'] . '</td>
-        <td width="8%">' . number_format($indemnite, 2, ',', ' ') . '</td>
+        <td width="7%">' . (int)$row['nombre_jours'] . '</td>
+        <td width="10%">' . number_format($indemnite, 2, ',', ' ') . '</td>
         <td width="12%">' . number_format($montant, 2, ',', ' ') . '</td>
         <td width="10%">' . htmlspecialchars($row['banque']) . '</td>
         <td width="20%">' . htmlspecialchars($row['rib']) . '</td>
@@ -173,9 +174,9 @@ foreach ($data as $index => $row) {
 
     if ($fin_page) {
         $tableHtml .= '<tr>
-            <td colspan="7"><b>Total partiel</b></td>
-            <td><b>' . number_format($total_partiel, 2, ',', ' ') . '</b></td>
-            <td></td>
+            <td colspan="7" width="70%"><b>Total partiel</b></td>
+            <td width="10%"><b>' . number_format($total_partiel, 2, ',', ' ') . '</b></td>
+            <td width="20%"></td>
         </tr></tbody></table>';
 
         $pdf->writeHTML($tableHtml, true, false, true, false, '');
@@ -205,9 +206,9 @@ $total_formate = number_format($total_general, 0, ',', ' ');
 $footerHtml = '<br><br>
 <table border="1" cellpadding="4" align="center">
     <tr>
-        <td colspan="7"><b>Total général</b></td>
-        <td><b>' . number_format($total_general, 2, ',', ' ') . '</b></td>
-        <td></td>
+        <td colspan="7" width="70%"><b>Total général</b></td>
+        <td width="10%"><b>' . number_format($total_general, 2, ',', ' ') . '</b></td>
+        <td width="20%"></td>
     </tr>
 </table>';
 

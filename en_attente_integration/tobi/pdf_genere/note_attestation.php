@@ -199,22 +199,7 @@ foreach ($participants as $p) {
               </tr>';
 }
 
-/* try {
-   $stmt = $bdd->prepare($sql);
-    $stmt->execute(['type_activite' => $id_type_activite]);
-    $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-   ob_end_clean();
-    die('Erreur lors de l’exécution de la requête SQL : ' . $e->getMessage());
-}
 
-if (empty($participants)) {
-    ob_end_clean();
-    die('Aucun participant trouvé pour ce type d’activité.');
-
-}
-*/
-// Vérifier quel document afficher
 $document = isset($_GET['document']) ? $_GET['document'] : '';
 
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE, "Europe/Paris", IntlDateFormatter::GREGORIAN);
@@ -234,6 +219,7 @@ if ($document === 'note') {
     h2 { text-align: center; font-size: 14pt; }
     table { border-collapse: collapse; width: 100%; }
     td, th { border: 1px solid #000; padding: 5px; }
+    tr{font-size:8px;}
     </style>
     <table style="margin-bottom: 20px;" border="0">
         <tr>
@@ -302,6 +288,7 @@ if ($document === 'note') {
     h2 { text-align: center; font-size: 14pt; }
     table { border-collapse: collapse; width: 100%; }
     td, th { border: 1px solid #000; padding: 5px; }
+    tr{font-size:8px;}
     </style>
     <table style="margin-bottom: 20px;" border="0">
         <tr>
