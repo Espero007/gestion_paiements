@@ -14,7 +14,6 @@ if (isset($_GET['type_activite'])) {
         if ($_GET['type_activite'] == 1 || $_GET['type_activite'] == 2 || $_GET['type_activite'] == 3) {
             // Le type est valide
             $type_activite = $_GET['type_activite'];
-
             $recuperation_type_activite = true;
         } else {
             redirigerVersPageErreur('404', obtenirURLcourant());
@@ -186,7 +185,7 @@ if ($recuperation_type_activite) {
             $fileTmpPath = $_FILES['note_generatrice']['tmp_name'];
             $fileName = basename($_FILES['note_generatrice']['name']);
             $uploadFileDir = creer_dossiers_upload();
-            $dest_path = $uploadFileDir . 'note_generatrice_'.strtolower(str_replace(' ', '_', htmlspecialchars($_POST['nom']))).'.pdf';
+            $dest_path = $uploadFileDir . 'note_generatrice_' . strtolower(str_replace(' ', '_', htmlspecialchars($_POST['nom']))) . '.pdf';
         }
         // }
 
@@ -196,34 +195,70 @@ if ($recuperation_type_activite) {
 
             // On vérifie si une activité exactement identique n'est pas déjà présente en bdd
             $doublon = false;
-            $sql = $bdd->prepare('
-            SELECT id FROM activites WHERE type_activite=:val1 AND id_user=:val2 AND nom=:val3 AND description=:val4 AND date_debut=:val5 AND date_fin=:val6 AND centre=:val7 AND premier_responsable=:val8 AND titre_responsable=:val9 AND organisateur=:val10 AND titre_organisateur=:val11 AND financier=:val12 AND titre_financier=:val13 AND taux_journalier=:val14 AND taux_taches=:val15 AND frais_deplacement_journalier=:val16');
 
-            $sql->execute([
-                'val1' => $type_activite,
-                'val2' => $id_user,
-                'val3' => $data['nom'],
-                'val4' => $data['description'],
-                'val5' => $data['date_debut'],
-                'val6' => $data['date_fin'],
-                'val7' => $data['centre'],
-                'val8' => $data['premier_responsable'],
-                'val9' => $data['titre_responsable'],
-                'val10' => $data['organisateur'],
-                'val11' => $data['titre_organisateur'],
-                'val12' => $data['financier'],
-                'val13' => $data['titre_financier'],
-                'val14' => in_array($type_activite, ['1', '2']) ? $data['taux_journalier'] : null,
-                'val15' => $type_activite === '3' ? $data['taux_taches'] : null,
-                'val16' => $type_activite === '3' ? $data['frais_deplacement_journalier'] : null
-            ]);
+            // Préparation de la requête
 
-            if($sql->rowCount() != 0){
+            $stmt = '
+            SELECT 
+            id 
+            FROM activites 
+            WHERE type_activite=:val1 
+            AND id_user=:val2 
+            AND nom=:val3 
+            AND description=:val4 
+            AND date_debut=:val5 
+            AND date_fin=:val6 
+            AND centre=:val7 
+            AND premier_responsable=:val8 
+            AND titre_responsable=:val9 
+            AND organisateur=:val10 
+            AND titre_organisateur=:val11 
+            AND financier=:val12 
+            AND titre_financier=:val13 ';
+
+            if (in_array($type_activite, [1, 2])) {
+                $stmt .= 'AND taux_journalier=:val14 ';
+            } else {
+                $stmt .= 'AND taux_journalier IS NULL ';
+            }
+
+            if ($type_activite == 3) {
+                $stmt .= 'AND taux_taches=:val15 AND frais_deplacement_journalier=:val16';
+            } else {
+                $stmt .= 'AND taux_taches IS NULL AND frais_deplacement_journalier IS NULL';
+            }
+            $sql = $bdd->prepare($stmt);
+
+            $sql->bindParam('val1', $type_activite, PDO::PARAM_INT);
+            $sql->bindParam('val2', $id_user, PDO::PARAM_INT);
+            $sql->bindParam('val3', $data['nom']);
+            $sql->bindParam('val4', $data['description']);
+            $sql->bindParam('val5', $data['date_debut']);
+            $sql->bindParam('val6', $data['date_fin']);
+            $sql->bindParam('val7', $data['centre']);
+            $sql->bindParam('val8', $data['premier_responsable']);
+            $sql->bindParam('val9', $data['titre_responsable']);
+            $sql->bindParam('val10', $data['organisateur']);
+            $sql->bindParam('val11', $data['titre_organisateur']);
+            $sql->bindParam('val12', $data['financier']);
+            $sql->bindParam('val13', $data['titre_financier']);
+            // Taux journalier
+            if (in_array($type_activite, [1, 2])) {
+                $sql->bindParam('val14', $data['taux_journalier'], PDO::PARAM_INT);
+            }
+            // Taux tâches et frais de déplacement journalier
+            if ($type_activite == 3) {
+                $sql->bindParam('val15', $data['taux_taches']);
+                $sql->bindParam('val16', $data['frais_deplacement_journalier']);
+            }
+            $sql->execute();
+
+            if ($sql->rowCount() != 0) {
                 $doublon = true;
-            }else{
+            } else {
                 try {
                     // Enregistrement de la note génératrice
-                    
+
                     if (!move_uploaded_file($fileTmpPath, $dest_path)) {
                         $errors['note_generatrice'] = "Échec du déplacement du fichier. Vérifiez les permissions.";
                     } else {
@@ -239,12 +274,12 @@ if ($recuperation_type_activite) {
                             'type_fichier' => 'note_generatrice'
                         ]);
                         $id_note_generatrice = $bdd->lastInsertId();
-    
+
                         // Insérer l'activité
                         $sql = '
                         INSERT INTO activites(type_activite, id_user, nom, description, date_debut, date_fin, centre, premier_responsable, titre_responsable, organisateur, titre_organisateur, financier, titre_financier, id_note_generatrice, taux_journalier, taux_taches, frais_deplacement_journalier)
                         VALUES (:type_activite, :id_user, :nom, :description, :periode_debut, :periode_fin, :centre, :premier_responsable, :titre_responsable, :organisateur, :titre_organisateur, :financier, :titre_financier, :id_note_generatrice, :taux_journalier, :taux_taches, :frais_deplacement_journalier)';
-    
+
                         $stmt = $bdd->prepare($sql);
                         $stmt->execute([
                             'type_activite' => $type_activite,
@@ -265,28 +300,29 @@ if ($recuperation_type_activite) {
                             'titre_financier' => $data['titre_financier'],
                             'id_note_generatrice' => $id_note_generatrice,
                             'taux_journalier' => in_array($type_activite, ['1', '2']) ? $data['taux_journalier'] : null,
-                            'taux_taches' => $type_activite === '3' ? $data['taux_taches'] : null,
-                            'frais_deplacement_journalier' => $type_activite === '3' ? $data['frais_deplacement_journalier'] : null
+                            'taux_taches' => $type_activite == 3 ? $data['taux_taches'] : null,
+                            'frais_deplacement_journalier' => $type_activite == 3 ? $data['frais_deplacement_journalier'] : null
                         ]);
-    
+
                         $last_id = $bdd->lastInsertId();
-    
+                        $id_activite = $last_id;
+
                         // Insertion des diplômes
                         $sql = 'INSERT INTO diplomes(noms, id_activite) VALUES (:diplomes, :id_activite)';
                         $stmt = $bdd->prepare($sql);
-    
+
                         // foreach ($diplomes as $diplome) {
                         //     $stmt_diplome->execute([
                         //         'id_activite' => $last_id,
                         //         'nom' => $diplome
                         //     ]);
                         // }
-    
+
                         $stmt->execute([
                             'id_activite' => $last_id,
                             'diplomes' => $_POST['niveaux_diplome']
                         ]);
-    
+
                         // Insertion des titres associés
                         $sql = 'INSERT INTO titres(id_activite, nom, indemnite_forfaitaire) VALUES (:id_activite, :nom, :indemnite_forfaitaire)';
                         $stmt = $bdd->prepare($sql);
@@ -299,7 +335,6 @@ if ($recuperation_type_activite) {
                                 ]);
                             }
                         } elseif (in_array($type_activite, [2, 3])) {
-                            echo 'autre type';
                             foreach (array_combine($titres, $forfaits) as $titre => $forfait) {
                                 $stmt->execute([
                                     'id_activite' => $last_id,
@@ -308,16 +343,17 @@ if ($recuperation_type_activite) {
                                 ]);
                             }
                         }
-    
+
                         // Stocker le hash de la soumission
                         // $_SESSION['last_submission_hash'] = [
                         //     'hash' => $submission_hash,
                         //     'time' => time()
                         // ];
-    
+
                         // Pour afficher message de succès
                         $success = true;
-    
+                        $_POST = []; // On vide la superglobale
+
                         // Stocker les données pour le message de succès
                         // $data['note_generatrice'] = $fileName; // Pour affichage
                         // $_SESSION['success_data'] = $data; // On a plus besoin vu qu'on affiche plus les informations en cas de succès
@@ -330,8 +366,6 @@ if ($recuperation_type_activite) {
                     die('Erreur : ' . $e->getMessage());
                 }
             }
-
-           
         } else {
             // Il y a des erreurs
             // Stocker les données et erreurs dans la session pour affichage

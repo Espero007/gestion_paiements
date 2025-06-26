@@ -26,7 +26,6 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                 <div class="col-sm-9">
                     <input
                         type="<?= ($champ != "date_naissance") ? "text" : "date" ?>"
-
                         name="<?= $champ ?>"
                         <?php if ($champ != "date_naissance") : ?>
                         maxlength="100"

@@ -1,7 +1,7 @@
 <?php
 $section = 'Participants';
 $titre_page = "Ajout d'un participant";
-require_once(__DIR__.'/../includes/header.php');
+require_once(__DIR__ . '/../includes/header.php');
 require_once('includes/traitements_ajout_participant.php');
 ?>
 
@@ -11,7 +11,7 @@ require_once('includes/traitements_ajout_participant.php');
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once(__DIR__.'/../includes/sidebar.php') ?>
+        <?php require_once(__DIR__ . '/../includes/sidebar.php') ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -21,7 +21,7 @@ require_once('includes/traitements_ajout_participant.php');
             <div id="content">
 
                 <!-- Topbar -->
-                <?php require_once(__DIR__.'/../includes/topbar.php') ?>
+                <?php require_once(__DIR__ . '/../includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -48,7 +48,7 @@ require_once('includes/traitements_ajout_participant.php');
                                             <div>
                                                 <!-- Message proprement dit -->
                                                 <p class="m-0">Le participant a été enregistré avec succès !</p>
-                                                <p class="m-0"><a href="ajouter_comptes.php?id_participant=<?php echo $id_participant; ?>">Cliquez ici</a> si vous souhaitez lui ajouter des comptes bancaires ou préférez vous l'<a href="#">associer</a> directement à une activité ?</p>
+                                                <p class="m-0"><a href="ajouter_comptes.php?id_participant=<?php echo $id_participant; ?>">Cliquez ici</a> si vous souhaitez lui ajouter des comptes bancaires ou préférez vous l'<a href="/gestion_participants/lier_participant_activite.php?id_participant=<?= $id_participant ?>">associer</a> directement à une activité ?</p>
                                             </div>
                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                                         </div>
@@ -76,7 +76,7 @@ require_once('includes/traitements_ajout_participant.php');
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once(__DIR__.'/../includes/footer.php') ?>
+            <?php require_once(__DIR__ . '/../includes/footer.php') ?>
             <!-- End of Footer -->
         </div>
         <!-- End of Content Wrapper -->
@@ -89,8 +89,8 @@ require_once('includes/traitements_ajout_participant.php');
     </a>
 
     <!-- Logout Modal-->
-    <?php require_once(__DIR__.'/../includes/logoutModal.php') ?>
-    <?php require_once(__DIR__.'/../includes/scripts.php') ?>
+    <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
 </body>
 
 </html>

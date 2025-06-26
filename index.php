@@ -431,7 +431,7 @@ $resultat->closeCursor();
                         <div class="text-center">
                             <p class="mt-2">Il semble que vous n'avez aucune activité à votre actif. Pensez à en ajouter ! Ou préférez-vous commencer par l'ajout de participants ?</p>
                             <div>
-                                <a href="/gestion_activites/creer_activite.php" class="btn btn-outline-primary mr-2">Créer une activité</a>
+                                <a href="/gestion_activites/creer_activite.php" class="btn btn-primary mr-2">Créer une activité</a>
                                 <a href="/gestion_participants/ajouter_participant.php" class="btn btn-outline-primary">Ajouter un participant</a>
 
                             </div>

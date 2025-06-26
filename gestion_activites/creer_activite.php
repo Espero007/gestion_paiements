@@ -35,7 +35,7 @@ require_once('traitements/submit_creer_activite.php');
                     <!-- Page Heading -->
                     <div>
                         <h1 class="h4 mb-4 text-gray-800"> Activités /
-                            <strong>Création d'une activité <?= isset($type_activite) ? 'de type'.$type_activite :'' ?></strong>
+                            <strong>Création d'une activité <?= isset($type_activite) ? 'de type' . $type_activite : '' ?></strong>
                         </h1>
                         <p class="mt-2">Vous êtes sur le point de créer une activité. Nous allons vous guider tout au long du processus.</p>
                         <!-- <hr> -->
@@ -91,8 +91,8 @@ require_once('traitements/submit_creer_activite.php');
                                         <!-- Messages d'erreur divers -->
 
                                         <?php if ($success) : ?>
-                                            <div class="alert alert-success alert-dismissible">
-                                                Votre activité a été enregistrée avec succès ! Pensez à y associer des participants (lien vers l'association des participants à l'activité).
+                                            <div class="alert alert-success alert-dismissible text-center">
+                                                Votre activité a été enregistrée avec succès ! Pensez à y <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $id_activite ?>">associer des participants</a>.
                                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                                             </div>
                                         <?php endif; ?>
@@ -240,10 +240,11 @@ require_once('traitements/submit_creer_activite.php');
                                                 <?php if (in_array($type_activite, [2, 3])) : ?>
                                                     <!-- Indemnité(s) forfaitaire(s) -->
                                                     <div class="mb-2 row">
-                                                        <label for="indemnite_forfaitaire" class="col-sm-3 col-form-label">Indemnité(s) forfaitaire(s) (FCFA) <small class="text-muted">(séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75)</small></label>
+                                                        <label for="indemnite_forfaitaire" class="col-sm-3 col-form-label">Indemnité(s) forfaitaire(s) (FCFA)</label>
                                                         <div class="col-sm-9">
                                                             <input id="indemnite_forfaitaire" type="text" name="indemnite_forfaitaire" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['indemnite_forfaitaire']) ?>">
                                                             <small class="text-danger"><?= $errors['indemnite_forfaitaire'] ?? '' ?></small>
+                                                            <small class="text-muted">Note : séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75 (chaque montant indiqué sera associé au titre correspondant en respectant l'ordre de saisie)</small>
                                                         </div>
                                                     </div>
                                                 <?php endif; ?>

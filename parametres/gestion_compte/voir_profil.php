@@ -3,11 +3,6 @@ $section = 'Paramètres';
 $titre_page = "Mon compte";
 require_once(__DIR__ . '/../../includes/header.php');
 require_once('traitements/voir_profil.php');
-
-// Récupération des informations de l'utilisateur
-$stmt = $bdd->query('SELECT nom, prenoms, email, photo_profil FROM connexion WHERE user_id=' . $_SESSION['user_id']);
-$utilisateur = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$utilisateur = $utilisateur[0];
 ?>
 
 <style>
@@ -54,8 +49,41 @@ $utilisateur = $utilisateur[0];
                                         </div>
                                     <?php endif; ?>
 
+                                    <!-- Informations modifiées avec succès -->
+                                    <?php if (isset($infos_modifiees)) : ?>
+                                        <?php afficherAlerte('Vos informations ont été modifiées avec succès !', 'success') ?>
+                                    <?php endif; ?>
+
+                                    <!-- Erreur ou pas lors de l'envoi de l'email -->
+
+                                    <?php if (isset($email_envoye)) : ?>
+                                        <?php
+                                        $message = $email_envoye ? ' Vous êtes presque au bout, nous avons envoyé un lien de confirmation à l\'email indiqué : cliquez dessus pour achever le processus !' : 'Une erreur s\'est produite lors de l\'envoi du lien de confirmation à votre email, veuillez réessayer la mise à jour de votre email plus tard';
+                                        $type = $email_envoye ? 'success' : 'info';
+                                        afficherAlerte($message, $type);
+                                        ?>
+                                    <?php endif; ?>
+
+                                    <!-- Email confirmé avec succès -->
+
+                                    <?php if (isset($_SESSION['email_modifie']) && $_SESSION['email_modifie']) : ?>
+                                        <?php
+                                        afficherAlerte('Votre email a été confirmé et mis à jour avec succès !', 'success');
+                                        unset($_SESSION['email_modifie']);
+                                        ?>
+                                    <?php endif; ?>
+
+                                    <!-- Lien de confirmation d'email invalide -->
+
+                                    <?php if (isset($_SESSION['lien_invalide'])) : ?>
+                                        <?php
+                                        afficherAlerte('Le lien de confirmation que vous avez utilisé n\'est plus ou pas valide', 'info');
+                                        unset($_SESSION['lien_invalide']);
+                                        ?>
+                                    <?php endif; ?>
+
                                     <div class="d-flex align-items-start align-items-sm-center gap-4">
-                                        <img src=" <?= (!empty($utilisateur['photo_profil'])) ? '/photos_profil/'.$utilisateur['photo_profil'] : '/assets/img/undraw_profile.svg' ?>" alt="photo-profil" class="d-block rounded" height="100" width="100" style="aspect-ratio: 1;">
+                                        <img src=" <?= (!empty($utilisateur['photo_profil'])) ? '/photos_profil/' . $utilisateur['photo_profil'] : '/assets/img/undraw_profile.svg' ?>" alt="photo-profil" class="d-block rounded" height="100" width="100" style="aspect-ratio: 1;">
                                         <div class="button-wrapper">
                                             <div class="mb-4">
                                                 <div>
@@ -86,20 +114,41 @@ $utilisateur = $utilisateur[0];
                                         <div class="row">
                                             <div class="mb-3 col-md-6">
                                                 <label for="nom" class="col-form-label">Nom</label>
-                                                <input type="text" class="form-control" id="nom" name="nom" value='<?= htmlspecialchars($utilisateur['nom']) ?>' autofocus>
+                                                <input type="text" class="form-control <?= (isset($erreurs['nom'])) ? 'is-invalid' : '' ?>" id="nom" name="nom" value='<?= (!isset($erreurs)) ? htmlspecialchars($utilisateur['nom']) : htmlspecialchars($_POST['nom']) ?>' autofocus aria-describedby="nomAide">
+
+                                                <!-- Message d'erreur -->
+                                                <?php if (isset($erreurs['nom'])) : ?>
+                                                    <div id="nomAide" class="form-text">
+                                                        <small class="text-danger"><?= $erreurs['nom'][0] ?></small>
+                                                    </div>
+                                                <?php endif; ?>
                                             </div>
                                             <div class="mb-3 col-md-6">
                                                 <label for="prenoms" class="col-form-label">Prénom(s)</label>
-                                                <input type="text" class="form-control" id="prenoms" name="prenoms" value="<?= htmlspecialchars($utilisateur['prenoms']) ?>">
+                                                <input type="text" class="form-control <?= (isset($erreurs['prenoms'])) ? 'is-invalid' : '' ?>" id="prenoms" name="prenoms" value="<?= (!isset($erreurs)) ? htmlspecialchars($utilisateur['prenoms']) : htmlspecialchars($_POST['prenoms']) ?>" aria-describedby="prenomsAide">
+
+                                                <!-- Message d'erreur -->
+                                                <?php if (isset($erreurs['prenoms'])) : ?>
+                                                    <div id="nomAide" class="form-text">
+                                                        <small class="text-danger"><?= $erreurs['prenoms'][0] ?></small>
+                                                    </div>
+                                                <?php endif; ?>
                                             </div>
                                             <div class="mb-3 col-md-6">
                                                 <label for="email" class="col-form-label">Email</label>
-                                                <input type="text" class="form-control" id="email" name="email" value="<?= htmlspecialchars($utilisateur['email']) ?>">
+                                                <input type="email" class="form-control<?= (isset($erreurs['email'])) ? ' is-invalid' : '' ?>" id="email" name="email" value="<?= (!isset($erreurs)) ? htmlspecialchars($utilisateur['email']) : htmlspecialchars($_POST['email']) ?>">
+
+                                                <!-- Message d'erreur -->
+                                                <?php if (isset($erreurs['email'])) : ?>
+                                                    <div id="nomAide" class="form-text">
+                                                        <small class="text-danger"><?= $erreurs['email'][0] ?></small>
+                                                    </div>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
 
                                         <div class="mt-2">
-                                            <button type="submit" class="btn btn-primary mr-2">Enregistrer les modifications</button>
+                                            <button type="submit" class="btn btn-primary mr-2" name="modifier_infos">Enregistrer les modifications</button>
                                             <button type="reset" class="btn btn-outline-secondary">Annuler</button>
                                         </div>
                                     </form>

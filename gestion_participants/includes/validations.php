@@ -11,7 +11,6 @@ if (in_array('infos_generales', $elements_a_inclure)) {
     }
 
     foreach ($informations_generales as $champ => $intitule_champ) {
-
         // 1- Vérifier tout d'abord la présence de tous les champs attendus
 
         if (!array_key_exists($champ, $_POST)) {
@@ -49,10 +48,15 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                         if ($ligne) {
                             // Une ligne a été retrouvée
                             $matricule_retrouve = $ligne[0];
+
                             if (!isset($page_modification)) {
                                 // On est pas sur la page de modification
-                                $erreurs[$champ][] = $message;
+                                if($valeur_champ == $matricule_retrouve){
+                                    // Le matricule existe déjà en bdd
+                                    $erreurs[$champ][] = $message;
+                                }
                             } elseif ($matricule_retrouve != $matricule_ifu) {
+                                // On est sur la page de modification et le matricule retrouvé n'est pas celui de l'utilsiateur dont on veut modifier les informations
                                 $erreurs[$champ][] = $message;
                             }
                         }
