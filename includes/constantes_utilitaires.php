@@ -253,7 +253,7 @@ function afficherSousFormeTableau($elements, $style)
 <?php
 }
 
-require_once(__DIR__.'/../PHPMailer/autoload.php');
+require_once(__DIR__ . '/../PHPMailer/autoload.php');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -262,7 +262,6 @@ function envoyerLienValidationEmail($lien_verif, $email)
 {
     $mail = new PHPMailer(true);
     try {
-
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';  // Serveur SMTP de Gmail
         $mail->SMTPAuth   = true;
@@ -276,11 +275,25 @@ function envoyerLienValidationEmail($lien_verif, $email)
         $mail->isHTML(true);
 
         $mail->Subject = 'Confirmez votre adresse email';
-        $mail->Body    = 'Cliquez sur ce lien pour confirmer votre adresse email : <a href="'.$lien_verif.'">Confirmez votre email</a>';
-        
+        $mail->Body    = 'Cliquez sur ce lien pour confirmer votre adresse email : <a href="' . $lien_verif . '">Confirmez votre email</a>';
+
         $mail->SMTPDebug = 0; // Pour désactiver le débug
         $mail->send();
+        return true;
     } catch (Exception $e) {
-        die("Erreur : " . $e->getMessage());
+        // die("Erreur : " . $e->getMessage());
+        return false;
     }
+}
+
+function afficherAlerte($message, $type)
+{
+    //  $type fait allusion au fait que le message soit un message de succès ou d'erreur
+    // $message est tout simplement le message
+?>
+    <div class="alert alert-<?= $type ?> alert-dismissible text-center">
+        <?= $message ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+<?php
 }

@@ -67,6 +67,13 @@ require_once("submit/submit_connexion.php");
                                         <div class="alert alert-info text-center">Votre email n'a pas encore été confirmé. Veuillez consulter votre boite mail ou <a href="<?= 'renvoyerLienConfirmation.php?email=' . $_POST['email'] ?>">renvoyer un lien de confirmation</a> si vous n'avez pas reçu de lien.</div>
                                     <?php endif; ?>
 
+                                    <?php if (isset($_SESSION['erreur_avec_verification_email'])) : ?>
+                                        <?php
+                                        afficherAlerte('Une erreur s\'est produite lors de la vérification de l\'email', 'danger');
+                                        unset($_SESSION['erreur_avec_verification_email'])
+                                        ?>
+                                    <?php endif; ?>
+
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Contents de vous revoir !</h1>
                                         <p>Connectez-vous à votre compte pour retourner à la gestion de vos activités.</h2>

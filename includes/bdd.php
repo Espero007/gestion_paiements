@@ -42,7 +42,7 @@ try {
         type_activite INT NOT NULL,
         id_user INT NOT NULL,
         nom VARCHAR(100) NOT NULL,
-        description VARCHAR(255) NOT NULL,
+        description VARCHAR(500) NOT NULL,
         date_debut DATE NOT NULL,
         date_fin DATE NOT NULL,
         centre VARCHAR(100) NOT NULL,
