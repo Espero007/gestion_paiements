@@ -210,7 +210,7 @@ if ($document === 'note') {
     // *** Note de Service PDF ***
     $pdf = new TCPDF();
     $pdf->AddPage();
-    $pdf->SetFont('dejavusans', '', 10);
+    $pdf->SetFont('trebuc', '', 10);
 
     $html = '
     <style>
@@ -220,14 +220,15 @@ if ($document === 'note') {
     table { border-collapse: collapse; width: 100%; }
     td, th { border: 1px solid #000; padding: 5px; }
     tr{font-size:8px;}
+    P{font-size:11px;}
     </style>
     <table style="margin-bottom: 20px;" border="0">
         <tr>
             <td style="width: 50%; font-size: 10pt; text-align:center; border: none;">
-                <p><b>REPUBLIQUE DU BENIN<br/>**********</b></p>
-                <p><b>MINISTÈRE ...<br/>**********</b></p>
-                <p><b>DIRECTION ...<br/>**********</b></p>
-                <p><b>SERVICE ...<br/>**********</b></p>
+                <p><b>REPUBLIQUE DU BENIN<br/>********</b></p>
+                <p><b>MINISTÈRE ...<br/>********</b></p>
+                <p><b>DIRECTION ...<br/>********</b></p>
+                <p><b>SERVICE ...<br/>********</b></p>
             </td>
             <td style="width: 50%; font-size: 10pt; text-align:center; border: none;">
                 <p>Cotonou, le ' . $dateFr . '</p>
@@ -236,17 +237,17 @@ if ($document === 'note') {
             </td>
         </tr>
     </table>
-    <h4><b>N° :</b> /DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD</h4>
-    <p><b style="text-decoration:underline;">Réf :</b> NS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA DU 29 DECEMBRE 2023</p><br><br>
-    <table border="1" cellpadding="4" style="width: 100%;">
+    <h4><b>N°:</b> /DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD</h4>
+    <p><b style="text-decoration:underline;">Réf:</b> NS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA DU 29 DECEMBRE 2023</p><br><br>
+    <table border="1" cellpadding="4" style="width: 100%; text-align:center">
         <thead>
             <tr style="background-color: #eeeeee;">
                 <th style="width: 7%;">N°</th>
-                <th style="width: 15%;">Nom</th>
-                <th style="width: 15%;">Prénoms</th>
-                <th style="width: 15%;">Titre</th>
-                <th style="width: 15%;">Banque</th>
-                <th style="width: 33%;">Numéro de Compte</th>
+                <th style="width: 15%;">NOM</th>
+                <th style="width: 15%;">PRENOMS</th>
+                <th style="width: 15%;">TITRE</th>
+                <th style="width: 15%;">BANQUE</th>
+                <th style="width: 33%;">NUMERO DE COMPTE</th>
             </tr>
         </thead>
         <tbody>';
@@ -280,7 +281,7 @@ if ($document === 'note') {
     // *** Attestation Collective PDF ***
     $pdf1 = new TCPDF();
     $pdf1->AddPage();
-    $pdf1->SetFont('dejavusans', '', 10);
+    $pdf1->SetFont('trebuc', '', 10);
 
     $html = '
     <style>
@@ -289,14 +290,16 @@ if ($document === 'note') {
     table { border-collapse: collapse; width: 100%; }
     td, th { border: 1px solid #000; padding: 5px; }
     tr{font-size:8px;}
+    p{font-size:11px;}
+
     </style>
     <table style="margin-bottom: 20px;" border="0">
         <tr>
             <td style="width: 50%; font-size: 10pt; text-align:center; border: none;">
-                <p><b>REPUBLIQUE DU BENIN<br/>**********</b></p>
-                <p><b>MINISTÈRE ...<br/>**********</b></p>
-                <p><b>DIRECTION ...<br/>**********</b></p>
-                <p><b>SERVICE ...<br/>**********</b></p>
+                <p><b>REPUBLIQUE DU BENIN<br/>********</b></p>
+                <p><b>MINISTÈRE ...<br/>********</b></p>
+                <p><b>DIRECTION ...<br/>********</b></p>
+                <p><b>SERVICE ...<br/>********</b></p>
             </td>
             <td style="width: 50%; font-size: 10pt; text-align:center; border: none;">
                 <p>Cotonou, le ' . $dateFr . '</p>
@@ -305,15 +308,15 @@ if ($document === 'note') {
             </td>
         </tr>
     </table><br><br><br><br>
-    <table border="1" cellpadding="4" style="width: 100%;">
+    <table border="1" cellpadding="4" style="width: 100%;text-align:center">
         <thead>
             <tr style="background-color: #eeeeee;">
                 <th style="width: 7%;">N°</th>
-                <th style="width: 15%;">Nom</th>
-                <th style="width: 15%;">Prénoms</th>
-                <th style="width: 15%;">Titre</th>
-                <th style="width: 15%;">Banque</th>
-                <th style="width: 33%;">Numéro de Compte</th>
+                <th style="width: 15%;">NOM</th>
+                <th style="width: 15%;">PRENOMS</th>
+                <th style="width: 15%;">TITRE</th>
+                <th style="width: 15%;">BANQUE</th>
+                <th style="width: 33%;">NUMERO DE COMPTE</th>
             </tr>
         </thead>
         <tbody>';

@@ -47,7 +47,7 @@ $pdf = new TCPDF();
 $pdf->AddPage();
 $pdf->setPrintHeader(false);
 $pdf->setPrintFooter(false);
-$pdf->SetFont('dejavusans', '', 10);
+$pdf->SetFont('trebuc', '', 10);
 
 $compteurFile = __DIR__ . '/compteur.txt';
 
@@ -67,7 +67,8 @@ $html = '
     h2 { text-align: center; font-size: 14pt; }
     table { border-collapse: collapse; width: 100%; }
     td, th { border: 1px solid #000; padding: 5px; }
-    tr {font-size:8px; }
+    tr {font-size:9px; }
+    p {font-size:11px; }
 </style>
 <table border="0">
     <tr>
@@ -100,12 +101,12 @@ function startTable() {
         <thead>
             <tr style="background-color:#f0f0f0; font-size:8px;">
                 <th width="6%">N°</th>
-                <th width="20%">Nom et Prénoms</th>
-                <th width="15%">Qualité</th>
-                <th width="6%">Taux/Jour</th>
-                <th width="6%">Nbr Jours</th>
-                <th width="12%">Montant</th>
-                <th width="10%">Banque</th>
+                <th width="20%">NOM ET PRENOMS</th>
+                <th width="15%">QUALITE</th>
+                <th width="6%">TAUX/JOUR</th>
+                <th width="6%">NBRE JOUR</th>
+                <th width="12%">MONTANT</th>
+                <th width="10%">BANQUE</th>
                 <th width="25%">RIB</th>
             </tr>
         </thead>
@@ -204,6 +205,7 @@ $html .= '
 </table>';
 
 $pdf->writeHTML($html, true, false, true, false, '');
+
 //ob_end_clean(); // Nettoyer le tampon de sortie
 $pdf->Output(__DIR__ . '/Etat_deliberation.pdf', 'I');
 ?>

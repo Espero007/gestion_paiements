@@ -47,7 +47,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Initialisation PDF
 $pdf = new TCPDF();
 $pdf->AddPage();
-$pdf->SetFont('dejavusans', '', 10);
+$pdf->SetFont('trebuc', '', 10);
 
 // Infos générales
 $titre_activite = htmlspecialchars($data[0]['nom_activite'] ?? '');
@@ -69,14 +69,15 @@ $headerHtml = <<<HTML
     table { border-collapse: collapse; width: 100%; }
     td, th { border: 1px solid #000; padding: 5px; }
     tr {font-size:8px; }
+    p {font-size:11px}
 </style>
 <table>
 <tr>
     <td style="width: 50%; text-align:center;border: none;">
-        <p><b>REPUBLIQUE DU BENIN</b></p>
-        <p><b>MINISTÈRE ...</b></p>
-        <p><b>DIRECTION ...</b></p>
-        <p><b>SERVICE ...</b></p>
+        <p><b>REPUBLIQUE DU BENIN <br>*******</b></p>
+        <p><b>MINISTÈRE ... <br>*******</b></p>
+        <p><b>DIRECTION ... <br>*******</b></p>
+        <p><b>SERVICE ... <br>*******</b></p>
     </td>
     <td style="width: 50%; text-align:center; border: none;">
         <p>Cotonou, le $dateFr</p>
@@ -87,12 +88,13 @@ $headerHtml = <<<HTML
 <tr>
     <td style="border:none;"></td>
     <td style="text-align:left; border:none;">
-        <p><b><u>JOURNEE :</u> $dateFr</b></p>
-        <p><b><u>CENTRE :</u> $centre</b></p>
+        <p><b><u>JOURNEE</u>: $dateFr</b></p>
+        <p><b><u>CENTRE</u>: $centre</b></p>
     </td>
 </tr>
 </table>
 <p><b>NS N°0416/... portant Constitution des commissions chargées de superviser le déroulement de {$titre_activite}</b></p>
+<br>
 HTML;
 
 $pdf->writeHTML($headerHtml, true, false, true, false, '');
@@ -106,13 +108,13 @@ function generateTableHeader() {
         <thead>
             <tr style="background-color:#f0f0f0; font-size:8px;">
                 <th width="5%">N°</th>
-                <th width="18%">Nom et Prénoms</th>
-                <th width="12%">Qualité</th>
-                <th width="6%">Taux/Jour</th>
-                <th width="7%">Nombre de Jours</th>
-                <th width="10%">Indemnité forfaitaire</th>
-                <th width="12%">Montant</th>
-                <th width="10%">Banque</th>
+                <th width="18%">NOM ET PRENOMS</th>
+                <th width="12%">QUALITE</th>
+                <th width="6%">TAUX/JOUR</th>
+                <th width="7%">NOMBRE DE JOURS</th>
+                <th width="11%">INDEMNITE FORFAITAIRE</th>
+                <th width="11%">MONTANT</th>
+                <th width="10%">BANQUE</th>
                 <th width="20%">RIB</th>
             </tr>
         </thead>
@@ -163,8 +165,8 @@ foreach ($data as $index => $row) {
         <td width="12%">' . htmlspecialchars($row['titre_participant']) . '</td>
         <td  width="6%">' . number_format($row['taux_journalier'], 2, ',', ' ') . '</td>
         <td width="7%">' . (int)$row['nombre_jours'] . '</td>
-        <td width="10%">' . number_format($indemnite, 2, ',', ' ') . '</td>
-        <td width="12%">' . number_format($montant, 2, ',', ' ') . '</td>
+        <td width="11%">' . number_format($indemnite, 2, ',', ' ') . '</td>
+        <td width="11%">' . number_format($montant, 2, ',', ' ') . '</td>
         <td width="10%">' . htmlspecialchars($row['banque']) . '</td>
         <td width="20%">' . htmlspecialchars($row['rib']) . '</td>
     </tr>';
@@ -174,9 +176,9 @@ foreach ($data as $index => $row) {
 
     if ($fin_page) {
         $tableHtml .= '<tr>
-            <td colspan="7" width="70%"><b>Total partiel</b></td>
-            <td width="10%"><b>' . number_format($total_partiel, 2, ',', ' ') . '</b></td>
-            <td width="20%"></td>
+            <td colspan="7" width="59%"><b>Total partiel</b></td>
+            <td width="11%"><b>' . number_format($total_partiel, 2, ',', ' ') . '</b></td>
+            <td width="30%"></td>
         </tr></tbody></table>';
 
         $pdf->writeHTML($tableHtml, true, false, true, false, '');
@@ -206,9 +208,9 @@ $total_formate = number_format($total_general, 0, ',', ' ');
 $footerHtml = '<br><br>
 <table border="1" cellpadding="4" align="center">
     <tr>
-        <td colspan="7" width="70%"><b>Total général</b></td>
-        <td width="10%"><b>' . number_format($total_general, 2, ',', ' ') . '</b></td>
-        <td width="20%"></td>
+        <td colspan="7" width="59%"><b>Total général</b></td>
+        <td width="11%"><b>' . number_format($total_general, 2, ',', ' ') . '</b></td>
+        <td width="30%"></td>
     </tr>
 </table>';
 
