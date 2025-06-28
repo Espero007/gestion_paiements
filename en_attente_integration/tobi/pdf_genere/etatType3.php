@@ -48,7 +48,7 @@ $fin = isset($data[0]['date_fin'])? htmlspecialchars($data[0]['date_fin']): '';
 // Création du PDF
 $pdf = new TCPDF();
 $pdf->AddPage();
-$pdf->SetFont('dejavusans', '', 10);
+$pdf->SetFont('trebuc', '', 10);
 
 $compteurFile = __DIR__ . '/compteur.txt';
 
@@ -104,15 +104,16 @@ $html = '
     table { border-collapse: collapse; width: 100%; }
     td, th { border: 1px solid #000; padding: 5px; }
     tr {font-size:8px; }
+    p {font-size:11px; }
     
 </style>
 <table border="0">
     <tr>
         <td style="width: 50%; font-size: 10pt; text-align: center; border: none;">
-            <p><b>REPUBLIQUE DU BENIN</b><br>**********</p>
-            <p> <b>MINISTÈRE ...</b><br>********** </p>
-            <p><b>DIRECTION ... </b><br>**********</p>
-            <p><b>SERVICE ... </b><br>**********</p>
+            <p><b>REPUBLIQUE DU BENIN</b><br>********</p>
+            <p> <b>MINISTÈRE ...</b><br>********</p>
+            <p><b>DIRECTION ... </b><br>********</p>
+            <p><b>SERVICE ... </b><br>********</p>
         </td>
         <td style="width: 50%; font-size: 10pt; text-align: center; border: none;">
             <p>Cotonou, le ' . $dateFr . '</p>
@@ -130,7 +131,7 @@ $html = '
 </table>';
 
 $html .= '
-<p><b> NS  N° 2548/PR/DC/SGM/DAF/DEC/SAF/SIS/SEC/SD/SA DU 31 DECEMBRE 2020 </b><br> <br></p>';
+<p><b> NS  N° 2548/PR/DC/SGM/DAF/DEC/SAF/SIS/SEC/SD/SA DU 31 DECEMBRE 2020 </b><br></p>';
 
 
 // Titre
@@ -149,15 +150,15 @@ function startTable() {
         <thead>
             <tr  style="background-color:#eeeeee; font-size:7px; ">
             <th width="5%">N°</th>
-            <th width="13%">Nom & Prénoms</th>
-            <th width="9%">Titre</th>
-            <th width="6%">Taux/ Tâche</th>
-            <th width="7%">Nombre de Tâches</th>
-            <th width="9%">Frais Entretiens par jours</th>
-            <th width="7%">Nombre de Jours</th>
-            <th width="9%">Indemnité forfaitaire</th>
-            <th width="8%">Montant</th>
-            <th width="8%">Banque</th>
+            <th width="13%">NOM & PRENOM</th>
+            <th width="9%">TITRE</th>
+            <th width="6%">TAUX/ TÂCHE</th>
+            <th width="7%">NOMBRE DE TÂCHE</th>
+            <th width="9%">FRAIS ENTRETIENS PAR JOURS</th>
+            <th width="7%">NOMBRE DE JOURS</th>
+            <th width="9%">INDEMNITE FORFAITAIRE</th>
+            <th width="8%">MONTANT</th>
+            <th width="8%">BANQUE</th>
             <th width="19%">RIB</th>
             </tr>
         </thead>
