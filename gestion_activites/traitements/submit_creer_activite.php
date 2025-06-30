@@ -163,7 +163,7 @@ if ($recuperation_type_activite) {
             }
         }
 
-        if ($type_activite === '3') {
+        if ($type_activite === 3) {
             if (empty($data['taux_taches'])) {
                 $errors['taux_taches'] = "Le taux par tâche est requis.";
             } elseif (!preg_match('/^\d+(\.\d{1,2})?$/', $data['taux_taches']) || $data['taux_taches'] < 0) {
@@ -360,6 +360,17 @@ if ($recuperation_type_activite) {
                         // Rediriger pour éviter les doubles insertions
                         // header('Location: /gestion_activites/creer_activite.php?success=1'); // On évite la redirection car l'utilisateur pourrait vouloir continuer les enregistrements avec le même type d'activité
                         // exit;
+
+                         if ($success)
+                            {
+                                header('Location: ../gerer_activite.php?id=' . urlencode($id_activite). '&success=2');
+                                exit;
+                            }
+                        else 
+                            {
+                                header('Location: ../modifier_infos.php?id=' . urlencode($id_activite));
+                                exit;
+                            }
                     }
                 } catch (PDOException $e) {
                     $errors['database'] = "Une erreur s'est produite. Veuillez réessayer.";

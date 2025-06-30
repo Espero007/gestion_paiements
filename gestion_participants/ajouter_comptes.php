@@ -1,6 +1,6 @@
 <?php
 $titre = "Ajout de comptes bancaires";
-require_once('includes/header.php');
+require_once(__DIR__ . '/../includes/header.php');
 $elements_a_inclure = ['infos_bancaires'];
 require_once('includes/traitements_ajout_comptes.php');
 ?>
@@ -11,7 +11,7 @@ require_once('includes/traitements_ajout_comptes.php');
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once('includes/sidebar.php') ?>
+        <?php require_once(__DIR__ . '/../includes/sidebar.php') ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -21,7 +21,7 @@ require_once('includes/traitements_ajout_comptes.php');
             <div id="content">
 
                 <!-- Topbar -->
-                <?php require_once('includes/topbar.php') ?>
+                <?php require_once(__DIR__ . '/../includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -107,7 +107,7 @@ require_once('includes/traitements_ajout_comptes.php');
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once('includes/footer.php') ?>
+            <?php require_once(__DIR__ . '/../includes/footer.php') ?>
             <!-- End of Footer -->
         </div>
         <!-- End of Content Wrapper -->
@@ -120,8 +120,8 @@ require_once('includes/traitements_ajout_comptes.php');
     </a>
 
     <!-- Logout Modal-->
-    <?php require_once('includes/logoutModal.php') ?>
-    <?php require_once('includes/scripts.php') ?>
+    <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
 </body>
 
 </html>

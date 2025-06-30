@@ -3,6 +3,7 @@ $section = 'Activités';
 $titre = "Gestion de l'activité";
 require_once(__DIR__ . '/../includes/header.php');
 require_once('traitements/gerer_activite.php');
+
 ?>
 
 <body id="page-top">
@@ -29,6 +30,25 @@ require_once('traitements/gerer_activite.php');
                     <!-- Page Heading -->
                     <h1 class="h4 mb-4 text-gray-800">Activités / <strong>Gestion de l'activité</strong></h1>
                     <p class="mt-2">Gérez ici votre activité</p>
+                    
+                    <!-- Afficher un message de succèes si l'activité a été bien modifié -->
+
+                   <?php $success = isset($_GET['success']);
+                       $id_activite = $_GET['id']  ?>
+
+                    <?php if ($success==='1') : ?>
+                        <div class="alert alert-success alert-dismissible text-center">
+                            Vos modifications  ont été enregistrée avec succès ! Pensez à y <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $id_activite ?>">associer des participants</a>.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($success==='2') : ?>
+                         <div class="alert alert-success alert-dismissible text-center">
+                            Votre activité a été enregistrée avec succès ! Pensez à y <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $id_activite ?>">associer des participants</a>.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="card shadow mb-4">
                         <div class="card-header">

@@ -80,9 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
     // Vérification des doubles soumissions
     $submission_hash = md5($data['nom'] . $id_user . $data['date_debut'] . $activity_id);
     if (isset($_SESSION['last_submission_hash']) && $_SESSION['last_submission_hash']['hash'] === $submission_hash && (time() - $_SESSION['last_submission_hash']['time'] < 10)) {
-        $errors['duplicate'] = "Ce formulaire a déjà été soumis. Veuillez attendre un instant et réessayer.";
-    } else {
-        // Validations communes
+      $errors['duplicate'] = "Ce formulaire a déjà été soumis. Veuillez attendre un instant et réessayer.";
+   } else {
+        ### Validations communes
         $common_fields = ['nom', 'description', 'centre', 'premier_responsable', 'organisateur', 'financier', 'niveaux_diplome', 'titres_associes', 'date_debut', 'date_fin'];
         foreach ($common_fields as $field) {
             if (empty($data[$field])) {
@@ -203,6 +203,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
       
 
         if (empty($errors)) {
+             // On vérifie si une activité exactement identique n'est pas déjà présente en bdd
+            $doublon = false;
+
+            // Préparation de la requête
+
+            $stmt = '
+            SELECT 
+            id 
+            FROM activites 
+            WHERE type_activite=:val1 
+            AND id_user=:val2 
+            AND nom=:val3 
+            AND description=:val4 
+            AND date_debut=:val5 
+            AND date_fin=:val6 
+            AND centre=:val7 
+            AND premier_responsable=:val8 
+            AND titre_responsable=:val9 
+            AND organisateur=:val10 
+            AND titre_organisateur=:val11 
+            AND financier=:val12 
+            AND titre_financier=:val13 ';
+
+            if (in_array($type_activite, [1, 2])) {
+                $stmt .= 'AND taux_journalier=:val14 ';
+            } else {
+                $stmt .= 'AND taux_journalier IS NULL ';
+            }
+
+            if ($type_activite == 3) {
+                $stmt .= 'AND taux_taches=:val15 AND frais_deplacement_journalier=:val16';
+            } else {
+                $stmt .= 'AND taux_taches IS NULL AND frais_deplacement_journalier IS NULL';
+            }
+            $sql = $bdd->prepare($stmt);
+
+            $sql->bindParam('val1', $type_activite, PDO::PARAM_INT);
+            $sql->bindParam('val2', $id_user, PDO::PARAM_INT);
+            $sql->bindParam('val3', $data['nom']);
+            $sql->bindParam('val4', $data['description']);
+            $sql->bindParam('val5', $data['date_debut']);
+            $sql->bindParam('val6', $data['date_fin']);
+            $sql->bindParam('val7', $data['centre']);
+            $sql->bindParam('val8', $data['premier_responsable']);
+            $sql->bindParam('val9', $data['titre_responsable']);
+            $sql->bindParam('val10', $data['organisateur']);
+            $sql->bindParam('val11', $data['titre_organisateur']);
+            $sql->bindParam('val12', $data['financier']);
+            $sql->bindParam('val13', $data['titre_financier']);
+            // Taux journalier
+            if (in_array($type_activite, [1, 2])) {
+                $sql->bindParam('val14', $data['taux_journalier'], PDO::PARAM_INT);
+            }
+            // Taux tâches et frais de déplacement journalier
+            if ($type_activite == 3) {
+                $sql->bindParam('val15', $data['taux_taches']);
+                $sql->bindParam('val16', $data['frais_deplacement_journalier']);
+            }
+            $sql->execute();
+
+            if ($sql->rowCount() != 0) {
+                $doublon = true;
+            } else {
             try {
                 // Si un nouveau fichier est uploadé, insérer dans fichiers
                 if (isset($fileName) && isset($dest_path)) {
@@ -309,13 +372,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                     'time' => time()
                 ];
 
+                 // Pour afficher message de succès
+                $success = true;
+                $_POST = []; // On vide la superglobale
+
                 // Stocker les données pour le message de succès
-                $data['note_generatrice'] = isset($fileName) ? $fileName : ($data['note_generatrice'] ?: 'Aucun fichier');
-                $_SESSION['success_data'] = $data;
+                //$data['note_generatrice'] = isset($fileName) ? $fileName : ($data['note_generatrice'] ?: 'Aucun fichier');
+                //$_SESSION['success_data'] = $data;
                 // Rediriger pour éviter les doubles soumissions
-                
-                header('Location: ../modifier_infos.php?id=' . urlencode($activity_id));
-                exit;
+                if ($success)
+                {
+                    header('Location: ../gerer_activite.php?id=' . urlencode($activity_id). '&success=1');
+                    exit;
+                }
+                else 
+                {
+                    header('Location: ../modifier_infos.php?id=' . urlencode($activity_id));
+                    exit;
+                }
+               
             } catch (PDOException $e) {
                 die('Erreur : ' . $e->getMessage());
                 $errors['database'] = "Une erreur s'est produite. Veuillez réessayer.";
@@ -324,6 +399,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                     unlink($dest_path);
                 }
             }
+        }
         }
     }
 

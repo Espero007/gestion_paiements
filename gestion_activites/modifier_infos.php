@@ -83,6 +83,7 @@ $fields_to_display = [
 // Récupérer les données et erreurs de la session si présentes
 $errors = $_SESSION['form_errors'] ?? [];
 $data = $_SESSION['form_data'] ?? $data;
+
 $success = isset($_GET['success']) && $_GET['success'] === '1' && isset($_SESSION['success_data']);
 if ($success) {
     $data = $_SESSION['success_data'];
@@ -135,6 +136,13 @@ unset($_SESSION['success_data']);
                                     <?php if (isset($errors['duplicate'])): ?>
                                         <div class="alert alert-danger">
                                             <strong>Erreur :</strong> <?= htmlspecialchars($errors['duplicate']) ?>
+                                        </div>
+                                    <?php endif; ?>
+                                     
+                                    <?php if (isset($doublon) && $doublon) : ?>
+                                        <div class="alert alert-danger text-center alert-dismissible">
+                                            Il semble que vous avez déjà créé une activité identique.
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                                         </div>
                                     <?php endif; ?>
 
