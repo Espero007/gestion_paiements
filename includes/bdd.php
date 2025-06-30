@@ -73,7 +73,7 @@ try {
         CREATE TABLE IF NOT EXISTS diplomes
         (
         id_diplome INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        noms VARCHAR(100) NOT NULL,
+        noms VARCHAR(500) NOT NULL,
         id_activite INT NOT NULL
         );
 
@@ -113,7 +113,7 @@ try {
         id_participant INT NOT NULL,
         id_activite INT NOT NULL,
         id_titre INT NOT NULL,
-        id_diplome INT NOT NULL,
+        diplome VARCHAR(100) NOT NULL,
         id_compte_bancaire INT NOT NULL,
         nombre_jours INT NULL,
         nombre_taches INT NULL

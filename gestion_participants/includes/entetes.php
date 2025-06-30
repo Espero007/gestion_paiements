@@ -11,7 +11,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
         "matricule_ifu" => ["Matricule/IFU", "Entrez le matricule ou l'IFU"],
         "date_naissance" => ["Date de naissance", ""],
         "lieu_naissance" => ["Lieu de naissance", "Entrez le lieu de naissance"],
-        "diplome" => ["Diplôme", "Indiquez le diplôme le plus élevé du participant"]
+        "diplome_le_plus_eleve" => ["Diplôme", "Indiquez le diplôme le plus élevé du participant"]
     ];
 }
 

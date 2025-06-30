@@ -158,14 +158,14 @@
                             }
 
                             // Obtention des diplômes
-                            $stmt = $bdd->prepare("SELECT id_diplome, nom FROM diplomes WHERE id_activite = :id ORDER BY nom");
+                            $stmt = $bdd->prepare("SELECT id_diplome, noms FROM diplomes WHERE id_activite = :id ORDER BY noms");
                             $stmt->bindParam(':id', $id_activite, PDO::PARAM_INT);
                             $stmt->execute();
 
                             //echo count($stmt);
 
                             foreach ($stmt as $ligne) {
-                                $diplomes['intitules'][] = $ligne['nom'];
+                                $diplomes['intitules'][] = $ligne['noms'];
                                 $diplomes['ids'][] = $ligne['id_diplome'];
                             }
 
@@ -567,7 +567,7 @@
                                             }
                                         }
 
-                                        if(isset($message_succes)){
+                                        if (isset($message_succes)) {
                                             echo $message_succes;
                                         }
                                     }
@@ -908,6 +908,7 @@
                                     <?php
                                     if ($type_activite == 3) {
                                     ?>
+                                        <!-- Nombre de tâches -->
                                         <div class="mb-2 row">
                                             <label for="nbr_copies" class="col-sm-3 col-form-label">Nombre de copies</label>
                                             <div class="col-sm-9">

@@ -106,26 +106,15 @@ function valider_valeur_numerique($cle, $conteneur)
     return true;
 }
 
-function valider_id($methode, $cle, $bdd, $table = 'participants')
+function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = false)
 {
-    // S'assurer que la méthode, et la table sont valides
+    // $valeur_id nous permet de valider un id qu'on passe directement à la fonction sans passer par les superglobales
 
-    $allowed_methods = ['get', 'post'];
     $allowed_tables = ['participants', 'activites', 'autre_table'];
     // $allowed_columns = ['id_participant', 'id_autre'];
 
-    if (!in_array($table, $allowed_tables) || !in_array($methode, $allowed_methods)) {
-        throw new Exception("Table ou méthode non autorisée.");
-    }
-
-    // Definition des valeurs globales
-
-    if ($methode == 'get') {
-        $const_superglobale = INPUT_GET;
-        $superglobale = $_GET;
-    } elseif ($methode == 'post') {
-        $const_superglobale = INPUT_POST;
-        $superglobale = $_POST;
+    if (!in_array($table, $allowed_tables)) {
+        throw new Exception("Table non autorisée.");
     }
 
     // type d'id
@@ -139,22 +128,44 @@ function valider_id($methode, $cle, $bdd, $table = 'participants')
             break;
     }
 
-    if (!filter_input($const_superglobale, $cle, FILTER_VALIDATE_INT)) {
-        // C'est une chaîne de caractères ou tout simplement la valeur 0 que j'ai reçue
-        return false;
-    } else {
-        $valeur = $superglobale[$cle];
+    if (!$valeur_id) {
+        // La fonction ne travaille pas directement sur la valeur de l'id mais sur les superglobables
 
-        $stmt = $bdd->prepare("SELECT $type_id FROM $table WHERE $type_id=:valeur_id AND id_user=" . $_SESSION['user_id']);
-        $stmt->bindParam(':valeur_id', $valeur, PDO::PARAM_INT);
-
-        if (!$stmt->execute()) {
-            // Une erreur s'est produite lors de la récupération
-            redirigerVersPageErreur(500, obtenirURLcourant());
-        } else {
-            $bool = count($stmt->fetchAll()) == 0 ? false : true;
-            return $bool;
+        // S'assurer que la méthode, et la table sont valides
+        $allowed_methods = ['get', 'post'];
+        if (!in_array($methode, $allowed_methods)) {
+            throw new Exception("Méthode non autorisée.");
         }
+        
+        // Definition des valeurs globales
+
+        if ($methode == 'get') {
+            $const_superglobale = INPUT_GET;
+            $superglobale = $_GET;
+        } elseif ($methode == 'post') {
+            $const_superglobale = INPUT_POST;
+            $superglobale = $_POST;
+        }
+
+        if (!filter_input($const_superglobale, $cle, FILTER_VALIDATE_INT)) {
+            // C'est une chaîne de caractères ou tout simplement la valeur 0 que j'ai reçue
+            return false;
+        } else {
+            $valeur = $superglobale[$cle];
+        }
+    } else {
+        $valeur = $valeur_id;
+    }
+
+    $stmt = $bdd->prepare("SELECT $type_id FROM $table WHERE $type_id=:valeur_id AND id_user=" . $_SESSION['user_id']);
+    $stmt->bindParam(':valeur_id', $valeur, PDO::PARAM_INT);
+
+    if (!$stmt->execute()) {
+        // Une erreur s'est produite lors de la récupération
+        redirigerVersPageErreur(500, obtenirURLcourant());
+    } else {
+        $bool = count($stmt->fetchAll()) == 0 ? false : true;
+        return $bool;
     }
 }
 

@@ -131,3 +131,48 @@
 .gap-5 {
     gap: 3rem !important;
 }
+
+/* Styles pour les divider */
+.text-start {
+    text-align: left !important;
+}
+
+.divider {
+    display: block;
+    text-align: center;
+    margin: 1rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.divider .divider-text {
+    position: relative;
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 0rem 1rem;
+}
+
+.divider .divider-text i {
+    font-size: 1rem;
+}
+
+.divider .divider-text:before,
+.divider .divider-text:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 100vw;
+    border-top: 1px solid rgba(67, 89, 113, 0.2);
+}
+
+.divider .divider-text:before {
+    right: 100%;
+}
+
+.divider .divider-text:after {
+    left: 100%;
+}
+
+.divider.text-start .divider-text {
+    padding-left: 0;
+}

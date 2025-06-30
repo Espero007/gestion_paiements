@@ -137,7 +137,7 @@ $resultat->closeCursor();
                                                                         <a href="gerer_participant.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Voir</a>
                                                                     </li>
                                                                     <li>
-                                                                        <a href="modifier_infos.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Modifier</a>
+                                                                        <a href="modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
                                                                     </li>
                                                                     <li>
                                                                         <a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>

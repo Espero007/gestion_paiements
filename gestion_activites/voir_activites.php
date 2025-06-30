@@ -118,9 +118,9 @@ $resultat->closeCursor();
                                                                     <li>
                                                                         <a href="gerer_activite.php?id=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Voir</a>
                                                                     </li>
-                                                                    <!-- <li>
-                                                                        <a href="modifier_infos.php?id=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Modifier</a>
-                                                                    </li> -->
+                                                                    <li>
+                                                                        <a href="modifier_infos.php?id=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
+                                                                    </li>
                                                                     <!-- <li>
                                                                         <a href="ajouter_comptes.php?id_participant=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>
                                                                     </li> -->

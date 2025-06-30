@@ -2,7 +2,7 @@
 // Validation id
 
 if (!isset($_GET['id_participant'])) {
-    header('location:voir_participants.php');
+    header('location:'.$_SESSION['previous_url']);
     exit;
 } else {
     if (valider_id('get', 'id_participant', $bdd)) {

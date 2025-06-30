@@ -305,7 +305,7 @@ require_once('traitements/submit_creer_activite.php');
                                             <!-- Boutons d'action -->
                                             <div class="mt-4">
                                                 <button class="btn btn-primary mr-3" id="submitButton" type="submit" name="form_submitted">Créer l'activité</button>
-                                                <a href="voir_activites.php" class="btn btn-outline-primary">Annuler</a>
+                                                <a href="creer_activite.php" class="btn btn-outline-primary">Annuler</a>
                                             </div>
                                         </form>
                                     </div>
