@@ -3,7 +3,14 @@ $section = 'Activités';
 $titre = "Modifications des informations";
 require_once(__DIR__ . '/../includes/header.php');
 
-$activity_id = 1;
+// Vérifier si l'ID de l'activité est fourni
+if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+    header('Location:'.$_SESSION["previous_url"]);
+    exit;
+}
+
+$activity_id = $_GET['id'];
+
 
 // Récupérer les données de l'activité
 try {
@@ -76,6 +83,7 @@ $fields_to_display = [
 // Récupérer les données et erreurs de la session si présentes
 $errors = $_SESSION['form_errors'] ?? [];
 $data = $_SESSION['form_data'] ?? $data;
+
 $success = isset($_GET['success']) && $_GET['success'] === '1' && isset($_SESSION['success_data']);
 if ($success) {
     $data = $_SESSION['success_data'];
@@ -123,19 +131,30 @@ unset($_SESSION['success_data']);
                                 <div class="card-body">
                                     <!-- Messages d'erreurs divers -->
                                     <?php if (isset($errors['database'])): ?>
-                                        <div class="alert alert-danger">
-                                            <strong>Erreur :</strong> <?= htmlspecialchars($errors['database']) ?>
-                                        </div>
+                                        <?php afficherAlerte('Erreur : '.htmlspecialchars($errors['database']), 'danger')?>                                        
                                     <?php endif; ?>
                                     <?php if (isset($errors['duplicate'])): ?>
                                         <div class="alert alert-danger">
                                             <strong>Erreur :</strong> <?= htmlspecialchars($errors['duplicate']) ?>
                                         </div>
                                     <?php endif; ?>
+                                     
+                                    <?php if (isset($doublon) && $doublon) : ?>
+                                        <div class="alert alert-danger text-center alert-dismissible">
+                                            Il semble que vous avez déjà créé une activité identique.
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                        </div>
+                                    <?php endif; ?>
 
                                     <!-- Formulaire -->
 
                                     <form action="traitements/modifier_infos.php" method="post" id="activityForm" enctype="multipart/form-data">
+
+                                        <!-- Hidden input for activity_id -->
+                                        <input type="hidden" name="id" value="<?= htmlspecialchars($activity_id) ?>">
+                                        <!-- Rest of your form fields -->
+
+                    
                                         <!-- Informations générales -->
                                         <fieldset>
                                             <legend class="h6"><strong>Informations générales</strong></legend>
@@ -332,7 +351,7 @@ unset($_SESSION['success_data']);
 
                                         <!-- Boutons d'action -->
                                         <div class="mt-4">
-                                            <button class="btn btn-primary mr-3" id="submitButton" type="submit">Modifier l'activité</button>
+                                            <button class="btn btn-primary mr-3" id="submitButton" name="form_submitted" type="submit">Modifier l'activité</button>
                                             <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-outline-primary">Annuler</a>
                                         </div>
                                     </form>

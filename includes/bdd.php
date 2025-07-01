@@ -53,7 +53,7 @@ try {
         financier VARCHAR(100) NOT NULL,
         titre_financier VARCHAR(100) NOT NULL,
         id_note_generatrice INT NOT NULL,
-        taux_journalier DECIMAL(50) NOT NULL,
+        taux_journalier DECIMAL(50) NULL,
         taux_taches DECIMAL(50) NULL,
         frais_deplacement_journalier DECIMAL(50) NULL
         );

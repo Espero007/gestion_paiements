@@ -47,7 +47,7 @@ if (!isset($_POST['activity_id']) || !filter_var($_POST['activity_id'], FILTER_V
 $activity_id = $_POST['activity_id'];
 */
 
-$activity_id = 1;
+$activity_id = 3;
 
 // Vérifier si l'activité existe et appartient à l'utilisateur
 try {

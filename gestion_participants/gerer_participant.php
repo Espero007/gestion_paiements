@@ -1,6 +1,7 @@
 <?php
 $titre_page = "Gestion du participant";
 require_once(__DIR__.'/../includes/header.php');
+
 require_once('includes/gerer_participant.php');
 ?>
 
@@ -11,6 +12,7 @@ require_once('includes/gerer_participant.php');
 
         <!-- Sidebar -->
         <?php require_once(__DIR__.'/../includes/sidebar.php') ?>
+
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -19,7 +21,9 @@ require_once('includes/gerer_participant.php');
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
+
                 <?php require_once(__DIR__.'/../includes/topbar.php') ?>
+
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -100,6 +104,7 @@ require_once('includes/gerer_participant.php');
     </a>
 
     <!-- Logout Modal-->
+     
     <?php require_once(__DIR__.'/../includes/logoutModal.php') ?>
     <?php require_once(__DIR__.'/../includes/scripts.php') ?>
 

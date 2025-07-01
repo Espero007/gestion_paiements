@@ -176,3 +176,13 @@
 .divider.text-start .divider-text {
     padding-left: 0;
 }
+
+.list-group-numbered {
+    list-style-type: none;
+    counter-reset: section;
+}
+
+.list-group-numbered>li::before {
+    content: counters(section, ".") ". ";
+    counter-increment: section;
+}

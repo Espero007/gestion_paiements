@@ -47,7 +47,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                     <input type="hidden" name="<?= ($sens == 0) ? 'id_participant' : 'id_activite' ?>" value="<?= ($sens == 0) ? $id_participant : $id_activite ?>">
 
                                     <div class="table">
-                                        <table class="table">
+                                        <table class="table table-bordered text-center">
                                             <?php if ($sens == 0) : ?>
                                                 <?php if ($aucune_activite_1) : ?>
                                                     <p>Il semble que vous ne disposez d'aucune activité ajoutée. <a href="/gestion_activites/creer_activite.php">Cliquez ici</a> pour créer de nouvelles activités auxquelles vous pourrez ensuite des participants. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>

@@ -91,10 +91,7 @@ require_once('traitements/submit_creer_activite.php');
                                         <!-- Messages d'erreur divers -->
 
                                         <?php if ($success) : ?>
-                                            <div class="alert alert-success alert-dismissible text-center">
-                                                Votre activité a été enregistrée avec succès ! Pensez à y <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $id_activite ?>">associer des participants</a>.
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                                            </div>
+                                           
                                         <?php endif; ?>
                                         <?php if (isset($doublon) && $doublon) : ?>
                                             <div class="alert alert-danger text-center alert-dismissible">
