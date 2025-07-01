@@ -12,7 +12,7 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
+    <li class="nav-item <?= ($titre_page == "Tableau de bord") ? 'active' : '' ?>">
         <a class="nav-link" href="/index.php">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Tableau de bord</span>
@@ -32,7 +32,7 @@
 
     <!-- Gestion des activités -->
 
-    <li class="nav-item">
+    <li class="nav-item <?= ($section == "Activités") ? 'active' : '' ?>">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
             aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-clipboard-list"></i>
@@ -42,7 +42,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
                 <a class="collapse-item <?= $titre_page == "Création d'une activité" ? 'active' : '' ?>" href="/gestion_activites/creer_activite.php">Créer une activité</a>
-                <a class="collapse-item <?= $titre_page == "Liste des activités" ? 'active' : '' ?>" href="/gestion_activites/voir_activites.php">Voir les activités</a>
+                <a class="collapse-item <?= $titre_page == "Liste des activités" ? 'active' : '' ?>" href="/gestion_activites/voir_activites.php">Vos activités</a>
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
         </div>
@@ -51,7 +51,7 @@
 
     <!-- Gestion des participants -->
 
-    <li class="nav-item">
+    <li class="nav-item <?= ($section == "Participants") ? 'active' : '' ?>">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
             aria-expanded="true" aria-controls="collapseThree">
             <i class="fas fa-fw bi bi-person-fill"></i>
@@ -61,7 +61,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
                 <a class="collapse-item <?= $titre_page == 'Ajout d\'un participant' ? 'active' : '' ?>" href="/gestion_participants/ajouter_participant.php">Ajouter un participant</a>
-                <a class="collapse-item <?= $titre_page == 'Liste des participants' ? 'active' : '' ?>" href="/gestion_participants/voir_participants.php">Voir les participants</a>
+                <a class="collapse-item <?= $titre_page == 'Liste des participants' ? 'active' : '' ?>" href="/gestion_participants/voir_participants.php">Vos participants</a>
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
         </div>
@@ -69,7 +69,7 @@
 
     <!-- Gestion du compte utiisateur -->
 
-    <li class="nav-item">
+    <li class="nav-item <?= ($section == "Paramètres") ? 'active' : '' ?>">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
             aria-expanded="true" aria-controls="collapseFour">
             <i class="fas fa-fw fa-cog"></i>

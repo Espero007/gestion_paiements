@@ -109,7 +109,7 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                             redirigerVersPageErreur(404, $_SESSION['previous_url']);
                         }
 
-                        $stmt = $bdd->query('SELECT id_participant, nom, prenoms FROM participants WHERE id_participant=' . $id_participant);
+                        $stmt = $bdd->query('SELECT id_participant, nom, prenoms, diplome_le_plus_eleve FROM participants WHERE id_participant=' . $id_participant);
                         $resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         $participants[] = $resultat[0];
                     }
@@ -138,9 +138,13 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
 
                 // On récupère les diplômes associés à l'activité et à chaque participant
                 $stmt = $bdd->query('SELECT noms FROM diplomes WHERE id_activite=' . $id_activite);
-                $diplomes = $stmt->fetch(PDO::FETCH_NUM); // puisque je sais qu'on va récupérer une seule ligne
-                $diplomes = $diplomes[0];
-                $diplomes = explode(',', $diplomes);
+                $diplomes_activite = $stmt->fetch(PDO::FETCH_NUM); // puisque je sais qu'on va récupérer une seule ligne
+                $diplomes_activite = $diplomes_activite[0];
+                $diplomes_activite = explode(',', $diplomes_activite);
+                
+                foreach ($participants as $participant) {
+                    $diplomes[] = array_merge($diplomes_activite, [$participant['diplome_le_plus_eleve']]);
+                }
 
                 // On récupère les comptes bancaires du participants
 

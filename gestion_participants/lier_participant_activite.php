@@ -152,8 +152,8 @@ require_once('includes/traitements_lier_participant_activite.php');
                                             <label for="diplome_<?= $i ?>" class="col-form-label col-sm-4">Diplôme</label>
                                             <div class="col-sm-8">
                                                 <select name="diplome[]" id="diplome<?= $i ?>" class="form-control <?= isset($erreurs['diplome'][$i]) ? 'is-invalid' : '' ?>" aria-describdly=" diplomeAide_<?= $i ?>">
-                                                    <option value="defaut" <?= (!isset($_POST['diplome']) || !in_array($_POST['diplome'][$i], $diplomes)) ? 'selected' : '' ?>>Choisissez le diplôme du participant</option>
-                                                    <?php foreach ($diplomes as $diplome) : ?>
+                                                    <option value="defaut" <?= (!isset($_POST['diplome']) || !in_array($_POST['diplome'][$i], $diplomes[$i])) ? 'selected' : '' ?>>Choisissez le diplôme du participant</option>
+                                                    <?php foreach ($diplomes[$i] as $diplome) : ?>
                                                         <option value="<?= $diplome ?>" <?= (isset($erreurs) && $diplome == $_POST['diplome'][$i]) ? 'selected' : '' ?>><?= htmlspecialchars($diplome) ?></option>
                                                     <?php endforeach; ?>
                                                 </select>

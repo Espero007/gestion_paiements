@@ -38,23 +38,6 @@ require_once('traitements/gerer_activite.php');
                                 </div>
                                 <div class="card-body">
 
-                                    <table class="table table-borderless">
-                                        <tbody>
-                                            <tr>
-                                                <td class="align-middle">Bonjour</td>
-                                                <td>Salut toi</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Bonjour</td>
-                                                <td>Salut toi</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <!-- <dl class="row">
-                                        <dt class="col-sm-3">Bonjour</dt>
-                                        <dd class="col-sm-9">Salut mon gars</dd>
-                                    </dl> -->
-
                                     <!-- Nom -->
                                     <p class="mb-3">
                                         <span class="font-weight-bold">Nom : </span>
@@ -85,7 +68,7 @@ require_once('traitements/gerer_activite.php');
                                         <span class="font-weight-bold">Premier responsable : </span>
                                         <span><?= htmlspecialchars($activite['premier_responsable']) ?></span>
                                         <?php if (!empty($activite['titre_responsable'])) : ?>
-                                            <span>(<?= htmlspecialchars($activite['titre_responsable']) ?>)</span>
+                                            <span>(<strong><?= htmlspecialchars($activite['titre_responsable']) ?></strong>)</span>
                                         <?php endif; ?>
                                     </p>
 
@@ -94,7 +77,7 @@ require_once('traitements/gerer_activite.php');
                                         <span class="font-weight-bold">Organisateur : </span>
                                         <span><?= htmlspecialchars($activite['organisateur']) ?></span>
                                         <?php if (!empty($activite['titre_organisateur'])) : ?>
-                                            <span>(<?= htmlspecialchars($activite['titre_organisateur']) ?>)</span>
+                                            <span>(<strong><?= htmlspecialchars($activite['titre_organisateur']) ?></strong>)</span>
                                         <?php endif; ?>
                                     </p>
 
@@ -103,7 +86,7 @@ require_once('traitements/gerer_activite.php');
                                         <span class="font-weight-bold">Financier : </span>
                                         <span><?= htmlspecialchars($activite['financier']) ?></span>
                                         <?php if (!empty($activite['titre_financier'])) : ?>
-                                            <span>(<?= htmlspecialchars($activite['titre_financier']) ?>)</span>
+                                            <span>(<strong><?= htmlspecialchars($activite['titre_financier']) ?></strong>)</span>
                                         <?php endif; ?>
                                     </p>
 
@@ -117,9 +100,10 @@ require_once('traitements/gerer_activite.php');
 
                                         <!-- Indemnités forfaitaires avec les titres associés -->
                                         <p class="mb-3">
-                                            <span class="font-weight-bold">Indemnités forfaitaires </span>
+                                            <span class="font-weight-bold">Indemnités forfaitaires : </span>
+                                            <span><?= $indemnite_str ?></span>
                                         </p>
-                                        <div class="col-lg-6 mb-4 mb-xl-0">
+                                        <!-- <div class="col-lg-6 mb-4 mb-xl-0">
                                             <div class="mt-3">
                                                 <ol class="list-group list-group-numbered">
                                                     <li class="list-group-item">Bear claw cake biscuit</li>
@@ -129,7 +113,7 @@ require_once('traitements/gerer_activite.php');
                                                     <li class="list-group-item">Dragée tootsie roll</li>
                                                 </ol>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                     <?php endif; ?>
 

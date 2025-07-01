@@ -27,4 +27,17 @@ $champs = ['id', 'type_activite', 'id_user', 'id_note_generatrice'];
 if($activite['type_activite'] == 1){
     $champs[] = 'frais_deplacement_journalier';
     $champs[] = 'taux_taches';
+}else{
+    // Type 2 ou 3
+
+    $stmt = $bdd->prepare('SELECT nom, indemnite_forfaitaire FROM titres WHERE id_activite='.$activite['id']);
+    $stmt->execute();
+    $indemnites_forfaitaires = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $indemnite_str = '';
+    for ($i=0; $i < count($indemnites_forfaitaires); $i++) {
+        $indemnite_str .= htmlspecialchars($indemnites_forfaitaires[$i]['nom']) . ' (<strong>' . htmlspecialchars($indemnites_forfaitaires[$i]['indemnite_forfaitaire']) . ' FCFA</strong>)';
+        if($i != count($indemnites_forfaitaires) - 1){
+            $indemnite_str .= ', ';
+        }
+    }
 }
