@@ -36,13 +36,14 @@ $stmt = $bdd->prepare("SELECT banque, numero_compte FROM informations_bancaires 
 $stmt->execute();
 $comptes = $stmt->fetchAll(PDO::FETCH_NUM);
 
-
-// Merge avec $infos
 $index = 0;
+$comptes_str = '';
 foreach ($comptes as $compte) {
     $index++;
-    $infos['compte_' . $index][] = $compte[0]; // Banque
-    $infos['compte_' . $index][] = $compte[1]; // numéro de compte, rib probablement
+    $comptes_str .= $compte[0].' (<strong>'.$compte[1].'</strong>)';
+    if($index != count($comptes)){
+        $comptes_str .=', ';
+    }
 }
 
 // Vérification du nombre de comptes associé au participant pour afficher ou non l'option d'ajout de comptes
@@ -54,3 +55,6 @@ $stmt->execute();
 // $nombre_comptes_existants = $stmt->rowCount();
 
 $quota_comptes_bancaires_atteint = (NOMBRE_MAXIMAL_COMPTES - $stmt->rowCount()) == 0 ? true : false; // avec $stmt->rowCount() donnant le nombre de lignes retrouvé dans la table
+
+// Récupération des activités auxquelles le participant est déjà associé
+$activites_associees = [];

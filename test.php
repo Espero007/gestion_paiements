@@ -11,9 +11,18 @@
 <body>
 
     <?php
-       ?>
-        <pre><?php var_dump($_SERVER);?></pre>
-       <?php
+    $email = $_GET['email'];
+    $stmt = $bdd->prepare('SELECT nom, email FROM informations WHERE email=:email');
+    $stmt->execute([':email' => $email]);
+    $infos = $stmt->fetch(PDO::FETCH_ASSOC);
+    $infos->closeCursor();
+
+    if (count($infos) != 0) {
+        // Il y a une correspondance
+        echo "Le nom de l'utilisateur est " . $infos['nom'] . " et son email est " . $infos['email'];
+    } else {
+        echo "L'email indiqué ne correspond à aucun utilisateur";
+    }
     ?>
 </body>
 

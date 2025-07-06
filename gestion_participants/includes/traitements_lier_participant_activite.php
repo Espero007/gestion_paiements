@@ -141,27 +141,25 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                 $diplomes_activite = $stmt->fetch(PDO::FETCH_NUM); // puisque je sais qu'on va récupérer une seule ligne
                 $diplomes_activite = $diplomes_activite[0];
                 $diplomes_activite = explode(',', $diplomes_activite);
-                
-                foreach ($participants as $participant) {
-                    $diplomes[] = array_merge($diplomes_activite, [$participant['diplome_le_plus_eleve']]);
-                }
 
-                // On récupère les comptes bancaires du participants
+                // $index = 0;
 
-                $stmt = $bdd->prepare('SELECT id, banque, numero_compte FROM informations_bancaires WHERE id_participant=' . $id_participant);
-                $stmt->execute();
-                $comptes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                for ($i = 0; $i < count($participants); $i++) {
+                    $diplomes[] = array_merge($diplomes_activite, [$participants[$i]['diplome_le_plus_eleve']]);
+                    // On récupère les comptes bancaires du participant
+                    $stmt = $bdd->prepare('SELECT id, banque, numero_compte FROM informations_bancaires WHERE id_participant=' . $participants[$i]['id_participant']);
+                    $stmt->execute();
+                    $comptes[] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                foreach ($comptes as $index => $compte) {
-                    $id_comptes[] = $compte['id'];
+                    foreach ($comptes[count($comptes) - 1] as $compte_participant) {
+                        $id_comptes[$i][] = $compte_participant['id'];
+                    }
                 }
 
                 // Les informations à afficher sont récupérées et stockées. On passe à présent aux validations nécessaires lorsque le formulaire sera soumis
 
                 if (isset($_POST['lier'])) {
-?>
-                    <pre><?php var_dump($_POST); ?></pre>
-<?php
+
                     for ($i = 0; $i < count($participants); $i++) {
                         foreach ($champs_attendus as $champ) {
                             if (!isset($_POST[$champ][$i]) || (isset($_POST[$champ][$i]) && empty($_POST[$champ][$i]))) {
@@ -179,11 +177,11 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                                         $erreurs[$champ][$i][] = "Le titre que vous avez choisi n'est pas valide";
                                     }
                                 } else if ($champ == 'diplome') {
-                                    if (!in_array($valeur, $diplomes)) {
+                                    if (!in_array($valeur, $diplomes[$i])) {
                                         $erreurs[$champ][$i][] = "Le diplome que vous avez choisi n'est pas valide";
                                     }
                                 } else if ($champ == 'compte_bancaire') {
-                                    if (!in_array($valeur, $id_comptes)) {
+                                    if (!in_array($valeur, $id_comptes[$i])) {
                                         $erreurs[$champ][$i][] = "Le compte bancaire sélectionné n'est pas valide";
                                     }
                                 } else if ($champ == 'nbr_jours' || $champ == 'nbr_taches') {
@@ -195,15 +193,14 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                         }
                     }
 
-
                     // Liaison effective après validations
 
                     if (!isset($erreurs)) {
                         // Insertions dans la table 'participations' pour chaque participant
 
                         for ($i = 0; $i < count($participants); $i++) {
-                            $stmt = $bdd->prepare('INSERT INTO participations(id_participant, id_activite, id_titre, diplome, id_compte_bancaire, nombre_jours, nombre_taches) VALUES (:id_participant, :id_activite, :id_titre, :diplome, :id_compte_bancaire, :nbr_jours, :nbr_taches');
-                            $stmt->bindParam(':id_participant', $id_participant, PDO::PARAM_INT);
+                            $stmt = $bdd->prepare('INSERT INTO participations(id_participant, id_activite, id_titre, diplome, id_compte_bancaire, nombre_jours, nombre_taches) VALUES (:id_participant, :id_activite, :id_titre, :diplome, :id_compte_bancaire, :nbr_jours, :nbr_taches)');
+                            $stmt->bindParam(':id_participant', $participants[$i]['id_participant'], PDO::PARAM_INT);
                             $stmt->bindParam(':id_activite', $id_activite, PDO::PARAM_INT);
 
                             // On récupère l'id du titre qui a été sélectionné
@@ -214,7 +211,8 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                             }
 
                             $stmt->bindParam(':id_titre', $id_titre, PDO::PARAM_INT);
-                            $stmt->bindParam(':compte_bancaire', $_POST['compte_bancaire'][$i], PDO::PARAM_INT);
+                            $stmt->bindParam(':diplome', $_POST['diplome'][$i]);
+                            $stmt->bindParam(':id_compte_bancaire', $_POST['compte_bancaire'][$i], PDO::PARAM_INT);
                             $stmt->bindParam(':nbr_jours', $_POST['nbr_jours'][$i], PDO::PARAM_INT);
 
                             if ($type_activite == 3) {
@@ -227,8 +225,13 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                         }
 
                         // Redirection en cas de succès
-                        $_SESSION['liaison_reussie'] = true;
-                        header('location:'.$_SESSION['previous_url']);
+                        if (count($participants) > 1) {
+                            $_SESSION['liaison_reussie'] = 'Les participants ont été associés à l\'activité avec succès';
+                        } else {
+                            $_SESSION['liaison_reussie'] = 'Le participant a été associé à l\'activité avec succès';
+                        }
+
+                        header('location:' . $_SESSION['previous_url']);
                         exit;
                     }
                 }

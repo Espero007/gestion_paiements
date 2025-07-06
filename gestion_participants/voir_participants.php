@@ -18,9 +18,6 @@ $resultat->closeCursor();
 // $participants = [];
 ?>
 
-<!-- Custom styles for this page -->
-<link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-
 <body id="page-top">
 
     <!-- Page Wrapper -->
@@ -58,20 +55,16 @@ $resultat->closeCursor();
 
                                 <!-- Ajout de comptes -->
                                 <?php if (isset($_SESSION['comptes_ajoutes'])) : ?>
-                                    <div class="alert alert-success mt-2 text-center alert-dismissible">
-                                        Le(s) compte(s) bancaire(s) a(ont) été ajouté(s) avec succès !
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                                    </div>
-                                    <?php unset($_SESSION['comptes_ajoutes']); ?>
+                                    <?php
+                                    afficherAlerte($_SESSION['comptes_ajoutes'], 'success');
+                                    unset($_SESSION['comptes_ajoutes']); ?>
                                 <?php endif; ?>
 
                                 <!-- Liaison participant-activité réussie -->
                                 <?php if (isset($_SESSION['liaison_reussie'])) : ?>
-                                    <div class="alert alert-success mt-2 text-cente alert-dismissibler">
-                                        La liaison a été faite avec succès !
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                                    </div>
-                                    <?php unset($_SESSION['liaison_reussie']); ?>
+                                    <?php afficherAlerte($_SESSION['liaison_reussie'], 'success');
+                                    unset($_SESSION['liaison_reussie'])
+                                    ?>
                                 <?php endif; ?>
 
                                 <!-- Liaison participant-activité non autorisée -->
@@ -219,14 +212,6 @@ $resultat->closeCursor();
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
-
-    <!-- Page level plugins -->
-    <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="/assets/js/demo/datatables-demo.js"></script>
-    <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         const deleteBtns = document.querySelectorAll('.del-btn'); // boutons de suppression des participants

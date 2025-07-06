@@ -116,7 +116,7 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
                 $erreurs[$champ][] = "Veuillez remplir ce champ";
             } else {
                 if (str_contains($champ, 'banque_')) {
-                    if (preg_match('/^[p{L} -]+$/u', $valeur_champ)) {
+                    if (preg_match('/[^\p{L} -]+$/u', $valeur_champ)) {
                         $erreurs[$champ][] = "Ce champ doit être une chaîne de caractères alphabétiques !";
                     } elseif (strlen($valeur_champ) > 100) {
                         $erreurs[$champ][] = "La valeur de ce champ ne doit pas excéder 100 caractères";
@@ -126,7 +126,7 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
                     // Vérifier la validite du numéro de compte
                     $_POST[$champ] = strtoupper($_POST[$champ]);
 
-                    if (preg_match('/[^A-Z0-9]+/', $valeur_champ)) {
+                    if (!preg_match('/^[A-Z0-9]+/', $valeur_champ)) {
                         // La valeur reçue contient d'autres caractères que les lettres et les chiffres
                         $erreurs[$champ][] = "Ce champ doit contenir uniquement des lettres et des chiffres";
                     } elseif (!preg_match('/[0-9]+/', $valeur_champ)) {

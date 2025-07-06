@@ -1,6 +1,7 @@
 <?php
+$section = 'Participants';
 $titre_page = "Gestion du participant";
-require_once(__DIR__.'/../includes/header.php');
+require_once(__DIR__ . '/../includes/header.php');
 
 require_once('includes/gerer_participant.php');
 ?>
@@ -11,7 +12,7 @@ require_once('includes/gerer_participant.php');
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once(__DIR__.'/../includes/sidebar.php') ?>
+        <?php require_once(__DIR__ . '/../includes/sidebar.php') ?>
 
         <!-- End of Sidebar -->
 
@@ -22,7 +23,7 @@ require_once('includes/gerer_participant.php');
             <div id="content">
                 <!-- Topbar -->
 
-                <?php require_once(__DIR__.'/../includes/topbar.php') ?>
+                <?php require_once(__DIR__ . '/../includes/topbar.php') ?>
 
                 <!-- End of Topbar -->
 
@@ -43,43 +44,64 @@ require_once('includes/gerer_participant.php');
                                 <?php unset($_SESSION['modification_ok']) ?>
                             <?php endif; ?>
 
+                            <!-- Informations générales -->
+
                             <?php foreach ($infos as $info => $valeur) : ?>
                                 <p class="mb-3">
-                                    <?php if (str_contains($info, 'compte_')) : ?>
-                                        <span class="font-weight-bold">Banque (RIB) : </span>
-                                        <span><?= htmlspecialchars($valeur[0]) . ' <i>(' . htmlspecialchars($valeur[1]) . '</i>)' ?></span>
-                                    <?php else: ?>
-                                        <span class="font-weight-bold"><?= $valeur ?> : </span>
-                                        <span><?= $participant[$info] ?></span>
-                                    <?php endif; ?>
+                                    <span class="font-weight-bold"><?= $valeur ?> : </span>
+                                    <span><?= htmlspecialchars($participant[$info]) ?></span>
                                 </p>
                             <?php endforeach; ?>
 
-                            <hr>
-                            <p><strong>Que voulez-vous faire ?</strong></p>
+                            <!-- Informations bancaires -->
 
+                            <p class="mb-0">
+                                <span class='font-weight-bold'> Banque<?= count($comptes) > 1 ? 's' : '' ?> (RIB) :
+                                </span>
+                                <?= $comptes_str ?>
+                            </p>
+                        </div>
+                        <hr class="m-0">
+                        <div class="card-body">
                             <!-- Boutons d'action -->
-                            <div>
-                                <a href="modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="btn btn-primary mr-2">Modifier</a>
-                                <a href="lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="btn btn-outline-primary mr-2">Associer à une activité</a>
 
-                                <!-- Autres options -->
-                                <div class="btn-group dropup">
-                                    <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres </button>
+                            <a href="modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="btn btn-primary mr-2">Modifier les informations</a>
 
-                                    <ul class="dropdown-menu shadow">
-                                        <?php if (!$quota_comptes_bancaires_atteint) : ?>
-                                            <li><a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a></li>
-                                        <?php endif; ?>
-                                        <li>
-                                            <hr class="dropwdown-divider">
-                                        </li>
-                                        <li>
-                                            <a href="#" class="dropdown-item text-danger custom-dropdown-item">Supprimer</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <!-- Autres options -->
+                            <div class="btn-group dropup">
+                                <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres options</button>
+
+                                <ul class="dropdown-menu shadow">
+                                    <?php if (!$quota_comptes_bancaires_atteint) : ?>
+                                        <li><a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a></li>
+                                    <?php endif; ?>
+                                    <li>
+                                        <hr class="dropwdown-divider">
+                                    </li>
+                                    <li>
+                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item">Supprimer</a>
+                                    </li>
+                                </ul>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header">
+                            <h6 class="text-pirmary font-weight-bold">Activités associées</h6>
+                        </div>
+                        <div class="card-body">
+                            <!-- Messages divers s'il y en a -->
+
+                            <?php if(count($activites_associees) == 0) : ?>
+                            <div class="text-center">
+                                <p>Vous n'avez encore associé <strong><?= htmlspecialchars($participant['nom'].' '.$participant['prenoms']) ?></strong> à aucune activité semble t'il. Faîtes le dès maintenant.</p>
+                                <a href="/gestion_participants/lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="btn btn-outline-primary">Associer à une activité</a>
+                            </div>
+                            
+                            <?php else: ?>
+
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -89,7 +111,7 @@ require_once('includes/gerer_participant.php');
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once(__DIR__.'/../includes/footer.php') ?>
+            <?php require_once(__DIR__ . '/../includes/footer.php') ?>
             <!-- End of Footer -->
 
         </div>
@@ -104,9 +126,9 @@ require_once('includes/gerer_participant.php');
     </a>
 
     <!-- Logout Modal-->
-     
-    <?php require_once(__DIR__.'/../includes/logoutModal.php') ?>
-    <?php require_once(__DIR__.'/../includes/scripts.php') ?>
+
+    <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
 
     <!-- Page level custom scripts -->
     <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>

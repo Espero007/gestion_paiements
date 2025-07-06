@@ -112,6 +112,6 @@ if ($nombre_comptes_bancaires_permis == 0) {
 }
 
 if(isset($traitement_fichiers_ok) && $traitement_fichiers_ok){
-    $_SESSION['comptes_ajoutes'] = true;
+    $_SESSION['comptes_ajoutes'] = $nombre_comptes_bancaires > 1 ? 'Les comptes bancaires ont été ajoutés avec succès' : 'Le compte bancaire a été ajouté avec succès';
     header('location:voir_participants.php');
 }

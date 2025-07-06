@@ -169,7 +169,6 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         </div>
 
                                         <!-- Nombre de jours -->
-
                                         <div class="mb-4 row">
                                             <label for="nbr_jours_<?= $i ?>" class="col-form-label col-sm-4">Nombre de jours</label>
                                             <div class="col-sm-8">
@@ -209,10 +208,10 @@ require_once('includes/traitements_lier_participant_activite.php');
                                             <div class="col-sm-8">
                                                 <div class="d-flex col-form-label pb-0">
                                                     <?php $index = 0; ?>
-                                                    <?php foreach ($comptes as $compte) : ?>
+                                                    <?php foreach ($comptes[$i] as $compte) : ?>
                                                         <?php $index++; ?>
                                                         <div class="form-check mr-4">
-                                                            <input name="compte_bancaire[]" class="form-check-input" type="radio" value="<?= $compte['id'] ?>" id="compte<?= $index ?>_<?= $i ?>" <?= (isset($_POST['compte_bancaire'][$i]) && $compte['id'] == $_POST['compte_bancaire'][$i] && isset($erreurs)) ? 'checked' : '' ?> aria-describedby="compte_bancaireAide_<?= $i ?>">
+                                                            <input name="compte_bancaire[<?= $i ?>]" class="form-check-input" type="radio" value="<?= $compte['id'] ?>" id="compte<?= $index ?>_<?= $i ?>" <?= (isset($_POST['compte_bancaire'][$i]) && $compte['id'] == $_POST['compte_bancaire'][$i] && isset($erreurs)) ? 'checked' : '' ?> aria-describedby="compte_bancaireAide_<?= $i ?>">
                                                             <label class="form-check-label" for="compte<?= $index ?>_<?= $i ?>"> <?= htmlspecialchars($compte['banque']) . ' (<i>' . htmlspecialchars($compte['numero_compte']) . '</i>)' ?></label>
                                                         </div>
                                                     <?php endforeach; ?>
@@ -240,6 +239,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         <a href="voir_participants.php" class="btn btn-outline-primary">Annuler</a>
                                     </div>
                                 </form>
+                                <span id="multi" class="d-none"></span>
                             <?php endif; ?>
                         </div>
                     </div>

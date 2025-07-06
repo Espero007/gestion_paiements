@@ -136,7 +136,7 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
         if (!in_array($methode, $allowed_methods)) {
             throw new Exception("Méthode non autorisée.");
         }
-        
+
         // Definition des valeurs globales
 
         if ($methode == 'get') {
@@ -228,36 +228,63 @@ function couperTexte($texte, $nbr_mots, $nbr_caractères)
 
 // En cours de développement
 
-function afficherSousFormeTableau($elements, $style)
+function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $actions = true)
 {
     // $elements : les éléments à afficher sous la forme d'un tableau. Je considère que dans $elements est constitué de deux tableaux, un pour l'entête du tableau et un second pour le body
-
     // $style correspond au style additionnel qu'on pourrait ajouter au tableau
+
     $head = $elements[0];
     $body = $elements[1];
+    $liens = $elements[2];
+    $index = 0; // variable d'incrémentation
 
 ?>
-    <div class="table-responsive text-no-wrap">
-        <table class="table">
+    <div class="<?= $style1 ?>">
+        <table class="table <?= $style2 ?>" id="dataTable" width="100%" cellspacing="0">
             <thead>
                 <tr>
-                    <th>Choix</th>
+                    <?php if ($choix) : ?>
+                        <th>Choix</th>
+                    <?php endif; ?>
                     <?php foreach ($head as $valeur) : ?>
                         <th><?= htmlspecialchars($valeur) ?></th>
                     <?php endforeach; ?>
+
+                    <?php if ($actions) : ?>
+                        <th>Actions</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
+            <tfoot>
+                <tr>
+                    <?php if ($choix) : ?>
+                        <th>Choix</th>
+                    <?php endif; ?>
+                    <?php foreach ($head as $valeur) : ?>
+                        <th><?= htmlspecialchars($valeur) ?></th>
+                    <?php endforeach; ?>
+                    <?php if ($actions) : ?>
+                        <th>Actions</th>
+                    <?php endif; ?>
+                </tr>
+            </tfoot>
             <tbody class="table-border-bottom-1">
                 <?php foreach ($body as $ligne) : ?>
                     <tr>
-                        <td><input type="checkbox" name="id_activite" <?= 'bonjour' ?> value="<?= 'bonjour' //$activite['id'] 
-                                                                                                ?>"></td>
+                        <?php if ($choix) : ?>
+                            <td><input type="checkbox" name="bref" id="bref"></td>
+                        <?php endif; ?>
                         <?php foreach ($ligne as $cellule) : ?>
-                            td
+                            <td><?= $cellule != null ? htmlspecialchars($cellule) : '-' ?></td>
                         <?php endforeach; ?>
+                        <?php if ($actions) : ?>
+                            <td>
+                                <a href="<?= $liens[$index] ?>" class="btn btn-primary">Gérer</a>
+                            </td>
+                            <?php $index++ ?>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
-
             </tbody>
         </table>
     </div>

@@ -30,80 +30,80 @@ require_once('traitements/gerer_activite.php');
                     <!-- Page Heading -->
                     <h1 class="h4 mb-4 text-gray-800">Activités / <strong>Gestion de l'activité</strong></h1>
                     <p class="mt-2">Gérez ici votre activité</p>
-                    <div class="row">
-                        <div class="col">
-                            <div class="card shadow mb-4">
-                                <div class="card-header">
-                                    <h6 class="text-primary font-weight-bold">Fiche informative</h3>
-                                </div>
-                                <div class="card-body">
 
-                                    <!-- Nom -->
-                                    <p class="mb-3">
-                                        <span class="font-weight-bold">Nom : </span>
-                                        <span><?= htmlspecialchars($activite['nom']) ?></span>
-                                        <span> (Activité de type <strong><?= $activite['type_activite'] ?></strong>)</span>
-                                    </p>
+                    <!-- Fiche informative -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header">
+                            <h6 class="text-primary font-weight-bold">Fiche informative</h3>
+                        </div>
+                        <div class="card-body">
 
-                                    <!-- Description -->
-                                    <p class="mb-3">
-                                        <span class="font-weight-bold">Description : </span>
-                                        <span><?= htmlspecialchars($activite['description']) ?></span>
-                                    </p>
+                            <!-- Nom -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Nom : </span>
+                                <span><?= htmlspecialchars($activite['nom']) ?></span>
+                                <span> (Activité de type <strong><?= $activite['type_activite'] ?></strong>)</span>
+                            </p>
 
-                                    <!-- Période -->
-                                    <p class="mb-3">
-                                        <span class="font-weight-bold">Période : </span>
-                                        <span>Du <?= $activite['date_debut'] ?> au <?= $activite['date_fin'] ?></span>
-                                    </p>
+                            <!-- Description -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Description : </span>
+                                <span><?= htmlspecialchars($activite['description']) ?></span>
+                            </p>
 
-                                    <!-- Centre -->
-                                    <p class="mb-3">
-                                        <span class="font-weight-bold">Centre : </span>
-                                        <span><?= htmlspecialchars($activite['centre']) ?></span>
-                                    </p>
+                            <!-- Période -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Période : </span>
+                                <span>Du <?= $activite['date_debut'] ?> au <?= $activite['date_fin'] ?></span>
+                            </p>
 
-                                    <!-- Premier responsable et titre premier responsable -->
-                                    <p class="mb-3">
-                                        <span class="font-weight-bold">Premier responsable : </span>
-                                        <span><?= htmlspecialchars($activite['premier_responsable']) ?></span>
-                                        <?php if (!empty($activite['titre_responsable'])) : ?>
-                                            <span>(<strong><?= htmlspecialchars($activite['titre_responsable']) ?></strong>)</span>
-                                        <?php endif; ?>
-                                    </p>
+                            <!-- Centre -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Centre : </span>
+                                <span><?= htmlspecialchars($activite['centre']) ?></span>
+                            </p>
 
-                                    <!-- Organisateur et titre organisateur -->
-                                    <p class="mb-3">
-                                        <span class="font-weight-bold">Organisateur : </span>
-                                        <span><?= htmlspecialchars($activite['organisateur']) ?></span>
-                                        <?php if (!empty($activite['titre_organisateur'])) : ?>
-                                            <span>(<strong><?= htmlspecialchars($activite['titre_organisateur']) ?></strong>)</span>
-                                        <?php endif; ?>
-                                    </p>
+                            <!-- Premier responsable et titre premier responsable -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Premier responsable : </span>
+                                <span><?= htmlspecialchars($activite['premier_responsable']) ?></span>
+                                <?php if (!empty($activite['titre_responsable'])) : ?>
+                                    <span>(<strong><?= htmlspecialchars($activite['titre_responsable']) ?></strong>)</span>
+                                <?php endif; ?>
+                            </p>
 
-                                    <!-- Financier & titre financier -->
-                                    <p class="mb-3">
-                                        <span class="font-weight-bold">Financier : </span>
-                                        <span><?= htmlspecialchars($activite['financier']) ?></span>
-                                        <?php if (!empty($activite['titre_financier'])) : ?>
-                                            <span>(<strong><?= htmlspecialchars($activite['titre_financier']) ?></strong>)</span>
-                                        <?php endif; ?>
-                                    </p>
+                            <!-- Organisateur et titre organisateur -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Organisateur : </span>
+                                <span><?= htmlspecialchars($activite['organisateur']) ?></span>
+                                <?php if (!empty($activite['titre_organisateur'])) : ?>
+                                    <span>(<strong><?= htmlspecialchars($activite['titre_organisateur']) ?></strong>)</span>
+                                <?php endif; ?>
+                            </p>
 
-                                    <!-- Taux journalier -->
-                                    <p class="mb-3">
-                                        <span class="font-weight-bold">Taux journalier : </span>
-                                        <span><?= htmlspecialchars($activite['taux_journalier']) ?> FCFA</span>
-                                    </p>
+                            <!-- Financier & titre financier -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Financier : </span>
+                                <span><?= htmlspecialchars($activite['financier']) ?></span>
+                                <?php if (!empty($activite['titre_financier'])) : ?>
+                                    <span>(<strong><?= htmlspecialchars($activite['titre_financier']) ?></strong>)</span>
+                                <?php endif; ?>
+                            </p>
 
-                                    <?php if ($activite['type_activite'] == 2 || $activite['type_activite'] == 3) : ?>
+                            <!-- Taux journalier -->
+                            <p class="mb-0">
+                                <span class="font-weight-bold">Taux journalier : </span>
+                                <span><?= htmlspecialchars($activite['taux_journalier']) ?> FCFA</span>
+                            </p>
 
-                                        <!-- Indemnités forfaitaires avec les titres associés -->
-                                        <p class="mb-3">
-                                            <span class="font-weight-bold">Indemnités forfaitaires : </span>
-                                            <span><?= $indemnite_str ?></span>
-                                        </p>
-                                        <!-- <div class="col-lg-6 mb-4 mb-xl-0">
+                            <?php if ($activite['type_activite'] == 2 || $activite['type_activite'] == 3) : ?>
+
+                                <!-- Indemnités forfaitaires avec les titres associés -->
+                                <p class="my-3">
+                                    <span class="font-weight-bold">Indemnités forfaitaires : </span>
+                                    <span><?= $indemnite_str ?></span>
+                                </p>
+                                <!-- <div class="col-lg-6 mb-4 mb-xl-0">
                                             <div class="mt-3">
                                                 <ol class="list-group list-group-numbered">
                                                     <li class="list-group-item">Bear claw cake biscuit</li>
@@ -115,49 +115,75 @@ require_once('traitements/gerer_activite.php');
                                             </div>
                                         </div> -->
 
-                                    <?php endif; ?>
+                            <?php endif; ?>
 
-                                    <?php if ($activite['type_activite'] == 3) : ?>
-                                        <!-- Frais de déplacement journalier -->
-                                        <p class="mb-3">
-                                            <span class="font-weight-bold">Frais de déplacement journalier : </span>
-                                            <span><?= htmlspecialchars($activite['frais_deplacement_journalier']) ?></span>
-                                        </p>
+                            <?php if ($activite['type_activite'] == 3) : ?>
+                                <!-- Frais de déplacement journalier -->
+                                <p class="mb-3">
+                                    <span class="font-weight-bold">Frais de déplacement journalier : </span>
+                                    <span><?= htmlspecialchars($activite['frais_deplacement_journalier']) ?></span>
+                                </p>
 
-                                        <!-- Taux par tâche -->
-                                        <p class="mb-3">
-                                            <span class="font-weight-bold">Taux par tâche : </span>
-                                            <span><?= htmlspecialchars($activite['taux_taches']) ?></span>
-                                        </p>
-                                    <?php endif; ?>
-                                </div>
-                                <hr class="m-0">
-                                <div class="card-body">
-                                    <!-- Boutons d'action -->
-                                    <div>
-                                        <a href="modifier_infos.php?id=<?= $activite['id'] ?>" class="btn btn-primary mr-2">Modifier</a>
-                                        <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="btn btn-outline-primary mr-2">Associer des participants</a>
+                                <!-- Taux par tâche -->
+                                <p class="mb-0">
+                                    <span class="font-weight-bold">Taux par tâche : </span>
+                                    <span><?= htmlspecialchars($activite['taux_taches']) ?></span>
+                                </p>
+                            <?php endif; ?>
+                        </div>
+                        <hr class="m-0">
+                        <div class="card-body">
+                            <!-- Boutons d'action -->
+                            <div>
+                                <a href="modifier_infos.php?id=<?= $activite['id'] ?>" class="btn btn-primary mr-2">Modifier les informations</a>
+                                
+                                <!-- <a href="#" class="btn btn-outline-primary mr-2">Supprimer</a> -->
 
-                                        <!-- Autres options -->
+                                <!-- Autres options -->
 
-                                        <div class="btn-group dropup">
-                                            <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres </button>
+                                <div class="btn-group dropup">
+                                    <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres actions</button>
 
-                                            <ul class="dropdown-menu shadow">
-                                                <!-- <li>
+                                    <ul class="dropdown-menu shadow">
+                                        <!-- <li>
                                             <hr class="dropwdown-divider">
                                         </li> -->
-                                                <li>
-                                                    <a href="#" class="dropdown-item text-danger fs-6">Supprimer</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                        <li>
+                                            <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6">Associer des participants</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="dropdown-item text-danger fs-6">Supprimer</a>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="col"></div> -->
                     </div>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header">
+                            <h6 class="text-primary font-weight-bold">Participants associés</h6>
+                        </div>
+                        <div class="card-body">
+                            <!-- Messages divers -->
+                            <?php if (isset($_SESSION['liaison_reussie'])) : ?>
+                                <?php afficherAlerte($_SESSION['liaison_reussie'], 'success');
+                                unset($_SESSION['liaison_reussie'])
+                                ?>
+                            <?php endif; ?>
+                            <!-- Messages divers -->
+
+                            <?php if (count($participants_associes) == 0) : ?>
+                                <div class="text-center">
+                                    <p class="">Il semble que vous n'avez encore associé à votre activité aucun participant. Pourquoi ne pas le faire dès maintenant ?</p>
+                                    <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="btn btn-outline-primary">Associer des participants</a>
+                                </div>
+                            <?php else : ?>
+                                <?php afficherSousFormeTableau($informations, 'table-responsive text-nowrap', 'table-bordered text-center', false, false) ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
 
 
 
@@ -185,9 +211,6 @@ require_once('traitements/gerer_activite.php');
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
-
-    <!-- Page level custom scripts -->
-    <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

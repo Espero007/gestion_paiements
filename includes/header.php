@@ -89,4 +89,7 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/bootstrap-icons-1.13.1/bootstrap-icons.min.css">
 
+    <!-- Custom styles for this page -->
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
 </head>

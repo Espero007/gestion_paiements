@@ -1,5 +1,6 @@
 <?php
-$titre = "Ajout de comptes bancaires";
+$section = 'Participants';
+$titre_page = "Ajout de comptes bancaires";
 require_once(__DIR__ . '/../includes/header.php');
 $elements_a_inclure = ['infos_bancaires'];
 require_once('includes/traitements_ajout_comptes.php');
@@ -90,7 +91,7 @@ require_once('includes/traitements_ajout_comptes.php');
                                                 
                                                 <!-- Boutons d'action -->
                                                 <div class="mt-4 mb-4">
-                                                    <button type="submit" name="ajouter_comptes" class="btn btn-primary mr-3">Ajouter</button>
+                                                    <button type="submit" name="ajouter_comptes" class="btn btn-primary mr-3">Ajouter <?= $nombre_comptes_bancaires > 1 ? 'les comptes' : 'le compte' ?></button>
                                                     <a href="gerer_participant.php?id=<?= $id_participant ?>" class="btn btn-outline-primary">Annuler</a>
                                                     <!-- <a href="/gestion_participants/ajouter_participant.php" class="btn btn-primary">Revenir à la page précédente</a> -->
                                                 </div>

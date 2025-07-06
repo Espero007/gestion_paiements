@@ -33,6 +33,7 @@ if($activite['type_activite'] == 1){
     $stmt = $bdd->prepare('SELECT nom, indemnite_forfaitaire FROM titres WHERE id_activite='.$activite['id']);
     $stmt->execute();
     $indemnites_forfaitaires = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     $indemnite_str = '';
     for ($i=0; $i < count($indemnites_forfaitaires); $i++) {
         $indemnite_str .= htmlspecialchars($indemnites_forfaitaires[$i]['nom']) . ' (<strong>' . htmlspecialchars($indemnites_forfaitaires[$i]['indemnite_forfaitaire']) . ' FCFA</strong>)';
@@ -40,4 +41,24 @@ if($activite['type_activite'] == 1){
             $indemnite_str .= ', ';
         }
     }
+}
+
+// Participants associés
+
+$stmt = $bdd->query('
+SELECT p1.id_participant, p2.nom, p2.prenoms, p2.matricule_ifu, t.nom as titre, p1.diplome, p1.nombre_jours, p1.nombre_taches, ib.banque, ib.numero_compte
+FROM participations p1
+INNER JOIN participants p2 ON p1.id_participant = p2.id_participant
+INNER JOIN titres t ON t.id_titre = p1.id_titre
+INNER JOIN informations_bancaires ib ON p1.id_compte_bancaire = ib.id
+WHERE p1.id_activite='.$activite['id']);
+$participants_associes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+if(count($participants_associes) != 0){
+    $informations[0] = ['Nom', 'Prénoms', 'Titre', 'Diplome', 'Nombre de jours', 'Nombre de tâches', 'Compte bancaire'];
+    foreach ($participants_associes as $participant) {
+        $informations[1][] = [$participant['nom'], $participant['prenoms'], $participant['titre'], $participant['diplome'], $participant['nombre_jours'], $participant['nombre_taches'], $participant['banque'].' ('.$participant['numero_compte'].')'];
+        $informations[2][] = '/gestion_participants/gerer_participant.php?id='.$participant['id_participant'];
+    }
+    // $informations[2] = ['/gestion_participants/']
 }
