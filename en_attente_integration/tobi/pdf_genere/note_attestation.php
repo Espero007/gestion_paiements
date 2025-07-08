@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Activer le mode debug temporairement (à désactiver en production)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -12,11 +13,48 @@ require_once(__DIR__ . '/../../../includes/bdd.php');
 // Vérifier que $bdd est un objet PDO
 if (!($bdd instanceof PDO)) {
     ob_end_clean();
-    die('Erreur : la connexion à la base de données a échoué.');
+    die('Erreur : la connexion à la base de données a échouée.');
 }
 
+
+
+$errors = [];
+$id_user = $_SESSION['user_id'];
+
+
+
+// Vérifier si l'ID de l'activité est fourni
+if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+    header('Location:' . $_SESSION["previous_url"]);
+    exit;
+}
+$activity_id = $_GET['id'];
+
+
+// Vérifier si l'activité existe et appartient à l'utilisateur
+try {
+    $sql = 'SELECT id_note_generatrice, type_activite FROM activites WHERE id = :id AND id_user = :id_user';
+    $stmt = $bdd->prepare($sql);
+    $stmt->execute(['id' => $activity_id, 'id_user' => $id_user]);
+    $activity = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+    if (!$activity) {
+        $_SESSION['form_errors'] = ['database' => "Activité non trouvée ou vous n'avez pas les permissions pour la modifier."];
+        header('Location:' . $_SESSION["previous_url"]);
+        exit;
+    }
+
+} catch (PDOException $e) {
+    $_SESSION['form_errors'] = ['database' => "Erreur lors de la vérification de l'activité. Veuillez réessayer."];
+    header('Location:' . $_SESSION["previous_url"]);
+    exit;
+}
+
+
+
 // Requête SQL pour récupérer les informations
-$id_type_activite = 1;
+
 $sql = "
     SELECT 
         p.id_participant,
@@ -35,11 +73,11 @@ $sql = "
     LEFT JOIN activites a ON pa.id_activite = a.id
     LEFT JOIN titres t ON pa.id_titre = t.id_titre
     LEFT JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
-    WHERE a.type_activite = :type_activite
+    WHERE a.id = :activite_id
 ";
 
 $stmt = $bdd->prepare($sql);
-$stmt->execute(['type_activite' => $id_type_activite]); // Passe la valeur du type d'activité ici
+$stmt->execute(['activite_id' => $activity_id]); // Passe la valeur du type d'activité ici
 $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Création du PDF avec TCPDF
