@@ -90,11 +90,14 @@ require_once('traitements/gerer_activite.php');
                                 <?php endif; ?>
                             </p>
 
-                            <!-- Taux journalier -->
-                            <p class="mb-0">
-                                <span class="font-weight-bold">Taux journalier : </span>
-                                <span><?= htmlspecialchars($activite['taux_journalier']) ?> FCFA</span>
-                            </p>
+                            <?php if ($activite['type_activite'] == 1 || $activite['type_activite'] == 3) : ?>
+                                <!-- Taux journalier -->
+                                <p class="mb-0">
+                                    <span class="font-weight-bold">Taux journalier : </span>
+                                    <span><?= htmlspecialchars($activite['taux_journalier']) ?> FCFA</span>
+                                </p>
+                            <?php endif; ?>
+
 
                             <?php if ($activite['type_activite'] == 2 || $activite['type_activite'] == 3) : ?>
 
@@ -136,7 +139,7 @@ require_once('traitements/gerer_activite.php');
                             <!-- Boutons d'action -->
                             <div>
                                 <a href="modifier_infos.php?id=<?= $activite['id'] ?>" class="btn btn-primary mr-2">Modifier les informations</a>
-                                
+
                                 <!-- <a href="#" class="btn btn-outline-primary mr-2">Supprimer</a> -->
 
                                 <!-- Autres options -->
