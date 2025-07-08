@@ -29,5 +29,15 @@ $documents = [
     'attestation_collective' => 'Attestation collective de travail',
     'etat_paiement' => 'Etat de paiement',
     'synthese_ordres_virements' => 'Synthèse des ordres de virements',
-    'liste_rib'
+    'liste_rib' => 'Liste des RIBs'
 ];
+
+// Gestion des documents sélectionnés
+
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    foreach ($documents as $document => $label) {
+        if(in_array($document, $_POST)){
+            $documents_choisis[] = $document;
+        }
+    }
+}

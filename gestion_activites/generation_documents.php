@@ -1,7 +1,8 @@
 <?php
 $section = 'Activités';
 $titre_page = "Génération de documents";
-require_once('includes/header.php');
+require_once(__DIR__ . '/../includes/header.php');
+require_once('traitements/generation_documents.php');
 ?>
 
 <body id="page-top">
@@ -10,7 +11,7 @@ require_once('includes/header.php');
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once('includes/sidebar.php') ?>
+        <?php require_once(__DIR__ . '/../includes/sidebar.php') ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -19,7 +20,7 @@ require_once('includes/header.php');
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
-                <?php require_once('includes/topbar.php') ?>
+                <?php require_once(__DIR__ . '/../includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -38,8 +39,47 @@ require_once('includes/header.php');
                             <p class=""><strong>Note</strong> : Pour une activité, 06 documents peuvent être générés et téléchargés en PDF : la note de service, l'attestation collective de travail, l’état de paiement, les ordres de virements, la synthèse des ordres de virements et la liste des RIB des participants. Choisissez en dessous les documents que vous voulez générer et télécharger parmi les 06.</p>
 
                             <div class="divider text-start">
-                                <div class="divider-text"><strong>Liste des documents</strong></div>
+                                <div class="divider-text"><strong>Liste des documents <?= isset($documents_choisis) ? 'choisis' : '' ?> </strong></div>
                             </div>
+
+                            <?php if (!isset($documents_choisis)) : ?>
+                                <form action="" method="post">
+                                    <div class="ml-4">
+                                        <?php foreach ($documents as $document => $label) : ?>
+                                            <div class="form-check mt-3">
+                                                <input type="checkbox" name="<?= $document ?>" value="<?= $document ?>" id="<?= $document ?>" class="form-check-input">
+                                                <label for="<?= $document ?>" class="form-check-label"><?= $label ?></label>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+
+                                    <div class="divider text-start">
+                                        <div class="divider-text"><strong>Action</strong></div>
+                                    </div>
+
+                                    <!-- Boutons d'actions -->
+                                    <?php if ($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST)) : ?>
+                                        <p class="mt-0 mb-2"><small><strong>Note</strong> : Sélectionnez des documents à générer</small></p>
+                                    <?php endif; ?>
+                                    <button type="submit" class="btn btn-primary">Sélectionner</button>
+                                </form>
+                            <?php else: ?>
+
+                                <div class="col-lg-6 mb-4 mb-xl-0">
+                                    <div class="mt-3">
+                                        <ol class="list-group list-group-numbered">
+                                            <?php foreach ($documents_choisis as $document) : ?>
+                                                <li class="list-group-item border-0"><?= $documents[$document] ?></li>
+                                            <?php endforeach; ?>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                                <div class="divider text-start">
+                                    <div class="divider-text"><strong>Action</strong></div>
+                                </div>
+                                <button class="btn btn-primary">Générer</button>
+                            <?php endif; ?>
 
 
                         </div>
@@ -51,7 +91,7 @@ require_once('includes/header.php');
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once('includes/footer.php') ?>
+            <?php require_once(__DIR__ . '/../includes/footer.php') ?>
             <!-- End of Footer -->
 
         </div>
@@ -66,8 +106,8 @@ require_once('includes/header.php');
     </a>
 
     <!-- Logout Modal-->
-    <?php require_once('includes/logoutModal.php') ?>
-    <?php require_once('includes/scripts.php') ?>
+    <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
 </body>
 
 </html>

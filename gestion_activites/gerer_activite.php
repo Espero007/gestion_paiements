@@ -173,7 +173,7 @@ require_once('traitements/gerer_activite.php');
 
                                         <?php if (count($participants_associes) != 0) : ?>
                                             <li>
-                                                <a href="/gestion_activites/generation_documents.php?id_activite=<?= $id_activite ?>" class="dropdown-item fs-6 custom-dropdown-item" target="_blank">Générer les documents</a>
+                                                <a href="/gestion_activites/generation_documents.php?id_activite=<?= $id_activite ?>" class="dropdown-item fs-6 custom-dropdown-item">Générer les documents</a>
                                             </li>
                                         <?php endif; ?>
                                         <li>
