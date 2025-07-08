@@ -1,5 +1,6 @@
 <?php
-$titre = "Tableau de bord";
+$section = 'Tableau de bord';
+$titre_page = "Tableau de bord";
 require_once('includes/header.php');
 ?>
 
@@ -23,7 +24,10 @@ require_once('includes/header.php');
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    
+                    <!-- Page Heading -->
+                    <h1 class="h4 mb-4 text-gray-800">Titre / <strong>Sous-titre</strong></h1>
+                    <p class="mt-2">Texte</p>
+
                 </div>
                 <!-- /.container-fluid -->
 

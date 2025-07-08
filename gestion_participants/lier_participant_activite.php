@@ -189,12 +189,13 @@ require_once('includes/traitements_lier_participant_activite.php');
                                             ]
                                             ?>
                                             <div class="mb-2 row">
-                                                <label for="nbr_taches" class="col-form-label col-sm-4">Nombre de tâches</label>
+                                                <label for="nbr_taches_<?= $i ?>" class="col-form-label col-sm-4">Nombre de tâches</label>
                                                 <div class="col-sm-8">
-                                                    <input type="number" name="nbr_taches" id="nbr_taches" class="form-control <?= isset($erreurs['nbr_taches']) ? 'is-invalid' : '' ?> " aria-describedby="<?= 'nbr_taches' ?>Aide" <?= (isset($erreurs) && isset($_POST['nbr_taches'])) ? 'value ="' . htmlspecialchars($_POST['nbr_taches']) . '"' : '' ?> placeholder="Indiquez le <?= strtolower($label) ?>">
-                                                    <?php if (isset($erreurs['nbr_taches'])) : ?>
-                                                        <div class="form-text" id="nbr_tachesAide">
-                                                            <small class="text-danger"><?= $erreurs['nbr_taches'][0] ?></small>
+                                                    <input type="number" name="nbr_taches[]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : '' ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>">
+
+                                                    <?php if (isset($erreurs['nbr_taches'][$i])) : ?>
+                                                        <div class="form-text" id="nbr_tachesAide_<?= $i ?>">
+                                                            <small class="text-danger"><?= $erreurs['nbr_taches'][$i][0] ?></small>
                                                         </div>
                                                     <?php endif; ?>
                                                 </div>

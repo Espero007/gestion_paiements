@@ -34,9 +34,13 @@ require_once('traitements/gerer_activite.php');
                     <!-- Fiche informative -->
                     <div class="card shadow mb-4">
                         <div class="card-header">
-                            <h6 class="text-primary font-weight-bold">Fiche informative</h3>
+                            <h6 class="text-primary font-weight-bold">Fiche informative</h6>
                         </div>
                         <div class="card-body">
+                            <!-- Messages divers -->
+                            <?php if (isset($_SESSION['liaison_reussie'])) : ?>
+                                <?php afficherAlerte('liaison_reussie', 'success', true);?>
+                            <?php endif; ?>
 
                             <?php if (isset($_SESSION['success'])) : ?>
                                 <?php afficherAlerte('success', 'success', true) ?>
@@ -45,6 +49,7 @@ require_once('traitements/gerer_activite.php');
                             <?php if (isset($_SESSION['erreur_modifier_infos'])) : ?>
                                 <?php afficherAlerte('erreur_modifier_infos', 'danger', true) ?>
                             <?php endif; ?>
+                            <!-- Fin Messages divers  -->
 
                             <!-- Nom -->
                             <p class="mb-3">
@@ -153,7 +158,7 @@ require_once('traitements/gerer_activite.php');
                                 <!-- Autres options -->
 
                                 <div class="btn-group dropup">
-                                    <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres actions</button>
+                                    <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres actions </button>
 
                                     <ul class="dropdown-menu shadow">
                                         <!-- <li>
@@ -165,6 +170,12 @@ require_once('traitements/gerer_activite.php');
                                         <li>
                                             <a href="/<?= $chemin_note_generatrice ?>" class="dropdown-item fs-6 custom-dropdown-item" target="_blank">Visualiser la note génératrice de l'activité</a>
                                         </li>
+
+                                        <?php if (count($participants_associes) != 0) : ?>
+                                            <li>
+                                                <a href="/gestion_activites/generation_documents.php?id_activite=<?= $id_activite ?>" class="dropdown-item fs-6 custom-dropdown-item" target="_blank">Générer les documents</a>
+                                            </li>
+                                        <?php endif; ?>
                                         <li>
                                             <a href="#" class="dropdown-item text-danger fs-6 custom-dropdown-item">Supprimer</a>
                                         </li>
@@ -180,11 +191,7 @@ require_once('traitements/gerer_activite.php');
                         </div>
                         <div class="card-body">
                             <!-- Messages divers -->
-                            <?php if (isset($_SESSION['liaison_reussie'])) : ?>
-                                <?php afficherAlerte($_SESSION['liaison_reussie'], 'success');
-                                unset($_SESSION['liaison_reussie'])
-                                ?>
-                            <?php endif; ?>
+
                             <!-- Messages divers -->
 
                             <?php if (count($participants_associes) == 0) : ?>

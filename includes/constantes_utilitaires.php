@@ -109,6 +109,7 @@ function valider_valeur_numerique($cle, $conteneur)
 
 function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = false)
 {
+    global $bdd;
     // $valeur_id nous permet de valider un id qu'on passe directement à la fonction sans passer par les superglobales
 
     $allowed_tables = ['participants', 'activites', 'autre_table'];
@@ -342,7 +343,6 @@ function afficherAlerte($message, $type, $session = false)
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
     </div>
 <?php
-
 }
 
 function traiterCheminAcces($chemin){

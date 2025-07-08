@@ -1,7 +1,7 @@
 <?php
 $section = 'Activités';
 $titre_page = "Liste des activités";
-require_once(__DIR__.'/../includes/header.php');
+require_once(__DIR__ . '/../includes/header.php');
 
 $stmt = 'SELECT id, nom, description, centre FROM activites ORDER BY id DESC';
 $resultat = $bdd->query($stmt);
@@ -51,7 +51,7 @@ $resultat->closeCursor();
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php require_once(__DIR__.'/../includes/sidebar.php') ?>
+        <?php require_once(__DIR__ . '/../includes/sidebar.php') ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -61,7 +61,7 @@ $resultat->closeCursor();
             <div id="content">
 
                 <!-- Topbar -->
-                <?php require_once(__DIR__.'/../includes/topbar.php') ?>
+                <?php require_once(__DIR__ . '/../includes/topbar.php') ?>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -81,6 +81,12 @@ $resultat->closeCursor();
                                 <h6 class="m-0 font-weight-bold text-primary">Liste des activités</h6>
                             </div>
                             <div class="card-body">
+                                <!-- Messages divers -->
+                                <?php if (isset($_SESSION['liaison_reussie'])) : ?>
+                                    <?php afficherAlerte('liaison_reussie', 'success', true); ?>
+                                <?php endif; ?>
+                                <!-- Fin Messages divers -->
+                                 
                                 <form action="">
                                     <div class="">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -163,7 +169,7 @@ $resultat->closeCursor();
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <?php require_once(__DIR__.'/../includes/footer.php') ?>
+            <?php require_once(__DIR__ . '/../includes/footer.php') ?>
             <!-- End of Footer -->
 
         </div>
@@ -178,16 +184,8 @@ $resultat->closeCursor();
     </a>
 
     <!-- Logout Modal-->
-    <?php require_once(__DIR__.'/../includes/logoutModal.php') ?>
-    <?php require_once(__DIR__.'/../includes/scripts.php') ?>
-
-    <!-- Page level plugins -->
-    <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="/assets/js/demo/datatables-demo.js"></script>
-    <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>
+    <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
+    <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
 </body>
 
 </html>

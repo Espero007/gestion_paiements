@@ -1,6 +1,6 @@
 <?php
 
-// On vérifie la présence de l'id de l'activité à gérer et si elle n'est pas présente on redirige vers 'voir_activites.php'
+// On vérifie la présence de l'id de l'activité à gérer et si elle n'est pas présente on redirige vers la page précédente
 $redirect = true;
 
 if(filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT)){
@@ -17,7 +17,7 @@ if(filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT)){
 }
 
 if($redirect){
-    header('location:voir_activites.php');
+    header('location:'.$_SESSION['previous_url']);
     exit;
 }
 
