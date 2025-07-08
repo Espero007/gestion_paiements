@@ -38,6 +38,14 @@ require_once('traitements/gerer_activite.php');
                         </div>
                         <div class="card-body">
 
+                            <?php if (isset($_SESSION['success'])) : ?>
+                                <?php afficherAlerte('success', 'success', true) ?>
+                            <?php endif; ?>
+
+                            <?php if (isset($_SESSION['erreur_modifier_infos'])) : ?>
+                                <?php afficherAlerte('erreur_modifier_infos', 'danger', true) ?>
+                            <?php endif; ?>
+
                             <!-- Nom -->
                             <p class="mb-3">
                                 <span class="font-weight-bold">Nom : </span>
@@ -90,7 +98,7 @@ require_once('traitements/gerer_activite.php');
                                 <?php endif; ?>
                             </p>
 
-                            <?php if ($activite['type_activite'] == 1 || $activite['type_activite'] == 3) : ?>
+                            <?php if ($activite['type_activite'] == 1 || $activite['type_activite'] == 2) : ?>
                                 <!-- Taux journalier -->
                                 <p class="mb-0">
                                     <span class="font-weight-bold">Taux journalier : </span>
@@ -124,13 +132,13 @@ require_once('traitements/gerer_activite.php');
                                 <!-- Frais de déplacement journalier -->
                                 <p class="mb-3">
                                     <span class="font-weight-bold">Frais de déplacement journalier : </span>
-                                    <span><?= htmlspecialchars($activite['frais_deplacement_journalier']) ?></span>
+                                    <span><?= htmlspecialchars($activite['frais_deplacement_journalier']) ?> FCFA</span>
                                 </p>
 
                                 <!-- Taux par tâche -->
                                 <p class="mb-0">
                                     <span class="font-weight-bold">Taux par tâche : </span>
-                                    <span><?= htmlspecialchars($activite['taux_taches']) ?></span>
+                                    <span><?= htmlspecialchars($activite['taux_taches']) ?> FCFA</span>
                                 </p>
                             <?php endif; ?>
                         </div>

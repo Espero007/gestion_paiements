@@ -361,16 +361,11 @@ if ($recuperation_type_activite) {
                         // header('Location: /gestion_activites/creer_activite.php?success=1'); // On évite la redirection car l'utilisateur pourrait vouloir continuer les enregistrements avec le même type d'activité
                         // exit;
 
-                         if ($success)
-                            {
-                                header('Location: ../gerer_activite.php?id=' . urlencode($id_activite). '&success=2');
-                                exit;
-                            }
-                        else 
-                            {
-                                header('Location: ../modifier_infos.php?id=' . urlencode($id_activite));
-                                exit;
-                            }
+                        if ($success) {
+                            $_SESSION['success'] = 'Votre activité a été créée avec succès. Pensez à y <a href="/gestion_participants/lier_participant_activite.php?id_activite=' . $id_activite . '">associer des participants</a>';
+                            header('Location:gerer_activite.php?id=' . $id_activite);
+                            exit;
+                        }
                     }
                 } catch (PDOException $e) {
                     $errors['database'] = "Une erreur s'est produite. Veuillez réessayer.";

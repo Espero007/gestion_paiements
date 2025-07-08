@@ -35,7 +35,7 @@ require_once('traitements/submit_creer_activite.php');
                     <!-- Page Heading -->
                     <div>
                         <h1 class="h4 mb-4 text-gray-800"> Activités /
-                            <strong>Création d'une activité <?= isset($type_activite) ? 'de type' . $type_activite : '' ?></strong>
+                            <strong>Création d'une activité <?= isset($type_activite) ? 'de type ' . $type_activite : '' ?></strong>
                         </h1>
                         <p class="mt-2">Vous êtes sur le point de créer une activité. Nous allons vous guider tout au long du processus.</p>
                         <!-- <hr> -->
@@ -89,10 +89,6 @@ require_once('traitements/submit_creer_activite.php');
                                     </div>
                                     <div class="card-body">
                                         <!-- Messages d'erreur divers -->
-
-                                        <?php if ($success) : ?>
-                                           
-                                        <?php endif; ?>
                                         <?php if (isset($doublon) && $doublon) : ?>
                                             <div class="alert alert-danger text-center alert-dismissible">
                                                 Il semble que vous avez déjà créé une activité identique.

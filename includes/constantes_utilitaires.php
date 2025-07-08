@@ -324,14 +324,22 @@ function envoyerLienValidationEmail($lien_verif, $email)
     }
 }
 
-function afficherAlerte($message, $type)
+function afficherAlerte($message, $type, $session = false)
 {
     //  $type fait allusion au fait que le message soit un message de succès ou d'erreur
     // $message est tout simplement le message
+    // $session est pour savoir si la variable contenant le message est dans la session ou pas
+
 ?>
     <div class="alert alert-<?= $type ?> alert-dismissible text-center">
-        <?= $message ?>
+        <?php if (!$session) : ?>
+            <?= $message ?>
+        <?php else: ?>
+            <?= $_SESSION[$message] ?>
+            <?php unset($_SESSION[$message]) ?>
+        <?php endif; ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
     </div>
 <?php
+
 }
