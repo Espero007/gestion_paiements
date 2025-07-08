@@ -351,7 +351,7 @@ unset($_SESSION['success_data']);
 
                                         <!-- Boutons d'action -->
                                         <div class="mt-4">
-                                            <button class="btn btn-primary mr-3" id="submitButton" name="form_submitted" type="submit">Modifier l'activité</button>
+                                            <button class="btn btn-primary mr-3" id="submitButton" name="form_submitted" type="submit">Enregistrer les modifications</button>
                                             <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-outline-primary">Annuler</a>
                                         </div>
                                     </form>

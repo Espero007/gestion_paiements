@@ -341,14 +341,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                     $stmt->execute(['id_activite' => $activity_id]);
 
                     // Insérer les nouveaux diplômes
-                    $sql_diplome = 'INSERT INTO diplomes(id_activite, noms) VALUES (:id_activite, :nom)';
+                    $sql_diplome = 'INSERT INTO diplomes(id_activite, noms) VALUES (:id_activite, :noms)';
                     $stmt_diplome = $bdd->prepare($sql_diplome);
-                    foreach ($diplomes as $diplome) {
-                        $stmt_diplome->execute([
-                            'id_activite' => $activity_id,
-                            'nom' => $diplome
-                        ]);
+                    $diplomes_str = '';
+                    for ($i=0; $i <count($diplomes) ; $i++) { 
+                        $diplomes_str .= $diplomes[$i];
+                        if($i != count($diplomes)-1){
+                            $diplomes_str .=',';
+                        }
                     }
+                    $stmt_diplome->execute([
+                        'id_activite' => $activity_id,
+                        'noms' => $diplomes_str
+                    ]);
 
                     // Supprimer les anciens titres
                     $sql = 'DELETE FROM titres WHERE id_activite = :id_activite';
@@ -358,7 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                     // Insérer les nouveaux titres
                     $sql_titre = 'INSERT INTO titres(id_activite, nom, indemnite_forfaitaire) VALUES (:id_activite, :nom, :indemnite_forfaitaire)';
                     $stmt_titre = $bdd->prepare($sql_titre);
-                    if ($type_activite === '1') {
+                    if ($type_activite == '1') {
                         foreach ($titres as $titre) {
                             $stmt_titre->execute([
                                 'id_activite' => $activity_id,

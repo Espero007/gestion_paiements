@@ -155,7 +155,9 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                         $id_comptes[$i][] = $compte_participant['id'];
                     }
                 }
-
+?>
+    <pre><?php var_dump($diplomes);?></pre>
+<?php
                 // Les informations à afficher sont récupérées et stockées. On passe à présent aux validations nécessaires lorsque le formulaire sera soumis
 
                 if (isset($_POST['lier'])) {
