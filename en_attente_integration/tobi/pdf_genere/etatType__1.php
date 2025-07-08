@@ -4,8 +4,47 @@ require_once(__DIR__.'/../../../tcpdf/tcpdf.php');
 require_once(__DIR__ .'/../../../includes/bdd.php');
 
 // ID du type d'activité à filtrer
-$id_type_activite = 1;
-$id_activite = 1;
+//$id_type_activite = 1;
+//$id_activite = 1;
+
+$errors = [];
+$id_user = $_SESSION['user_id'];
+
+//if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+
+
+// Vérifier si l'ID de l'activité est fourni
+if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {    
+    header('Location:' . $_SESSION["previous_url"]);
+    //echo 'Bonjour 1';
+    exit;
+}
+$activity_id = $_GET['id'];
+
+
+// Vérifier si l'activité existe et appartient à l'utilisateur
+try {
+    $sql = 'SELECT id_note_generatrice, type_activite FROM activites WHERE id = :id AND id_user = :id_user';
+    $stmt = $bdd->prepare($sql);
+    $stmt->execute(['id' => $activity_id, 'id_user' => $id_user]);
+    $activity = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+    if (!$activity) {
+        $_SESSION['form_errors'] = ['database' => "Activité non trouvée ou vous n'avez pas les permissions pour la modifier."];
+        //echo 'Bonjour 2';
+        header('Location:' . $_SESSION["previous_url"]);
+        exit;
+    }
+
+} catch (PDOException $e) {
+    $_SESSION['form_errors'] = ['database' => "Erreur lors de la vérification de l'activité. Veuillez réessayer."];
+    header('Location:' . $_SESSION["previous_url"]);
+    exit;
+    //echo 'Bonjour 3';
+}
+
+
 
 // Requête SQL
 $sql = "
