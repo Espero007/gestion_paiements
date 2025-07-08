@@ -32,15 +32,23 @@ $infos = [
 ];
 
 // Informations bancaires
-$stmt = $bdd->prepare("SELECT banque, numero_compte FROM informations_bancaires WHERE id_participant=" . $id_participant);
+$stmt = $bdd->prepare("
+SELECT ib.banque, ib.numero_compte, f.chemin_acces 
+FROM informations_bancaires ib 
+INNER JOIN fichiers f ON ib.id_rib=f.id_fichier
+WHERE id_participant=" . $id_participant);
 $stmt->execute();
-$comptes = $stmt->fetchAll(PDO::FETCH_NUM);
+$comptes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+    <pre><?php var_dump($comptes);?></pre>
+<?php
 
 $index = 0;
 $comptes_str = '';
 foreach ($comptes as $compte) {
     $index++;
-    $comptes_str .= $compte[0].' (<strong>'.$compte[1].'</strong>)';
+    $comptes_str .= '<a href="'.$compte['chemin_acces'].'">'.$compte['banque'].' (<strong>'.$compte['numero_compte'].'</strong>)</a>';
     if($index != count($comptes)){
         $comptes_str .=', ';
     }

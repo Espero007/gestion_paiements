@@ -221,7 +221,7 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
 
                 if (!in_array($extension_upload, $extensions_autorisees)) {
                     // Le fichier n'a pas la bonne extension
-                    $erreurs[$nom_fichier][] = "Le fichier attendu est de type PDF";
+                    $erreurs[$fichier][] = "Le fichier attendu est de type PDF";
                 }
             }
         }

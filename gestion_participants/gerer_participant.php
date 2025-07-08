@@ -44,6 +44,10 @@ require_once('includes/gerer_participant.php');
                                 <?php unset($_SESSION['modification_ok']) ?>
                             <?php endif; ?>
 
+                            <?php if (isset($_SESSION['participant_ajoute'])) : ?>
+                                <?php afficherAlerte('participant_ajoute', 'success', true) ?>
+                            <?php endif; ?>
+
                             <!-- Informations générales -->
 
                             <?php foreach ($infos as $info => $valeur) : ?>
@@ -56,9 +60,11 @@ require_once('includes/gerer_participant.php');
                             <!-- Informations bancaires -->
 
                             <p class="mb-0">
-                                <span class='font-weight-bold'> Banque<?= count($comptes) > 1 ? 's' : '' ?> (RIB) :
+                                <span class='font-weight-bold'> Banque<?= count($comptes) > 1 ? 's' : '' ?> (RIB<?= count($comptes) > 1 ? 's' : '' ?>) :
                                 </span>
                                 <?= $comptes_str ?>
+                                <br>
+                                <small><strong>Note</strong> : Cliquez sur un compte bancaire si vous souhaitez visualiser la copie pdf de son RIB</small>
                             </p>
                         </div>
                         <hr class="m-0">
@@ -93,12 +99,12 @@ require_once('includes/gerer_participant.php');
                         <div class="card-body">
                             <!-- Messages divers s'il y en a -->
 
-                            <?php if(count($activites_associees) == 0) : ?>
-                            <div class="text-center">
-                                <p>Vous n'avez encore associé <strong><?= htmlspecialchars($participant['nom'].' '.$participant['prenoms']) ?></strong> à aucune activité semble t'il. Faîtes le dès maintenant.</p>
-                                <a href="/gestion_participants/lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="btn btn-outline-primary">Associer à une activité</a>
-                            </div>
-                            
+                            <?php if (count($activites_associees) == 0) : ?>
+                                <div class="text-center">
+                                    <p>Vous n'avez encore associé <strong><?= htmlspecialchars($participant['nom'] . ' ' . $participant['prenoms']) ?></strong> à aucune activité semble t'il. Faîtes le dès maintenant.</p>
+                                    <a href="/gestion_participants/lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="btn btn-outline-primary">Associer à une activité</a>
+                                </div>
+
                             <?php else: ?>
 
                             <?php endif; ?>

@@ -43,17 +43,6 @@ require_once('includes/traitements_ajout_participant.php');
                                     <h6 class="m-0 font-weight-bold text-primary">Formulaire d'ajout</h6>
                                 </div>
                                 <div class="card-body">
-                                    <?php if (isset($message_succes)) : ?>
-                                        <div class="alert alert-success alert-dismissible mt-2 text-center">
-                                            <div>
-                                                <!-- Message proprement dit -->
-                                                <p class="m-0">Le participant a été enregistré avec succès !</p>
-                                                <p class="m-0"><a href="ajouter_comptes.php?id_participant=<?php echo $id_participant; ?>">Cliquez ici</a> si vous souhaitez lui ajouter des comptes bancaires ou préférez vous l'<a href="/gestion_participants/lier_participant_activite.php?id_participant=<?= $id_participant ?>">associer</a> directement à une activité ?</p>
-                                            </div>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                                        </div>
-                                    <?php endif; ?>
-
                                     <!-- Formulaire : Début -->
 
                                     <form action="" method="post" enctype="multipart/form-data">

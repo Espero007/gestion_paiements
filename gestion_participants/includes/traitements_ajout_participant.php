@@ -21,7 +21,6 @@ if (isset($_POST['ajouter_participant'])) {
         $matricule_ifu = $_POST['matricule_ifu'];
 
         // Enregistrement des données textuelles
-
         // Participants
 
         $stmt = $bdd->prepare("INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome_le_plus_eleve) VALUES (:val1, :val2, :val3, :val4, :val5, :val6, :val7)");
@@ -32,7 +31,7 @@ if (isset($_POST['ajouter_participant'])) {
         $stmt->bindParam(':val4', $_POST['matricule_ifu']);
         $stmt->bindParam(':val5', $_POST['date_naissance']);
         $stmt->bindParam(':val6', $_POST['lieu_naissance']);
-        $stmt->bindParam(':val7', $_POST['diplome']);
+        $stmt->bindParam(':val7', $_POST['diplome_le_plus_eleve']);
 
         $resultat = $stmt->execute();
 
@@ -57,5 +56,13 @@ if (isset($_POST['ajouter_participant'])) {
 }
 
 if (isset($traitement_fichiers_ok) && $traitement_fichiers_ok) {
-    $message_succes = true;
+    $_SESSION['participant_ajoute'] = "
+         <div>
+            <!-- Message proprement dit -->
+            <p class=\"m-0\">Le participant a été enregistré avec succès !</p>
+            <p class=\"m-0\"><a href=\"ajouter_comptes.php?id_participant=<?php echo $id_participant; ?>\">Cliquez ici</a> si vous souhaitez lui ajouter des comptes bancaires ou ici si vous préférez vous l'<a href=\"/gestion_participants/lier_participant_activite.php?id_participant=<?= $id_participant ?>\">associer</a> directement à une activité</p>
+        </div>
+    ";
+    header('location:gerer_participant.php?id='.$id_participant);
+    exit;
 }
