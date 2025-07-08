@@ -17,15 +17,19 @@ if (!($bdd instanceof PDO)) {
 }
 
 
+//$activity_id = 13;
+
 
 $errors = [];
 $id_user = $_SESSION['user_id'];
 
+//if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 
 
 // Vérifier si l'ID de l'activité est fourni
-if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {    
     header('Location:' . $_SESSION["previous_url"]);
+    //echo 'Bonjour 1';
     exit;
 }
 $activity_id = $_GET['id'];
@@ -41,6 +45,7 @@ try {
 
     if (!$activity) {
         $_SESSION['form_errors'] = ['database' => "Activité non trouvée ou vous n'avez pas les permissions pour la modifier."];
+        //echo 'Bonjour 2';
         header('Location:' . $_SESSION["previous_url"]);
         exit;
     }
@@ -49,6 +54,7 @@ try {
     $_SESSION['form_errors'] = ['database' => "Erreur lors de la vérification de l'activité. Veuillez réessayer."];
     header('Location:' . $_SESSION["previous_url"]);
     exit;
+    //echo 'Bonjour 3';
 }
 
 
@@ -397,7 +403,6 @@ if ($document === 'note') {
     // Afficher une interface pour choisir le document
     ob_end_clean();
     echo '<h2>Choisir un document à afficher :</h2>';
-    echo '<p><a href="?document=note">Afficher la Note de service</a></p>';
-    echo '<p><a href="?document=attestation">Afficher l’Attestation collective</a></p>';
-}
+    echo '<p><a href="?document=attestation&id=' . $activity_id . '">Afficher la note de service</a></p>';
+    echo '<p><a href="?document=attestation&id=' . $activity_id . '">Afficher l\'Attestation collective</a></p>';}
 ?>
