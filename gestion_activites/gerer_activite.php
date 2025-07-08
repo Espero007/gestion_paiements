@@ -160,10 +160,13 @@ require_once('traitements/gerer_activite.php');
                                             <hr class="dropwdown-divider">
                                         </li> -->
                                         <li>
-                                            <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6">Associer des participants</a>
+                                            <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Associer des participants</a>
                                         </li>
                                         <li>
-                                            <a href="#" class="dropdown-item text-danger fs-6">Supprimer</a>
+                                            <a href="/<?= $chemin_note_generatrice ?>" class="dropdown-item fs-6 custom-dropdown-item" target="_blank">Visualiser la note génératrice de l'activité</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="dropdown-item text-danger fs-6 custom-dropdown-item">Supprimer</a>
                                         </li>
                                     </ul>
                                 </div>

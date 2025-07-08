@@ -11,6 +11,7 @@ if(filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT)){
 
     if(count($activite) !=0){
         $activite = $activite[0];
+        $id_activite = $activite['id'];
         $redirect = false;
     }
 }
@@ -62,3 +63,15 @@ if(count($participants_associes) != 0){
     }
     // $informations[2] = ['/gestion_participants/']
 }
+
+// Chemin note génératrice
+
+$stmt = $bdd->query("
+    SELECT f.chemin_acces
+    FROM activites a INNER JOIN fichiers f ON a.id_note_generatrice = f.id_fichier
+    WHERE a.id = $id_activite
+");
+$chemin_note_generatrice = $stmt->fetch(PDO::FETCH_NUM);
+$chemin_note_generatrice = $chemin_note_generatrice[0];
+$chemin_note_generatrice = traiterCheminAcces($chemin_note_generatrice);
+$stmt->closeCursor();

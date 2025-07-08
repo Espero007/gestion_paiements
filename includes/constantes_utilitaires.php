@@ -5,7 +5,8 @@ define('BASE_PATH', realpath(__DIR__ . '/../'));
 const NBR_ACTIVITES_A_AFFICHER = 6;
 const NOMBRE_MAXIMAL_COMPTES = 3;
 define('TIMEOUT', 360 * 60); // 1h d'inactivité soit 20*60 secondes.
-const UPLOADS_BASE_DIR = BASE_PATH . '/fichiers';
+$nom_dossier_upload = 'fichiers';
+define('UPLOADS_BASE_DIR', BASE_PATH.'/'.$nom_dossier_upload);
 const PERMISSIONS = 0777;
 
 
@@ -342,4 +343,10 @@ function afficherAlerte($message, $type, $session = false)
     </div>
 <?php
 
+}
+
+function traiterCheminAcces($chemin){
+    // Cette fonction est là pour m'aider à retrouver le lien en relatif à partir du lien en absolu. Elle va donc tout simplement couper le chemin d'accès à partir de 'fichiers' et le reste me donnera le chemin d'accès en relatif
+    $motCle = $GLOBALS['nom_dossier_upload'];
+    return strstr($chemin, $motCle);
 }

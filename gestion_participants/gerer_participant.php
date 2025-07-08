@@ -80,10 +80,10 @@ require_once('includes/gerer_participant.php');
                                 <ul class="dropdown-menu shadow">
                                     <?php if (!$quota_comptes_bancaires_atteint) : ?>
                                         <li><a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a></li>
+                                        <li>
+                                            <hr class="dropwdown-divider">
+                                        </li>
                                     <?php endif; ?>
-                                    <li>
-                                        <hr class="dropwdown-divider">
-                                    </li>
                                     <li>
                                         <a href="#" class="dropdown-item text-danger custom-dropdown-item">Supprimer</a>
                                     </li>
@@ -135,9 +135,6 @@ require_once('includes/gerer_participant.php');
 
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
-
-    <!-- Page level custom scripts -->
-    <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

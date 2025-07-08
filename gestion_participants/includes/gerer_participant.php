@@ -40,15 +40,11 @@ WHERE id_participant=" . $id_participant);
 $stmt->execute();
 $comptes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-?>
-    <pre><?php var_dump($comptes);?></pre>
-<?php
-
 $index = 0;
 $comptes_str = '';
 foreach ($comptes as $compte) {
     $index++;
-    $comptes_str .= '<a href="'.$compte['chemin_acces'].'">'.$compte['banque'].' (<strong>'.$compte['numero_compte'].'</strong>)</a>';
+    $comptes_str .= '<a href="/'.traiterCheminAcces($compte['chemin_acces']).'" target="_blank">'.$compte['banque'].' (<strong>'.$compte['numero_compte'].'</strong>)</a>';
     if($index != count($comptes)){
         $comptes_str .=', ';
     }
