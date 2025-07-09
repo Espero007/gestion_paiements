@@ -17,6 +17,8 @@ if (!($bdd instanceof PDO)) {
 }
 
 
+//$activity_id = 13;
+
 
 $errors = [];
 $id_user = $_SESSION['user_id'];
@@ -24,7 +26,7 @@ $id_user = $_SESSION['user_id'];
 
 
 // Vérifier si l'ID de l'activité est fourni
-if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {    
     header('Location:' . $_SESSION["previous_url"]);
     exit;
 }
@@ -397,7 +399,6 @@ if ($document === 'note') {
     // Afficher une interface pour choisir le document
     ob_end_clean();
     echo '<h2>Choisir un document à afficher :</h2>';
-    echo '<p><a href="?document=note">Afficher la Note de service</a></p>';
-    echo '<p><a href="?document=attestation">Afficher l’Attestation collective</a></p>';
-}
+    echo '<p><a href="?document=attestation&id=' . $activity_id . '">Afficher la note de service</a></p>';
+    echo '<p><a href="?document=attestation&id=' . $activity_id . '">Afficher l\'Attestation collective</a></p>';}
 ?>
