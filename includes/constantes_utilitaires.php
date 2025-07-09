@@ -375,3 +375,12 @@ function afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, $font, $fo
 
     $pdf->Ln($sauts_ligne);
 }
+
+function supprimerAccents($chaine){
+    if(class_exists('Transliterator')){
+        $transliterator = Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC');
+        return $transliterator->transliterate($chaine);
+    }else{
+        return $chaine;
+    }
+}

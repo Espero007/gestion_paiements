@@ -1,5 +1,4 @@
 <?php
-
 // On vérifie la présence de l'id de l'activité à gérer et si elle n'est pas présente on redirige vers la page précédente
 $redirect = true;
 
@@ -9,8 +8,8 @@ if (filter_input(INPUT_GET, 'id_activite', FILTER_VALIDATE_INT)) {
     $stmt->execute();
     $resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if(count($resultat) != 0){
-        if(valider_id('', '', $bdd, 'activites', $_GET['id_activite'])){
+    if (count($resultat) != 0) {
+        if (valider_id('', '', $bdd, 'activites', $_GET['id_activite'])) {
             $id_activite = $_GET['id_activite'];
             $redirect = false;
         }
@@ -24,20 +23,54 @@ if ($redirect) {
 
 // Arrivé ici on a une activité valide
 
+// Prenons la liste des banques dont on peut générer les ordres de virement
+$stmt = $bdd->prepare('
+    SELECT DISTINCT banque
+    FROM participants p
+    INNER JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
+    WHERE p.id_user=' . $_SESSION['user_id'] . '
+');
+$stmt->execute();
+$banques = $stmt->fetchAll(PDO::FETCH_NUM);
+
 $documents = [
     'note_service' => 'Note de service',
     'attestation_collective' => 'Attestation collective de travail',
     'etat_paiement' => 'Etat de paiement',
-    'synthese_ordres_virements' => 'Synthèse des ordres de virements',
-    'liste_rib' => 'Liste des RIBs'
 ];
+foreach ($banques as $banque) {
+    $cle = strtolower(str_replace(" ", '_', 'ordre_virement_' . supprimerAccents($banque[0])));
+    $documents[$cle] = 'Ordre de virement '.$banque[0];
+}
+$documents['synthese_ordres_virements'] = 'Synthèse des ordres de virements';
+$documents['liste_rib'] = 'Liste des RIBs';
 
 // Gestion des documents sélectionnés
 
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
+// Mise en place des urls de téléchargement
+
+$urls = [
+    'note_service' => 'Url à définir',
+    'attestation_collective' => 'url à définir',
+    'etat_paiement' => 'url à définir',
+];
+
+foreach ($banques as $banque) {
+    $cle = strtolower(str_replace(" ", '_', 'ordre_virement_' . supprimerAccents($banque[0])));
+    $urls[$cle] = '/gestion_activites/scripts_generation/ordre_virement.php?id='.$id_activite.'&banque=' . $banque[0];
+}
+$urls['synthese_ordres_virements'] = 'Url à définir';
+$urls['liste_rib'] = 'Url à définir';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($documents as $document => $label) {
-        if(in_array($document, $_POST)){
+        if (in_array($document, $_POST)) {
             $documents_choisis[] = $document;
+            $pdfs[] = $urls[$document];
         }
     }
+
+    ?>
+        <pre><?php var_dump($pdfs);?></pre>
+    <?php
 }

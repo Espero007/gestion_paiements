@@ -36,7 +36,7 @@ require_once('traitements/generation_documents.php');
                         </div>
                         <div class="card-body">
 
-                            <p class=""><strong>Note</strong> : Pour une activité, 06 documents peuvent être générés et téléchargés en PDF : la note de service, l'attestation collective de travail, l’état de paiement, les ordres de virements, la synthèse des ordres de virements et la liste des RIB des participants. Choisissez en dessous les documents que vous voulez générer et télécharger parmi les 06.</p>
+                            <p class=""><strong>Note</strong> : Pour une activité, 06 types de documents distincts peuvent être générés et téléchargés en PDF : la note de service, l'attestation collective de travail, l’état de paiement, les ordres de virements, la synthèse des ordres de virements et la liste des RIB des participants. Choisissez en dessous les documents que vous voulez générer et télécharger parmi les 06.</p>
 
                             <div class="divider text-start">
                                 <div class="divider-text"><strong>Liste des documents <?= isset($documents_choisis) ? 'choisis' : '' ?> </strong></div>
@@ -45,8 +45,18 @@ require_once('traitements/generation_documents.php');
                             <?php if (!isset($documents_choisis)) : ?>
                                 <form action="" method="post">
                                     <div class="ml-4">
+                                        <?php $premiere_fois = 0 ?>
                                         <?php foreach ($documents as $document => $label) : ?>
-                                            <div class="form-check mt-3">
+                                            <?php if (str_contains($document, 'ordre_virement') && !$premiere_fois) : ?>
+                                                <div class="mt-3">
+
+                                                    <p class="m-0 font-weight-bold">Ordres de virements bancaires</p>
+
+                                                </div>
+                                                <?php $premiere_fois++ ?>
+                                            <?php endif; ?>
+
+                                            <div class="form-check<?= str_contains($document, 'ordre_virement') ? ' ml-3 mt-2' : ' mt-3' ?>">
                                                 <input type="checkbox" name="<?= $document ?>" value="<?= $document ?>" id="<?= $document ?>" class="form-check-input">
                                                 <label for="<?= $document ?>" class="form-check-label"><?= $label ?></label>
                                             </div>
@@ -78,7 +88,7 @@ require_once('traitements/generation_documents.php');
                                 <div class="divider text-start">
                                     <div class="divider-text"><strong>Action</strong></div>
                                 </div>
-                                <button class="btn btn-primary">Générer</button>
+                                <button class="btn btn-primary" id='generer'>Générer</button>
                             <?php endif; ?>
 
 
@@ -108,6 +118,18 @@ require_once('traitements/generation_documents.php');
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
+
+    <script>
+        const Btngenerer = document.getElementById('generer');
+
+        function ouvrirPDFs() {
+            const pdfs = <?php echo json_encode($pdfs); ?>;
+            for (let i = 0; i < pdfs.length; i++) {
+                window.open(pdfs[i], '_blank');
+            }
+        }
+        Btngenerer.addEventListener('click', ouvrirPDFs);
+    </script>
 </body>
 
 </html>
