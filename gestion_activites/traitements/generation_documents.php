@@ -62,15 +62,14 @@ foreach ($banques as $banque) {
 $urls['synthese_ordres_virements'] = 'Url à définir';
 $urls['liste_rib'] = 'Url à définir';
 
+$pdfs_non_telechargeables = ['note_service', 'attestation_collective', 'etat_paiement', 'synthese_ordres_virements', 'liste_rib'];
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($documents as $document => $label) {
         if (in_array($document, $_POST)) {
             $documents_choisis[] = $document;
+            if(!in_array($document, $pdfs_non_telechargeables))
             $pdfs[] = $urls[$document];
         }
     }
-
-    ?>
-        <pre><?php var_dump($pdfs);?></pre>
-    <?php
 }

@@ -120,15 +120,19 @@ require_once('traitements/generation_documents.php');
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
 
     <script>
-        const Btngenerer = document.getElementById('generer');
+        const BtnGenerer = document.getElementById('generer');
 
         function ouvrirPDFs() {
             const pdfs = <?php echo json_encode($pdfs); ?>;
             for (let i = 0; i < pdfs.length; i++) {
-                window.open(pdfs[i], '_blank');
+                ouvert = window.open(pdfs[i], '_blank');
+                if (!ouvert) {
+                    alert("Popups bloqués. Veuillez autoriser les fenêtres surgissantes pour ce site.");
+                    break;
+                }
             }
         }
-        Btngenerer.addEventListener('click', ouvrirPDFs);
+        BtnGenerer.addEventListener('click', ouvrirPDFs);
     </script>
 </body>
 

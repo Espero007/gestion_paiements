@@ -4,8 +4,8 @@ require_once(__DIR__ . '/../../tcpdf/tcpdf.php');
 require_once(__DIR__ . '/../../includes/bdd.php');
 require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
-$banque = 'BOA';
-$id_activite = 50;
+$banque = $_GET['banque'] ?? 'BOA';
+$id_activite = $_GET['id'] ?? 50;
 
 // Récupérons les participants associés à l'activité qui ont comme banque UBA
 
