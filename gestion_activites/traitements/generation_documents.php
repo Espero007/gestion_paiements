@@ -50,8 +50,8 @@ $documents['liste_rib'] = 'Liste des RIBs';
 // Mise en place des urls de téléchargement
 
 $urls = [
-    'note_service' => 'Url à définir',
-    'attestation_collective' => 'url à définir',
+    'note_service' => '/gestion_activites/scripts_generation/note_attestation.php?document=note&id=' . $id_activite,
+    'attestation_collective' => '/gestion_activites/scripts_generation/note_attestation.php?document=attestation&id='.$id_activite,
     'etat_paiement' => 'url à définir',
 ];
 
@@ -62,7 +62,7 @@ foreach ($banques as $banque) {
 $urls['synthese_ordres_virements'] = 'Url à définir';
 $urls['liste_rib'] = 'Url à définir';
 
-$pdfs_non_telechargeables = ['note_service', 'attestation_collective', 'etat_paiement', 'synthese_ordres_virements', 'liste_rib'];
+$pdfs_non_telechargeables = ['etat_paiement', 'synthese_ordres_virements', 'liste_rib'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($documents as $document => $label) {

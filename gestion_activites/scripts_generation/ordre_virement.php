@@ -1,5 +1,6 @@
 <?php
 // Inclusions
+session_start();
 require_once(__DIR__ . '/../../tcpdf/tcpdf.php');
 require_once(__DIR__ . '/../../includes/bdd.php');
 require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
@@ -10,11 +11,28 @@ $id_activite = $_GET['id'] ?? 50;
 // Récupérons les participants associés à l'activité qui ont comme banque UBA
 
 $stmt = "
-SELECT a.type_activite, p.nom, p.prenoms, t.nom as qualite, t.indemnite_forfaitaire, ib.banque, ib.numero_compte as rib, a.taux_journalier, a.taux_taches, a.frais_deplacement_journalier as fdj, pa.nombre_jours, pa.nombre_taches, a.nom as titre_activite, a.titre_financier, a.financier, a.premier_responsable, a.titre_responsable
+SELECT 
+    a.type_activite,
+    p.nom, 
+    p.prenoms,
+    t.nom as qualite,
+    t.indemnite_forfaitaire,
+    ib.banque,
+    ib.numero_compte as rib,
+    a.taux_journalier,
+    a.taux_taches,
+    a.frais_deplacement_journalier as fdj,
+    pa.nombre_jours,
+    pa.nombre_taches,
+    a.nom as titre_activite,
+    a.titre_financier,
+    a.financier,
+    a.premier_responsable,
+    a.titre_responsable
 FROM participations pa
 INNER JOIN participants p ON pa.id_participant=p.id_participant
 INNER JOIN titres t ON pa.id_titre = t.id_titre
-INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire=ib.id
+INNER JOIN informations_bancaires ib ON p.id_participant=ib.id_participant
 INNER JOIN activites a ON pa.id_activite=a.id
 WHERE pa.id_activite=$id_activite AND ib.banque =:banque 
 ";
@@ -100,7 +118,7 @@ $pdf = new Ordre_Virement('P', 'mm', 'A4');
 $pdf->AddFont('trebucbd', '', 'trebucbd.php');
 
 // Configuration du document
-configuration_pdf($pdf, 'Tobi', 'Ordre de virement');
+configuration_pdf($pdf, $_SESSION['nom'].' '.$_SESSION['prenoms'], 'Ordre de virement');
 $pdf->setMargins(15, 20, 15);
 $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
 $pdf->AddPage();
