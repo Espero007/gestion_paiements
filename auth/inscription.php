@@ -14,7 +14,6 @@
 <body>
     <!-- Helpers -->
 
-
     <div class="container-xxl ">
         <!-- Outer Row -->
         <div class="row justify-content-center">

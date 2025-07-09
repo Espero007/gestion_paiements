@@ -6,7 +6,7 @@ const NBR_ACTIVITES_A_AFFICHER = 6;
 const NOMBRE_MAXIMAL_COMPTES = 3;
 define('TIMEOUT', 360 * 60); // 1h d'inactivité soit 20*60 secondes.
 $nom_dossier_upload = 'fichiers';
-define('UPLOADS_BASE_DIR', BASE_PATH.'/'.$nom_dossier_upload);
+define('UPLOADS_BASE_DIR', BASE_PATH . '/' . $nom_dossier_upload);
 const PERMISSIONS = 0777;
 
 
@@ -345,8 +345,33 @@ function afficherAlerte($message, $type, $session = false)
 <?php
 }
 
-function traiterCheminAcces($chemin){
+function traiterCheminAcces($chemin)
+{
     // Cette fonction est là pour m'aider à retrouver le lien en relatif à partir du lien en absolu. Elle va donc tout simplement couper le chemin d'accès à partir de 'fichiers' et le reste me donnera le chemin d'accès en relatif
     $motCle = $GLOBALS['nom_dossier_upload'];
     return strstr($chemin, $motCle);
+}
+
+function afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, $font, $font_size, $sauts_ligne, $bloc_gauche_align = 'C', $bloc_gauche_style = '', $bloc_droite_align = 'C', $bloc_droite_style='')
+{
+    // $bloc_gauche_style pour savoir si je veux le bloc souligné, en gras, ce genre de choses
+    $pdf->setFont($font, $bloc_gauche_style, $font_size);
+
+    $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
+    // Largeur d'un bloc
+    $largeurBloc = $largeurPage / 2;
+    // Sauvegarder la position Y
+    $y = $pdf->GetY();
+    // Sauvegarder la position de x à droite
+    $x_droite = $pdf->getMargins()['left'] + $largeurBloc;
+    $pdf->setXY($pdf->getMargins()['left'], $y);
+    $pdf->MultiCell($largeurBloc, 5, $bloc_gauche, 0, $bloc_gauche_align);
+
+    $pdf->setFont($font, $bloc_droite_style, $font_size);
+
+    //Bloc de droite (sur la même ligne que le bloc de gauche)
+    $pdf->setXY($pdf->getMargins()['left'] + $largeurBloc, $y);
+    $pdf->MultiCell($largeurBloc, 5, $bloc_droite, 0, $bloc_droite_align);
+
+    $pdf->Ln($sauts_ligne);
 }

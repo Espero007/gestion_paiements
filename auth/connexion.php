@@ -37,14 +37,14 @@ require_once("submit/submit_connexion.php");
                                     <?php
                                     }
                                     ?>
-                                    <?php
-                                    if (isset($_SESSION['email_envoye'])) {
-                                    ?>
-                                        <div class="alert alert-info text-center">Un lien de vérification a été envoyé à votre mail. Confirmez le pour accéder à votre compte.</div>
-                                    <?php
-                                        unset($_SESSION['email_envoye']);
-                                    }
-                                    ?>
+                                    <?php if (isset($_SESSION['email_envoye']) && $_SESSION['email_envoye']) : ?>
+                                        <?php afficherAlerte('Un lien de vérification a été envoyé à votre mail. Cliquez dessus pour confirmer votre email et accéder à votre compte.', 'info');
+                                        unset($_SESSION['email_envoye']); ?>
+                                    <?php elseif (isset($_SESSION['email_envoye']) && !$_SESSION['email_envoye']): ?>
+
+                                        <?php afficherAlerte('Une erreur s\'est produite lors de l\'envoi du lien de confirmation de votre email, veuillez réessayer plus tard.', 'info');
+                                        unset($_SESSION['email_envoye']); ?>
+                                    <?php endif; ?>
 
                                     <?php
                                     if (isset($_SESSION['deconnexion']) && !isset($_SESSION['timeout_atteint'])) {

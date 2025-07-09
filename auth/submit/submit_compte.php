@@ -3,11 +3,6 @@ session_start();
 require_once(__DIR__.'/../../includes/bdd.php');
 require_once(__DIR__.'/../../includes/constantes_utilitaires.php');
 
-// // FIchiers pour envoi de mail
-// require_once('PHPMailer/autoload.php');
-// use PHPMailer\PHPMailer\PHPMailer;
-// use PHPMailer\PHPMailer\Exception;
-
 if (isset($_POST['inscription'])) {
 
     $champs_attendus = ['nom', 'prenoms', 'email', 'password'];
@@ -52,33 +47,12 @@ if (isset($_POST['inscription'])) {
 
         $lien_verif = obtenirURLcourant(true).'/auth/submit/verifie_email.php?email='. urldecode($_POST['email']).'&token='.$token;
 
-        // $mail = new PHPMailer(true);
-
-        // try {
-
-        //     $mail->isSMTP();
-        //     $mail->Host       = 'smtp.gmail.com';  // Serveur SMTP de Gmail
-        //     $mail->SMTPAuth   = true;
-        //     $mail->Username   = 'gpaiements229@gmail.com';  // adresse Gmail
-        //     $mail->Password   = 'rxop lqyz scjl hiqd';  // Mot de passe d'application
-        //     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Sécuriser la connexion
-        //     $mail->Port       = 587;
-
-        //     $mail->setFrom('gpaiements229@gmail.com', 'GPaiements');
-        //     $mail->addAddress($_POST["email"]); // L'email de l'utilisateur
-
-        //     $mail->Subject = 'Confirmez votre adresse email';
-        //     $mail->Body    = "Cliquez sur ce lien pour confirmer votre adresse email : <a href=\"$lien_verif\" >Confirmez votre email</a>";
-
-        //     $mail->send();
-
-        //     $_SESSION["email_envoye"] = true;
-        // } catch (Exception $e) {
-        //     die("Erreur : " . $e->getMessage());
-        // }
-
-        envoyerLienValidationEmail($lien_verif, $_POST['email']);
-        $_SESSION["email_envoye"] = true;
+        
+        if (envoyerLienValidationEmail($lien_verif, $_POST['email'])) {
+            $_SESSION["email_envoye"] = true;
+        }else{
+            $_SESSION['email_envoye'] = false;
+        }
 
         if (!$resultat) {
             $echec_enregistrement_donnees = true;
