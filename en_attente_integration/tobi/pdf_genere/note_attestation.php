@@ -23,13 +23,11 @@ if (!($bdd instanceof PDO)) {
 $errors = [];
 $id_user = $_SESSION['user_id'];
 
-//if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 
 
 // Vérifier si l'ID de l'activité est fourni
 if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {    
     header('Location:' . $_SESSION["previous_url"]);
-    //echo 'Bonjour 1';
     exit;
 }
 $activity_id = $_GET['id'];
@@ -45,7 +43,6 @@ try {
 
     if (!$activity) {
         $_SESSION['form_errors'] = ['database' => "Activité non trouvée ou vous n'avez pas les permissions pour la modifier."];
-        //echo 'Bonjour 2';
         header('Location:' . $_SESSION["previous_url"]);
         exit;
     }
@@ -54,7 +51,6 @@ try {
     $_SESSION['form_errors'] = ['database' => "Erreur lors de la vérification de l'activité. Veuillez réessayer."];
     header('Location:' . $_SESSION["previous_url"]);
     exit;
-    //echo 'Bonjour 3';
 }
 
 

@@ -1,4 +1,5 @@
 <?php
+session_start();
 //ob_start(); // Démarrer le tampon de sortie
 require_once(__DIR__.'/../../../tcpdf/tcpdf.php');
 require_once(__DIR__ .'/../../../includes/bdd.php');
@@ -16,23 +17,21 @@ $id_user = $_SESSION['user_id'];
 // Vérifier si l'ID de l'activité est fourni
 if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {    
     header('Location:' . $_SESSION["previous_url"]);
-    //echo 'Bonjour 1';
     exit;
 }
-$activity_id = $_GET['id'];
+$id_activite = $_GET['id'];
 
 
 // Vérifier si l'activité existe et appartient à l'utilisateur
 try {
     $sql = 'SELECT id_note_generatrice, type_activite FROM activites WHERE id = :id AND id_user = :id_user';
     $stmt = $bdd->prepare($sql);
-    $stmt->execute(['id' => $activity_id, 'id_user' => $id_user]);
+    $stmt->execute(['id' => $id_activite, 'id_user' => $id_user]);
     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
     if (!$activity) {
         $_SESSION['form_errors'] = ['database' => "Activité non trouvée ou vous n'avez pas les permissions pour la modifier."];
-        //echo 'Bonjour 2';
         header('Location:' . $_SESSION["previous_url"]);
         exit;
     }
@@ -41,7 +40,39 @@ try {
     $_SESSION['form_errors'] = ['database' => "Erreur lors de la vérification de l'activité. Veuillez réessayer."];
     header('Location:' . $_SESSION["previous_url"]);
     exit;
-    //echo 'Bonjour 3';
+}
+
+
+// Récupération du type de l'activité 
+
+$sql = "
+SELECT type_activite 
+FROM activites a WHERE a.id = :activite_id
+" ;
+$stmt = $bdd->prepare($sql);
+$stmt->execute(['activite_id' => $id_activite]); // Passe la valeur du type d'activité ici
+$activite_type = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+// Validation de l'id du type  de l'activité  dont on veut générer le document
+
+// Liste des valeurs autorisées
+
+$valeurs_autorisees = [1, 2, 3];
+
+// Vérification et assignation ou redirection si lien invalide ou type non voulu
+if (isset($_GET['type_activite']) && filter_var($_GET['type_activite'], FILTER_VALIDATE_INT)) {
+    $type_activite = (int)$_GET['type_activite'];
+    if (in_array($type_activite, $valeurs_autorisees) && (int)$_GET['type_activite'] === $activite_type['type_activite']) {
+        $id_type_activite = $activite_type;
+    }
+    else {
+        header('Location:' . $_SESSION["previous_url"]);
+    }
+} else {
+    //$id_type_activite = 2; // Valeur par défaut si absent ou non entier
+    header('Location:' . $_SESSION["previous_url"]);
+
 }
 
 
