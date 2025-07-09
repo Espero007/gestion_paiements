@@ -41,7 +41,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                         // La valeur semble valide mais vérifions si elle se retrouve ou non dans la base de données
 
                         $stmt = $bdd->prepare("SELECT matricule_ifu FROM participants WHERE matricule_ifu = :val");
-                        $stmt->bindParam('val', $valeur_champ, PDO::PARAM_INT);
+                        $stmt->bindParam('val', $valeur_champ);
                         $stmt->execute();
                         $ligne = $stmt->fetch(PDO::FETCH_NUM);
 
@@ -56,7 +56,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                                     $erreurs[$champ][] = $message;
                                 }
                             } elseif ($matricule_retrouve != $matricule_ifu) {
-                                // On est sur la page de modification et le matricule retrouvé n'est pas celui de l'utilsiateur dont on veut modifier les informations
+                                // On est sur la page de modification et le matricule retrouvé n'est pas celui de l'utilisateur dont on veut modifier les informations
                                 $erreurs[$champ][] = $message;
                             }
                         }
@@ -162,7 +162,12 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
 
                         // On vérifie à présent que le numéro de compte indiqué n'existe pas déjà en bdd
 
-                        $stmt = $bdd->prepare("SELECT numero_compte FROM informations_bancaires WHERE numero_compte = :val");
+                        $stmt = $bdd->prepare("
+                        SELECT numero_compte 
+                        FROM informations_bancaires ib
+                        INNER JOIN participants p ON p.id_participant=ib.id_participant
+                        WHERE numero_compte = :val AND p.id_user=".$_SESSION['user_id']."
+                        ");
                         $stmt->bindParam('val', $valeur_champ);
                         $stmt->execute();
                         $ligne = $stmt->fetch(PDO::FETCH_NUM);

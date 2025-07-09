@@ -1,5 +1,6 @@
 <?php
-$titre = "Modification des informations";
+$section = 'Participants';
+$titre_page = "Modification des informations";
 require_once(__DIR__ . '/../includes/header.php');
 require_once('includes/traitements_modifier_infos.php');
 ?>

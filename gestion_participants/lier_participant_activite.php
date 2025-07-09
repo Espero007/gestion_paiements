@@ -77,7 +77,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                             <?php elseif ($sens == 1): ?>
                                                 <!-- Activité vers participant -->
                                                 <?php if ($aucun_participant_1) : ?>
-                                                    <p>Il semble que vous ne disposez d'aucun participant ajouté./ <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter de nouveaux participants, ensuite vous pourrez les associer à l'activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                                                    <p>Il semble que vous ne disposez d'aucun participant ajouté. <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter de nouveaux participants, ensuite vous pourrez les associer à l'activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
                                                 <?php elseif ($aucun_participant_2): ?>
                                                     <p class="">Il semble que vous avez déjà associé à cette activité tous les participants que vous avez créés. <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter un nouveau participant, ensuite vous pourrez l'associer à l'activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
                                                 <?php else: ?>

@@ -155,9 +155,6 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                         $id_comptes[$i][] = $compte_participant['id'];
                     }
                 }
-?>
-    <pre><?php var_dump($diplomes);?></pre>
-<?php
                 // Les informations à afficher sont récupérées et stockées. On passe à présent aux validations nécessaires lorsque le formulaire sera soumis
 
                 if (isset($_POST['lier'])) {
@@ -233,7 +230,8 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                             $_SESSION['liaison_reussie'] = 'Le participant a été associé à l\'activité avec succès';
                         }
 
-                        header('location:' . $_SESSION['previous_url']);
+                        // header('location:' . $_SESSION['previous_url']);
+                        header('location:/gestion_activites/voir_activites.php');
                         exit;
                     }
                 }

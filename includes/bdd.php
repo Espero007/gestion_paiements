@@ -91,7 +91,7 @@ try {
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         id_participant INT NOT NULL,
         banque VARCHAR(100) NOT NULL,
-        numero_compte VARCHAR(100) UNIQUE NOT NULL,
+        numero_compte VARCHAR(100) NOT NULL,
         id_rib INT NOT NULL
         );
 

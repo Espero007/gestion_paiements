@@ -161,9 +161,9 @@ $resultat->closeCursor();
                             <h3 class="font-weight-bold">Aucun participant retrouvé !</h3>
                             <p class="mt-3 text-center">Il semble que vous n'ayiez aucun participant déjà ajouté. Pourquoi ne pas remédier à celà et en ajouter dès maintenant ?</p>
                             <a href="ajouter_participant.php" class="btn btn-outline-primary">Ajouter un participant</a>
-                            <div class="mt-5 mb-5">
+                            <!-- <div class="mt-5 mb-5">
                                 <img src="/assets/illustrations/no-results-1.png" alt="no results" class="img-fluid" width="500">
-                            </div>
+                            </div> -->
                         </div>
 
 

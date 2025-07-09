@@ -94,7 +94,7 @@ class Ordre_Virement extends TCPDF
 
         // $this->setXY($this->getMargins()['left'], $y);
         // Ligne 2
-        $ligne2 = strtoupper("ordre de virement $banque");
+        $ligne2 = mb_strtoupper("ordre de virement $banque", 'UTF-8');
         $this->setFont('trebucbd', '', '11');
         $this->setX($x_droite);
         $this->Cell(0, 5, $ligne2, 0, 1, 'C');

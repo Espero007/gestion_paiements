@@ -40,7 +40,7 @@ require_once('includes/gerer_participant.php');
                         </div>
                         <div class="card-body">
                             <?php if (isset($_SESSION['modification_ok'])) : ?>
-                                <div class="alert alert-success mt-2">Les informations du participant ont été modifiées avec succès !</div>
+                                <?php afficherAlerte('Les informations du participant ont été modifiées avec succès !', 'success') ?>
                                 <?php unset($_SESSION['modification_ok']) ?>
                             <?php endif; ?>
 
@@ -64,7 +64,7 @@ require_once('includes/gerer_participant.php');
                                 </span>
                                 <?= $comptes_str ?>
                                 <br>
-                                <small><strong>Note</strong> : Cliquez sur un compte bancaire si vous souhaitez visualiser la copie pdf de son RIB</small>
+                                <small><strong>Note</strong> : Cliquez sur un compte bancaire si vous souhaitez visualiser la copie PDF de son RIB</small>
                             </p>
                         </div>
                         <hr class="m-0">
@@ -80,24 +80,24 @@ require_once('includes/gerer_participant.php');
                                 <ul class="dropdown-menu shadow">
                                     <?php if (!$quota_comptes_bancaires_atteint) : ?>
                                         <li><a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a></li>
-                                        <li>
+                                        <!-- <li>
                                             <hr class="dropwdown-divider">
-                                        </li>
+                                        </li> -->
                                     <?php endif; ?>
-                                    <li>
+                                    <!-- <li>
                                         <a href="#" class="dropdown-item text-danger custom-dropdown-item">Supprimer</a>
-                                    </li>
+                                    </li> -->
                                 </ul>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card shadow mb-4">
-                        <div class="card-header">
-                            <h6 class="text-pirmary font-weight-bold">Activités associées</h6>
-                        </div>
-                        <div class="card-body">
-                            <!-- Messages divers s'il y en a -->
+                    <!-- <div class="card shadow mb-4"> -->
+                        <!-- <div class="card-header"> -->
+                            <!-- <h6 class="text-pirmary font-weight-bold">Activités associées</h6> -->
+                        <!-- </div> -->
+                        <!-- <div class="card-body">
+                            Messages divers s'il y en a
 
                             <?php if (count($activites_associees) == 0) : ?>
                                 <div class="text-center">
@@ -108,8 +108,8 @@ require_once('includes/gerer_participant.php');
                             <?php else: ?>
 
                             <?php endif; ?>
-                        </div>
-                    </div>
+                        </div> -->
+                    <!-- </div> -->
                 </div>
                 <!-- /.container-fluid -->
 

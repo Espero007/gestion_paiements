@@ -3,7 +3,7 @@ $section = 'Activités';
 $titre_page = "Liste des activités";
 require_once(__DIR__ . '/../includes/header.php');
 
-$stmt = 'SELECT id, nom, description, centre FROM activites ORDER BY id DESC';
+$stmt = 'SELECT id, nom, description, centre FROM activites WHERE id_user='.$_SESSION['user_id']. ' ORDER BY id DESC';
 $resultat = $bdd->query($stmt);
 
 if (!$resultat) {
@@ -156,9 +156,9 @@ $resultat->closeCursor();
                             <h3 class="font-weight-bold">Aucune activité retrouvée !</h1>
                                 <p class="mt-3 text-center">Il semble que vous n'ayiez aucune activité déjà créée. Pourquoi ne pas corriger le tir et en créer dès maintenant ?</p>
                                 <a href="creer_activite.php" class="btn btn-outline-primary">Créer une activité</a>
-                                <div class="mt-5 mb-5">
+                                <!-- <div class="mt-5 mb-5">
                                     <img src="/assets/illustrations/no-results.png" alt="no results" class="img-fluid" width="400">
-                                </div>
+                                </div> -->
                         </div>
                     <?php endif; ?>
 
