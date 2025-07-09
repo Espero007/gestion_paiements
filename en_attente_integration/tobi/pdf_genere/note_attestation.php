@@ -85,7 +85,7 @@ $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Création du PDF avec TCPDF
 $pdf = new TCPDF();
 $pdf->AddPage();
-$pdf->SetFont('dejavusans', '', 10); // Utilisation d'une police adaptée
+$pdf->SetFont('trebuc', '', 10); // Utilisation d'une police adaptée
 
 // Construction du tableau HTML
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE,"Europe/Paris",IntlDateFormatter::GREGORIAN);
@@ -176,7 +176,7 @@ echo '<a href="Note_de_service.pdf" target="_blank"> Note de service </a>';
 
 $pdf1 = new TCPDF();
 $pdf1->AddPage();
-$pdf1->SetFont('dejavusans', '', 10); // Utilisation d'une police adaptée
+$pdf1->SetFont('trebuc', '', 10); // Utilisation d'une police adaptée
 
 // Construction du tableau HTML
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE,"Europe/Paris",IntlDateFormatter::GREGORIAN);
@@ -380,11 +380,11 @@ if ($document === 'note') {
     $html .= '<br><br><br><br>
     <table border="0" style="width: 100%;">
         <tr>
-            <td style="width: 50%; font-size: 10pt; border: none;">
+            <td style="width: 50%; font-size: 10pt; border: none; text-align:center">
                 <h4 style="margin-bottom:3em">' . $titre_responsable . '</h4>
                 <h4 style="text-decoration:underline;">' . $premier_responsable . '</h4>
             </td>
-            <td style="width: 50%; font-size: 10pt; border: none;">
+            <td style="width: 50%; font-size: 10pt; border: none; text-align:center">
                 <h4 style="margin-bottom:3em">' . $titre_financier . '</h4>
                 <h4 style="text-decoration:underline;">' . $financier . '</h4>
             </td>
