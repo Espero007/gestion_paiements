@@ -80,23 +80,30 @@ require_once('includes/gerer_participant.php');
                                 <ul class="dropdown-menu shadow">
                                     <?php if (!$quota_comptes_bancaires_atteint) : ?>
                                         <li><a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a></li>
-                                        <!-- <li>
-                                            <hr class="dropwdown-divider">
-                                        </li> -->
                                     <?php endif; ?>
-                                    <!-- <li>
-                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item">Supprimer</a>
-                                    </li> -->
+                                    <li>
+                                        <a href="modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
+                                    </li>
+
+                                    <li>
+                                        <a href="lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer à une activité</a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropwdown-divider">
+                                    </li>
+                                    <li>
+                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item del-btn" id='<?= $participant['id_participant'] ?>' data-toggle="modal" data-target="#deletionModal">Supprimer</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
                     <!-- <div class="card shadow mb-4"> -->
-                        <!-- <div class="card-header"> -->
-                            <!-- <h6 class="text-pirmary font-weight-bold">Activités associées</h6> -->
-                        <!-- </div> -->
-                        <!-- <div class="card-body">
+                    <!-- <div class="card-header"> -->
+                    <!-- <h6 class="text-pirmary font-weight-bold">Activités associées</h6> -->
+                    <!-- </div> -->
+                    <!-- <div class="card-body">
                             Messages divers s'il y en a
 
                             <?php if (count($activites_associees) == 0) : ?>
@@ -131,10 +138,42 @@ require_once('includes/gerer_participant.php');
         <i class="fas fa-angle-up"></i>
     </a>
 
+    <!-- Suppression Modal -->
+    <div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="deletionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Êtes-vous sûr(e) de vouloir continuer ?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">En appuyant sur "Supprimer" vous ne pourrez plus faire marche arrière.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Annuler</button>
+                    <a class="btn btn-danger" href="#" id='deletionModalBtn'>Supprimer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Logout Modal-->
 
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
+
+    <script>
+        const deleteBtns = document.querySelectorAll('.del-btn'); // boutons de suppression des participants
+        const deletionModalBtn = document.getElementById('deletionModalBtn');
+
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id_participant = btn.id;
+                deletionModalBtn.href = '/gestion_participants/supprimer_participant.php?id=' + id_participant;
+            })
+        })
+    </script>
 </body>
 
 </html>

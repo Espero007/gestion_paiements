@@ -142,7 +142,7 @@ $resultat->closeCursor();
                                                                         <hr class="dropdown-divider">
                                                                     </li>
                                                                     <li>
-                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item del-btn" id='<?= $participant['id_participant'] ?>' data-toggle="modal" data-target="#deletionModal"></i>Supprimer</a>
+                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item del-btn" id='<?= $participant['id_participant'] ?>' data-toggle="modal" data-target="#deletionModal">Supprimer</a>
                                                                     </li>
                                                                 </ul>
                                                             </div>

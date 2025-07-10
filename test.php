@@ -11,11 +11,36 @@
 <body>
 
     <?php
-    $valeur1 = '2';
-    $valeur_2 = null;
 
-    $valeur3 = $valeur1 + $valeur_2;
-    echo $valeur3
+
+
+
+    // global $banque, $titre_activite;
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    // $this->setXY($this->getMargins()['left'], $y);
+   
+
+    
+
+    // Ligne de séparation
+    // $this->Ln(15);
+    // $this->Line($this->getMargins()['left'], $this->GetY(), $this->getPageWidth()-$this->getMargins()['right'], $this->GetY());
+    // $this->Ln(2);
+
+
     ?>
 </body>
 

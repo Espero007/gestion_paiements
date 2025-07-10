@@ -1,4 +1,4 @@
-<?php
+erreur_avec<?php
 
 session_start();
 require_once(__DIR__ . '/../../includes/bdd.php');
@@ -65,6 +65,6 @@ if ($utilisateur) {
 }
 else {
     header('location:../connexion.php');
-    $_SESSION['erreur_avec_verification_email'] = true;
+    $_SESSION['erreur_avec_verification_email'] = "Une erreur s'est produite lors de la vérification de l'email";
     exit;
 }

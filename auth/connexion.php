@@ -30,48 +30,40 @@ require_once("submit/submit_connexion.php");
                             <div class="col-12">
                                 <div class="p-5">
                                     <!-- Messages divers -->
-                                    <?php
-                                    if (isset($echec_connexion)) {
-                                    ?>
-                                        <div class="alert alert-danger text-center">Echec de la connexion ! Assurez-vous d'indiquer correctement vos identifiants de connexion !</div>
-                                    <?php
-                                    }
-                                    ?>
+                                    <?php if (isset($echec_connexion)) : ?>
+                                        <?php afficherAlerte('Echec de la connexion ! Assurez-vous d\'indiquer correctement vos identifiants de connexion.', 'danger') ?>
+                                    <?php endif; ?>
+
                                     <?php if (isset($_SESSION['email_envoye']) && $_SESSION['email_envoye']) : ?>
                                         <?php afficherAlerte('Un lien de vérification a été envoyé à votre mail. Cliquez dessus pour confirmer votre email et accéder à votre compte.', 'info');
                                         unset($_SESSION['email_envoye']); ?>
                                     <?php elseif (isset($_SESSION['email_envoye']) && !$_SESSION['email_envoye']): ?>
-
                                         <?php afficherAlerte('Une erreur s\'est produite lors de l\'envoi du lien de confirmation de votre email, veuillez réessayer plus tard.', 'info');
                                         unset($_SESSION['email_envoye']); ?>
                                     <?php endif; ?>
 
                                     <?php
                                     if (isset($_SESSION['deconnexion']) && !isset($_SESSION['timeout_atteint'])) {
-                                        // echo "bonjour";
                                         session_unset(); // On détruit les varaibles de la session
                                         session_destroy(); // On détruit la session
-                                    ?>
-                                        <div class="alert alert-success text-center">Vous êtes à présent déconnecté(e) !</div>
-                                    <?php
+
+                                        afficherAlerte('Vous êtes à présent déconnecté(e) !', 'success');
                                     } elseif (isset($_SESSION['deconnexion']) && isset($_SESSION['timeout_atteint'])) {
                                         // déconnexion due au timeout
-                                    ?>
-                                        <div class="alert alert-info text-center">Vous avez été déconnecté(e) pour cause d'inactivité. Veuillez vous reconnecter avant de poursuivre.</div>
-                                    <?php
+                                        afficherAlerte('Vous avez été déconnecté(e) pour cause d\'inactivité. Veuillez vous reconnecter avant de poursuivre.', 'info');
                                         session_unset();
                                         session_destroy();
                                     }
                                     ?>
                                     <?php if (isset($email_non_valide)) : ?>
-                                        <div class="alert alert-info text-center">Votre email n'a pas encore été confirmé. Veuillez consulter votre boite mail ou <a href="<?= 'renvoyerLienConfirmation.php?email=' . $_POST['email'] ?>">renvoyer un lien de confirmation</a> si vous n'avez pas reçu de lien.</div>
+                                        <?php
+                                        $message = 'Votre email n\'a pas encore été confirmé. Veuillez consulter votre boite mail ou <a href="' . 'renvoyerLienConfirmation.php?email=' . $_POST['email'] . '">renvoyer un lien de confirmation</a> si vous n\'avez pas reçu de lien.';
+                                        afficherAlerte($message, 'info')
+                                        ?>
                                     <?php endif; ?>
 
                                     <?php if (isset($_SESSION['erreur_avec_verification_email'])) : ?>
-                                        <?php
-                                        afficherAlerte('Une erreur s\'est produite lors de la vérification de l\'email', 'danger');
-                                        unset($_SESSION['erreur_avec_verification_email'])
-                                        ?>
+                                        <?php afficherAlerte('erreur_avec_verification_email', 'danger', true);?>
                                     <?php endif; ?>
 
                                     <div class="text-center">
@@ -86,12 +78,12 @@ require_once("submit/submit_connexion.php");
                                                 echo "is-invalid";
                                             } ?>"
                                                 <?php if (isset($erreurs)) {
-                                                    echo "value = \"" . $_POST["email"] . "\"";
+                                                    echo "value = \"" . htmlspecialchars($_POST["email"]) . "\"";
                                                 } ?>>
 
                                             <?php if (isset($erreurs["email"])) {
                                             ?>
-                                                <div id="emailHelp" class="form-text"><?php echo $erreurs["email"] ?></div>
+                                                <div id="emailHelp" class="form-text"><?= $erreurs["email"] ?></div>
                                             <?php } ?>
 
 
@@ -109,7 +101,7 @@ require_once("submit/submit_connexion.php");
 
                                             <?php if (isset($erreurs["password"])) {
                                             ?>
-                                                <div id="passwordHelp" class="form-text"><?php echo $erreurs["password"] ?></div>
+                                                <div id="passwordHelp" class="form-text"><?= $erreurs["password"] ?></div>
                                             <?php } ?>
 
                                             <!-- <div class="d-flex justify-content-end mt-3"><a href="./inscription.php">Mot de passe oublié ?</a></div> -->

@@ -384,3 +384,74 @@ function supprimerAccents($chaine){
         return $chaine;
     }
 }
+
+function genererHeader($pdf, $type_document, $informations){
+
+    /** Commentaires explicatifs */
+
+    // $type_document est la variable qui doit nous dire si le header est pour un ordre de virement, l'attestation collective, etc...
+    // Les différents types possibles sont 'ordre_virement', 'note_service', 'attestation_collective' (si un autre type que ceux listés là est utilisé à l'usage de la fonction, le comportement de celle ci est indéterminé)
+
+    /** Gestion des informations à adapter selon le type du document */
+
+    // $informations est un tableau associatif qui doit contenir comme données générales le titre de l'activité(['titre'=>'valeur_titre'])
+
+    // Ordre de virement : En plus des informations de base cités au dessus, il faut ici la banque en plus toujours selon le format ['banque'=>]
+
+    /** Fin Commentaires explicatifs */
+
+    /** Actions préliminaires */
+
+    $titres = [
+        'ordre_virement' => 'des indemnites et frais d\' entretien accordes aux membres de la commission chargee de'
+    ];
+
+    // Formattage de la date en français
+
+    $formatter = new IntlDateFormatter(
+        'fr_FR',
+        IntlDateFormatter::FULL,
+        IntlDateFormatter::NONE,
+        'Africa/Lagos',
+        IntlDateFormatter::GREGORIAN
+    );
+
+    // Chargement de la police du pdf
+    $pdf->setFont('trebuc', '', 10);
+    $pdf->setY(8); // on descend de 8mm du haut avant de débuter le dessin du header
+
+    // Calcul de largeur totale disponible entre les marges
+    $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
+    $largeurBloc = $largeurPage / 2; // Largeur d'un bloc
+    $y = $pdf->GetY(); // sauvegarde de la position Y
+    $x = $pdf->getMargins()['left'] + $largeurBloc; // sauvegarde de la position de x à droite
+
+    // Gestion du bloc de gauche du header
+    $bloc_gauche =  strtoupper("REPUBLIQUE DU BENIN\n*-*-*-*-*\nMINISTERE DE L'ENSEIGNEMENT SUPERIEUR ET SECONDAIRE\n*-*-*-*-*\nDIRECTION DES ............\n*-*-*-*-*\nSERVICE ............");
+    $pdf->setXY($pdf->getMargins()['left'], $y);
+    $pdf->MultiCell($largeurBloc, 5, $bloc_gauche, 0, 'C');
+
+    // Gestion du bloc de droite (sur la même ligne que le bloc de gauche)
+    $pdf->setXY($x, $y); // Déplacement du curseur à la bonne position
+    
+    // Ligne 1 : date
+    $ligne1 = strtoupper("Cotonou, le " . $formatter->format(new DateTime()));
+    $pdf->Cell(0, 5, $ligne1, 0, 1, 'C');
+    $pdf->Ln(5);
+
+    // Ligne 2 : Titre du document
+    if($type_document == 'ordre_virement'){
+        $ligne2 = mb_strtoupper('ordre de virement '.$informations['banque'], 'UTF-8');
+    }
+    
+    $pdf->setFont('trebucbd', '', '11');
+    $pdf->setX($x);
+    $pdf->Cell(0, 5, $ligne2, 0, 1, 'C');
+    $pdf->Ln(5);
+
+    // Ligne 3
+    $ligne3 = mb_strtoupper($titres[$type_document].' '.$informations['titre'], 'UTF-8');
+    $pdf->setFont('trebuc', '', '10');
+    $pdf->setX($x);
+    $pdf->MultiCell($largeurBloc, 5, $ligne3, 0, 'C');
+}
