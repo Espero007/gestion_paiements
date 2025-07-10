@@ -112,7 +112,7 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
     global $bdd;
     // $valeur_id nous permet de valider un id qu'on passe directement à la fonction sans passer par les superglobales
 
-    $allowed_tables = ['participants', 'activites', 'autre_table'];
+    $allowed_tables = ['participants', 'activites', 'participations_participant', 'participations_activites', 'autre_table'];
     // $allowed_columns = ['id_participant', 'id_autre'];
 
     if (!in_array($table, $allowed_tables)) {
@@ -128,6 +128,15 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
         case 'activites':
             $type_id = 'id';
             break;
+        case 'participations_participant':
+            $type_id = 'id_participant';
+            $type_id2 = $type_id;
+            break;
+        case 'participations_activites':
+            $type_id = 'id_activite';
+            $type_id2 = 'id';
+            break;
+        default:
     }
 
     if (!$valeur_id) {
@@ -159,7 +168,14 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
         $valeur = $valeur_id;
     }
 
-    $stmt = $bdd->prepare("SELECT $type_id FROM $table WHERE $type_id=:valeur_id AND id_user=" . $_SESSION['user_id']);
+    if(in_array($table, ['participants', 'activites'])){
+        $stmt = $bdd->prepare("SELECT $type_id FROM $table WHERE $type_id=:valeur_id AND id_user=" . $_SESSION['user_id']);
+    }elseif(str_contains($table, 'participations')){
+        $table_base = 'participations';
+        $table_additionnelle = str_replace('participations_', '', $table);
+        $stmt = $bdd->prepare("SELECT $type_id FROM participations pa INNER JOIN $table_additionnelle t ON pa.$type_id=t.$type_id2 WHERE t.$type_id2=:valeur_id AND id_user=".$_SESSION['user_id']);
+    }
+
     $stmt->bindParam(':valeur_id', $valeur, PDO::PARAM_INT);
 
     if (!$stmt->execute()) {
@@ -352,7 +368,7 @@ function traiterCheminAcces($chemin)
     return strstr($chemin, $motCle);
 }
 
-function afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, $font, $font_size, $sauts_ligne, $bloc_gauche_align = 'C', $bloc_gauche_style = '', $bloc_droite_align = 'C', $bloc_droite_style='')
+function afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, $font, $font_size, $sauts_ligne, $bloc_gauche_align = 'C', $bloc_gauche_style = '', $bloc_droite_align = 'C', $bloc_droite_style = '')
 {
     // $bloc_gauche_style pour savoir si je veux le bloc souligné, en gras, ce genre de choses
     $pdf->setFont($font, $bloc_gauche_style, $font_size);
@@ -376,16 +392,18 @@ function afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, $font, $fo
     $pdf->Ln($sauts_ligne);
 }
 
-function supprimerAccents($chaine){
-    if(class_exists('Transliterator')){
+function supprimerAccents($chaine)
+{
+    if (class_exists('Transliterator')) {
         $transliterator = Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC');
         return $transliterator->transliterate($chaine);
-    }else{
+    } else {
         return $chaine;
     }
 }
 
-function genererHeader($pdf, $type_document, $informations){
+function genererHeader($pdf, $type_document, $informations)
+{
 
     /** Commentaires explicatifs */
 
@@ -433,24 +451,24 @@ function genererHeader($pdf, $type_document, $informations){
 
     // Gestion du bloc de droite (sur la même ligne que le bloc de gauche)
     $pdf->setXY($x, $y); // Déplacement du curseur à la bonne position
-    
+
     // Ligne 1 : date
     $ligne1 = strtoupper("Cotonou, le " . $formatter->format(new DateTime()));
     $pdf->Cell(0, 5, $ligne1, 0, 1, 'C');
     $pdf->Ln(5);
 
     // Ligne 2 : Titre du document
-    if($type_document == 'ordre_virement'){
-        $ligne2 = mb_strtoupper('ordre de virement '.$informations['banque'], 'UTF-8');
+    if ($type_document == 'ordre_virement') {
+        $ligne2 = mb_strtoupper('ordre de virement ' . $informations['banque'], 'UTF-8');
     }
-    
+
     $pdf->setFont('trebucbd', '', '11');
     $pdf->setX($x);
     $pdf->Cell(0, 5, $ligne2, 0, 1, 'C');
     $pdf->Ln(5);
 
     // Ligne 3
-    $ligne3 = mb_strtoupper($titres[$type_document].' '.$informations['titre'], 'UTF-8');
+    $ligne3 = mb_strtoupper($titres[$type_document] . ' ' . $informations['titre'], 'UTF-8');
     $pdf->setFont('trebuc', '', '10');
     $pdf->setX($x);
     $pdf->MultiCell($largeurBloc, 5, $ligne3, 0, 'C');

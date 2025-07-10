@@ -12,7 +12,11 @@
 
     <?php
 
+$str = 'participations_activites';
 
+if (str_contains($str, 'participations')) {
+    echo 'bonjour';
+}
 
 
     // global $banque, $titre_activite;
