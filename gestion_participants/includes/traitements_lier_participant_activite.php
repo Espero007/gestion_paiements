@@ -231,7 +231,7 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                         }
 
                         // header('location:' . $_SESSION['previous_url']);
-                        header('location:/gestion_activites/voir_activites.php');
+                        header('location:/gestion_activites/gerer_activite.php?id='.$id_activite);
                         exit;
                     }
                 }

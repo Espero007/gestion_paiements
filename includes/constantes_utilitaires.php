@@ -168,12 +168,12 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
         $valeur = $valeur_id;
     }
 
-    if(in_array($table, ['participants', 'activites'])){
+    if (in_array($table, ['participants', 'activites'])) {
         $stmt = $bdd->prepare("SELECT $type_id FROM $table WHERE $type_id=:valeur_id AND id_user=" . $_SESSION['user_id']);
-    }elseif(str_contains($table, 'participations')){
+    } elseif (str_contains($table, 'participations')) {
         $table_base = 'participations';
         $table_additionnelle = str_replace('participations_', '', $table);
-        $stmt = $bdd->prepare("SELECT $type_id FROM participations pa INNER JOIN $table_additionnelle t ON pa.$type_id=t.$type_id2 WHERE t.$type_id2=:valeur_id AND id_user=".$_SESSION['user_id']);
+        $stmt = $bdd->prepare("SELECT $type_id FROM participations pa INNER JOIN $table_additionnelle t ON pa.$type_id=t.$type_id2 WHERE t.$type_id2=:valeur_id AND id_user=" . $_SESSION['user_id']);
     }
 
     $stmt->bindParam(':valeur_id', $valeur, PDO::PARAM_INT);
@@ -472,4 +472,96 @@ function genererHeader($pdf, $type_document, $informations)
     $pdf->setFont('trebuc', '', '10');
     $pdf->setX($x);
     $pdf->MultiCell($largeurBloc, 5, $ligne3, 0, 'C');
+}
+
+function listeBanques($id_activite)
+{
+    // Cette fonction doit me permettre d'avoir la liste des banques des participants associées à une activité
+    global $bdd;
+
+    $stmt = $bdd->query(
+        'SELECT DISTINCT banque
+        FROM participations pa
+        INNER JOIN participants p ON pa.id_participant = p.id_participant
+        INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
+        WHERE p.id_user=' . $_SESSION['user_id'] . ' AND pa.id_activite=' . $id_activite
+    );
+    $banques = $stmt->fetchAll(PDO::FETCH_NUM);
+    foreach ($banques as $banque) {
+        $liste_banques[] = $banque[0];
+    }
+    return $liste_banques;
+}
+
+function montantParticipant($id_participant, $id_activite)
+{
+    // ELle permettra de calculer le montant associé à un participant (dans le contexte d'une activité à laquelle des participants ont été associés bien sûr) mais son réel intérêt est de centraliser le code de calcul à un seul endroit pour qu'on puisse le modifier plus facilement
+
+    global $bdd;
+
+    $stmt = $bdd->query("
+    SELECT 
+    a.type_activite,
+    t.indemnite_forfaitaire,
+    a.taux_journalier,
+    a.taux_taches,
+    a.frais_deplacement_journalier as fdj,
+    pa.nombre_jours,
+    pa.nombre_taches
+    FROM participations pa
+    INNER JOIN titres t ON pa.id_titre = t.id_titre
+    INNER JOIN activites a ON pa.id_activite=a.id
+    WHERE pa.id_activite=$id_activite AND pa.id_participant =$id_participant 
+    ");
+
+    $infos = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->closeCursor();
+
+    $montant = 0;
+    if ($infos['type_activite'] == 3) {
+        $montant = $infos['taux_taches'] * $infos['nombre_taches'] + $infos['fdj'] * $infos['nombre_jours'] + $infos['indemnite_forfaitaire'];
+    } else {
+        $montant = $infos['taux_journalier'] * $infos['nombre_jours'] + $infos['indemnite_forfaitaire'];
+    }
+    return $montant;
+}
+
+function listeParticipantsBanque($id_activite, $banque){
+    // Nous renvoie la liste des id des participants ayant la banque indiquée (dans le contexte d'une activité à laquelle on a associé des participants bien-sûr)
+    global $bdd;
+    $stmt = $bdd->prepare("
+    SELECT 
+    pa.id_participant as id
+    FROM participations pa    
+    INNER JOIN informations_bancaires ib ON pa.id_participant=ib.id_participant
+    WHERE pa.id_activite=$id_activite AND ib.banque =:banque 
+    ");
+    $stmt->bindParam('banque', $banque);
+    $stmt->execute();
+    $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($resultats as $participant) {
+        $liste_participants[] = $participant['id'];
+    }
+
+    return $liste_participants;
+}
+
+function totalBanque($id_activite, $banque)
+{
+    // Sert à calculer le total du montant associé à une banque dans le contexte d'une activité à laquelle des participants ont été associés
+    global $bdd;
+
+    // Voici le process :
+    // 1- Je récupère la liste des participants qui sont dans cette banque
+    // 2- Je calcule le montant de chacun de ces participants
+    // 3- Je fais le cumul
+    
+    $liste_participants = listeParticipantsBanque($id_activite, $banque);
+    $total = 0;
+    foreach ($liste_participants as $id_participant) {
+        $total += montantParticipant($id_participant, $id_activite);
+    }
+    
+    return $total;
 }

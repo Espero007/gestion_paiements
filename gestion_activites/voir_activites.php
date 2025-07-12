@@ -3,7 +3,7 @@ $section = 'Activités';
 $titre_page = "Liste des activités";
 require_once(__DIR__ . '/../includes/header.php');
 
-$stmt = 'SELECT id, nom, description, centre FROM activites WHERE id_user='.$_SESSION['user_id']. ' ORDER BY id DESC';
+$stmt = 'SELECT id, nom, description, centre FROM activites WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id DESC';
 $resultat = $bdd->query($stmt);
 
 if (!$resultat) {
@@ -86,7 +86,7 @@ $resultat->closeCursor();
                                     <?php afficherAlerte('liaison_reussie', 'success', true); ?>
                                 <?php endif; ?>
                                 <!-- Fin Messages divers -->
-                                 
+
                                 <form action="">
                                     <div class="">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">

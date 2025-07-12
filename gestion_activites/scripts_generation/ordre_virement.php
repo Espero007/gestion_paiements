@@ -8,29 +8,16 @@ require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 // Validations pour les informations à récupérer par GET
 $redirect = true;
 
-if(valider_id('get', 'id', $bdd, 'participations_activites')){
+if (valider_id('get', 'id', $bdd, 'participations_activites')) {
     // Il faut maintenant s'assurer que la banque reçue est valable
     $id_activite = $_GET['id'];
-    if(isset($_GET['banque'])){
-
-        $stmt = $bdd->prepare(
-            'SELECT DISTINCT banque
-            FROM participations pa
-            INNER JOIN participants p ON pa.id_participant = p.id_participant
-            INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
-            WHERE p.id_user=' . $_SESSION['user_id'] . ' AND pa.id_activite=' . $id_activite.'
-            AND ib.banque=:banque'
-        );
-        $stmt->bindParam('banque', $_GET['banque']);
-        $stmt->execute();
-        if($stmt->rowCount() != 0){
-            $banque = $_GET['banque'];
-            $redirect = false;
-        }
+    if (isset($_GET['banque']) && in_array($_GET['banque'], listeBanques($id_activite))) {
+        $banque = $_GET['banque'];
+        $redirect = false;
     }
 }
 
-if($redirect){
+if ($redirect) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
 
@@ -40,7 +27,8 @@ if($redirect){
 // Récupérons les participants associés à l'activité qui ont comme banque UBA
 
 $stmt = "
-SELECT 
+SELECT
+    pa.id_participant,
     a.type_activite,
     p.nom, 
     p.prenoms,
@@ -76,7 +64,7 @@ $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $pdf = new TCPDF('P', 'mm', 'A4');
 $pdf->AddFont('trebucbd', '', 'trebucbd.php');
 $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
-configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Ordre de virement '.$banque);
+configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Ordre de virement ' . $banque);
 $pdf->setMargins(15, 20, 15);
 $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
 $pdf->AddPage();
@@ -88,7 +76,7 @@ genererHeader($pdf, 'ordre_virement', $informations_necessaires);
 $pdf->Ln(20);
 
 $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
-$tailles_colonnes = [0.05, 0.2, 0.15, 0.15, 0.15, 0.3];
+$tailles_colonnes = [0.05, 0.22, 0.15, 0.15, 0.15, 0.28];
 
 foreach ($tailles_colonnes as $index => $taille) {
     $tailles_colonnes[$index] = $taille * $largeurPage;
@@ -98,44 +86,37 @@ foreach ($tailles_colonnes as $index => $taille) {
 // Entête
 $pdf->setFont('trebuc', '', 10);
 $pdf->setFillColor(242, 242, 242); // #f2f2f2
-$pdf->Cell($tailles_colonnes[0], 8, 'N°', 1, 0, 'C', true); // 5%
-$pdf->Cell($tailles_colonnes[1], 8, strtoupper('Nom et prenoms'), 1, 0, 'C', true);
-$pdf->Cell($tailles_colonnes[2], 8, strtoupper('Qualite'), 1, 0, 'C', true);
-$pdf->Cell($tailles_colonnes[3], 8, strtoupper('Montant'), 1, 0, 'C', true);
-$pdf->Cell($tailles_colonnes[4], 8, strtoupper('Banque'), 1, 0, 'C', true);
-$pdf->Cell($tailles_colonnes[5], 8, strtoupper('Rib'), 1, 0, 'C', true);
+$hauteur = 10;
+$pdf->Cell($tailles_colonnes[0], $hauteur, 'N°', 1, 0, 'C', true); // 5%
+$pdf->Cell($tailles_colonnes[1], $hauteur, strtoupper('Nom et prenoms'), 1, 0, 'C', true);
+$pdf->Cell($tailles_colonnes[2], $hauteur, strtoupper('Qualite'), 1, 0, 'C', true);
+$pdf->Cell($tailles_colonnes[3], $hauteur, strtoupper('Montant'), 1, 0, 'C', true);
+$pdf->Cell($tailles_colonnes[4], $hauteur, strtoupper('Banque'), 1, 0, 'C', true);
+$pdf->Cell($tailles_colonnes[5], $hauteur, strtoupper('Rib'), 1, 0, 'C', true);
 $pdf->Ln();
 
 $total = 0;
 
 for ($i = 0; $i < count($resultats); $i++) {
     $ligne = $resultats[$i];
-
-    $montant = 0;
-    if ($ligne['type_activite'] == 1) {
-        $montant = $ligne['taux_journalier'] * $ligne['nombre_jours'];
-    } elseif ($ligne['type_activite'] == 2) {
-        $montant = $ligne['taux_journalier'] * $ligne['nombre_jours'] + $ligne['indemnite_forfaitaire'];
-    } elseif ($ligne['type_activite'] == 3) {
-        $montant = $ligne['taux_taches'] * $ligne['nombre_taches'] + $ligne['fdj'] * $ligne['nombre_jours'] + $ligne['indemnite_forfaitaire'];
-    }
+    $montant = montantParticipant($ligne['id_participant'], $id_activite);
 
     // Une ligne
 
     $pdf->setFont('trebuc', '', 10);
     $pdf->setFillColor(255, 255, 255); // #fff
     // N°
-    $pdf->Cell($tailles_colonnes[0], 8, $i + 1, 1, 0, 'C');
+    $pdf->Cell($tailles_colonnes[0], $hauteur, $i + 1, 1, 0, 'C');
     // Nom et prénoms
-    $pdf->Cell($tailles_colonnes[1], 8, $ligne['nom'] . ' ' . $ligne['prenoms'], 1);
+    $pdf->Cell($tailles_colonnes[1], $hauteur, $ligne['nom'] . ' ' . $ligne['prenoms'], 1);
     // Qualité
-    $pdf->Cell($tailles_colonnes[2], 8, $ligne['qualite'], 1, 0, 'C');
+    $pdf->Cell($tailles_colonnes[2], $hauteur, $ligne['qualite'], 1, 0, 'C');
     // Montant
-    $pdf->Cell($tailles_colonnes[3], 8, number_format($montant, 0, ',', '.'), 1, 0, 'C');
+    $pdf->Cell($tailles_colonnes[3], $hauteur, number_format($montant, 0, ',', '.'), 1, 0, 'C');
     // Banque
-    $pdf->Cell($tailles_colonnes[4], 8, $banque, 1, 0, 'C');
+    $pdf->Cell($tailles_colonnes[4], $hauteur, $banque, 1, 0, 'C');
     // Rib
-    $pdf->Cell($tailles_colonnes[5], 8, $ligne['rib'], 1, 0, 'C');
+    $pdf->Cell($tailles_colonnes[5], $hauteur, $ligne['rib'], 1, 0, 'C');
     $pdf->Ln();
 
     $total += $montant;
@@ -146,13 +127,13 @@ for ($i = 0; $i < count($resultats); $i++) {
 $pdf->setFont('trebucbd', '', 10);
 $pdf->setFillColor(242, 242, 242); // #f2f2f2
 // Total ( )
-$pdf->Cell($tailles_colonnes[0] + $tailles_colonnes[1] + $tailles_colonnes[2], 8, strtoupper('Total ( )'), 1, 0, 'C', true);
+$pdf->Cell($tailles_colonnes[0] + $tailles_colonnes[1] + $tailles_colonnes[2], $hauteur, strtoupper('Total ( )'), 1, 0, 'C', true);
 // Montant
-$pdf->Cell($tailles_colonnes[3], 8, number_format($total, 0, ',', '.'), 1, 0, 'C', true);
+$pdf->Cell($tailles_colonnes[3], $hauteur, number_format($total, 0, ',', '.'), 1, 0, 'C', true);
 // Banque
-$pdf->Cell($tailles_colonnes[4], 8, '', 1, 0, 'C', true);
+$pdf->Cell($tailles_colonnes[4], $hauteur, '', 1, 0, 'C', true);
 // Rib
-$pdf->Cell($tailles_colonnes[5], 8, '', 1, 0, 'C', true);
+$pdf->Cell($tailles_colonnes[5], $hauteur, '', 1, 0, 'C', true);
 $pdf->Ln(15);
 
 // On s'attaque à la phrase en dessous du tableau
@@ -171,4 +152,4 @@ $bloc_droite = mb_strtoupper($resultats[0]['titre_responsable']);
 afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 2, 'C', 'U', 'C', 'U');
 
 // //Sortie du pdf
-// $pdf->Output('Ordre de virement ' . $banque . '.pdf', 'I');
+$pdf->Output('Ordre de virement ' . $banque . '.pdf', 'I');

@@ -39,7 +39,7 @@ require_once('traitements/gerer_activite.php');
                         <div class="card-body">
                             <!-- Messages divers -->
                             <?php if (isset($_SESSION['liaison_reussie'])) : ?>
-                                <?php afficherAlerte('liaison_reussie', 'success', true);?>
+                                <?php afficherAlerte('liaison_reussie', 'success', true); ?>
                             <?php endif; ?>
 
                             <?php if (isset($_SESSION['success'])) : ?>
@@ -191,7 +191,7 @@ require_once('traitements/gerer_activite.php');
                         </div>
                         <div class="card-body">
                             <!-- Messages divers -->
-
+                            
                             <!-- Messages divers -->
 
                             <?php if (count($participants_associes) == 0) : ?>
