@@ -48,6 +48,11 @@ require_once('includes/gerer_participant.php');
                                 <?php afficherAlerte('participant_ajoute', 'success', true) ?>
                             <?php endif; ?>
 
+                            <!-- Ajout de comptes -->
+                            <?php if (isset($_SESSION['comptes_ajoutes'])) : ?>
+                                <?php afficherAlerte('comptes_ajoutes', 'success', true)?>
+                            <?php endif; ?>
+
                             <!-- Informations générales -->
 
                             <?php foreach ($infos as $info => $valeur) : ?>

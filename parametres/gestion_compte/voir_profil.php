@@ -87,7 +87,7 @@ require_once('traitements/voir_profil.php');
                                                     <form action="" method="post" enctype="multipart/form-data">
                                                         <label for="upload" class="btn btn-primary mr-2 mb-0" tabindex="0">
                                                             <span class="d-none d-sm-block">Choisir une nouvelle photo</span>
-                                                            <i class="bx bx-upload d-block d-sm-none"></i>
+                                                            <i class="bi bi-cloud-upload d-block d-sm-none"></i>
                                                             <input type="file" name="photo" id="upload" class="account-file-input" hidden accept='image/png, image/jpeg, image/jpg'>
                                                         </label>
                                                         <button type="submit" class="btn btn-outline-secondary account-image-reset" name='choisir_photo'>
