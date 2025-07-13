@@ -15,8 +15,9 @@
 </body>
 
 <?php
-require_once('includes/loader.php');
-
+if (!valider_id('get', 'id', $bdd, 'participations_activites')) {
+    redirigerVersPageErreur(404, $_SESSION['previous_url']);
+}
 ?>
 
 <div id="content" class="d-none">

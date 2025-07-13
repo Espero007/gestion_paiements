@@ -58,20 +58,20 @@ $stmt->bindParam('banque', $banque);
 $stmt->execute();
 $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
-
 // Configuration du document
 $pdf = new TCPDF('P', 'mm', 'A4');
 $pdf->AddFont('trebucbd', '', 'trebucbd.php');
 $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
 configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Ordre de virement ' . $banque);
-$pdf->setMargins(15, 20, 15);
+$pdf->setMargins(15, 25, 15, true);
 $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
 $pdf->AddPage();
 
 // Header
-$informations_necessaires = ['titre' => $resultats[0]['titre_activite'], 'banque' => $banque];
-genererHeader($pdf, 'ordre_virement', $informations_necessaires);
+// $informations_necessaires = ['titre' => $resultats[0]['titre_activite'], 'banque' => $banque];
+$informations_necessaires = ['titre' => $resultats[0]['titre_activite']];
+// genererHeader($pdf, 'ordre_virement', $informations_necessaires);
+genererHeader($pdf, 'note_service', $informations_necessaires);
 
 $pdf->Ln(20);
 

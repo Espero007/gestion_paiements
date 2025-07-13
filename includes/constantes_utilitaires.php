@@ -430,14 +430,25 @@ function genererHeader($pdf, $type_document, $informations)
 
     // $informations est un tableau associatif qui doit contenir comme données générales le titre de l'activité(['titre'=>'valeur_titre'])
 
-    // Ordre de virement : En plus des informations de base cités au dessus, il faut ici la banque en plus toujours selon le format ['banque'=>]
+    // Note de service : RAS, appeler la fonction en lui donnant le titre de l'activité suffira
+
+    // Attestation collective : pareil que pour la note de service
+
+    // Etat paiement : il faut dans le tableau indiquer le type de l'activité pour que le header puisse s'adapter comme celà se doit. (bref, en cours de développement)
+
+
+    // Ordre de virement : il faut ici la banque en plus, toujours selon le format ['banque'=>]
 
     /** Fin Commentaires explicatifs */
 
     /** Actions préliminaires */
 
     $titres = [
-        'ordre_virement' => 'des indemnites et frais d\' entretien accordes aux membres de la commission chargee de'
+        'ordre_virement' => 'des indemnités et frais d\' entretien accordés aux membres de la commission chargée de',
+        'note_service' => 'portant constitution des membres de la commission chargée de',
+        'etat_paiement_1' => 'des indemnités et frais d\'entretien accordés aux membres de la commission chargée de',
+        'etat_paiement_2' => 'indemnités et frais d\'entretien accordés aux membres de la commission chargée de la correction des examens de',
+        'etat_paiement_3' => 'des indemnités et frais d\'entretien accordés aux membres d\'encadrement dans le cadre'
     ];
 
     // Formattage de la date en français
@@ -476,6 +487,12 @@ function genererHeader($pdf, $type_document, $informations)
     // Ligne 2 : Titre du document
     if ($type_document == 'ordre_virement') {
         $ligne2 = mb_strtoupper('ordre de virement ' . $informations['banque'], 'UTF-8');
+    }elseif($type_document == 'note_service'){
+        $ligne2 = 'NOTE DE SERVICE';
+    }elseif($type_document == 'attestation_collective'){
+        $ligne2 = 'ATTESTATION COLLECTIVE DE TRAVAIL';
+    }elseif($type_document == 'etat_paiement'){
+
     }
 
     $pdf->setFont('trebucbd', '', '11');

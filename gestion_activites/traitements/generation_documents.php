@@ -60,10 +60,10 @@ foreach ($banques as $banque) {
     $cle = strtolower(str_replace(" ", '_', 'ordre_virement_' . supprimerAccents($banque[0])));
     $urls[$cle] = '/gestion_activites/scripts_generation/ordre_virement.php?id='.$id_activite.'&banque=' . $banque[0];
 }
-$urls['synthese_ordres_virements'] = 'Url à définir';
+$urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id='.$id_activite;
 $urls['liste_rib'] = 'Url à définir';
 
-$pdfs_non_telechargeables = ['etat_paiement', 'synthese_ordres_virements', 'liste_rib'];
+$pdfs_non_telechargeables = ['etat_paiement', 'liste_rib'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($documents as $document => $label) {

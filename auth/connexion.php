@@ -74,7 +74,7 @@ require_once("submit/submit_connexion.php");
                                         <h1 class="h4 text-gray-900 mb-4">Contents de vous revoir !</h1>
                                         <p>Connectez-vous à votre compte pour retourner à la gestion de vos activités.</h2>
                                     </div>
-                                    <form action="" method="post">
+                                    <form action="" method="post" class="user">
                                         <div class="form-group">
                                             <label for="email" class="col-form-label form-label">email</label>
                                             <input type="email" name="email" id="email" aria-describedby="emailHelp" placeholder="Entrez votre adresse email..." class="form-control 
@@ -109,6 +109,14 @@ require_once("submit/submit_connexion.php");
                                             <?php } ?>
 
                                             <!-- <div class="d-flex justify-content-end mt-3"><a href="./inscription.php">Mot de passe oublié ?</a></div> -->
+                                        </div>
+
+                                        <!-- Se souvenir de moi -->
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox small">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck">
+                                                <label class="custom-control-label" for="customCheck">Se souvenir de moi</label>
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
