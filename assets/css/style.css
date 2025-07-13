@@ -226,7 +226,7 @@
 }
 
 #loader.hide{
-    animation : hide 0.2s linear;
+    animation : hide 0.125s linear forwards;
 }
 @keyframes hide {
     0%{

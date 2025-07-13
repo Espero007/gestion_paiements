@@ -48,7 +48,7 @@ if (isset($_POST['inscription'])) {
         $lien_verif = obtenirURLcourant(true).'/auth/submit/verifie_email.php?email='. urldecode($_POST['email']).'&token='.$token;
 
         
-        if (envoyerLienValidationEmail($lien_verif, $_POST['email'])) {
+        if (envoyerLienValidationEmail($lien_verif, $_POST['email'], $_POST['nom'], $_POST['prenoms'], 0)) {
             $_SESSION["email_envoye"] = true;
         }else{
             $_SESSION['email_envoye'] = false;

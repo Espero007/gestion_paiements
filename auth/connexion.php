@@ -35,7 +35,7 @@ require_once("submit/submit_connexion.php");
                                     <?php endif; ?>
 
                                     <?php if (isset($_SESSION['email_envoye']) && $_SESSION['email_envoye']) : ?>
-                                        <?php afficherAlerte('Un lien de vérification a été envoyé à votre mail. Cliquez dessus pour confirmer votre email et accéder à votre compte.', 'info');
+                                        <?php afficherAlerte('Un lien de vérification a été envoyé à votre mail. Cliquez dessus pour activer votre compte.', 'info');
                                         unset($_SESSION['email_envoye']); ?>
                                     <?php elseif (isset($_SESSION['email_envoye']) && !$_SESSION['email_envoye']): ?>
                                         <?php afficherAlerte('Une erreur s\'est produite lors de l\'envoi du lien de confirmation de votre email, veuillez réessayer plus tard.', 'info');
@@ -63,7 +63,11 @@ require_once("submit/submit_connexion.php");
                                     <?php endif; ?>
 
                                     <?php if (isset($_SESSION['erreur_avec_verification_email'])) : ?>
-                                        <?php afficherAlerte('erreur_avec_verification_email', 'danger', true);?>
+                                        <?php afficherAlerte('erreur_avec_verification_email', 'danger', true); ?>
+                                    <?php endif; ?>
+
+                                    <?php if (isset($_SESSION['lien_invalide'])) : ?>
+                                        <?php afficherAlerte('lien_invalide', 'info', true); ?>
                                     <?php endif; ?>
 
                                     <div class="text-center">
@@ -126,6 +130,7 @@ require_once("submit/submit_connexion.php");
     </div>
 
     <?php require_once(__DIR__ . '/../includes/footer.php') ?>
+    <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         (function() {

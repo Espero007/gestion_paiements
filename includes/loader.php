@@ -9,13 +9,14 @@
 
 <script>
     document.getElementById('wrapper').classList.add('hide');
+
     window.addEventListener('load', function() {
         // Quand tout est chargé
         document.getElementById('loader').classList.add('hide');
         setTimeout(() => {
-            document.getElementById('loader').style.display = "none";
             document.getElementById('wrapper').classList.remove('hide');
             document.getElementById('wrapper').classList.add('show');
+            document.getElementById('loader').style.display = "none";
         }, 200);
     })
 </script>

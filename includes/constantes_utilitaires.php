@@ -314,8 +314,10 @@ require_once(__DIR__ . '/../PHPMailer/autoload.php');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-function envoyerLienValidationEmail($lien_verif, $email)
+function envoyerLienValidationEmail($lien_verif, $email, $nom, $prenom, $type_mail)
 {
+    // si $type_mail est à 0, le mail est pour l'inscription
+    // si c'est à 1, le mail est pour confirmer son email
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
@@ -330,8 +332,22 @@ function envoyerLienValidationEmail($lien_verif, $email)
         $mail->addAddress($email, 'GPaiements'); // L'email de l'utilisateur
         $mail->isHTML(true);
 
-        $mail->Subject = 'Confirmez votre adresse email';
-        $mail->Body    = 'Cliquez sur ce lien pour confirmer votre adresse email : <a href="' . $lien_verif . '">Confirmez votre email</a>';
+        if (!$type_mail) {
+            $mail->Subject = 'Activation de votre compte GPaiements';
+            $mail->Body    = '
+            <p>Cher(e) ' . $nom . ' ' . $prenom . ',</p>
+            <p>Merci pour votre inscription sur GPaiements, la plateforme de gestion de vos activités. Nous sommes heureux de vous savoir à bord</p>
+            <p>A présent, veuillez cliquez sur le lien ci-dessous pour activer votre compte et entamer l\'aventure !</p>
+            <p style="text-align:center;"><a href="' . $lien_verif . '" style="text-decoration : none; color : #4e73df; font-size : 1.2rem;">Activer mon compte GPaiements</a></p>
+            <p>Très chaleureusement,<br>L\'équipe de GPaiements</p>';
+        } else {
+            $mail->Subject = 'Confirmation de votre adresse email';
+            $mail->Body = '
+            <p>Plus q\'un clic pour actualiser votre adresse mail</p>
+            <p><a href="' . $lien_verif . '" style="text-decoration : none; color : #4e73df;">Confirmer mon adresse</a></p>
+            <p>Très chaleureusement,<br>L\'équipe de GPaiements</p>';
+        }
+
 
         $mail->SMTPDebug = 0; // Pour désactiver le débug
         $mail->send();
@@ -526,7 +542,8 @@ function montantParticipant($id_participant, $id_activite)
     return $montant;
 }
 
-function listeParticipantsBanque($id_activite, $banque){
+function listeParticipantsBanque($id_activite, $banque)
+{
     // Nous renvoie la liste des id des participants ayant la banque indiquée (dans le contexte d'une activité à laquelle on a associé des participants bien-sûr)
     global $bdd;
     $stmt = $bdd->prepare("
@@ -556,12 +573,12 @@ function totalBanque($id_activite, $banque)
     // 1- Je récupère la liste des participants qui sont dans cette banque
     // 2- Je calcule le montant de chacun de ces participants
     // 3- Je fais le cumul
-    
+
     $liste_participants = listeParticipantsBanque($id_activite, $banque);
     $total = 0;
     foreach ($liste_participants as $id_participant) {
         $total += montantParticipant($id_participant, $id_activite);
     }
-    
+
     return $total;
 }

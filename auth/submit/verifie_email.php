@@ -1,4 +1,4 @@
-erreur_avec<?php
+<?php
 
 session_start();
 require_once(__DIR__ . '/../../includes/bdd.php');
@@ -35,7 +35,7 @@ if ($utilisateur) {
 
     header('location:/index.php');
     exit;
-}elseif(isset($modification_email) && $modification_email == 1) {
+} elseif (isset($modification_email) && $modification_email == 1) {
 
     if (isset($_SESSION['modification_email'])) {
         // L'email veut être modifié
@@ -47,7 +47,7 @@ if ($utilisateur) {
             $_SESSION['email_modifie'] = true;
         } else {
             // Il y a un souci avec les infos, sûrement un utilisateur qui veut jouer au malin  
-            $_SESSION['lien_invalide'] = true;
+            $_SESSION['lien_invalide'] = 'Le lien de confirmation que vous avez utilisé n\'est plus ou pas valide';
         }
 
         unset($_SESSION['modification_email']);
@@ -56,15 +56,24 @@ if ($utilisateur) {
 
         header('location:/parametres/gestion_compte/voir_profil.php');
         exit;
-    }else{
+    } else {
         // Il y a eu déconnexion entre temps ou plusieurs liens de confirmation lui ont été envoyés;
-        $_SESSION['lien_invalide'] = true;
+        $_SESSION['lien_invalide'] = 'Le lien de confirmation que vous avez utilisé n\'est plus ou pas valide';
         header('location:/parametres/gestion_compte/voir_profil.php');
         exit;
     }
-}
-else {
+} else {
+    // L'utilisateur n'a pas été retrouvé et nous ne sommes pas dans une instance de modification d'email. Du coup on va vérifier si tout au moins l'email est valide. Si oui c'est que le token n'est pas bon et de fait on indiquera un message approprié
+
+    $stmt = $bdd->prepare('SELECT * FROM connexion WHERE email = :email');
+    $stmt->execute([
+        "email" => $email,
+    ]);
+    if ($stmt->rowCount() != 0) {
+        $_SESSION['lien_invalide'] = 'Le lien de confirmation que vous avez utilisé n\'est plus ou pas valide';
+    } else {
+        $_SESSION['erreur_avec_verification_email'] = "Une erreur s'est produite lors de la vérification de l'email";
+    }
     header('location:../connexion.php');
-    $_SESSION['erreur_avec_verification_email'] = "Une erreur s'est produite lors de la vérification de l'email";
     exit;
 }

@@ -58,7 +58,7 @@ require_once('traitements/voir_profil.php');
 
                                     <?php if (isset($email_envoye)) : ?>
                                         <?php
-                                        $message = $email_envoye ? ' Vous êtes presque au bout, nous avons envoyé un lien de confirmation à l\'email indiqué : cliquez dessus pour achever le processus !' : 'Une erreur s\'est produite lors de l\'envoi du lien de confirmation à votre email, veuillez réessayer la mise à jour de votre email plus tard';
+                                        $message = $email_envoye ? ' Vous êtes presque au bout, nous avons envoyé un lien de confirmation à l\'email indiqué, cliquez dessus pour achever le processus !' : 'Une erreur s\'est produite lors de l\'envoi du lien de confirmation à votre email, veuillez réessayer la mise à jour de votre email plus tard';
                                         $type = $email_envoye ? 'success' : 'info';
                                         afficherAlerte($message, $type);
                                         ?>
@@ -76,10 +76,7 @@ require_once('traitements/voir_profil.php');
                                     <!-- Lien de confirmation d'email invalide -->
 
                                     <?php if (isset($_SESSION['lien_invalide'])) : ?>
-                                        <?php
-                                        afficherAlerte('Le lien de confirmation que vous avez utilisé n\'est plus ou pas valide', 'info');
-                                        unset($_SESSION['lien_invalide']);
-                                        ?>
+                                        <?php afficherAlerte('lien_invalide', 'info', true);?>
                                     <?php endif; ?>
 
                                     <div class="d-flex align-items-start align-items-sm-center gap-4">
