@@ -141,7 +141,7 @@ require_once('traitements/submit_creer_activite.php');
                                                         <input id="timbre" type="text" name="timbre" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['timbre']) ?>">
                                                         <small class="text-danger"><?= $errors['timbre'] ?? '' ?></small>
                                                         <?= isset($errors['timbre']) ? '<br>' : '' ?>
-                                                        <small> Note : Elle doit être de la forme <strong>/DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD</strong></small>
+                                                        <small> Note : Il doit être de la forme <strong>/DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD</strong></small>
                                                     </div>
                                                 </div>
 
@@ -149,7 +149,7 @@ require_once('traitements/submit_creer_activite.php');
                                                 <div class="mb-4 row">
                                                     <label for="reference" class="col-sm-3 col-form-label">Référence</label>
                                                     <div class="col-sm-9">
-                                                        <input id="reference" type="text" name="reference" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['timbre']) ?>">
+                                                        <input id="reference" type="text" name="reference" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['reference']) ?>">
                                                         <small class="text-danger"><?= $errors['reference'] ?? '' ?></small>
                                                         <?= isset($errors['reference']) ? '<br>' : '' ?>
                                                         <small> Note : Elle doit être de la forme <strong>NS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA DU 29 DECEMBRE 2023</strong></small>

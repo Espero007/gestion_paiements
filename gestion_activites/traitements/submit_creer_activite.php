@@ -69,6 +69,9 @@ if ($recuperation_type_activite) {
         // Un simple traitement des valeurs qu'on a reçu
         foreach ($data as $key => $_) {
             $data[$key] = isset($_POST[$key]) ? trim($_POST[$key]) : '';
+            if($key=='timbre' || $key == 'reference'){
+                $data[$key] = isset($_POST[$key]) ? mb_strtoupper(trim($_POST[$key]), 'UTF-8') : '';
+            }
         }
 
         ### Validations communes
@@ -86,12 +89,80 @@ if ($recuperation_type_activite) {
         // Validations sur les valeurs textuelles
 
         foreach ($champs_texts as $champ) {
-            if (!preg_match('/^[p{L} -]+$/u', $data[$champ])) {
-                if (!isset($errors[$champ]))
-                    $errors[$champ] = "Ce champ doit être une chaîne de caractères alphabétiques !";
-            }
-            if ($champ == 'timbre') {
-                # code...
+            /**
+             * Quelques explications sur les regex utilisés
+             * if (!preg_match('/^[\p{L} \-\']+$/u', $data[$champ]))
+             * Ce qu'elle fait :
+             * Elle vérifie que toute la chaîne (^ début, $ fin) est composée uniquement :
+             * de lettres Unicode (\p{L})
+             * d'espaces ( )
+             * de tirets (-)
+             * d'apostsrophes (')
+             * Ce qu'elle accepte :
+             * "Jean-Paul"
+             * "Marie Claire"
+             * "Éléonore"
+             * Ce qu'elle refuse :
+             * "Jean123" (chiffres interdits)
+             * "Jean!" (caractères spéciaux interdits)
+             * "Paul_" (underscore interdit)
+             * "" (chaîne vide si + est utilisé, car il faut au moins un caractère valide)
+
+             * Résumé :
+             * Cette version vérifie si la chaîne entière est correcte.
+             * Elle est stricte et positive : on valide la chaîne si elle correspond entièrement au motif.
+             */
+
+            if ($champ != 'timbre' && $champ != 'centre' && $champ != 'reference') {
+                if (!preg_match('/^[\p{L} \-\']+$/u', $data[$champ])) {
+                    if (!isset($errors[$champ])) {
+                        $errors[$champ] = "Ce champ contient des caractères non valides !";
+                    }
+                }
+            } elseif ($champ == 'centre') {
+                // Ce regex par contre accepte, en plus de ce que le regex précédern accepte, des chiffres par le '\p{N}'
+                if (!preg_match('/^[\p{L}\p{N} \-\']+$/u', $data[$champ])) {
+                    if (!isset($errors[$champ]))
+                        $errors[$champ] = "Ce champ contient des caractères non valides !";
+                }
+            } elseif ($champ == 'timbre') {
+                /**
+                 * Explications du regex utilisé
+                 * \/? : 0 ou 1 slash au début (optionnel)
+                 * \/? : 0 ou 1 slash au début (optionnel)
+                 * [A-Za-z0-9]+ : un segment composé uniquement de lettres ASCII non accentuées et chiffres, au moins un caractère
+                 * (\/[A-Za-z0-9]+)+ : au moins un slash suivi d’un segment similaire (donc au moins 2 segments)
+                 * ^...$ : la chaîne entière doit correspondre
+                 * Pas d'espaces ni autres caractères autorisés
+
+                 * Exemples valides :
+                 * DEG/MAS
+                 * a/b
+                 * ALPHA/BETA/GAMMA
+                 * Jean123/Paul456
+                 * ABC/DEF123/GHI456
+
+                 * Exemples refusés :
+                 * A	(un seul segment)
+                 * mot	(un seul mot)
+                 * /alpha	(commence par /)
+                 * alpha/	(finit par /)
+                 * alpha//beta	(segment vide)
+                 * alpha/ be ta	(contient un espace)
+                 * Élodie/Jean
+                 */
+
+                if (!preg_match('/^\/[A-Za-z0-9]+(\/[A-Za-z0-9]+)+$/', $data[$champ])) {
+                    if (!isset($errors[$champ])) {
+                        $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
+                    }
+                }
+            }elseif($champ == 'reference'){
+                if (!preg_match('/^[A-Za-z0-9]+(\/[A-Za-z0-9]+)+$/', $data[$champ])) {
+                    if (!isset($errors[$champ])) {
+                        $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
+                    }
+                }
             }
         }
 
@@ -205,7 +276,7 @@ if ($recuperation_type_activite) {
             AND financier=:val12 
             AND titre_financier=:val13 
             AND timbre=:val14 
-            AND reference=:reference';
+            AND reference=:reference ';
 
             if (in_array($type_activite, [1, 2])) {
                 $stmt .= 'AND taux_journalier=:val15 ';
