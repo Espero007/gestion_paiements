@@ -152,7 +152,7 @@ require_once('traitements/submit_creer_activite.php');
                                                         <input id="reference" type="text" name="reference" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['reference']) ?>">
                                                         <small class="text-danger"><?= $errors['reference'] ?? '' ?></small>
                                                         <?= isset($errors['reference']) ? '<br>' : '' ?>
-                                                        <small> Note : Elle doit être de la forme <strong>NS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA DU 29 DECEMBRE 2023</strong></small>
+                                                        <small> Note : Elle doit être de la forme <strong>0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA</strong></small>
                                                     </div>
                                                 </div>
 
