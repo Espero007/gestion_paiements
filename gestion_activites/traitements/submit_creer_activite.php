@@ -86,7 +86,7 @@ if ($recuperation_type_activite) {
         // Validations sur les valeurs textuelles
 
         foreach ($champs_texts as $champ) {
-            if (!preg_match('/^[p{L} -]+$/u', $data[$champ])) {
+            if (preg_match('/^[p{L} -]+$/u', $data[$champ])) {
                 if (!isset($errors[$champ]))
                     $errors[$champ] = "Ce champ doit être une chaîne de caractères alphabétiques !";
             }
@@ -208,15 +208,15 @@ if ($recuperation_type_activite) {
             AND reference=:reference';
 
             if (in_array($type_activite, [1, 2])) {
-                $stmt .= 'AND taux_journalier=:val15 ';
+                $stmt .= ' AND taux_journalier=:val15 ';
             } else {
-                $stmt .= 'AND taux_journalier IS NULL ';
+                $stmt .= ' AND taux_journalier IS NULL ';
             }
 
             if ($type_activite == 3) {
-                $stmt .= 'AND taux_taches=:val16 AND frais_deplacement_journalier=:val17';
+                $stmt .= ' AND taux_taches=:val16 AND frais_deplacement_journalier=:val17';
             } else {
-                $stmt .= 'AND taux_taches IS NULL AND frais_deplacement_journalier IS NULL';
+                $stmt .= ' AND taux_taches IS NULL AND frais_deplacement_journalier IS NULL';
             }
             $sql = $bdd->prepare($stmt);
 
