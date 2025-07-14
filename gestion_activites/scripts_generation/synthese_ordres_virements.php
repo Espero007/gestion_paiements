@@ -46,7 +46,7 @@ $pdf->Ln(8);
 
 // Ecriture de l'entête
 
-$pdf->setFont('trebucbd', '', 11);
+$pdf->setFont('trebucbd', '', 10);
 
 // $liste_banques = ['BOA', 'CorisBenin', 'Atlantique Bénin', 'CCP', 'NSIA', 'ORABANK', 'SGB', 'UBA', 'CorisBenin1', 'Atlantique Bénin1', 'CCP1', 'NSIA1', 'ORABANK1', 'SGB1', 'UBA1'];
 // $liste_banques = ['BOA', 'CorisBenin', 'Atlantique Bénin'];

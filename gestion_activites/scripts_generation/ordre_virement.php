@@ -68,10 +68,10 @@ $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
 $pdf->AddPage();
 
 // Header
-// $informations_necessaires = ['titre' => $resultats[0]['titre_activite'], 'banque' => $banque];
-$informations_necessaires = ['titre' => $resultats[0]['titre_activite']];
-// genererHeader($pdf, 'ordre_virement', $informations_necessaires);
-genererHeader($pdf, 'note_service', $informations_necessaires);
+$informations_necessaires = ['titre' => $resultats[0]['titre_activite'], 'banque' => $banque];
+// $informations_necessaires = ['titre' => $resultats[0]['titre_activite']];
+genererHeader($pdf, 'ordre_virement', $informations_necessaires);
+// genererHeader($pdf, 'note_service', $informations_necessaires);
 
 $pdf->Ln(20);
 

@@ -111,7 +111,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                     <?php if (!$aucun_participant_1 && !$aucun_participant_2 && !$aucune_activite_1 && !$aucune_activite_2) : ?>
                                         <div class="mt-2">
                                             <button type="submit" class="btn btn-primary mr-2" id="submitBtn1" name='continuer'>Continuer</button>
-                                            <a href="gerer_participant.php?id=<?= $id_participant ?>" class="btn btn-outline-primary">Annuler</a>
+                                            <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-outline-primary">Annuler</a>
                                         </div>
                                     <?php endif; ?>
                                 </form>
@@ -237,7 +237,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                     </div>
                                     <div class="mt-4">
                                         <button type="submit" class="btn btn-primary mr-2" name="lier">Réaliser la liaison</button>
-                                        <a href="voir_participants.php" class="btn btn-outline-primary">Annuler</a>
+                                        <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-outline-primary">Annuler</a>
                                     </div>
                                 </form>
                                 <span id="multi" class="d-none"></span>
