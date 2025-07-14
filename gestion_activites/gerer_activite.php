@@ -89,6 +89,18 @@ require_once('traitements/gerer_activite.php');
                                 <span><?= htmlspecialchars($activite['centre']) ?></span>
                             </p>
 
+                            <!-- Timbre -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Timbre : </span>
+                                <span><?= htmlspecialchars($activite['timbre']) ?></span>
+                            </p>
+
+                            <!-- Référence -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Référence : </span>
+                                <span><?= htmlspecialchars($activite['reference']) ?></span>
+                            </p>
+
                             <!-- Premier responsable et titre premier responsable -->
                             <p class="mb-3">
                                 <span class="font-weight-bold">Premier responsable : </span>
@@ -174,14 +186,12 @@ require_once('traitements/gerer_activite.php');
                                     <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres actions </button>
 
                                     <ul class="dropdown-menu shadow">
-                                        <!-- <li>
-                                            <hr class="dropwdown-divider">
-                                        </li> -->
+
                                         <li>
                                             <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Associer des participants</a>
                                         </li>
                                         <li>
-                                            <a href="/<?= $chemin_note_generatrice ?>" class="dropdown-item fs-6 custom-dropdown-item" target="_blank">Visualiser la note génératrice de l'activité</a>
+                                            <hr class="dropwdown-divider my-1">
                                         </li>
                                         <li>
                                             <a href="#" class="dropdown-item text-danger fs-6 custom-dropdown-item">Supprimer</a>

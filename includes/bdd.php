@@ -64,11 +64,11 @@ try {
         titre_organisateur VARCHAR(100) NOT NULL,
         financier VARCHAR(100) NOT NULL,
         titre_financier VARCHAR(100) NOT NULL,
-        timbre VARCHAR(100) NOT NULL,
+        timbre VARCHAR(300) NOT NULL,
         taux_journalier DECIMAL(50) NULL,
         taux_taches DECIMAL(50) NULL,
         frais_deplacement_journalier DECIMAL(50) NULL,
-        reference VARCHAR(100) NOT NULL,
+        reference VARCHAR(300) NOT NULL,
         FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
 

@@ -3,21 +3,21 @@
 // On vérifie la présence de l'id de l'activité à gérer et si elle n'est pas présente on redirige vers la page précédente
 $redirect = true;
 
-if(filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT)){
+if (filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT)) {
     // On vérifie la présence de l'id indiqué dans la table activités
-    $stmt = $bdd->prepare('SELECT * FROM activites WHERE id='.$_GET['id']);
+    $stmt = $bdd->prepare('SELECT * FROM activites WHERE id=' . $_GET['id']);
     $stmt->execute();
     $activite = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if(count($activite) !=0){
+    if (count($activite) != 0) {
         $activite = $activite[0];
         $id_activite = $activite['id'];
         $redirect = false;
     }
 }
 
-if($redirect){
-    header('location:'.$_SESSION['previous_url']);
+if ($redirect) {
+    header('location:' . $_SESSION['previous_url']);
     exit;
 }
 
@@ -25,20 +25,20 @@ if($redirect){
 
 $champs = ['id', 'type_activite', 'id_user', 'id_note_generatrice'];
 
-if($activite['type_activite'] == 1){
+if ($activite['type_activite'] == 1) {
     $champs[] = 'frais_deplacement_journalier';
     $champs[] = 'taux_taches';
-}else{
+} else {
     // Type 2 ou 3
 
-    $stmt = $bdd->prepare('SELECT nom, indemnite_forfaitaire FROM titres WHERE id_activite='.$activite['id']);
+    $stmt = $bdd->prepare('SELECT nom, indemnite_forfaitaire FROM titres WHERE id_activite=' . $activite['id']);
     $stmt->execute();
     $indemnites_forfaitaires = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $indemnite_str = '';
-    for ($i=0; $i < count($indemnites_forfaitaires); $i++) {
+    for ($i = 0; $i < count($indemnites_forfaitaires); $i++) {
         $indemnite_str .= htmlspecialchars($indemnites_forfaitaires[$i]['nom']) . ' (<strong>' . htmlspecialchars($indemnites_forfaitaires[$i]['indemnite_forfaitaire']) . ' FCFA</strong>)';
-        if($i != count($indemnites_forfaitaires) - 1){
+        if ($i != count($indemnites_forfaitaires) - 1) {
             $indemnite_str .= ', ';
         }
     }
@@ -52,18 +52,26 @@ FROM participations p1
 INNER JOIN participants p2 ON p1.id_participant = p2.id_participant
 INNER JOIN titres t ON t.id_titre = p1.id_titre
 INNER JOIN informations_bancaires ib ON p1.id_compte_bancaire = ib.id
-WHERE p1.id_activite='.$activite['id']);
+WHERE p1.id_activite=' . $activite['id']);
 $participants_associes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $compteur = 0;
 
-if(count($participants_associes) != 0){
-    $informations[0] = ['Nom', 'Prénoms', 'Titre', 'Diplome', 'Nombre de jours', 'Nombre de tâches', 'Compte bancaire'];
+if (count($participants_associes) != 0) {
+    $informations[0] = ['Nom', 'Prénoms', 'Titre', 'Diplome', 'Nombre de jours'];
+    if ($activite['type_activite'] == 3)
+        $informations[0][] = 'Nombre de tâches';
+    $informations[0][] = 'Compte bancaire';
+
     foreach ($participants_associes as $participant) {
-        $informations[1][] = [$participant['nom'], $participant['prenoms'], $participant['titre'], $participant['diplome'], $participant['nombre_jours'], $participant['nombre_taches'], $participant['banque'].' ('.$participant['numero_compte'].')'];
+        $informations[1][] = [$participant['nom'], $participant['prenoms'], $participant['titre'], $participant['diplome'], $participant['nombre_jours']];
+        if ($activite['type_activite'] == 3)
+            $informations[1][count($informations[1]) - 1][] = $participant['nombre_taches'];
+        $informations[1][count($informations[1]) - 1][] = $participant['banque'] . ' (' . $participant['numero_compte'] . ')';
+
         // Définition des actions possibles par participant
         $informations[2][$compteur][] = [
             'intitule' => 'Modifier',
-            'lien' => '/gestion_participants/lier_participant_activite.php?modifier='.$participant['id']
+            'lien' => '/gestion_participants/lier_participant_activite.php?modifier=' . $participant['id']
         ];
         $informations[2][$compteur][] = [
             'intitule' => 'Gérer le participant',
@@ -76,19 +84,17 @@ if(count($participants_associes) != 0){
             'dernier' => true,
         ];
         $compteur++;
-        // $informations[2][] = '/gestion_participants/gerer_participant.php?id='.$participant['id_participant'];
     }
-    // $informations[2] = ['/gestion_participants/']
 }
 
-// Chemin note génératrice
+// // Chemin note génératrice
 
-$stmt = $bdd->query("
-    SELECT f.chemin_acces
-    FROM activites a INNER JOIN fichiers f ON a.id_note_generatrice = f.id_fichier
-    WHERE a.id = $id_activite
-");
-$chemin_note_generatrice = $stmt->fetch(PDO::FETCH_NUM);
-$chemin_note_generatrice = $chemin_note_generatrice[0];
-$chemin_note_generatrice = traiterCheminAcces($chemin_note_generatrice);
-$stmt->closeCursor();
+// $stmt = $bdd->query("
+//     SELECT f.chemin_acces
+//     FROM activites a INNER JOIN fichiers f ON a.id_note_generatrice = f.id_fichier
+//     WHERE a.id = $id_activite
+// ");
+// $chemin_note_generatrice = $stmt->fetch(PDO::FETCH_NUM);
+// $chemin_note_generatrice = $chemin_note_generatrice[0];
+// $chemin_note_generatrice = traiterCheminAcces($chemin_note_generatrice);
+// $stmt->closeCursor();
