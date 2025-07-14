@@ -28,7 +28,16 @@ require_once('traitements/gerer_activite.php');
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h4 mb-4 text-gray-800">Activités / <strong>Gestion de l'activité</strong></h1>
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h4 mb-0 text-gray-800">Activités / <strong>Gestion de l'activité</strong></h1>
+                        <?php if (count($participants_associes) != 0) : ?>
+                            <a href="/gestion_activites/generation_documents.php?id_activite=<?= $id_activite ?>" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+                                <i class="fas fa-download text-white-50 mr-2"></i> Générer les documents</a>
+
+
+                        <?php endif; ?>
+                    </div>
+
                     <p class="mt-2">Gérez ici votre activité</p>
 
                     <!-- Fiche informative -->
@@ -170,12 +179,6 @@ require_once('traitements/gerer_activite.php');
                                         <li>
                                             <a href="/<?= $chemin_note_generatrice ?>" class="dropdown-item fs-6 custom-dropdown-item" target="_blank">Visualiser la note génératrice de l'activité</a>
                                         </li>
-
-                                        <?php if (count($participants_associes) != 0) : ?>
-                                            <li>
-                                                <a href="/gestion_activites/generation_documents.php?id_activite=<?= $id_activite ?>" class="dropdown-item fs-6 custom-dropdown-item">Générer les documents</a>
-                                            </li>
-                                        <?php endif; ?>
                                         <li>
                                             <a href="#" class="dropdown-item text-danger fs-6 custom-dropdown-item">Supprimer</a>
                                         </li>
@@ -191,7 +194,7 @@ require_once('traitements/gerer_activite.php');
                         </div>
                         <div class="card-body">
                             <!-- Messages divers -->
-                            
+
                             <!-- Messages divers -->
 
                             <?php if (count($participants_associes) == 0) : ?>
