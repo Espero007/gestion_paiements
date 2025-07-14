@@ -14,11 +14,13 @@
 
 </body>
 
-<?php
-if (!valider_id('get', 'id', $bdd, 'participations_activites')) {
-    redirigerVersPageErreur(404, $_SESSION['previous_url']);
-}
-?>
+<table>
+    <thead>
+        <tr>
+            
+        </tr>
+    </thead>
+</table>
 
 <div id="content" class="d-none">
     Mon contenu principal

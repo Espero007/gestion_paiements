@@ -18,7 +18,7 @@ $id_activite = $_GET['id'];
 $liste_banques = listeBanques($id_activite);
 
 foreach ($liste_banques as $banque) {
-    $totaux_banques[$banque] = totalBanque($id_activite, $banque);
+    $totaux_banques[] = totalBanque($id_activite, $banque);
 }
 
 $stmt = $bdd->query('SELECT nom FROM activites WHERE id=' . $id_activite);
@@ -32,7 +32,7 @@ $pdf = new TCPDF('P', 'mm', 'A4');
 $pdf->AddFont('trebucbd', '', 'trebucbd.php');
 $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
 configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Tableau récapitulatif');
-$pdf->setMargins(25, 25, 15, true);
+$pdf->setMargins(15, 25, 15, true);
 $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
 $pdf->AddPage();
 
@@ -46,104 +46,123 @@ $pdf->Ln(8);
 
 // Ecriture de l'entête
 
-$liste_banques = ['BOA', 'CorisBenin', 'Atlantique Bénin', 'CCP', 'NSIA', 'ORABANK', 'SGB', 'UBA'];
-$totaux_banques = [0, 0, 0, 0, 0, 0, 0, 0];
+$pdf->setFont('trebucbd', '', 11);
+
+// $liste_banques = ['BOA', 'CorisBenin', 'Atlantique Bénin', 'CCP', 'NSIA', 'ORABANK', 'SGB', 'UBA', 'CorisBenin1', 'Atlantique Bénin1', 'CCP1', 'NSIA1', 'ORABANK1', 'SGB1', 'UBA1'];
+// $liste_banques = ['BOA', 'CorisBenin', 'Atlantique Bénin'];
+// $totaux_banques = [0.1, 0.2, 0.3];
 
 $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
-$tailles_colonnes = [40, 60];
-// $compteur = 1;
-// foreach ($liste_banques as $banque) {
-//     $compteur++;
-//     $tailles_colonnes[] = $compteur < 4 ? (100 - $tailles_colonnes[0])/4 : (100/); // chaque banque aura cette largeur en pourcentage
-// }
+$tailles_colonnes = [40, 20];
+$nbr_banques_par_ligne = 3;
 
-// $nbr_lignes = count($liste_banques) > 4 ? 0 : 1;
+$nbr_banques = count($liste_banques);
+$nbr_lignes = $nbr_banques <= $nbr_banques_par_ligne ? 1 : intdiv($nbr_banques, $nbr_banques_par_ligne) - 1;
 
-// On va essayer une sortie avec HTML
-// Constitution du bloc HTML à output
+// echo $nbr_lignes;
 
-$pdf->setFont('trebucbd', '', 10);
-
-$html = '
+$style = '
 <style>
-.header{
+th{
 background-color : #f2f2f2;
-text-transform : capitalize;
+text-align : center;
 }
 td{
 text-align : center;
 }
 </style>
-<table border="1" cellpadding="5" width="100%">
-<tbody>
-<tr>
-<td class="header">'.mb_strtoupper('Titre de l\'activité', 'UTF-8').'</td>
-<td>'. mb_strtoupper($titre_activite, 'UTF-8').'</td>
-</tr>';
-for ($i=0; $i < count($liste_banques); $i++) { 
-    $html .='
-<tr>
-<td class="header">'. mb_strtoupper($liste_banques[$i], 'UTF-8').'</td>
-<td>'. mb_strtoupper($totaux_banques[$i], 'UTF-8'). '</td>
-</tr>    
 ';
-}
-$html .='
+
+$compteur = 0;
+$compteur_2 = 0;
+
+for ($i = 0; $i < $nbr_lignes; $i++) {
+    // Chaque ligne
+    $pourcentage = $i == 0 ? 100 - $tailles_colonnes[0] : 100;
+    $nouvelle_ligne = false; // pour le montant total
+
+    $html = $style . '
+<table border="1" cellpadding="5" width="100%">
+<thead>
+<tr>';
+    // Header
+    if ($i == 0) {
+        $html .= '
+<th width="' . $tailles_colonnes[0] . '%">ELEMENT</th>';
+        $max_j = 3;
+    } else {
+        $max_j = $nbr_banques > 5 ? 5 : $nbr_banques;
+    }
+
+    for ($j = 0; $j < $max_j; $j++) {
+        $html  .= '
+<th width="' . $tailles_colonnes[1] . '%">' . mb_strtoupper($liste_banques[$compteur], 'UTF-8') . '</th>';
+        $compteur++;
+        $nbr_banques--;
+        $pourcentage -= $tailles_colonnes[1];
+    }
+
+    if ($i == $nbr_lignes - 1 && $pourcentage != 0) {
+        // Dernière ligne et il reste encore de la place
+        $html .= '
+    <th width="' . $pourcentage . '%">MONTANT TOTAL</th>
+            ';
+    } elseif ($i == $nbr_lignes - 1 && $pourcentage == 0) {
+        $nouvelle_ligne = true;
+    }
+
+    $html .= '
+</tr>
+</thead>
+<tbody>
+<tr>';
+    // Body
+    if ($i == 0) {
+        $html .= '
+<td width="' . $tailles_colonnes[0] . '%">' . mb_strtoupper($titre_activite, 'UTF-8') . '</td>';
+    }
+
+    for ($j = 0; $j < $max_j; $j++) {
+        $html  .= '
+<td width="' . $tailles_colonnes[1] . '%">' . number_format($totaux_banques[$compteur_2], 0, ',', '.') . '</td>';
+        $compteur_2++;
+    }
+
+    if ($i == $nbr_lignes - 1 && $pourcentage !=0) {
+        // Dernière ligne et il reste encore de la place
+        $html .= '
+    <td width="' . $pourcentage . '%">'.number_format(array_sum($totaux_banques), 0, ',', '.').' FCFA</td>
+            ';
+    }
+    $html .= '
+</tr>
 </tbody>
 </table>
-';
+    ';
+    $pdf->writeHTML($html, true, false, true, false, '');
+    $pdf->Ln();
 
-// $html = '
-// <style>
-// th{
-// background-color : #f2f2f2;
-// text-align : center;
-// }
-// td{
-// text-align : center;
-// }
-// </style>
-
-// <table border="1" cellpadding="5" width="100%">
-// <thead>
-// <tr>
-// <th width="' . $tailles_colonnes[0] . '%">Titre de l\'activité</th>
-// </tr>
-// ';
-// for ($i = 1; $i <= count($liste_banques); $i++) {
-//     $banque = $liste_banques[$i - 1];
-//     $html .= '
-// <th width="' . $tailles_colonnes[$i] . '%">' . $banque . '</th>
-// ';
-//     if ($i == count($liste_banques)) {
-//         $html .= '
-// </tr>
-// </thead>';
-//     }
-// }
-
-// $html .= '
-// <tbody>
-// <tr>
-// <td width="'.$tailles_colonnes[0].'%">'.$titre_activite.'</td>';
-
-// for ($i = 1; $i <= count($liste_banques); $i++) {
-//     $total = $totaux_banques[$i - 1];
-//     $html .= '
-// <td width="' . $tailles_colonnes[$i] . '%">' . $total . '</td>
-// ';
-//     if ($i == count($liste_banques)) {
-//         $html .= '
-// </tr>';
-//     }
-// }
-
-// $html .= '
-// </tbody>
-// </table>';
-
-// Affichage du tableau
-$pdf->writeHTML($html, true, false, true, false, '');
+    if ($nouvelle_ligne) {
+        $html =
+            $style .
+            '
+    <table border="1" cellpadding="5" width="100%">
+    <thead>
+    <tr>
+    <th>MONTANT TOTAL</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>'. number_format(array_sum($totaux_banques), 0, ',', '.').' FCFA</td>
+    </tr>
+    </tbody>
+    </table>
+    ';
+        $pdf->writeHTML($html, true, false, true, false, '');
+        $pdf->Ln();
+    }
+}
 
 // //Sortie du pdf
 $pdf->Output('Tableau récapitulatif.pdf', 'I');
