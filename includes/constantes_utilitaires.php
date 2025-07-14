@@ -112,7 +112,7 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
     global $bdd;
     // $valeur_id nous permet de valider un id qu'on passe directement à la fonction sans passer par les superglobales
 
-    $allowed_tables = ['participants', 'activites', 'participations_participant', 'participations_activites', 'autre_table'];
+    $allowed_tables = ['participants', 'activites', 'participations_participant', 'participations_activites', 'participations', 'autre_table'];
     // $allowed_columns = ['id_participant', 'id_autre'];
 
     if (!in_array($table, $allowed_tables)) {
@@ -136,6 +136,8 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
             $type_id = 'id_activite';
             $type_id2 = 'id';
             break;
+        case 'participations':
+            $type_id = 'id';
         default:
     }
 
@@ -170,10 +172,21 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
 
     if (in_array($table, ['participants', 'activites'])) {
         $stmt = $bdd->prepare("SELECT $type_id FROM $table WHERE $type_id=:valeur_id AND id_user=" . $_SESSION['user_id']);
-    } elseif (str_contains($table, 'participations')) {
+    } elseif (str_contains($table, 'participations_')) {
         $table_base = 'participations';
         $table_additionnelle = str_replace('participations_', '', $table);
         $stmt = $bdd->prepare("SELECT $type_id FROM participations pa INNER JOIN $table_additionnelle t ON pa.$type_id=t.$type_id2 WHERE t.$type_id2=:valeur_id AND id_user=" . $_SESSION['user_id']);
+    }elseif($table == 'participations'){
+        $stmt = $bdd->prepare("
+        SELECT p.id_participant
+        FROM participants p
+        INNER JOIN participations p1 ON
+        p.id_participant = p1.id_participant
+        WHERE p.id_user=".$_SESSION['user_id']." AND 
+        p.id_participant IN
+        (SELECT id_participant
+        FROM participants WHERE $type_id=:valeur_id)
+        ");
     }
 
     $stmt->bindParam(':valeur_id', $valeur, PDO::PARAM_INT);
@@ -250,10 +263,14 @@ function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $a
 {
     // $elements : les éléments à afficher sous la forme d'un tableau. Je considère que dans $elements est constitué de deux tableaux, un pour l'entête du tableau et un second pour le body
     // $style correspond au style additionnel qu'on pourrait ajouter au tableau
-
+    // dans actions je dois avoir l'intitulé de l'action et le lien qui permet de la réaliser dans cet ordre donc action devrait ressembler un peu à
+    // [0][0]['intitule'=>'Gérer', 'lien'=>'...']
+    //    [1]['intitule'=>'Gérer', 'lien'=>'...']
+    // Pour la dernière action de la liste ajouter dans le tableau associatif un booléen avec comme clé 'dernier'
+    // On peut ajouter du style aussi si on le souhaite dans une valeur dont la clé sera 'style'
     $head = $elements[0];
     $body = $elements[1];
-    $liens = $elements[2];
+    $actions = $elements[2];
     $index = 0; // variable d'incrémentation
 
 ?>
@@ -297,7 +314,24 @@ function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $a
                         <?php endforeach; ?>
                         <?php if ($actions) : ?>
                             <td>
-                                <a href="<?= $liens[$index] ?>" class="btn btn-primary">Gérer</a>
+                                <div class="btn-group">
+                                    <?php $action = $actions[$index][0] ?>
+                                    <a href="<?= $action['lien'] ?>" class="btn btn-primary"><?= $action['intitule'] ?></a>
+                                    <button type="button" class="btn btn-primary btn btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                    <ul class="dropdown-menu">
+                                        <?php for ($i = 1; $i < count($actions[$index]); $i++) : ?>
+                                            <?php $action = $actions[$index][$i] ?>
+                                            <?php if (isset($action['dernier']) && count($actions[$index]) > 2) : ?>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                            <?php endif; ?>
+                                            <li>
+                                                <a href="<?= $action['lien'] ?>" class="dropdown-item custom-dropdown-item<?= isset($action['style']) ? ' ' . $action['style'] : '' ?>"><?= $action['intitule'] ?></a>
+                                            </li>
+                                        <?php endfor; ?>
+                                    </ul>
+                                </div>
                             </td>
                             <?php $index++ ?>
                         <?php endif; ?>
@@ -487,12 +521,11 @@ function genererHeader($pdf, $type_document, $informations)
     // Ligne 2 : Titre du document
     if ($type_document == 'ordre_virement') {
         $ligne2 = mb_strtoupper('ordre de virement ' . $informations['banque'], 'UTF-8');
-    }elseif($type_document == 'note_service'){
+    } elseif ($type_document == 'note_service') {
         $ligne2 = 'NOTE DE SERVICE';
-    }elseif($type_document == 'attestation_collective'){
+    } elseif ($type_document == 'attestation_collective') {
         $ligne2 = 'ATTESTATION COLLECTIVE DE TRAVAIL';
-    }elseif($type_document == 'etat_paiement'){
-
+    } elseif ($type_document == 'etat_paiement') {
     }
 
     $pdf->setFont('trebucbd', '', '11');

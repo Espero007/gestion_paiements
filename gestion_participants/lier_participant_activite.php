@@ -26,13 +26,13 @@ require_once('includes/traitements_lier_participant_activite.php');
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <h1 class="h4 mb-4 text-gray-800">Participants / <strong>Liaison Participant - Activité</strong></h1>
-                    <p class="mt-2">Liez vos participants à vos activités pour profiter de toutes les fonctionnalités disponibles !</p>
+                    <h1 class="h4 mb-4 text-gray-800">Participants / <strong> <?= isset($modification) ? 'Modification Liaison' : 'Liaison Participant - Activité' ?></strong></h1>
+                    <p class="mt-2"> <?= !isset($modification) ? 'Liez vos participants à vos activités pour profiter de toutes les fonctionnalités disponibles !' : 'Vous avez fait une erreur lors de la liaison de votre participant à l\'activité ? Vous êtes au bon endroit !' ?> </p>
 
                     <div class="card shadow mb-4">
                         <div class="card-header">
                             <h6 class="font-weight-bold text-primary">
-                                <?= ($etape_1 && !$etape_2) ? 'Etape 1' : 'Etape 2' ?>
+                                <?= isset($modification) ? 'Formulaire de modification' : (($etape_1 && !$etape_2) ? 'Etape 1' : 'Etape 2') ?>
                             </h6>
                         </div>
 
@@ -131,9 +131,9 @@ require_once('includes/traitements_lier_participant_activite.php');
                                             <label for="titre_<?= $i ?>" class="col-form-label col-sm-4">Titre</label>
                                             <div class="col-sm-8">
                                                 <select name="titre[]" id="titre_<?= $i ?>" class="form-control <?= isset($erreurs['titre'][$i]) ? 'is-invalid' : '' ?>" aria-describdly=" titreAide_<?= $i ?>">
-                                                    <option value="defaut" <?= (!isset($_POST['titre'][$i]) || !in_array($_POST['titre'][$i], $titres_intitules)) ? 'selected' : '' ?>>Choisissez le titre du participant</option>
+                                                    <option value="defaut" <?= ((!isset($_POST['titre'][$i]) || !in_array($_POST['titre'][$i], $titres_intitules)) && !isset($modification)) ? 'selected' : '' ?>>Choisissez le titre du participant</option>
                                                     <?php foreach ($titres as $titre) : ?>
-                                                        <option value="<?= $titre['nom'] ?>" <?= (isset($erreurs) && $titre['nom'] == $_POST['titre'][$i]) ? 'selected' : '' ?>><?= htmlspecialchars($titre['nom']) ?></option>
+                                                        <option value="<?= $titre['nom'] ?>" <?= isset($erreurs) ? ($titre['nom'] == $_POST['titre'][$i] ? 'selected' : '') : (isset($modification) && $titre['nom'] == $infos_liaison['titre_liaison'] ? 'selected' : '') ?>><?= htmlspecialchars($titre['nom']) ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
 
@@ -151,10 +151,10 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         <div class="mb-4 row">
                                             <label for="diplome_<?= $i ?>" class="col-form-label col-sm-4">Diplôme</label>
                                             <div class="col-sm-8">
-                                                <select name="diplome[]" id="diplome<?= $i ?>" class="form-control <?= isset($erreurs['diplome'][$i]) ? 'is-invalid' : '' ?>" aria-describdly=" diplomeAide_<?= $i ?>">
-                                                    <option value="defaut" <?= (!isset($_POST['diplome']) || !in_array($_POST['diplome'][$i], $diplomes[$i])) ? 'selected' : '' ?>>Choisissez le diplôme du participant</option>
+                                                <select name="diplome[]" id="diplome_<?= $i ?>" class="form-control <?= isset($erreurs['diplome'][$i]) ? 'is-invalid' : '' ?>" aria-describdly=" diplomeAide_<?= $i ?>">
+                                                    <option value="defaut" <?= (!isset($_POST['diplome']) || !in_array($_POST['diplome'][$i], $diplomes[$i])) && !isset($modification) ? 'selected' : '' ?>>Choisissez le diplôme du participant</option>
                                                     <?php foreach ($diplomes[$i] as $diplome) : ?>
-                                                        <option value="<?= $diplome ?>" <?= (isset($erreurs) && $diplome == $_POST['diplome'][$i]) ? 'selected' : '' ?>><?= htmlspecialchars($diplome) ?></option>
+                                                        <option value="<?= $diplome ?>" <?= isset($erreurs) ? ($diplome == $_POST['diplome'][$i] ? 'selected' : '') : (isset($modification) && $diplome == $infos_liaison['diplome'] ? 'selected' : '') ?>><?= htmlspecialchars($diplome) ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
 
@@ -172,7 +172,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         <div class="mb-4 row">
                                             <label for="nbr_jours_<?= $i ?>" class="col-form-label col-sm-4">Nombre de jours</label>
                                             <div class="col-sm-8">
-                                                <input type="number" name="nbr_jours[]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours du participant" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : '' ?>" aria-describedby="nbr_joursAide_<?= $i ?>">
+                                                <input type="number" name="nbr_jours[]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours du participant" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : (isset($modification) ? $infos_liaison['nombre_jours'] : '') ?>" aria-describedby="nbr_joursAide_<?= $i ?>">
 
                                                 <?php if (isset($erreurs['nbr_jours'][$i])) : ?>
                                                     <div class="form-text" id="nbr_joursAide_<?= $i ?>">
@@ -191,7 +191,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                             <div class="mb-2 row">
                                                 <label for="nbr_taches_<?= $i ?>" class="col-form-label col-sm-4">Nombre de tâches</label>
                                                 <div class="col-sm-8">
-                                                    <input type="number" name="nbr_taches[]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : '' ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>">
+                                                    <input type="number" name="nbr_taches[]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : (isset($modification) ? $infos_liaison['nombre_taches'] : '') ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>">
 
                                                     <?php if (isset($erreurs['nbr_taches'][$i])) : ?>
                                                         <div class="form-text" id="nbr_tachesAide_<?= $i ?>">
@@ -212,7 +212,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                                     <?php foreach ($comptes[$i] as $compte) : ?>
                                                         <?php $index++; ?>
                                                         <div class="form-check mr-4">
-                                                            <input name="compte_bancaire[<?= $i ?>]" class="form-check-input" type="radio" value="<?= $compte['id'] ?>" id="compte<?= $index ?>_<?= $i ?>" <?= (isset($_POST['compte_bancaire'][$i]) && $compte['id'] == $_POST['compte_bancaire'][$i] && isset($erreurs)) ? 'checked' : '' ?> aria-describedby="compte_bancaireAide_<?= $i ?>">
+                                                            <input name="compte_bancaire[<?= $i ?>]" class="form-check-input" type="radio" value="<?= $compte['id'] ?>" id="compte<?= $index ?>_<?= $i ?>" <?= isset($erreurs) ? ($compte['id'] == $_POST['compte_bancaire'][$i] ? 'checked' : '') : (isset($modification) && $compte['numero_compte'] == $infos_liaison['numero_compte'] ? 'checked' : '') ?> aria-describedby="compte_bancaireAide_<?= $i ?>">
                                                             <label class="form-check-label" for="compte<?= $index ?>_<?= $i ?>"> <?= htmlspecialchars($compte['banque']) . ' (<i>' . htmlspecialchars($compte['numero_compte']) . '</i>)' ?></label>
                                                         </div>
                                                     <?php endforeach; ?>
@@ -236,7 +236,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         <div class="divider-text"><strong>Vous avez terminé ?</strong></div>
                                     </div>
                                     <div class="mt-4">
-                                        <button type="submit" class="btn btn-primary mr-2" name="lier">Réaliser la liaison</button>
+                                        <button type="submit" class="btn btn-primary mr-2" name="<?= !isset($modification) ? 'lier' : 'enregistrer' ?>"> <?= !isset($modification) ? 'Réaliser la liaison' : 'Enregistrer les modifications' ?></button>
                                         <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-outline-primary">Annuler</a>
                                     </div>
                                 </form>

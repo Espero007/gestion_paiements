@@ -1,5 +1,13 @@
+
+<?php 
+session_start();
+require_once('includes/constantes_utilitaires.php');
+require_once('includes/bdd.php');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
+
 
 <head>
     <meta charset="UTF-8">
@@ -11,19 +19,17 @@
 </head>
 
 <body>
+    <div id="content" class="d-none">
+        Mon contenu principal
+    </div>
 
+    <?php 
+    if(valider_id('get', 'id', '', 'participations')){
+        echo 'id valide';
+    }else{
+        echo 'id_invalide';
+    }
+     ?>
 </body>
-
-<table>
-    <thead>
-        <tr>
-            
-        </tr>
-    </thead>
-</table>
-
-<div id="content" class="d-none">
-    Mon contenu principal
-</div>
 
 </html>

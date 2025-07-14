@@ -58,6 +58,10 @@ require_once('traitements/gerer_activite.php');
                             <?php if (isset($_SESSION['erreur_modifier_infos'])) : ?>
                                 <?php afficherAlerte('erreur_modifier_infos', 'danger', true) ?>
                             <?php endif; ?>
+
+                            <?php if (isset($_SESSION['modification_reussie'])) : ?>
+                                <?php afficherAlerte('modification_reussie', 'success', true) ?>
+                            <?php endif; ?>
                             <!-- Fin Messages divers  -->
 
                             <!-- Nom -->
@@ -203,7 +207,7 @@ require_once('traitements/gerer_activite.php');
                                     <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="btn btn-outline-primary">Associer des participants</a>
                                 </div>
                             <?php else : ?>
-                                <?php afficherSousFormeTableau($informations, 'table-responsive text-nowrap', 'table-bordered text-center', false, false) ?>
+                                <?php afficherSousFormeTableau($informations, 'table-responsive text-nowrap', 'table-bordered text-center', false, true) ?>
                             <?php endif; ?>
                         </div>
                     </div>

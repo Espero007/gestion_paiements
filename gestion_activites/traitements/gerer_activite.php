@@ -44,22 +44,39 @@ if($activite['type_activite'] == 1){
     }
 }
 
-// Participants associés
+// Participants associés : récupération et mise en place de la logique nécessaire pour utiliser la fonction afficherSousFormeTableau
 
 $stmt = $bdd->query('
-SELECT p1.id_participant, p2.nom, p2.prenoms, p2.matricule_ifu, t.nom as titre, p1.diplome, p1.nombre_jours, p1.nombre_taches, ib.banque, ib.numero_compte
+SELECT p1.id, p1.id_participant, p2.nom, p2.prenoms, p2.matricule_ifu, t.nom as titre, p1.diplome, p1.nombre_jours, p1.nombre_taches, ib.banque, ib.numero_compte
 FROM participations p1
 INNER JOIN participants p2 ON p1.id_participant = p2.id_participant
 INNER JOIN titres t ON t.id_titre = p1.id_titre
 INNER JOIN informations_bancaires ib ON p1.id_compte_bancaire = ib.id
 WHERE p1.id_activite='.$activite['id']);
 $participants_associes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$compteur = 0;
 
 if(count($participants_associes) != 0){
     $informations[0] = ['Nom', 'Prénoms', 'Titre', 'Diplome', 'Nombre de jours', 'Nombre de tâches', 'Compte bancaire'];
     foreach ($participants_associes as $participant) {
         $informations[1][] = [$participant['nom'], $participant['prenoms'], $participant['titre'], $participant['diplome'], $participant['nombre_jours'], $participant['nombre_taches'], $participant['banque'].' ('.$participant['numero_compte'].')'];
-        $informations[2][] = '/gestion_participants/gerer_participant.php?id='.$participant['id_participant'];
+        // Définition des actions possibles par participant
+        $informations[2][$compteur][] = [
+            'intitule' => 'Modifier',
+            'lien' => '/gestion_participants/lier_participant_activite.php?modifier='.$participant['id']
+        ];
+        $informations[2][$compteur][] = [
+            'intitule' => 'Gérer le participant',
+            'lien' => '/gestion_participants/gerer_participant.php?id=' . $participant['id_participant']
+        ];
+        $informations[2][$compteur][] = [
+            'intitule' => 'Rompre la liaison',
+            'lien' => '#',
+            'style' => 'text-danger',
+            'dernier' => true,
+        ];
+        $compteur++;
+        // $informations[2][] = '/gestion_participants/gerer_participant.php?id='.$participant['id_participant'];
     }
     // $informations[2] = ['/gestion_participants/']
 }
