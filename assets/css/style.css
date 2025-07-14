@@ -241,7 +241,8 @@
 }
 
 #wrapper.hide {
-    display: none;
+    /* display: none; */
+    transform: scale(0);
 }
 
 #wrapper.show{
