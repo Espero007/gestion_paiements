@@ -163,6 +163,7 @@ if ($recuperation_type_activite) {
                         $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
                     }
                 }
+            }
         }
 
         // Validation des dates : date_fin >= date_debut
