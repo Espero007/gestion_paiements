@@ -14,6 +14,8 @@ $activity_id = $_GET['id'];
 
 // Récupérer les données de l'activité
 try {
+
+    
     $sql = 'SELECT a.*, f.nom_original AS note_generatrice_name 
             FROM activites a 
             LEFT JOIN fichiers f ON a.id_note_generatrice = f.id_fichier 

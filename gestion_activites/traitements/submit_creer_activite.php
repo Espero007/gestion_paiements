@@ -163,7 +163,6 @@ if ($recuperation_type_activite) {
                         $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
                     }
                 }
-            }
         }
 
         // Validation des dates : date_fin >= date_debut
@@ -279,15 +278,15 @@ if ($recuperation_type_activite) {
             AND reference=:reference ';
 
             if (in_array($type_activite, [1, 2])) {
-                $stmt .= 'AND taux_journalier=:val15 ';
+                $stmt .= ' AND taux_journalier=:val15 ';
             } else {
-                $stmt .= 'AND taux_journalier IS NULL ';
+                $stmt .= ' AND taux_journalier IS NULL ';
             }
 
             if ($type_activite == 3) {
-                $stmt .= 'AND taux_taches=:val16 AND frais_deplacement_journalier=:val17';
+                $stmt .= ' AND taux_taches=:val16 AND frais_deplacement_journalier=:val17';
             } else {
-                $stmt .= 'AND taux_taches IS NULL AND frais_deplacement_journalier IS NULL';
+                $stmt .= ' AND taux_taches IS NULL AND frais_deplacement_journalier IS NULL';
             }
             $sql = $bdd->prepare($stmt);
 
