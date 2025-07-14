@@ -313,7 +313,7 @@ unset($_SESSION['success_data']);
                                             <?php if (in_array($type_activite, [2, 3])) : ?>
                                                 <!-- Indemnité(s) forfaitaire(s) -->
                                                 <div class="mb-2 row">
-                                                    <label for="indemnite_forfaitaire" class="col-sm-3 col-form-label">Indemnité(s) forfaitaire(s) (FCFA) <small class="text-muted">(séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75)</small></label>
+                                                    <label for="indemnite_forfaitaire" class="col-sm-3 col-form-label">Indemnité(s) forfaitaire(s) (FCFA) <small class="text-muted">(séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75(Chaque montant sera associé au titre en respectant l'ordre de saisie) , NB:Si un titre n'a pas d'indemnité , renseignez 0)</small></label>
                                                     <div class="col-sm-9">
                                                         <input id="indemnite_forfaitaire" type="text" name="indemnite_forfaitaire" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['indemnite_forfaitaire']) ?>">
                                                         <small class="text-danger"><?= $errors['indemnite_forfaitaire'] ?? '' ?></small>

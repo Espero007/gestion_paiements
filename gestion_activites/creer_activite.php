@@ -266,7 +266,7 @@ require_once('traitements/submit_creer_activite.php');
                                                         <div class="col-sm-9">
                                                             <input id="indemnite_forfaitaire" type="text" name="indemnite_forfaitaire" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['indemnite_forfaitaire']) ?>">
                                                             <small class="text-danger"><?= $errors['indemnite_forfaitaire'] ?? '' ?></small>
-                                                            <small class="text-muted">Note : séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75 (chaque montant indiqué sera associé au titre correspondant en respectant l'ordre de saisie)</small>
+                                                            <small class="text-muted">Note : séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75 (chaque montant indiqué sera associé au titre correspondant en respectant l'ordre de saisie) , NB : Si un titre n'a pas d'indemnité , renseignez 0</small>
                                                         </div>
                                                     </div>
                                                 <?php endif; ?>
