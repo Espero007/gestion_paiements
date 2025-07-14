@@ -49,9 +49,9 @@ if (isset($_POST['inscription'])) {
 
         
         if (envoyerLienValidationEmail($lien_verif, $_POST['email'], $_POST['nom'], $_POST['prenoms'], 0)) {
-            $_SESSION["email_envoye"] = true;
+            $_SESSION["email_envoye"] = 'Un lien de vérification a été envoyé à votre mail ('.htmlspecialchars($_POST['email']).'). Cliquez dessus pour activer votre compte.';
         }else{
-            $_SESSION['email_envoye'] = false;
+            $_SESSION['email_non_envoye'] = 'Une erreur d\'est produite lors de l\'envoi du lien de confirmation de votre email, veuillez réessayer plus tard';
         }
 
         if (!$resultat) {

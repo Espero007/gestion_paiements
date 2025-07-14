@@ -34,19 +34,18 @@ require_once("submit/submit_connexion.php");
                                         <?php afficherAlerte('Echec de la connexion ! Assurez-vous d\'indiquer correctement vos identifiants de connexion.', 'danger') ?>
                                     <?php endif; ?>
 
-                                    <?php if (isset($_SESSION['email_envoye']) && $_SESSION['email_envoye']) : ?>
-                                        <?php afficherAlerte('Un lien de vérification a été envoyé à votre mail. Cliquez dessus pour activer votre compte.', 'info');
-                                        unset($_SESSION['email_envoye']); ?>
-                                    <?php elseif (isset($_SESSION['email_envoye']) && !$_SESSION['email_envoye']): ?>
-                                        <?php afficherAlerte('Une erreur s\'est produite lors de l\'envoi du lien de confirmation de votre email, veuillez réessayer plus tard.', 'info');
-                                        unset($_SESSION['email_envoye']); ?>
+                                    <?php if (isset($_SESSION['email_envoye'])) : ?>
+                                        <?php afficherAlerte('email_envoye', 'info', true); ?>
+                                    <?php endif; ?>
+
+                                    <?php if (isset($_SESSION['email_non_envoye'])): ?>
+                                        <?php afficherAlerte('email_non_envoye', 'info', true);?>
                                     <?php endif; ?>
 
                                     <?php
                                     if (isset($_SESSION['deconnexion']) && !isset($_SESSION['timeout_atteint'])) {
                                         session_unset(); // On détruit les varaibles de la session
                                         session_destroy(); // On détruit la session
-
                                         afficherAlerte('Vous êtes à présent déconnecté(e) !', 'success');
                                     } elseif (isset($_SESSION['deconnexion']) && isset($_SESSION['timeout_atteint'])) {
                                         // déconnexion due au timeout
