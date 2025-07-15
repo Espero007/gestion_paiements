@@ -8,17 +8,17 @@ $id_activite = $_GET['id'];
 $user_id = $_SESSION['user_id'];
 
 // Je veux le faire en deux volets, d'abord pour ajouter, ensuite pour modifier. Les deux aujourd'hui. Ok travaillons le alors
-$donnees = [
-    'ligne1' => '',
-    'ligne2' => '',
-    'ligne3' => '',
-    'ville' =>  '',
-    'date1' => '',
-    'date2' => ''
+$champs_attendus = [
+    'ligne1' => 'Ligne 1',
+    'ligne2' => 'Ligne 2',
+    'ligne3' => 'Ligne 3',
+    'ville' =>  'Ville',
+    'date1' => 'Date 1',
+    'date2' => 'Date 2'
 ];
 
-foreach ($donnees as $key => $value) {
-    $champs_attendus[] = $key;
+foreach ($champs_attendus as $key => $value) {
+    $donnees[$key] = '';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enregistrer'])) {

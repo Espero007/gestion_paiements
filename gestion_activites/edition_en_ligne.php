@@ -58,13 +58,33 @@ require_once('traitements/edition.php');
                                                     </div>
                                                 </legend>
 
+                                                <?php foreach ($champs_attendus as $champ => $label) : ?>
+
+                                                    <?php if ($champ != 'date2') : ?>
+                                                        <div class="mb-2 row">
+                                                            <label for="<?= $champ ?>" class="col-sm-3 col-form-label"><?= $label ?></label>
+                                                            <div class="col-sm-9">
+                                                                <input id="<?= $champ ?>" type="text" name="<?= $champ ?>" class="form-control<?= isset($erreurs[$champ]) ? ' is-invalid' : '' ?>" value="<?= isset($erreurs) ? (isset($_POST[$champ]) ? htmlspecialchars($_POST[$champ]) : '') : '' ?>" placeholder="Entrez une valeur" <?= isset($erreurs[$champ]) ? 'aria-describedby="' . $champ . 'Aide"' : '' ?>>
+
+                                                                <?php if (isset($erreurs[$champ])) : ?>
+                                                                    <div id="<?= $champ ?>Aide">
+                                                                        <small class="text-danger"><?= $erreurs[$champ] ?? '' ?></small>
+                                                                    </div>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        </div>
+
+                                                    <?php endif; ?>
+
+                                                <?php endforeach; ?>
+
                                                 <!-- Ligne 1 -->
                                                 <div class="mb-2 row">
                                                     <label for="ligne1" class="col-sm-3 col-form-label">Ligne 1</label>
                                                     <div class="col-sm-9">
                                                         <input id="ligne1" type="text" name="ligne1" class="form-control<?= isset($erreurs['ligne1']) ? ' is-invalid' : '' ?>" value="<?= isset($erreurs) ? (isset($_POST['ligne1']) ? htmlspecialchars($_POST['ligne1']) : '') : '' ?>" placeholder="Entrez une valeur" <?= isset($erreurs['ligne1']) ? 'aria-describedby="ligne1Aide"' : '' ?>>
 
-                                                        <?php if(isset($erreurs['ligne1'])) : ?>
+                                                        <?php if (isset($erreurs['ligne1'])) : ?>
                                                             <div id="ligne1Aide">
                                                                 <small class="text-danger"><?= $erreurs['ligne1'] ?? '' ?></small>
                                                             </div>
