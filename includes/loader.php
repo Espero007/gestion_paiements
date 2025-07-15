@@ -17,6 +17,9 @@
             document.getElementById('wrapper').classList.remove('hide');
             document.getElementById('wrapper').classList.add('show');
             document.getElementById('loader').style.display = "none";
+            setTimeout(() => {
+                document.getElementById('wrapper').classList.remove('show');
+            }, 1000);
         }, 200);
     })
 </script>

@@ -176,13 +176,13 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
         $table_base = 'participations';
         $table_additionnelle = str_replace('participations_', '', $table);
         $stmt = $bdd->prepare("SELECT $type_id FROM participations pa INNER JOIN $table_additionnelle t ON pa.$type_id=t.$type_id2 WHERE t.$type_id2=:valeur_id AND id_user=" . $_SESSION['user_id']);
-    }elseif($table == 'participations'){
+    } elseif ($table == 'participations') {
         $stmt = $bdd->prepare("
         SELECT p.id_participant
         FROM participants p
         INNER JOIN participations p1 ON
         p.id_participant = p1.id_participant
-        WHERE p.id_user=".$_SESSION['user_id']." AND 
+        WHERE p.id_user=" . $_SESSION['user_id'] . " AND 
         p.id_participant IN
         (SELECT id_participant
         FROM participants WHERE $type_id=:valeur_id)
@@ -392,21 +392,23 @@ function envoyerLienValidationEmail($lien_verif, $email, $nom, $prenom, $type_ma
     }
 }
 
-function afficherAlerte($message, $type, $session = false)
+function afficherAlerte($message, $type, $session = false, $dismissible = true)
 {
     //  $type fait allusion au fait que le message soit un message de succès ou d'erreur
     // $message est tout simplement le message
     // $session est pour savoir si la variable contenant le message est dans la session ou pas
 
 ?>
-    <div class="alert alert-<?= $type ?> alert-dismissible text-center">
+    <div class="alert alert-<?= $type ?><?= $dismissible ? ' alert-dismissible' : '' ?> text-center">
         <?php if (!$session) : ?>
             <?= $message ?>
         <?php else: ?>
             <?= $_SESSION[$message] ?>
             <?php unset($_SESSION[$message]) ?>
         <?php endif; ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        <?php if($dismissible) : ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        <?php endif; ?>
     </div>
 <?php
 }
