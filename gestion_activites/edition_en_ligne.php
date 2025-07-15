@@ -12,8 +12,7 @@ require_once('traitements/edition.php');
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php // require_once(__DIR__ . '/../includes/sidebar.php') 
-        ?>
+        <?php // require_once(__DIR__ . '/../includes/sidebar.php')?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -79,7 +78,7 @@ require_once('traitements/edition.php');
                                                 <?php endforeach; ?>
 
                                                 <!-- Ligne 1 -->
-                                                <div class="mb-2 row">
+                                                <!-- <div class="mb-2 row">
                                                     <label for="ligne1" class="col-sm-3 col-form-label">Ligne 1</label>
                                                     <div class="col-sm-9">
                                                         <input id="ligne1" type="text" name="ligne1" class="form-control<?= isset($erreurs['ligne1']) ? ' is-invalid' : '' ?>" value="<?= isset($erreurs) ? (isset($_POST['ligne1']) ? htmlspecialchars($_POST['ligne1']) : '') : '' ?>" placeholder="Entrez une valeur" <?= isset($erreurs['ligne1']) ? 'aria-describedby="ligne1Aide"' : '' ?>>
@@ -90,43 +89,43 @@ require_once('traitements/edition.php');
                                                             </div>
                                                         <?php endif; ?>
                                                     </div>
-                                                </div>
+                                                </div> -->
 
                                                 <!-- Ligne 2 -->
-                                                <div class="mb-2 row">
+                                                <!-- <div class="mb-2 row">
                                                     <label for="ligne2" class="col-sm-3 col-form-label">Ligne 2</label>
                                                     <div class="col-sm-9">
                                                         <input id="ligne2" type="text" name="ligne2" class="form-control" value="" placeholder="Entrez une valeur">
-                                                        <!-- <small class="text-danger"><?= $errors['nom'] ?? '' ?></small> -->
+                                                        <small class="text-danger"><?= $errors['nom'] ?? '' ?></small>
                                                     </div>
-                                                </div>
+                                                </div> -->
 
                                                 <!-- Ligne 3 -->
-                                                <div class="mb-2 row">
+                                                <!-- <div class="mb-2 row">
                                                     <label for="ligne3" class="col-sm-3 col-form-label">Ligne 3</label>
                                                     <div class="col-sm-9">
                                                         <input id="ligne3" type="text" name="ligne3" class="form-control" value="" placeholder="Entrez une valeur">
-                                                        <!-- <small class="text-danger"><?= $errors['nom'] ?? '' ?></small> -->
+                                                        <small class="text-danger"><?= $errors['nom'] ?? '' ?></small>
                                                     </div>
-                                                </div>
+                                                </div> -->
 
                                                 <!-- Ville -->
-                                                <div class="mb-2 row">
+                                                <!-- <div class="mb-2 row">
                                                     <label for="ville" class="col-sm-3 col-form-label">Ville</label>
                                                     <div class="col-sm-9">
                                                         <input id="ville" type="text" name="ville" class="form-control" value="" placeholder="Entrez une valeur">
-                                                        <!-- <small class="text-danger"><?= $errors['nom'] ?? '' ?></small> -->
+                                                        <small class="text-danger"><?= $errors['nom'] ?? '' ?></small>
                                                     </div>
-                                                </div>
+                                                </div> -->
 
                                                 <!-- Date 1 -->
-                                                <div class="mb-2 row">
+                                                <!-- <div class="mb-2 row">
                                                     <label for="date1" class="col-sm-3 col-form-label">Date 1</label>
                                                     <div class="col-sm-9">
                                                         <input id="date1" type="text" name="date1" class="form-control" value="" placeholder="Entrez une valeur">
-                                                        <!-- <small class="text-danger"><?= $errors['nom'] ?? '' ?></small> -->
+                                                        <small class="text-danger"><?= $errors['nom'] ?? '' ?></small>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </fieldset>
 
                                             <!-- Autres informations -->

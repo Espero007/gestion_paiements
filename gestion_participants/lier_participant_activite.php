@@ -26,7 +26,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <h1 class="h4 mb-4 text-gray-800">Participants / <strong> <?= isset($modification) ? 'Modification Liaison' : 'Liaison Participant - Activité' ?></strong></h1>
+                    <h1 class="h4 mb-4 text-gray-800">Participants / <strong> <?= isset($modification) ? 'Modification - Liaison' : 'Liaison Participant - Activité' ?></strong></h1>
                     <p class="mt-2"> <?= !isset($modification) ? 'Liez vos participants à vos activités pour profiter de toutes les fonctionnalités disponibles !' : 'Vous avez fait une erreur lors de la liaison de votre participant à l\'activité ? Vous êtes au bon endroit !' ?> </p>
 
                     <div class="card shadow mb-4">
