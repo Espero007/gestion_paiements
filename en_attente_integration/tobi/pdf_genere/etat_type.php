@@ -96,7 +96,7 @@ if($activite_type['type_activite'] === 1){
         // Titre
         $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE, "Europe/Paris", IntlDateFormatter::GREGORIAN);
         $dateFr = $formatter->format(new DateTime());
-        /*$html = '
+        $html = '
         <style>
             h1 { text-align: center; font-size: 16pt; }
             h2 { text-align: center; font-size: 14pt; }
@@ -120,9 +120,10 @@ if($activite_type['type_activite'] === 1){
                 </td>
             </tr>
         </table>';
-*/
-    $information_supplementaire = ['type' => $nom_activite] ;
+
+    /*$information_supplementaire = ['type' => $nom_activite] ;
     genererHeader($pdf,'etat_paiement',$information_supplementaire );
+    */
         $html .= '<p><b> REF NS N°0569/MES/DC/SGM/DEC/SAFM/SIS/SEMC/SA DU 04 DECEMBRE 2023 PORTANT CONSTITUTION DES COMMISSIONS CHARGEES DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</b><br></p>';
 
         // Initialisations
@@ -298,7 +299,7 @@ if($activite_type['type_activite'] === 1){
     $dateFr = $formatter->format(new DateTime());
 
     // En-tête HTML
-    /*$headerHtml = '
+    $headerHtml = '
     <style>
         h1 { text-align: center; font-size: 16pt; }
         h2 { text-align: center; font-size: 14pt; }
@@ -333,12 +334,12 @@ if($activite_type['type_activite'] === 1){
     <p><b>NS N°0416/... portant Constitution des commissions chargées de superviser le déroulement de '.mb_strtolower($titre_activite, 'UTF-8').'</b></p>
     <br>
     ';
-*/
+
     $pdf->writeHTML($headerHtml, true, false, true, false, '');
-    
+   /* 
     $information_supplementaire = ['type' => $titre_activite] ;
     genererHeader($pdf,'etat_paiement',$information_supplementaire );
-
+*/
 
     // Fonction en-tête tableau
     function generateTableHeader() {
@@ -569,7 +570,7 @@ if($activite_type['type_activite'] === 1){
     // Nécessaire pour les mois en français
     setlocale(LC_TIME, 'fr_FR.UTF-8');
 
-    /*$html = '
+    $html = '
     <style>
         
         h1 { text-align: center; font-size: 16pt; }
@@ -602,9 +603,10 @@ if($activite_type['type_activite'] === 1){
         </td>
     </tr>
     </table>';
-*/
-$information_supplementaire = ['type' => $titre_activite] ;
-genererHeader($pdf,'etat_paiement',$information_supplementaire );
+
+/*$information_supplementaire = ['type' => $titre_activite] ;
+genererHeader($pdf,'etat_paiement',$information_supplementaire );*/
+
     $html .= '
     <p><b> NS  N° 2548/PR/DC/SGM/DAF/DEC/SAF/SIS/SEC/SD/SA DU 31 DECEMBRE 2020 </b><br></p>';
 
