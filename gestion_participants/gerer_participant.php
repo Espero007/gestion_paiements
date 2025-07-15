@@ -86,6 +86,11 @@ require_once('includes/gerer_participant.php');
                                     <?php if (!$quota_comptes_bancaires_atteint) : ?>
                                         <li><a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a></li>
                                     <?php endif; ?>
+                                    <?php if (count($comptes) > 1): ?>
+                                        <li>
+                                            <a href="supprimer_une_banque.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item text-danger">Supprimer un compte bancaire</a>
+                                        </li>
+                                    <?php endif; ?>
                                     <li>
                                         <a href="modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
                                     </li>

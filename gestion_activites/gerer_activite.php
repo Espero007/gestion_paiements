@@ -194,7 +194,7 @@ require_once('traitements/gerer_activite.php');
                                             <hr class="dropwdown-divider my-1">
                                         </li>
                                         <li>
-                                            <a href="#" class="dropdown-item text-danger fs-6 custom-dropdown-item">Supprimer</a>
+                                            <a href="supprimer_activiter.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item text-danger fs-6 custom-dropdown-item">Supprimer</a>
                                         </li>
                                     </ul>
                                 </div>

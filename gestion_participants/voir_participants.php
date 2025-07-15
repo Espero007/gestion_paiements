@@ -6,15 +6,26 @@ require_once(__DIR__ . '/../includes/header.php');
 $stmt = 'SELECT id_participant, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance FROM participants WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id_participant';
 $resultat = $bdd->query($stmt);
 
+
+
 if (!$resultat) {
     redirigerVersPageErreur(500, obtenirURLcourant());
 } else {
     // Les données sont récupérées
     while ($ligne = $resultat->fetch(PDO::FETCH_ASSOC)) {
+        $stmtBanques = $bdd->prepare("SELECT COUNT(*) AS total FROM informations_bancaires WHERE id_participant = ?");
+        $stmtBanques->execute([$ligne['id_participant']]);
+        $banqueCount = $stmtBanques->fetch(PDO::FETCH_ASSOC)['total'];
+        
+        // Intégrer le nombre de banques dans les données du participant
+        $ligne['banque_count'] = $banqueCount;
+
+        // Ajouter au tableau final
         $participants[] = $ligne;
     }
 }
 $resultat->closeCursor();
+
 // $participants = [];
 ?>
 
@@ -128,6 +139,12 @@ $resultat->closeCursor();
                                                                     <li>
                                                                         <a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>
                                                                     </li>
+                                                                    <?php  if ($participant['banque_count'] > 1): ?>
+                                                                        <li>
+                                                                            <a href="supprimer_une_banque.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item text-danger">Supprimer un compte bancaire</a>
+                                                                        </li>
+                                                                    <?php endif; ?>
+
                                                                     <li>
                                                                         <a href="lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer à une activité</a>
                                                                     </li>
