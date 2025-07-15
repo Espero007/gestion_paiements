@@ -35,32 +35,36 @@ if (isset($_POST['inscription'])) {
         // Pas d'erreurs
 
         $token = bin2hex(random_bytes(16)); // token de vérification
-        $stmt = $bdd->prepare("INSERT INTO connexion(nom,prenoms,email,password,token_verification) VALUES (:val1,:val2,:val3,:val4,:val5)");
-
-        $resultat = $stmt->execute([
-            "val1" => $_POST["nom"],
-            "val2" => $_POST["prenoms"],
-            "val3" => $_POST["email"],
-            "val4" => password_hash($_POST["password"], PASSWORD_DEFAULT),
-            "val5" => $token
-        ]);
+        
+        $_SESSION['email'] = $_POST ['email'];
 
         $lien_verif = obtenirURLcourant(true).'/auth/submit/verifie_email.php?email='. urldecode($_POST['email']).'&token='.$token;
 
-        
         if (envoyerLienValidationEmail($lien_verif, $_POST['email'])) {
             $_SESSION["email_envoye"] = true;
+            $stmt = $bdd->prepare("INSERT INTO connexion(nom,prenoms,email,password,token_verification) VALUES (:val1,:val2,:val3,:val4,:val5)");
+
+            $resultat = $stmt->execute([
+                "val1" => $_POST["nom"],
+                "val2" => $_POST["prenoms"],
+                "val3" => $_POST["email"],
+                "val4" => password_hash($_POST["password"], PASSWORD_DEFAULT),
+                "val5" => $token
+            ]);
+
+            if (!$resultat) {
+            $echec_enregistrement_donnees = true;
+            } else {
+                // Insertion réussie
+                // $_SESSION['inscription_reussie'] = true;
+                header('location:connexion.php');
+                exit;
+            }
         }else{
             $_SESSION['email_envoye'] = false;
         }
 
-        if (!$resultat) {
-            $echec_enregistrement_donnees = true;
-        } else {
-            // Insertion réussie
-            // $_SESSION['inscription_reussie'] = true;
-            header('location:connexion.php');
-            exit;
-        }
+        header('location:connexion.php');
+        exit;
     }
 }
