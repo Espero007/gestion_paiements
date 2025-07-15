@@ -126,8 +126,8 @@ require_once("submit/submit_connexion.php");
                                         <!-- Se souvenir de moi -->
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Se souvenir de moi</label>
+                                                <input type="checkbox" class="custom-control-input" id="customCheck" name="souvenir"  value="yes">
+                                                <label class="custom-control-label" for="customCheck" >Se souvenir de moi</label>
                                             </div>
                                         </div>
 
@@ -135,9 +135,7 @@ require_once("submit/submit_connexion.php");
                                             <button class="btn btn-primary w-100" type="submit" name="connexion">Se connecter</button>
                                         </div>
 
-                                        <label for="souvenir"> 
-                                            <input type="checkbox" value="yes" name="souvenir"> Se souvenir de moi
-                                        </label>
+                                        
                                     </form>
                                     <hr>
                                     <div class="text-center">

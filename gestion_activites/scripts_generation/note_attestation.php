@@ -53,6 +53,11 @@ try {
     exit;
 }
 
+if(!valider_id('get', 'id', $bdd, 'participations_activites')){
+    redirigerVersPageErreur(404,$_SESSION['previous_url']);
+
+}
+
 // Requête SQL pour récupérer les informations
 
 $sql = "
@@ -396,6 +401,9 @@ if ($document === 'note') {
     $pdf = new Note_Service();
     $pdf->AddPage();
     $pdf->SetFont('trebuc', '', 10);
+    
+    $information_supplementaire = ['titre' =>$titre_activite ];
+    genererHeader($pdf, 'note_service', $information_supplementaire);
 
     $html = '
     <style>
@@ -463,6 +471,9 @@ if ($document === 'note') {
     $pdf1->AddPage();
     $pdf1->SetFont('trebuc', '', 10);
     // $pdf->Ln(0);
+
+    $information_supplementaire = ['titre' => $titre_activite ];
+    genererHeader($pdf, 'attestation_collective', $information_supplementaire);
 
     $html = '
     <style>

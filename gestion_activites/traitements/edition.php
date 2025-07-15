@@ -24,7 +24,7 @@ foreach ($champs_attendus as $key => $value) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enregistrer'])) {
 
     foreach ($champs_attendus as $champ) {
-        if (!isset($_POST[$champ])) {
+        if (!isset($_POST[$champ])) { 
             redirigerVersPageErreur(404, $_SESSION['previous_url']);
         }
         if (!empty($_POST[$champ])) {
