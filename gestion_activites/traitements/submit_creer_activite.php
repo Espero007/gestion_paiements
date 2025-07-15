@@ -113,7 +113,7 @@ if ($recuperation_type_activite) {
              * Elle est stricte et positive : on valide la chaîne si elle correspond entièrement au motif.
              */
 
-            if ($champ != 'timbre' && $champ != 'reference') {
+            if ($champ != 'timbre' && $champ != 'reference' && $champ != 'description') {
                 if (!preg_match('/^[\p{L}\p{N} \-\']+$/u', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "Ce champ contient des caractères non valides !";
