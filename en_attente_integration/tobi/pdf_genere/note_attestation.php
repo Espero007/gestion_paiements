@@ -167,11 +167,11 @@ $html .= '
 $pdf->writeHTML($html, true, false, true, false, '');
 
 // Affichage du PDF dans le navigateur
-$pdf->Output(__DIR__.'/Note_de_service.pdf', 'F'); // 'F' sauvegarder sur le disque
+$pdf->Output(__DIR__.'/Note_de_service.pdf', 'I'); // 'F' sauvegarder sur le disque
 echo '<a href="Note_de_service.pdf" target="_blank"> Note de service </a>';
 
 
-
+    
 // ****ATTESTATION COLLECTIVE****
 
 $pdf1 = new TCPDF();

@@ -72,6 +72,15 @@ try {
         FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
 
+        CREATE TABLE IF NOT EXISTS token_souvenir
+        (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        token VARCHAR(64) NOT NULL,
+        expire_le DATETIME NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES connexion(user_id) ON DELETE CASCADE
+        );
+
         CREATE TABLE IF NOT EXISTS diplomes
         (
         id_diplome INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
