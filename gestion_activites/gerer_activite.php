@@ -28,7 +28,16 @@ require_once('traitements/gerer_activite.php');
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h4 mb-4 text-gray-800">Activités / <strong>Gestion de l'activité</strong></h1>
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h4 mb-0 text-gray-800">Activités / <strong>Gestion de l'activité</strong></h1>
+                        <?php if (count($participants_associes) != 0) : ?>
+                            <a href="/gestion_activites/generation_documents.php?id_activite=<?= $id_activite ?>" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+                                <i class="fas fa-download text-white-50 mr-2"></i> Générer les documents</a>
+
+
+                        <?php endif; ?>
+                    </div>
+
                     <p class="mt-2">Gérez ici votre activité</p>
 
                     <!-- Fiche informative -->
@@ -39,7 +48,7 @@ require_once('traitements/gerer_activite.php');
                         <div class="card-body">
                             <!-- Messages divers -->
                             <?php if (isset($_SESSION['liaison_reussie'])) : ?>
-                                <?php afficherAlerte('liaison_reussie', 'success', true);?>
+                                <?php afficherAlerte('liaison_reussie', 'success', true); ?>
                             <?php endif; ?>
 
                             <?php if (isset($_SESSION['success'])) : ?>
@@ -48,6 +57,10 @@ require_once('traitements/gerer_activite.php');
 
                             <?php if (isset($_SESSION['erreur_modifier_infos'])) : ?>
                                 <?php afficherAlerte('erreur_modifier_infos', 'danger', true) ?>
+                            <?php endif; ?>
+
+                            <?php if (isset($_SESSION['modification_reussie'])) : ?>
+                                <?php afficherAlerte('modification_reussie', 'success', true) ?>
                             <?php endif; ?>
                             <!-- Fin Messages divers  -->
 
@@ -74,6 +87,18 @@ require_once('traitements/gerer_activite.php');
                             <p class="mb-3">
                                 <span class="font-weight-bold">Centre : </span>
                                 <span><?= htmlspecialchars($activite['centre']) ?></span>
+                            </p>
+
+                            <!-- Timbre -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Timbre : </span>
+                                <span><?= htmlspecialchars($activite['timbre']) ?></span>
+                            </p>
+
+                            <!-- Référence -->
+                            <p class="mb-3">
+                                <span class="font-weight-bold">Référence : </span>
+                                <span><?= htmlspecialchars($activite['reference']) ?></span>
                             </p>
 
                             <!-- Premier responsable et titre premier responsable -->
@@ -161,21 +186,13 @@ require_once('traitements/gerer_activite.php');
                                     <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres actions </button>
 
                                     <ul class="dropdown-menu shadow">
-                                        <!-- <li>
-                                            <hr class="dropwdown-divider">
-                                        </li> -->
+
                                         <li>
                                             <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Associer des participants</a>
                                         </li>
                                         <li>
-                                            <a href="/<?= $chemin_note_generatrice ?>" class="dropdown-item fs-6 custom-dropdown-item" target="_blank">Visualiser la note génératrice de l'activité</a>
+                                            <hr class="dropwdown-divider my-1">
                                         </li>
-
-                                        <?php if (count($participants_associes) != 0) : ?>
-                                            <li>
-                                                <a href="/gestion_activites/generation_documents.php?id_activite=<?= $id_activite ?>" class="dropdown-item fs-6 custom-dropdown-item">Générer les documents</a>
-                                            </li>
-                                        <?php endif; ?>
                                         <li>
                                             <a href="#" class="dropdown-item text-danger fs-6 custom-dropdown-item">Supprimer</a>
                                         </li>
@@ -200,7 +217,7 @@ require_once('traitements/gerer_activite.php');
                                     <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="btn btn-outline-primary">Associer des participants</a>
                                 </div>
                             <?php else : ?>
-                                <?php afficherSousFormeTableau($informations, 'table-responsive text-nowrap', 'table-bordered text-center', false, false) ?>
+                                <?php afficherSousFormeTableau($informations, 'table-responsive text-nowrap', 'table-bordered text-center', false, true) ?>
                             <?php endif; ?>
                         </div>
                     </div>

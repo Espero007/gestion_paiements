@@ -57,37 +57,36 @@ require_once("submit/submit_connexion.php");
 
                                     <?php
                                     if (isset($_SESSION['deconnexion']) && !isset($_SESSION['timeout_atteint'])) {
-                                        // echo "bonjour";
                                         session_unset(); // On détruit les varaibles de la session
                                         session_destroy(); // On détruit la session
-                                    ?>
-                                        <div class="alert alert-success text-center">Vous êtes à présent déconnecté(e) !</div>
-                                    <?php
+                                        afficherAlerte('Vous êtes à présent déconnecté(e) !', 'success');
                                     } elseif (isset($_SESSION['deconnexion']) && isset($_SESSION['timeout_atteint'])) {
                                         // déconnexion due au timeout
-                                    ?>
-                                        <div class="alert alert-info text-center">Vous avez été déconnecté(e) pour cause d'inactivité. Veuillez vous reconnecter avant de poursuivre.</div>
-                                    <?php
+                                        afficherAlerte('Vous avez été déconnecté(e) pour cause d\'inactivité. Veuillez vous reconnecter avant de poursuivre.', 'info');
                                         session_unset();
                                         session_destroy();
                                     }
                                     ?>
                                     <?php if (isset($email_non_valide)) : ?>
-                                        <div class="alert alert-info text-center">Votre email n'a pas encore été confirmé. Veuillez consulter votre boite mail ou <a href="<?= 'renvoyerLienConfirmation.php?email=' . $_POST['email'] ?>">renvoyer un lien de confirmation</a> si vous n'avez pas reçu de lien.</div>
+                                        <?php
+                                        $message = 'Votre email n\'a pas encore été confirmé. Veuillez consulter votre boite mail ou <a href="' . 'renvoyerLienConfirmation.php?email=' . $_POST['email'] . '">renvoyer un lien de confirmation</a> si vous n\'avez pas reçu de lien.';
+                                        afficherAlerte($message, 'info')
+                                        ?>
                                     <?php endif; ?>
 
                                     <?php if (isset($_SESSION['erreur_avec_verification_email'])) : ?>
-                                        <?php
-                                        afficherAlerte('Une erreur s\'est produite lors de la vérification de l\'email', 'danger');
-                                        unset($_SESSION['erreur_avec_verification_email'])
-                                        ?>
+                                        <?php afficherAlerte('erreur_avec_verification_email', 'danger', true); ?>
+                                    <?php endif; ?>
+
+                                    <?php if (isset($_SESSION['lien_invalide'])) : ?>
+                                        <?php afficherAlerte('lien_invalide', 'info', true); ?>
                                     <?php endif; ?>
 
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Contents de vous revoir !</h1>
                                         <p>Connectez-vous à votre compte pour retourner à la gestion de vos activités.</h2>
                                     </div>
-                                    <form action="" method="post">
+                                    <form action="" method="post" class="user">
                                         <div class="form-group">
                                             <label for="email" class="col-form-label form-label">email</label>
                                             <input type="email" name="email" id="email" aria-describedby="emailHelp" placeholder="Entrez votre adresse email..." class="form-control 
@@ -95,12 +94,12 @@ require_once("submit/submit_connexion.php");
                                                 echo "is-invalid";
                                             } ?>"
                                                 <?php if (isset($erreurs)) {
-                                                    echo "value = \"" . $_POST["email"] . "\"";
+                                                    echo "value = \"" . htmlspecialchars($_POST["email"]) . "\"";
                                                 } ?>>
 
                                             <?php if (isset($erreurs["email"])) {
                                             ?>
-                                                <div id="emailHelp" class="form-text"><?php echo $erreurs["email"] ?></div>
+                                                <div id="emailHelp" class="form-text"><?= $erreurs["email"] ?></div>
                                             <?php } ?>
 
 
@@ -118,10 +117,18 @@ require_once("submit/submit_connexion.php");
 
                                             <?php if (isset($erreurs["password"])) {
                                             ?>
-                                                <div id="passwordHelp" class="form-text"><?php echo $erreurs["password"] ?></div>
+                                                <div id="passwordHelp" class="form-text"><?= $erreurs["password"] ?></div>
                                             <?php } ?>
 
                                             <!-- <div class="d-flex justify-content-end mt-3"><a href="./inscription.php">Mot de passe oublié ?</a></div> -->
+                                        </div>
+
+                                        <!-- Se souvenir de moi -->
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox small">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck">
+                                                <label class="custom-control-label" for="customCheck">Se souvenir de moi</label>
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
@@ -147,6 +154,7 @@ require_once("submit/submit_connexion.php");
     </div>
 
     <?php require_once(__DIR__ . '/../includes/footer.php') ?>
+    <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         (function() {

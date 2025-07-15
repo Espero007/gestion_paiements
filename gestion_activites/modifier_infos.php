@@ -14,9 +14,10 @@ $activity_id = $_GET['id'];
 
 // Récupérer les données de l'activité
 try {
-    $sql = 'SELECT a.*, f.nom_original AS note_generatrice_name 
+
+
+    $sql = 'SELECT a.* 
             FROM activites a 
-            LEFT JOIN fichiers f ON a.id_note_generatrice = f.id_fichier 
             WHERE a.id = :id AND a.id_user = :id_user';
     $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id, 'id_user' => $_SESSION['user_id']]);
@@ -54,6 +55,8 @@ $type_activite = $activity['type_activite'];
 // Initialisation des données pour le formulaire
 $data = [
     'nom' => $activity['nom'],
+    'timbre' => $activity['timbre'],
+    'reference' => $activity['reference'],
     'description' => $activity['description'],
     'centre' => $activity['centre'],
     'premier_responsable' => $activity['premier_responsable'],
@@ -75,9 +78,9 @@ $data = [
 
 // Champs à afficher dans le message de succès par type
 $fields_to_display = [
-    '1' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'date_debut', 'date_fin'],
-    '2' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin'],
-    '3' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin']
+    '1' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'date_debut', 'date_fin' , 'timbre' , 'reference'],
+    '2' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin', 'timbre' , 'reference'],
+    '3' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin', 'timbre' , 'reference']
 ];
 
 // Récupérer les données et erreurs de la session si présentes
@@ -186,6 +189,28 @@ unset($_SESSION['success_data']);
                                                 </div>
                                             </div>
 
+                                            <!-- Timbre de l'activité -->
+                                            <div class="mb-4 row">
+                                                <label for="timbre" class="col-sm-3 col-form-label">Timbre</label>
+                                                <div class="col-sm-9">
+                                                    <input id="timbre" type="text" name="timbre" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['timbre']) ?>">
+                                                    <small class="text-danger"><?= $errors['timbre'] ?? '' ?></small>
+                                                    <?= isset($errors['timbre']) ? '<br>' : '' ?>
+                                                    <small> Note : Il doit être de la forme <strong>/DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD</strong></small>
+                                                </div>
+                                            </div>
+
+                                            <!-- Référence -->
+                                            <div class="mb-4 row">
+                                                <label for="reference" class="col-sm-3 col-form-label">Référence</label>
+                                                <div class="col-sm-9">
+                                                    <input id="reference" type="text" name="reference" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['reference']) ?>">
+                                                    <small class="text-danger"><?= $errors['reference'] ?? '' ?></small>
+                                                    <?= isset($errors['reference']) ? '<br>' : '' ?>
+                                                    <small> Note : Elle doit être de la forme <strong>0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA</strong></small>
+                                                </div>
+                                            </div>
+
                                             <!-- Premier responsable -->
                                             <div class="mb-2 row">
                                                 <label for="premier_responsable" class="col-sm-3 col-form-label">Premier responsable</label>
@@ -288,7 +313,7 @@ unset($_SESSION['success_data']);
                                             <?php if (in_array($type_activite, [2, 3])) : ?>
                                                 <!-- Indemnité(s) forfaitaire(s) -->
                                                 <div class="mb-2 row">
-                                                    <label for="indemnite_forfaitaire" class="col-sm-3 col-form-label">Indemnité(s) forfaitaire(s) (FCFA) <small class="text-muted">(séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75)</small></label>
+                                                    <label for="indemnite_forfaitaire" class="col-sm-3 col-form-label">Indemnité(s) forfaitaire(s) (FCFA) <small class="text-muted">(séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75(Chaque montant sera associé au titre en respectant l'ordre de saisie) , NB:Si un titre n'a pas d'indemnité , renseignez 0)</small></label>
                                                     <div class="col-sm-9">
                                                         <input id="indemnite_forfaitaire" type="text" name="indemnite_forfaitaire" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['indemnite_forfaitaire']) ?>">
                                                         <small class="text-danger"><?= $errors['indemnite_forfaitaire'] ?? '' ?></small>
@@ -322,13 +347,13 @@ unset($_SESSION['success_data']);
                                             <legend class="h6"><strong>Autres informations</strong></legend>
                                             <hr>
                                             <!-- Note génératrice -->
-                                            <div class="mb-2 row">
+                                            <!-- <div class="mb-2 row">
                                                 <label for="note_generatrice" class="col-sm-3 col-form-label">Note génératrice <small class="text-muted">(fichier facultatif)</small></label>
                                                 <div class="col-sm-9">
                                                     <input id="note_generatrice" type="file" name="note_generatrice" class="form-control">
                                                     <small class="text-danger"><?= $errors['note_generatrice'] ?? '' ?></small>
                                                 </div>
-                                            </div>
+                                            </div> -->
 
                                             <!-- Date de début -->
                                             <div class="mb-2 row">

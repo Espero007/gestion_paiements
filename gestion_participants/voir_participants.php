@@ -53,13 +53,6 @@ $resultat->closeCursor();
                             <div class="card-body">
                                 <!-- Messages de succès -->
 
-                                <!-- Ajout de comptes -->
-                                <?php if (isset($_SESSION['comptes_ajoutes'])) : ?>
-                                    <?php
-                                    afficherAlerte($_SESSION['comptes_ajoutes'], 'success');
-                                    unset($_SESSION['comptes_ajoutes']); ?>
-                                <?php endif; ?>
-
                                 <!-- Liaison participant-activité réussie -->
                                 <?php if (isset($_SESSION['liaison_reussie'])) : ?>
                                     <?php afficherAlerte($_SESSION['liaison_reussie'], 'success');
@@ -142,7 +135,7 @@ $resultat->closeCursor();
                                                                         <hr class="dropdown-divider">
                                                                     </li>
                                                                     <li>
-                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item del-btn" id='<?= $participant['id_participant'] ?>' data-toggle="modal" data-target="#deletionModal"></i>Supprimer</a>
+                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item del-btn" id='<?= $participant['id_participant'] ?>' data-toggle="modal" data-target="#deletionModal">Supprimer</a>
                                                                     </li>
                                                                 </ul>
                                                             </div>

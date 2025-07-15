@@ -58,7 +58,7 @@ require_once('traitements/voir_profil.php');
 
                                     <?php if (isset($email_envoye)) : ?>
                                         <?php
-                                        $message = $email_envoye ? ' Vous êtes presque au bout, nous avons envoyé un lien de confirmation à l\'email indiqué : cliquez dessus pour achever le processus !' : 'Une erreur s\'est produite lors de l\'envoi du lien de confirmation à votre email, veuillez réessayer la mise à jour de votre email plus tard';
+                                        $message = $email_envoye ? ' Vous êtes presque au bout, nous avons envoyé un lien de confirmation à l\'email indiqué, cliquez dessus pour achever le processus !' : 'Une erreur s\'est produite lors de l\'envoi du lien de confirmation à votre email, veuillez réessayer la mise à jour de votre email plus tard';
                                         $type = $email_envoye ? 'success' : 'info';
                                         afficherAlerte($message, $type);
                                         ?>
@@ -76,10 +76,7 @@ require_once('traitements/voir_profil.php');
                                     <!-- Lien de confirmation d'email invalide -->
 
                                     <?php if (isset($_SESSION['lien_invalide'])) : ?>
-                                        <?php
-                                        afficherAlerte('Le lien de confirmation que vous avez utilisé n\'est plus ou pas valide', 'info');
-                                        unset($_SESSION['lien_invalide']);
-                                        ?>
+                                        <?php afficherAlerte('lien_invalide', 'info', true);?>
                                     <?php endif; ?>
 
                                     <div class="d-flex align-items-start align-items-sm-center gap-4">
@@ -90,7 +87,7 @@ require_once('traitements/voir_profil.php');
                                                     <form action="" method="post" enctype="multipart/form-data">
                                                         <label for="upload" class="btn btn-primary mr-2 mb-0" tabindex="0">
                                                             <span class="d-none d-sm-block">Choisir une nouvelle photo</span>
-                                                            <i class="bx bx-upload d-block d-sm-none"></i>
+                                                            <i class="bi bi-cloud-upload d-block d-sm-none"></i>
                                                             <input type="file" name="photo" id="upload" class="account-file-input" hidden accept='image/png, image/jpeg, image/jpg'>
                                                         </label>
                                                         <button type="submit" class="btn btn-outline-secondary account-image-reset" name='choisir_photo'>

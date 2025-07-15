@@ -36,6 +36,18 @@ try {
 
     $sqlTables = "
 
+        CREATE TABLE IF NOT EXISTS connexion
+        (
+        user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        nom VARCHAR(100) NOT NULL,
+        prenoms VARCHAR(100) NOT NULL,
+        email VARCHAR(100) UNIQUE NOT NULL,
+        password VARCHAR(100) NOT NULL,
+        photo_profil VARCHAR(500) NULL,
+        token_verification VARCHAR(255) NOT NULL,
+        est_verifie BOOLEAN DEFAULT FALSE
+        );
+
         CREATE TABLE IF NOT EXISTS activites
         (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -52,22 +64,12 @@ try {
         titre_organisateur VARCHAR(100) NOT NULL,
         financier VARCHAR(100) NOT NULL,
         titre_financier VARCHAR(100) NOT NULL,
-        id_note_generatrice INT NOT NULL,
+        timbre VARCHAR(300) NOT NULL,
         taux_journalier DECIMAL(50) NULL,
         taux_taches DECIMAL(50) NULL,
-        frais_deplacement_journalier DECIMAL(50) NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS connexion
-        (
-        user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        nom VARCHAR(100) NOT NULL,
-        prenoms VARCHAR(100) NOT NULL,
-        email VARCHAR(100) UNIQUE NOT NULL,
-        password VARCHAR(100) NOT NULL,
-        photo_profil VARCHAR(500) NULL,
-        token_verification VARCHAR(255) NOT NULL,
-        est_verifie BOOLEAN DEFAULT FALSE
+        frais_deplacement_journalier DECIMAL(50) NULL,
+        reference VARCHAR(300) NOT NULL,
+        FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
 
         CREATE TABLE IF NOT EXISTS token_souvenir
@@ -83,7 +85,30 @@ try {
         (
         id_diplome INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         noms VARCHAR(500) NOT NULL,
-        id_activite INT NOT NULL
+        id_activite INT NOT NULL,
+        FOREIGN KEY (id_activite) REFERENCES activites(id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS titres
+        (
+        id_titre INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        nom VARCHAR(100) NOT NULL,
+        id_activite INT NOT NULL,
+        indemnite_forfaitaire VARCHAR(100) NULL,
+        FOREIGN KEY (id_activite) REFERENCES activites(id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS participants
+        (
+        id_participant INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id_user INT NOT NULL,
+        nom VARCHAR(100) NOT NULL,
+        prenoms VARCHAR(100) NOT NULL,
+        matricule_ifu VARCHAR(100) UNIQUE NOT NULL,
+        date_naissance DATE NOT NULL,
+        lieu_naissance VARCHAR(100) NOT NULL,
+        diplome_le_plus_eleve VARCHAR(100) NOT NULL,
+        FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
 
         CREATE TABLE IF NOT EXISTS fichiers
@@ -101,19 +126,9 @@ try {
         id_participant INT NOT NULL,
         banque VARCHAR(100) NOT NULL,
         numero_compte VARCHAR(100) NOT NULL,
-        id_rib INT NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS participants
-        (
-        id_participant INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        id_user INT NOT NULL,
-        nom VARCHAR(100) NOT NULL,
-        prenoms VARCHAR(100) NOT NULL,
-        matricule_ifu VARCHAR(100) UNIQUE NOT NULL,
-        date_naissance DATE NOT NULL,
-        lieu_naissance VARCHAR(100) NOT NULL,
-        diplome_le_plus_eleve VARCHAR(100) NOT NULL
+        id_rib INT NOT NULL,
+        FOREIGN KEY (id_participant) REFERENCES participants(id_participant) ON DELETE CASCADE,
+        FOREIGN KEY (id_rib) REFERENCES fichiers(id_fichier) ON DELETE CASCADE
         );
 
         CREATE TABLE IF NOT EXISTS participations
@@ -125,15 +140,11 @@ try {
         diplome VARCHAR(100) NOT NULL,
         id_compte_bancaire INT NOT NULL,
         nombre_jours INT NULL,
-        nombre_taches INT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS titres
-        (
-        id_titre INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        nom VARCHAR(100) NOT NULL,
-        id_activite INT NOT NULL,
-        indemnite_forfaitaire VARCHAR(100) NULL
+        nombre_taches INT NULL,
+        FOREIGN KEY (id_participant) REFERENCES participants(id_participant) ON DELETE CASCADE,
+        FOREIGN KEY (id_activite) REFERENCES activites(id) ON DELETE CASCADE,
+        FOREIGN KEY (id_titre) REFERENCES titres(id_titre) ON DELETE CASCADE,
+        FOREIGN KEY (id_compte_bancaire) REFERENCES informations_bancaires(id) ON DELETE CASCADE
         );
     ";
 

@@ -118,7 +118,7 @@ if (isset($_POST['modifier_infos'])) {
             $token = bin2hex(random_bytes(16));
             $lien_verif = $lien_verif = obtenirURLcourant(true) . '/auth/submit/verifie_email.php?email=' . urldecode($_POST['email']) . '&token=' . $token.'&modification_email=1';
 
-            if(envoyerLienValidationEmail($lien_verif, $_POST['email'])){
+            if(envoyerLienValidationEmail($lien_verif, $_POST['email'], $_SESSION['nom'], $_SESSION['prenoms'], 1)){
                 $_SESSION['modification_email'] = true;
                 $_SESSION['email_a_verifie'] = $_POST['email'];
                 $_SESSION['token'] = $token;
@@ -126,6 +126,7 @@ if (isset($_POST['modifier_infos'])) {
             }else{
                 $email_envoye = false;
             }
+            $_POST = [];
         }
     }
 }

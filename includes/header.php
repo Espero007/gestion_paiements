@@ -48,7 +48,7 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
             // Il y a un souci, l'utilisateur n'a pas été retrouvé en bdd donc on redirige vers la page de connexion sans préavis en supprimant la session en cours
             session_unset();
             session_destroy();
-            header('location:./auth/connexion.php');
+            header('location:/auth/connexion.php');
             exit;
         } else {
             // Le gars est bien retrouvé dans la bdd et n'a pas de soucis

@@ -61,7 +61,7 @@ if (isset($_POST['inscription'])) {
                 exit;
             }
         }else{
-            $_SESSION['email_envoye'] = false;
+            $_SESSION['email_non_envoye'] = 'Une erreur d\'est produite lors de l\'envoi du lien de confirmation de votre email, veuillez réessayer plus tard';
         }
 
         header('location:connexion.php');

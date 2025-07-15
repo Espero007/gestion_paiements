@@ -71,7 +71,7 @@ require_once('traitements/generation_documents.php');
                                     <?php if ($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST)) : ?>
                                         <p class="mt-0 mb-2"><small><strong>Note</strong> : Sélectionnez des documents à générer</small></p>
                                     <?php endif; ?>
-                                    <button type="submit" class="btn btn-primary">Sélectionner</button>
+                                    <button type="submit" class="btn btn-primary">Continuer</button>
                                 </form>
                             <?php else: ?>
 

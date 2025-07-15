@@ -102,8 +102,11 @@ require_once('traitements/submit_creer_activite.php');
 
                                             <!-- Informations générales -->
                                             <fieldset>
-                                                <legend class="h6"><strong>Informations générales</strong></legend>
-                                                <hr>
+                                                <legend>
+                                                    <div class="divider text-start mt-0">
+                                                        <div class="divider-text"><strong>Informations générales</strong></div>
+                                                    </div>
+                                                </legend>
                                                 <!-- Nom -->
                                                 <div class="mb-2 row">
                                                     <label for="nom" class="col-sm-3 col-form-label">Nom</label>
@@ -128,6 +131,28 @@ require_once('traitements/submit_creer_activite.php');
                                                     <div class="col-sm-9">
                                                         <input id="centre" type="text" name="centre" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['centre']) ?>">
                                                         <small class="text-danger"><?= $errors['centre'] ?? '' ?></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Timbre de l'activité -->
+                                                <div class="mb-4 row">
+                                                    <label for="timbre" class="col-sm-3 col-form-label">Timbre</label>
+                                                    <div class="col-sm-9">
+                                                        <input id="timbre" type="text" name="timbre" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['timbre']) ?>">
+                                                        <small class="text-danger"><?= $errors['timbre'] ?? '' ?></small>
+                                                        <?= isset($errors['timbre']) ? '<br>' : '' ?>
+                                                        <small> Note : Il doit être de la forme <strong>/DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD</strong></small>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Référence -->
+                                                <div class="mb-4 row">
+                                                    <label for="reference" class="col-sm-3 col-form-label">Référence</label>
+                                                    <div class="col-sm-9">
+                                                        <input id="reference" type="text" name="reference" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['reference']) ?>">
+                                                        <small class="text-danger"><?= $errors['reference'] ?? '' ?></small>
+                                                        <?= isset($errors['reference']) ? '<br>' : '' ?>
+                                                        <small> Note : Elle doit être de la forme <strong>0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA</strong></small>
                                                     </div>
                                                 </div>
 
@@ -210,12 +235,16 @@ require_once('traitements/submit_creer_activite.php');
                                                         <small> Note : séparés par des virgules, lettres uniquement, ex. : R/DEC,Superviseur (il s'agit des titres que les participants de l'activité auront. Tout comme dans le cas des diplômes, les indiquer ici vous facilitera le travail quand vous devrez lier des participants à votre activité)</small>
                                                     </div>
                                                 </div>
+
                                             </fieldset>
 
                                             <!-- Informations financières -->
-                                            <fieldset class="mt-4">
-                                                <legend class="h6"><strong>Informations financières</strong></legend>
-                                                <hr>
+                                            <fieldset>
+                                                <legend>
+                                                    <div class="divider text-start mt-0">
+                                                        <div class="divider-text"><strong>Informations financières</strong></div>
+                                                    </div>
+                                                </legend>
 
                                                 <!-- Champ spécifique aux types 1 et 2 -->
                                                 <?php if (in_array($type_activite, [1, 2])) : ?>
@@ -237,7 +266,7 @@ require_once('traitements/submit_creer_activite.php');
                                                         <div class="col-sm-9">
                                                             <input id="indemnite_forfaitaire" type="text" name="indemnite_forfaitaire" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['indemnite_forfaitaire']) ?>">
                                                             <small class="text-danger"><?= $errors['indemnite_forfaitaire'] ?? '' ?></small>
-                                                            <small class="text-muted">Note : séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75 (chaque montant indiqué sera associé au titre correspondant en respectant l'ordre de saisie)</small>
+                                                            <small class="text-muted">Note : séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75 (chaque montant indiqué sera associé au titre correspondant en respectant l'ordre de saisie) , NB : Si un titre n'a pas d'indemnité , renseignez 0</small>
                                                         </div>
                                                     </div>
                                                 <?php endif; ?>
@@ -264,17 +293,21 @@ require_once('traitements/submit_creer_activite.php');
                                             </fieldset>
 
                                             <!-- Autres informations -->
-                                            <fieldset class="mt-4">
-                                                <legend class="h6"><strong>Autres informations</strong></legend>
-                                                <hr>
+                                            <fieldset>
+                                                <legend>
+                                                    <div class="divider text-start mt-0">
+                                                        <div class="divider-text"><strong>Autres informations</strong></div>
+                                                    </div>
+                                                </legend>
+
                                                 <!-- Note génératrice -->
-                                                <div class="mb-2 row">
+                                                <!-- <div class="mb-2 row">
                                                     <label for="note_generatrice" class="col-sm-3 col-form-label">Note génératrice <small class="text-muted">(fichier, obligatoire)</small></label>
                                                     <div class="col-sm-9">
                                                         <input id="note_generatrice" type="file" name="note_generatrice" class="form-control">
                                                         <small class="text-danger"><?= $errors['note_generatrice'] ?? '' ?></small>
                                                     </div>
-                                                </div>
+                                                </div> -->
 
                                                 <!-- Date de début -->
                                                 <div class="mb-2 row">

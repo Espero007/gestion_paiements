@@ -24,12 +24,13 @@ if ($redirect) {
 // Arrivé ici on a une activité valide
 
 // Prenons la liste des banques dont on peut générer les ordres de virement
-$stmt = $bdd->prepare('
-    SELECT DISTINCT banque
-    FROM participants p
-    INNER JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
-    WHERE p.id_user=' . $_SESSION['user_id'] . '
-');
+$stmt = $bdd->prepare(
+    'SELECT DISTINCT banque
+    FROM participations pa
+    INNER JOIN participants p ON pa.id_participant = p.id_participant
+    INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
+    WHERE p.id_user='. $_SESSION['user_id'] .' AND pa.id_activite='.$id_activite
+);
 $stmt->execute();
 $banques = $stmt->fetchAll(PDO::FETCH_NUM);
 
@@ -59,10 +60,10 @@ foreach ($banques as $banque) {
     $cle = strtolower(str_replace(" ", '_', 'ordre_virement_' . supprimerAccents($banque[0])));
     $urls[$cle] = '/gestion_activites/scripts_generation/ordre_virement.php?id='.$id_activite.'&banque=' . $banque[0];
 }
-$urls['synthese_ordres_virements'] = 'Url à définir';
+$urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id='.$id_activite;
 $urls['liste_rib'] = 'Url à définir';
 
-$pdfs_non_telechargeables = ['etat_paiement', 'synthese_ordres_virements', 'liste_rib'];
+$pdfs_non_telechargeables = ['etat_paiement', 'liste_rib'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($documents as $document => $label) {
