@@ -32,11 +32,27 @@ require_once('traitements/generation_documents.php');
                     <!-- Documents à générer -->
                     <div class="card shadow mb-4">
                         <div class="card-header">
-                            <h6 class="text-primary font-weight-bold">Documents à générer</h6>
+                            <h6 class="text-primary font-weight-bold">Documents</h6>
                         </div>
                         <div class="card-body">
 
-                            <p class=""><strong>Note</strong> : Pour une activité, 06 types de documents distincts peuvent être générés et téléchargés en PDF : la note de service, l'attestation collective de travail, l’état de paiement, les ordres de virements, la synthèse des ordres de virements et la liste des RIB des participants. Choisissez en dessous les documents que vous voulez générer et télécharger parmi les 06.</p>
+                            <!-- Messages divers -->
+
+                            <?php if (!$entete_editee) : ?>
+                                <?php
+                                $message = 'Il semble que vous n\'avez pas encore défini les informations à utiliser pour l\'entête de vos documents. Cliquez ici pour le faire si vous souhaitez personnaliser l\'entête de vos documents <a href="/gestion_activites/edition_en_ligne.php?id=' . $id_activite . '">Editer l\'entête</a>';
+                                afficherAlerte($message, 'info', false, false);
+                                ?>
+                            <?php else: ?>
+                                <?php
+                                $message = 'Cliquez ici si vous souhaitez personnaliser l\'entête de vos documents <a href="/gestion_activites/edition_en_ligne.php?id=' . $id_activite . '">Editer l\'entête</a>';
+                                afficherAlerte($message, 'info');
+                                ?>
+                            <?php endif; ?>
+
+                            <!-- Fin Messages divers -->
+
+                            <small><strong>Note</strong> : Pour une activité, 06 types de documents distincts peuvent être générés et téléchargés en PDF : la note de service, l'attestation collective de travail, l’état de paiement, les ordres de virements, la synthèse des ordres de virements et la liste des RIB des participants. Choisissez en dessous les documents que vous voulez générer et télécharger parmi les 06.</small>
 
                             <div class="divider text-start">
                                 <div class="divider-text"><strong>Liste des documents <?= isset($documents_choisis) ? 'choisis' : '' ?> </strong></div>

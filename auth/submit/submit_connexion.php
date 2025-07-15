@@ -70,7 +70,16 @@ if (isset($_POST['connexion'])) {
                 $_SESSION['prenoms'] = $logged_user['prenoms'];
                 $_SESSION['photo_profil'] = $logged_user['photo_profil'];
                 $_SESSION['dernier_signe_activite'] = time();
+                
+                if(isset($_POST['souvenir'])){
+                    $token = bin2hex(random_bytes(16));
+                    $expire = date('Y-m-d H:i:s', time() + (86400*30));
 
+                    $smt = $bdd->prepare("INSERT INTO token_souvenir(user_id,token, expire_le) VALUES (?,?,?)");
+                    $smt->execute([$logged_user['user_id'],hash('sha256',$token),$expire]);
+
+                    setcookie('souvenir', $token, time()+(86400*30),'/','',true,true);
+                }
                 // Redirection vers la page d'accueil par défaut mais s'il y avait une url on la chope
 
                 if (isset($_SESSION['previous_url'])) {

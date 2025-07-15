@@ -54,7 +54,7 @@ try {
         type_activite INT NOT NULL,
         id_user INT NOT NULL,
         nom VARCHAR(100) NOT NULL,
-        description VARCHAR(500) NOT NULL,
+        description VARCHAR(1000) NOT NULL,
         date_debut DATE NOT NULL,
         date_fin DATE NOT NULL,
         centre VARCHAR(100) NOT NULL,
@@ -70,6 +70,15 @@ try {
         frais_deplacement_journalier DECIMAL(50) NULL,
         reference VARCHAR(300) NOT NULL,
         FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS token_souvenir
+        (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        token VARCHAR(64) NOT NULL,
+        expire_le DATETIME NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
 
         CREATE TABLE IF NOT EXISTS diplomes
@@ -136,6 +145,19 @@ try {
         FOREIGN KEY (id_activite) REFERENCES activites(id) ON DELETE CASCADE,
         FOREIGN KEY (id_titre) REFERENCES titres(id_titre) ON DELETE CASCADE,
         FOREIGN KEY (id_compte_bancaire) REFERENCES informations_bancaires(id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS informations_entete
+        (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id_activite INT NOT NULL,
+        ligne1 VARCHAR(200) NOT NULL,
+        ligne2 VARCHAR(200) NOT NULL,
+        ligne3 VARCHAR(200) NOT NULL,
+        ville VARCHAR(200) NOT NULL,
+        date1 VARCHAR(200) NOT NULL,
+        date2 VARCHAR(200) NOT NULL,
+        FOREIGN KEY (id_activite) REFERENCES activites(id) ON DELETE CASCADE
         );
     ";
 

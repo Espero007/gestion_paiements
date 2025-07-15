@@ -30,16 +30,29 @@ require_once("submit/submit_connexion.php");
                             <div class="col-12">
                                 <div class="p-5">
                                     <!-- Messages divers -->
-                                    <?php if (isset($echec_connexion)) : ?>
-                                        <?php afficherAlerte('Echec de la connexion ! Assurez-vous d\'indiquer correctement vos identifiants de connexion.', 'danger') ?>
-                                    <?php endif; ?>
+                                    <?php
+                                    if (isset($echec_connexion)) {
+                                    ?>
+                                        <div class="alert alert-danger text-center">Echec de la connexion ! Assurez-vous d'indiquer correctement vos identifiants de connexion !</div>
+                                    <?php
+                                    }
+                                    ?>
+                                    <?php if (isset($_SESSION['email_envoye']) && $_SESSION['email_envoye']) : ?>
+                                        <?php 
+                                        $email = $_SESSION['email'];
+                                        $lien = '<a href="https://mail.google.com/mail/u/'.htmlspecialchars($email) .'/#inbox" target="_blank" >'. htmlspecialchars($email).'</a>';
+                                        afficherAlerte('Un lien de vérification a été envoyé au mail : '. $lien .'. Cliquez dessus pour confirmer votre email et accéder à votre compte.', 'info');
+                                        unset($_SESSION['email_envoye']);
+                                        ?>
+                                        
+                                    <?php elseif (isset($_SESSION['email_envoye']) && !$_SESSION['email_envoye']): ?>
 
-                                    <?php if (isset($_SESSION['email_envoye'])) : ?>
-                                        <?php afficherAlerte('email_envoye', 'info', true); ?>
-                                    <?php endif; ?>
-
-                                    <?php if (isset($_SESSION['email_non_envoye'])): ?>
-                                        <?php afficherAlerte('email_non_envoye', 'info', true);?>
+                                        <?php
+                                       
+                                        afficherAlerte('Une erreur s\'est produite lors de l\'envoi du lien de confirmation de votre email, veuillez réessayer plus tard.', 'info');
+                                        unset($_SESSION['email_envoye']);  ?>
+                                        
+                                       
                                     <?php endif; ?>
 
                                     <?php
@@ -121,6 +134,10 @@ require_once("submit/submit_connexion.php");
                                         <div class="mb-3">
                                             <button class="btn btn-primary w-100" type="submit" name="connexion">Se connecter</button>
                                         </div>
+
+                                        <label for="souvenir"> 
+                                            <input type="checkbox" value="yes" name="souvenir"> Se souvenir de moi
+                                        </label>
                                     </form>
                                     <hr>
                                     <div class="text-center">

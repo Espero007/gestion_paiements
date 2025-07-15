@@ -33,8 +33,6 @@ require_once('traitements/gerer_activite.php');
                         <?php if (count($participants_associes) != 0) : ?>
                             <a href="/gestion_activites/generation_documents.php?id_activite=<?= $id_activite ?>" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
                                 <i class="fas fa-download text-white-50 mr-2"></i> Générer les documents</a>
-
-
                         <?php endif; ?>
                     </div>
 
