@@ -52,16 +52,16 @@ foreach ($tailles as &$t) { $t *= $largeur; }
 
 $pdf->SetFont('helvetica', 'B', 11);
 $pdf->SetFillColor(242, 242, 242);
-$pdf->Cell($tailles[0], 10, 'N°', 1, 0, 'C', true);
-$pdf->Cell($tailles[1], 10, 'NOM ET PRENOMS', 1, 0, 'C', true);
+$pdf->MultiCellCell($tailles[0], 10, 'N°', 1, 0, 'C', true);
+$pdf->MultiCellCell($tailles[1], 10, 'NOM ET PRENOMS', 1, 0, 'C', true);
 $pdf->MultiCellCell($tailles[2], 10, 'RIB', 1, 1, 'C', true);
 
 $pdf->SetFont('helvetica', '', 10);
 $pdf->SetFillColor(255, 255, 255);
 foreach ($resultats as $i => $ligne) {
-    $pdf->Cell($tailles[0], 10, $i + 1, 1, 0, 'C'); // déjà centré
-    $pdf->Cell($tailles[1], 10, $ligne['nom'] . ' ' . $ligne['prenoms'], 1, 0, 'C'); // centré maintenant
-    $pdf->Cell($tailles[2], 10, $ligne['rib'], 1, 1, 'C'); // centré maintenant
+    $pdf->MultiCellCell($tailles[0], 10, $i + 1, 1, 0, 'C'); // déjà centré
+    $pdf->MultiCellCell($tailles[1], 10, $ligne['nom'] . ' ' . $ligne['prenoms'], 1, 0, 'C'); // centré maintenant
+    $pdf->MultiCellCell($tailles[2], 10, $ligne['rib'], 1, 1, 'C'); // centré maintenant
 }
 
 // Sortie
