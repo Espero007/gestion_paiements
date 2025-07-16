@@ -1,8 +1,9 @@
 <?php
 require_once(__DIR__ . '/../includes/bdd.php');
+require_once(__DIR__ . '/../constantes_utilitaires.php');
 
-if (isset($_GET['id_activite'])) {
-    $idActivite = intval($_GET['id_activite']);
+if (valider_id('get', 'id', '', 'activites')) {
+    $idActivite = $_GET['id_activite'];
 
     try {
         $bdd->beginTransaction();
@@ -17,17 +18,15 @@ if (isset($_GET['id_activite'])) {
 
         $bdd->commit();
 
-       // Suppression réussie
-        header("Location: /../index.php");
+        // Suppression réussie
+        $_SESSION['suppression_ok'] = 'L\'activité a été supprimée avec succès';
+        header("Location:/gestion_activites/voir_activites.php");
         exit;
-
-
     } catch (PDOException $e) {
         $bdd->rollBack();
-        echo "Erreur lors de la suppression : " . $e->getMessage();
+        // echo "Erreur lors de la suppression : " . $e->getMessage();
     }
-
 } else {
-    echo "ID de l'activité non fourni.";
+    header('location:' . $_SESSION['previous_url']);
+    exit;
 }
-?>

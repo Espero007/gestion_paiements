@@ -184,7 +184,6 @@ require_once('traitements/gerer_activite.php');
                                     <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres actions </button>
 
                                     <ul class="dropdown-menu shadow">
-
                                         <li>
                                             <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Associer des participants</a>
                                         </li>
@@ -192,7 +191,7 @@ require_once('traitements/gerer_activite.php');
                                             <hr class="dropwdown-divider my-1">
                                         </li>
                                         <li>
-                                            <a href="supprimer_activiter.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item text-danger fs-6 custom-dropdown-item">Supprimer</a>
+                                            <a href="#" class="dropdown-item text-danger fs-6 custom-dropdown-item del-btn" data-toggle="modal" data-target="#deletionModal" id="<?= $activite['id'] ?>">Supprimer</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -219,13 +218,8 @@ require_once('traitements/gerer_activite.php');
                             <?php endif; ?>
                         </div>
                     </div>
-
-
-
-
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
 
@@ -246,6 +240,8 @@ require_once('traitements/gerer_activite.php');
 
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
+    <!-- Autres modals -->
+    <?php require_once(__DIR__ . '/../includes/modals.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
 </body>
 

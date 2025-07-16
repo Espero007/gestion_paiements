@@ -16,7 +16,7 @@ if (!$resultat) {
         $stmtBanques = $bdd->prepare("SELECT COUNT(*) AS total FROM informations_bancaires WHERE id_participant = ?");
         $stmtBanques->execute([$ligne['id_participant']]);
         $banqueCount = $stmtBanques->fetch(PDO::FETCH_ASSOC)['total'];
-        
+
         // Intégrer le nombre de banques dans les données du participant
         $ligne['banque_count'] = $banqueCount;
 
@@ -139,7 +139,7 @@ $resultat->closeCursor();
                                                                     <li>
                                                                         <a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>
                                                                     </li>
-                                                                    <?php  if ($participant['banque_count'] > 1): ?>
+                                                                    <?php if ($participant['banque_count'] > 1): ?>
                                                                         <li>
                                                                             <a href="supprimer_une_banque.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item text-danger">Supprimer un compte bancaire</a>
                                                                         </li>
@@ -199,41 +199,11 @@ $resultat->closeCursor();
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Suppression Modal -->
-    <div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="deletionModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Êtes-vous sûr(e) de vouloir continuer ?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">En appuyant sur "Supprimer" vous ne pourrez plus faire marche arrière.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Annuler</button>
-                    <a class="btn btn-danger" href="#" id='deletionModalBtn'>Supprimer</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
+    <!-- Autres modals -->
+    <?php require_once(__DIR__ . '/../includes/modals.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
-
-    <script>
-        const deleteBtns = document.querySelectorAll('.del-btn'); // boutons de suppression des participants
-        const deletionModalBtn = document.getElementById('deletionModalBtn');
-
-        deleteBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id_participant = btn.id;
-                deletionModalBtn.href = '/gestion_participants/supprimer_participant.php?id=' + id_participant;
-            })
-        })
-    </script>
 </body>
 
 </html>

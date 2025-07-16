@@ -2,7 +2,6 @@
 session_start();
 require_once(__DIR__ . '/../../includes/bdd.php');
 
-
 $errors = [];
 $success = false;
 $id_user = $_SESSION['user_id'];
@@ -26,13 +25,11 @@ try {
     $stmt->execute(['id' => $activity_id, 'id_user' => $id_user]);
     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
     if (!$activity) {
         $_SESSION['form_errors'] = ['database' => "Activité non trouvée ou vous n'avez pas les permissions pour la modifier."];
         header('Location:' . $_SESSION["previous_url"]);
         exit;
     }
-
     $type_activite = $activity['type_activite'];
     //$current_id_note_generatrice = $activity['id_note_generatrice'];
 } catch (PDOException $e) {
@@ -40,6 +37,13 @@ try {
     header('Location:' . $_SESSION["previous_url"]);
     exit;
 }
+
+// On va récupérer les 'anciens' titres de l'activité en instance
+$stmt = $bdd->query('SELECT id_titre, nom FROM titres WHERE id_activite='.$activity_id);
+$anciens_titres = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+    <pre><?php var_dump($anciens_titres);?></pre>
+<?php
 
 // Initialisation des données à vide
 $data = [
@@ -78,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
         $data[$key] = isset($_POST[$key]) ? trim($_POST[$key]) : '';
     }
 
-
     // Vérification des doubles soumissions
     $submission_hash = md5($data['nom'] . $id_user . $data['date_debut'] . $activity_id);
     if (isset($_SESSION['last_submission_hash']) && $_SESSION['last_submission_hash']['hash'] === $submission_hash && (time() - $_SESSION['last_submission_hash']['time'] < 10)) {
@@ -94,71 +97,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
         }
 
         // Validations sur les valeurs textuelles
-
         foreach ($champs_texts as $champ) {
-            /**
-             * Quelques explications sur les regex utilisés
-             * if (!preg_match('/^[\p{L} \-\']+$/u', $data[$champ]))
-             * Ce qu'elle fait :
-             * Elle vérifie que toute la chaîne (^ début, $ fin) est composée uniquement :
-             * de lettres Unicode (\p{L})
-             * d'espaces ( )
-             * de tirets (-)
-             * d'apostsrophes (')
-             * Ce qu'elle accepte :
-             * "Jean-Paul"
-             * "Marie Claire"
-             * "Éléonore"
-             * Ce qu'elle refuse :
-             * "Jean123" (chiffres interdits)
-             * "Jean!" (caractères spéciaux interdits)
-             * "Paul_" (underscore interdit)
-             * "" (chaîne vide si + est utilisé, car il faut au moins un caractère valide)
-
-             * Résumé :
-             * Cette version vérifie si la chaîne entière est correcte.
-             * Elle est stricte et positive : on valide la chaîne si elle correspond entièrement au motif.
-             */
-
-            if ($champ != 'timbre' && $champ != 'centre' && $champ != 'reference') {
-                if (!preg_match('/^[\p{L} \-\']+$/u', $data[$champ])) {
+            if ($champ != 'timbre' && $champ != 'reference' && $champ != 'description') {
+                if (!preg_match('/^[\p{L}\p{N} \-\']+$/u', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "Ce champ contient des caractères non valides !";
                     }
                 }
-            } elseif ($champ == 'centre') {
-                // Ce regex par contre accepte, en plus de ce que le regex précédern accepte, des chiffres par le '\p{N}'
-                if (!preg_match('/^[\p{L}\p{N} \-\']+$/u', $data[$champ])) {
-                    if (!isset($errors[$champ]))
-                        $errors[$champ] = "Ce champ contient des caractères non valides !";
-                }
             } elseif ($champ == 'timbre') {
-                /**
-                 * Explications du regex utilisé
-                 * \/? : 0 ou 1 slash au début (optionnel)
-                 * \/? : 0 ou 1 slash au début (optionnel)
-                 * [A-Za-z0-9]+ : un segment composé uniquement de lettres ASCII non accentuées et chiffres, au moins un caractère
-                 * (\/[A-Za-z0-9]+)+ : au moins un slash suivi d’un segment similaire (donc au moins 2 segments)
-                 * ^...$ : la chaîne entière doit correspondre
-                 * Pas d'espaces ni autres caractères autorisés
-
-                 * Exemples valides :
-                 * DEG/MAS
-                 * a/b
-                 * ALPHA/BETA/GAMMA
-                 * Jean123/Paul456
-                 * ABC/DEF123/GHI456
-
-                 * Exemples refusés :
-                 * A	(un seul segment)
-                 * mot	(un seul mot)
-                 * /alpha	(commence par /)
-                 * alpha/	(finit par /)
-                 * alpha//beta	(segment vide)
-                 * alpha/ be ta	(contient un espace)
-                 * Élodie/Jean
-                 */
-
                 if (!preg_match('/^\/[A-Za-z0-9]+(\/[A-Za-z0-9]+)+$/', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
@@ -295,6 +241,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
             }
         }
 
+        ?>
+            <pre><?php var_dump($titres);?></pre>
+        <?php
+
         if (empty($errors)) {
 
             // On vérifie si une activité exactement identique n'est pas déjà présente en bdd
@@ -368,7 +318,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                 header('Location: ../gerer_activite.php?id=' . $activity_id);
                 exit;
             } else {
-
                 try {
 
                     /*
@@ -442,6 +391,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                         'noms' => $diplomes_str
                     ]);
 
+                    foreach ($titres as $titre) {
+                        if(in_array($titre, $anciens_titres)){
+                            echo 'présent';
+                        }
+                    }
                     // Mettre à jour les titres
                     $sql_titre = 'UPDATE titres SET nom = :nom, indemnite_forfaitaire = :indemnite_forfaitaire WHERE id_activite = :id_activite AND nom = :old_nom';
                     $stmt_titre = $bdd->prepare($sql_titre);
@@ -457,7 +411,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                             ]);
                         }
                     } elseif (in_array($type_activite, ['2', '3'])) {
-                        foreach (array_combine($titres, $forfaires) as $titre => $forfaire) {
+                        $tableau = array_combine($titres, $forfaires);
+
+                        ?>
+                            <pre><?php var_dump($tableau);?></pre>
+                        <?php
+
+                        foreach ($tableau as $titre => $forfaire) {
                             $stmt_titre->execute([
                                 'id_activite' => $activity_id,
                                 'nom' => $titre,
@@ -465,6 +425,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                                 'old_nom' => $titre // Utiliser le même titre comme clé de correspondance
                             ]);
                         }
+
+                        echo 'requête exécutée';
                     }
 
                     // Stocker le hash de la soumission
@@ -482,17 +444,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                     //$_SESSION['success_data'] = $data;
                     // Rediriger pour éviter les doubles soumissions
                     if ($success) {
-                        $_SESSION['success'] = 'Vos modifications ont été enregistrées avec succès !';
-                        header('Location: ../gerer_activite.php?id=' . $activity_id);
-                        exit;
+                        // $_SESSION['success'] = 'Vos modifications ont été enregistrées avec succès !';
+                        // header('Location: ../gerer_activite.php?id=' . $activity_id);
+                        // exit;
                     }
                 } catch (PDOException $e) {
                     die('Erreur : ' . $e->getMessage());
                     $errors['database'] = "Une erreur s'est produite. Veuillez réessayer.";
                     // Supprimer le nouveau fichier si l'insertion échoue
-                    if (isset($dest_path) && file_exists($dest_path)) {
-                        unlink($dest_path);
-                    }
+                    // if (isset($dest_path) && file_exists($dest_path)) {
+                    //     unlink($dest_path);
+                    // }
                 }
             }
         }
@@ -504,7 +466,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
         $_SESSION['form_data'] = $data;
         $_SESSION['form_errors'] = $errors;
 
-        header('Location: ../modifier_infos.php?id=' . urlencode($activity_id));
-        exit;
+        // header('Location: ../modifier_infos.php?id=' . urlencode($activity_id));
+        // exit;
     }
 }

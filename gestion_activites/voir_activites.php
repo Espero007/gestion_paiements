@@ -74,7 +74,7 @@ $resultat->closeCursor();
                     <?php if (isset($activites)) : ?>
                         <!-- Page Heading -->
                         <h1 class="h4 mb-4 text-gray-800">Activités / <strong>Vos activités</strong></h1>
-                        <p class="mt-2">Ici vous avez accès à toutes les activités que vous avez créées. (Cliquez <a href="creer_activite.php">ici</a> pour en créer une autre)</p>
+                        <p class="mt-2">Ici vous avez accès à toutes les activités que vous avez créées. (<a href="creer_activite.php">Cliquez ici</a> pour en créer une autre)</p>
                         <hr>
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
@@ -137,7 +137,7 @@ $resultat->closeCursor();
                                                                         <hr class="dropdown-divider">
                                                                     </li>
                                                                     <li>
-                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item"></i>Supprimer</a>
+                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item del-btn" data-toggle="modal" data-target="#deletionModal" id="<?= $activite['id'] ?>">Supprimer</a>
                                                                     </li>
                                                                 </ul>
                                                             </div>
@@ -185,6 +185,8 @@ $resultat->closeCursor();
 
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
+    <!-- Autres modals -->
+    <?php require_once(__DIR__ . '/../includes/modals.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
 </body>
 

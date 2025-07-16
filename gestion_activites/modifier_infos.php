@@ -5,7 +5,7 @@ require_once(__DIR__ . '/../includes/header.php');
 
 // Vérifier si l'ID de l'activité est fourni
 if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-    header('Location:'.$_SESSION["previous_url"]);
+    header('Location:' . $_SESSION["previous_url"]);
     exit;
 }
 
@@ -78,9 +78,9 @@ $data = [
 
 // Champs à afficher dans le message de succès par type
 $fields_to_display = [
-    '1' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'date_debut', 'date_fin' , 'timbre' , 'reference'],
-    '2' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin', 'timbre' , 'reference'],
-    '3' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin', 'timbre' , 'reference']
+    '1' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'date_debut', 'date_fin', 'timbre', 'reference'],
+    '2' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin', 'timbre', 'reference'],
+    '3' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin', 'timbre', 'reference']
 ];
 
 // Récupérer les données et erreurs de la session si présentes
@@ -134,14 +134,14 @@ unset($_SESSION['success_data']);
                                 <div class="card-body">
                                     <!-- Messages d'erreurs divers -->
                                     <?php if (isset($errors['database'])): ?>
-                                        <?php afficherAlerte('Erreur : '.htmlspecialchars($errors['database']), 'danger')?>                                        
+                                        <?php afficherAlerte('Erreur : ' . htmlspecialchars($errors['database']), 'danger') ?>
                                     <?php endif; ?>
                                     <?php if (isset($errors['duplicate'])): ?>
                                         <div class="alert alert-danger">
                                             <strong>Erreur :</strong> <?= htmlspecialchars($errors['duplicate']) ?>
                                         </div>
                                     <?php endif; ?>
-                                     
+
                                     <?php if (isset($doublon) && $doublon) : ?>
                                         <div class="alert alert-danger text-center alert-dismissible">
                                             Il semble que vous avez déjà créé une activité identique.
@@ -157,7 +157,7 @@ unset($_SESSION['success_data']);
                                         <input type="hidden" name="id" value="<?= htmlspecialchars($activity_id) ?>">
                                         <!-- Rest of your form fields -->
 
-                    
+
                                         <!-- Informations générales -->
                                         <fieldset>
                                             <legend class="h6"><strong>Informations générales</strong></legend>
@@ -288,6 +288,11 @@ unset($_SESSION['success_data']);
                                                         <br>
                                                     <?php endif; ?>
                                                     <small> Note : séparés par des virgules, lettres uniquement, ex. : R/DEC,Superviseur (il s'agit des titres que les participants de l'activité auront. Tout comme dans le cas des diplômes, les indiquer ici vous facilitera le travail quand vous devrez lier des participants à votre activité)</small>
+                                                    <!-- Avertissement -->
+                                                    <small class="text-danger"> 
+                                                        Avertissement : Si vous modifiez un titre pour lequel un ou des participants ont déjà été associés à votre activité, cette modification sera prise en compte dans les informations de la liaison avec ce ou ces participants.
+                                                        Par-contre, si vous supprimez un titre pour lequel un ou des participants ont été associés à votre activité, la liaison avec ce ou ces participants sera rompue.
+                                                    </small>
                                                 </div>
                                             </div>
                                         </fieldset>
@@ -313,10 +318,12 @@ unset($_SESSION['success_data']);
                                             <?php if (in_array($type_activite, [2, 3])) : ?>
                                                 <!-- Indemnité(s) forfaitaire(s) -->
                                                 <div class="mb-2 row">
-                                                    <label for="indemnite_forfaitaire" class="col-sm-3 col-form-label">Indemnité(s) forfaitaire(s) (FCFA) <small class="text-muted">(séparés par des virgules, même nombre que les titres, ex. : 100.50,200.75(Chaque montant sera associé au titre en respectant l'ordre de saisie) , NB:Si un titre n'a pas d'indemnité , renseignez 0)</small></label>
+                                                    <label for="indemnite_forfaitaire" class="col-sm-3 col-form-label">Indemnité(s) forfaitaire(s) (FCFA)</label>
                                                     <div class="col-sm-9">
                                                         <input id="indemnite_forfaitaire" type="text" name="indemnite_forfaitaire" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['indemnite_forfaitaire']) ?>">
                                                         <small class="text-danger"><?= $errors['indemnite_forfaitaire'] ?? '' ?></small>
+                                                        <?= isset($errors['indemnite_forfaitaire']) ? '<br>' : '' ?>
+                                                        <small class="text-muted">Note : séparés par des virgules, elles doivent être du même nombre que les titres, ex. : 100.50,200.75 (Chaque montant sera associé au titre en respectant l'ordre de saisie), renseignez 0 si un titre n'a pas d'indemnité</small>
                                                     </div>
                                                 </div>
                                             <?php endif; ?>
