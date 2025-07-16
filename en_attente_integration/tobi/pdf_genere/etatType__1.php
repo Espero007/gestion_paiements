@@ -279,3 +279,4 @@ $pdf->writeHTML($html, true, false, true, false, '');
 //ob_end_clean(); // Nettoyer le tampon de sortie
 $pdf->Output(__DIR__ . '/Etat_deliberation.pdf', 'I');
 ?>
+

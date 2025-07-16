@@ -1,8 +1,15 @@
 <?php
-require_once(__DIR__ . '/../includes/bdd.php');
+session_start();
+require_once(__DIR__ . '/../../includes/bdd.php');
+require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
+
+if(!valider_id('post','id_participant',''))
+{
+    redirigerVersPageErreur(404,$_SESSION['previous_url']);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id_participant = intval($_POST['id_participant'] ?? 0);
+    $id_participant = $_POST['id_participant'] ?? 0;
     $comptes_a_supprimer = $_POST['comptes'] ?? [];
 
     // Vérifier la validité
@@ -21,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Vérification côté serveur de la limite
     if (count($comptes_a_supprimer) > $maxSuppression) {
-        header("Location: choisir_banque_a_supprimer.php?id_participant=$id_participant&erreur=limite_depassee");
+        redirigerVersPageErreur(404,$_SESSION['previous_url']);
         exit;
     }
 
@@ -57,7 +64,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: supprimer_une_banque.php?id_participant=$id_participant&erreur=sql");
         exit;
     }
-} else {
-    header("Location: supprimer_une_banque.php?erreur=acces");
-    exit;
 }

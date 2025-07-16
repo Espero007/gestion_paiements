@@ -3,6 +3,8 @@ $section = 'Paramètres';
 $titre_page = "Mon compte";
 require_once(__DIR__ . '/../../includes/header.php');
 require_once('traitements/voir_profil.php');
+require_once('traitements/desactiver_compte.php');
+
 ?>
 
 <style>
@@ -163,12 +165,13 @@ require_once('traitements/voir_profil.php');
                                         <p class="mb-0">Une fois que vous aurez supprimé votre compte, il n'y aura pas de retour en arrière possible. Soyez certain(e) de votre choix.</p>
                                     </div>
                                 </div>
-                                <form action="">
+                                <form action="" method="POST">
                                     <div class="form-check mb-3">
-                                        <input type="checkbox" class="form-check-input" name='desactivationCompte' id='desactivationCompte'>
-                                        <label for="desactivationCompte" class="form-check-label">Je confirme la désactovation de mon compte</label>
+                                        <input type="checkbox" class="form-check-input" name='suppressionCompte' id='suppressionCompte' value="yes">
+                                        <label for="suppressionCompte" class="form-check-label"> Je confirme la suppression de mon compte </label>
+                                         <?php echo !$confirmation ? '<p> <small class="text-danger"> Veillez confirmer la suppression de votre compte </small></p>' : '' ?>
                                     </div>
-                                    <button type="submit" class="btn btn-danger desactiver-compte">Désactiver compte</button>
+                                    <button type="submit" name="desactiver" class="btn btn-danger desactiver-compte">Supprimer compte</button>
                                 </form>
                             </div>
                         </div>

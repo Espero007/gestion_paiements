@@ -1,11 +1,14 @@
 <?php
+session_start();
 require_once(__DIR__ . '/../includes/bdd.php');
+require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 
-if (!isset($_GET['id_participant'])) {
-    die("Identifiant du participant manquant.");
+if(!valider_id('get','id_participant',''))
+{
+    redirigerVersPageErreur(404,$_SESSION['previous_url']);
 }
 
-$id_participant = intval($_GET['id_participant']);
+$id_participant = $_GET['id_participant'];
 
 // Récupérer les comptes
 $stmt = $bdd->prepare("SELECT id, banque, numero_compte FROM informations_bancaires WHERE id_participant = ?");
@@ -23,7 +26,7 @@ if ($totalBanques <= 1) {
 ?>
 
 <h3>Sélectionnez <?= $maxSuppression ?> compte<?= $maxSuppression > 1 ? 's' : '' ?> à supprimer :</h3>
-<form method="POST" action="valider_suppression_banque.php">
+<form method="POST" action="includes/valider_suppression_banque.php">
     <input type="hidden" name="id_participant" value="<?= $id_participant ?>">
 
     <?php foreach ($banques as $b): ?>

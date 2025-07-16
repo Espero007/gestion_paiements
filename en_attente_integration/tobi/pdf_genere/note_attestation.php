@@ -181,7 +181,7 @@ $pdf1->SetFont('trebuc', '', 10); // Utilisation d'une police adaptée
 // Construction du tableau HTML
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE,"Europe/Paris",IntlDateFormatter::GREGORIAN);
 $dateFr = $formatter->format(new DateTime());
-$html = '
+/*$html = '
 
 <style>
 h1 { text-align: center; font-size: 16pt; }
@@ -210,6 +210,10 @@ td, th { border: 1px solid #000; padding: 5px; }
 </tr>
 </table> 
  ';
+ */
+
+$information_supplementaire = ['type' => $nom_activite] ;
+    genererHeader($pdf,'note_service',$information_supplementaire );
 
  $html .= '<br><br><br><br>';
 
@@ -399,6 +403,6 @@ if ($document === 'note') {
     // Afficher une interface pour choisir le document
     ob_end_clean();
     echo '<h2>Choisir un document à afficher :</h2>';
-    echo '<p><a href="?document=attestation&id=' . $activity_id . '">Afficher la note de service</a></p>';
+    echo '<p><a href="?document=note&id=' . $activity_id . '">Afficher la note de service</a></p>';
     echo '<p><a href="?document=attestation&id=' . $activity_id . '">Afficher l\'Attestation collective</a></p>';}
 ?>

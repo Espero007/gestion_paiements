@@ -75,6 +75,16 @@ if (isset($_POST['connexion'])) {
                     $token = bin2hex(random_bytes(16));
                     $expire = date('Y-m-d H:i:s', time() + (86400*30));
 
+                    $smt1 = $bdd->prepare('SELECT * FROM token_souvenir WHERE user_id = ?');
+                    $smt1->execute([$logged_user['user_id']]);
+                    $souvenir = $smt1->fetch(PDO::FETCH_ASSOC);
+                     var_dump($souvenir);
+                    if($souvenir && $souvenir['expire_le'] < date('Y-m-d H:i:s')){
+                        $smt2 = $bdd->prepare('DELETE FROM token_souvenir WHERE user_id = ?');
+                        $smt2->execute([$logged_user['user_id']]);
+
+                    }
+
                     $smt = $bdd->prepare("INSERT INTO token_souvenir(user_id,token, expire_le) VALUES (?,?,?)");
                     $smt->execute([$logged_user['user_id'],hash('sha256',$token),$expire]);
 
