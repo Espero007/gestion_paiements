@@ -19,9 +19,10 @@ $id_activite = $_GET['id'];
 $stmt = $bdd->query('SELECT type_activite FROM activites a WHERE a.id=' . $id_activite);
 $resultat = $stmt->fetch(PDO::FETCH_NUM);
 $id_type_activite = $resultat[0];
+//echo $id_type_activite;
 $stmt->closeCursor();
 
-if ($id_type_activite == 1) {
+if ($id_type_activite === 1) {
     // Requête SQL
     $sql = "
         SELECT 
@@ -220,7 +221,8 @@ if ($id_type_activite == 1) {
 
     //ob_end_clean(); // Nettoyer le tampon de sortie
     // $pdf->Output(__DIR__ . '/Etat_deliberation.pdf', 'I');
-} elseif ($id_type_activite == 2) {
+} elseif ($id_type_activite === 2) {
+
 
     // Requête
     $sql = "SELECT 
@@ -475,7 +477,9 @@ if ($id_type_activite == 1) {
     $pdf->writeHTML($footerHtml, true, false, true, false, '');
     ob_end_clean();
     $pdf->Output(__DIR__ . '/Etat_de_paiement.pdf', 'I');
-} elseif ($id_type_activite == 3) {
+} elseif ($id_type_activite === 3) {
+
+    //echo "Bonjour 1";
 
     // Requête SQL
     $sql = "
@@ -605,7 +609,7 @@ if ($id_type_activite == 1) {
     </table>';
 
     /*$information_supplementaire = ['type' => $titre_activite] ;
-genererHeader($pdf,'etat_paiement',$information_supplementaire );*/
+    genererHeader($pdf,'etat_paiement',$information_supplementaire );*/
 
     $html .= '
     <p><b> NS  N° 2548/PR/DC/SGM/DAF/DEC/SAF/SIS/SEC/SD/SA DU 31 DECEMBRE 2020 </b><br></p>';

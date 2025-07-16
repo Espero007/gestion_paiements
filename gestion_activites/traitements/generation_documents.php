@@ -62,7 +62,7 @@ $documents['liste_rib'] = 'Liste des RIBs';
 $urls = [
     'note_service' => '/gestion_activites/scripts_generation/note_attestation.php?document=note&id=' . $id_activite,
     'attestation_collective' => '/gestion_activites/scripts_generation/note_attestation.php?document=attestation&id='.$id_activite,
-    'etat_paiement' => '/gestion_activites/scripts_generation/etat_paiement.php?id='.$id_activite,
+    'etat_paiement' => '/gestion_activites/scripts_generation/etat_paiement.php?id='.$id_activite
 ];
 
 foreach ($banques as $banque) {
