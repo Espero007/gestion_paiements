@@ -17,13 +17,19 @@ require_once('includes/bdd.php');
 </head>
 
 <body>
-<?php $stmt = $bdd->query('SELECT centre FROM activites WHERE id=4');
-$resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$informations_activite = $resultat[0];
-?>
-    <pre><?php var_dump($informations_activite);?></pre>
-<?php
-?>
+<style>
+    td{
+        line-height: 20px;
+    }
+</style>
+
+<table width="10%" border="1">
+    <tbody>
+        <tr>
+            <td>AKANDO Espéro Eléazar Ogoluwa</td>
+        </tr>
+    </tbody>
+</table>
 
 </body>
 
