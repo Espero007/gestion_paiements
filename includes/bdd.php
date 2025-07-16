@@ -150,13 +150,13 @@ try {
         CREATE TABLE IF NOT EXISTS informations_entete
         (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        id_activite INT NOT NULL,
-        ligne1 VARCHAR(200) NOT NULL,
-        ligne2 VARCHAR(200) NOT NULL,
-        ligne3 VARCHAR(200) NOT NULL,
-        ville VARCHAR(200) NOT NULL,
-        date1 VARCHAR(200) NOT NULL,
-        date2 VARCHAR(200) NOT NULL,
+        id_activite INT NOT NULL UNIQUE,
+        ligne1 VARCHAR(200) NULL,
+        ligne2 VARCHAR(200) NULL,
+        ligne3 VARCHAR(200) NULL,
+        ville VARCHAR(200) NULL,
+        date1 VARCHAR(200) NULL,
+        date2 VARCHAR(200) NULL,
         FOREIGN KEY (id_activite) REFERENCES activites(id) ON DELETE CASCADE
         );
     ";

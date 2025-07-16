@@ -38,6 +38,10 @@ require_once('traitements/generation_documents.php');
 
                             <!-- Messages divers -->
 
+                            <?php if (isset($_SESSION['edition_entete_ok'])) : ?>
+                                <?php afficherAlerte('edition_entete_ok', 'success', true) ?>
+                            <?php endif; ?>
+
                             <?php if (!$entete_editee) : ?>
                                 <?php
                                 $message = 'Il semble que vous n\'avez pas encore défini les informations à utiliser pour l\'entête de vos documents. Cliquez ici pour le faire si vous souhaitez personnaliser l\'entête de vos documents <a href="/gestion_activites/edition_en_ligne.php?id=' . $id_activite . '">Editer l\'entête</a>';

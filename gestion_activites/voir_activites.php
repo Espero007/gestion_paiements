@@ -89,7 +89,7 @@ $resultat->closeCursor();
 
                                 <form action="">
                                     <div class="">
-                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
                                                     <th>Choix</th>
@@ -110,6 +110,13 @@ $resultat->closeCursor();
                                             </tfoot>
                                             <tbody>
                                                 <?php foreach ($activites as $activite) : ?>
+                                                    <?php
+                                                    $generer_documents = false;
+                                                    $stmt = $bdd->query('SELECT * FROM participations WHERE id_activite=' . $activite['id']);
+                                                    if ($stmt->rowCount() != 0) {
+                                                        $generer_documents = true;
+                                                    }
+                                                    ?>
                                                     <tr>
                                                         <td><input type="checkbox" name="bref" id="bref"></th>
                                                         <td><?= htmlspecialchars($activite['nom']) ?></td>
@@ -133,6 +140,13 @@ $resultat->closeCursor();
                                                                     <li>
                                                                         <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer des participants</a>
                                                                     </li>
+
+                                                                    <?php if ($generer_documents) : ?>
+                                                                        <li>
+                                                                            <a href="/gestion_activites/generation_documents.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item"></i>Générer les documents</a>
+                                                                        </li>
+                                                                    <?php endif; ?>
+
                                                                     <li>
                                                                         <hr class="dropdown-divider">
                                                                     </li>

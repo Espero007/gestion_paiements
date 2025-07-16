@@ -87,6 +87,10 @@ $resultat->closeCursor();
                                     <?php unset($_SESSION['suppression_ok']); ?>
                                 <?php endif; ?>
 
+                                <?php if (isset($_SESSION['comptes_supprimes'])) : ?>
+                                    <?php afficherAlerte('comptes_supprimes', 'success', true) ?>
+                                <?php endif; ?>
+
                                 <form action="">
                                     <div class="">
                                         <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">

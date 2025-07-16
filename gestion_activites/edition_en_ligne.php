@@ -12,7 +12,8 @@ require_once('traitements/edition.php');
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php // require_once(__DIR__ . '/../includes/sidebar.php')?>
+        <?php // require_once(__DIR__ . '/../includes/sidebar.php')
+        ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -56,14 +57,13 @@ require_once('traitements/edition.php');
                                                         <div class="divider-text"><strong>Entête</strong></div>
                                                     </div>
                                                 </legend>
-
                                                 <?php foreach ($champs_attendus as $champ => $label) : ?>
 
                                                     <?php if ($champ != 'date2') : ?>
                                                         <div class="mb-2 row">
                                                             <label for="<?= $champ ?>" class="col-sm-3 col-form-label"><?= $label ?></label>
                                                             <div class="col-sm-9">
-                                                                <input id="<?= $champ ?>" type="text" name="<?= $champ ?>" class="form-control<?= isset($erreurs[$champ]) ? ' is-invalid' : '' ?>" value="<?= isset($erreurs) ? (isset($_POST[$champ]) ? htmlspecialchars($_POST[$champ]) : '') : '' ?>" placeholder="Entrez une valeur" <?= isset($erreurs[$champ]) ? 'aria-describedby="' . $champ . 'Aide"' : '' ?>>
+                                                                <input id="<?= $champ ?>" type="text" name="<?= $champ ?>" class="form-control<?= isset($erreurs[$champ]) ? ' is-invalid' : '' ?>" value="<?= isset($erreurs) ? (isset($_POST[$champ]) ? htmlspecialchars($_POST[$champ]) : '') : ($modification ? $informations[$champ] : '') ?>" placeholder="Entrez une valeur" <?= isset($erreurs[$champ]) ? 'aria-describedby="' . $champ . 'Aide"' : '' ?>>
 
                                                                 <?php if (isset($erreurs[$champ])) : ?>
                                                                     <div id="<?= $champ ?>Aide">
@@ -72,60 +72,8 @@ require_once('traitements/edition.php');
                                                                 <?php endif; ?>
                                                             </div>
                                                         </div>
-
                                                     <?php endif; ?>
-
                                                 <?php endforeach; ?>
-
-                                                <!-- Ligne 1 -->
-                                                <!-- <div class="mb-2 row">
-                                                    <label for="ligne1" class="col-sm-3 col-form-label">Ligne 1</label>
-                                                    <div class="col-sm-9">
-                                                        <input id="ligne1" type="text" name="ligne1" class="form-control<?= isset($erreurs['ligne1']) ? ' is-invalid' : '' ?>" value="<?= isset($erreurs) ? (isset($_POST['ligne1']) ? htmlspecialchars($_POST['ligne1']) : '') : '' ?>" placeholder="Entrez une valeur" <?= isset($erreurs['ligne1']) ? 'aria-describedby="ligne1Aide"' : '' ?>>
-
-                                                        <?php if (isset($erreurs['ligne1'])) : ?>
-                                                            <div id="ligne1Aide">
-                                                                <small class="text-danger"><?= $erreurs['ligne1'] ?? '' ?></small>
-                                                            </div>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div> -->
-
-                                                <!-- Ligne 2 -->
-                                                <!-- <div class="mb-2 row">
-                                                    <label for="ligne2" class="col-sm-3 col-form-label">Ligne 2</label>
-                                                    <div class="col-sm-9">
-                                                        <input id="ligne2" type="text" name="ligne2" class="form-control" value="" placeholder="Entrez une valeur">
-                                                        <small class="text-danger"><?= $errors['nom'] ?? '' ?></small>
-                                                    </div>
-                                                </div> -->
-
-                                                <!-- Ligne 3 -->
-                                                <!-- <div class="mb-2 row">
-                                                    <label for="ligne3" class="col-sm-3 col-form-label">Ligne 3</label>
-                                                    <div class="col-sm-9">
-                                                        <input id="ligne3" type="text" name="ligne3" class="form-control" value="" placeholder="Entrez une valeur">
-                                                        <small class="text-danger"><?= $errors['nom'] ?? '' ?></small>
-                                                    </div>
-                                                </div> -->
-
-                                                <!-- Ville -->
-                                                <!-- <div class="mb-2 row">
-                                                    <label for="ville" class="col-sm-3 col-form-label">Ville</label>
-                                                    <div class="col-sm-9">
-                                                        <input id="ville" type="text" name="ville" class="form-control" value="" placeholder="Entrez une valeur">
-                                                        <small class="text-danger"><?= $errors['nom'] ?? '' ?></small>
-                                                    </div>
-                                                </div> -->
-
-                                                <!-- Date 1 -->
-                                                <!-- <div class="mb-2 row">
-                                                    <label for="date1" class="col-sm-3 col-form-label">Date 1</label>
-                                                    <div class="col-sm-9">
-                                                        <input id="date1" type="text" name="date1" class="form-control" value="" placeholder="Entrez une valeur">
-                                                        <small class="text-danger"><?= $errors['nom'] ?? '' ?></small>
-                                                    </div>
-                                                </div> -->
                                             </fieldset>
 
                                             <!-- Autres informations -->
@@ -140,8 +88,12 @@ require_once('traitements/edition.php');
                                                 <div class="mb-2 row">
                                                     <label for="date2" class="col-sm-3 col-form-label">Date 2</label>
                                                     <div class="col-sm-9">
-                                                        <input id="date2" type="text" name="date2" class="form-control" value="" placeholder="Entrez une valeur">
-                                                        <!-- <small class="text-danger"><?= $errors['nom'] ?? '' ?></small> -->
+                                                        <input id="date2" type="text" name="date2" class="form-control<?= isset($erreurs['date2']) ? ' is-invalid' : '' ?>" value="<?= isset($erreurs) ? (isset($_POST['date2']) ? htmlspecialchars($_POST['date2']) : '') : ($modification ? $informations['date2'] : '') ?>" placeholder="Entrez une valeur" <?= isset($erreurs['date2']) ? 'aria-describedby="date2Aide"' : '' ?>>
+                                                        <?php if (isset($erreurs['date2'])) : ?>
+                                                            <div id="date2Aide">
+                                                                <small class="text-danger"><?= $erreurs['date2'] ?? '' ?></small>
+                                                            </div>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                             </fieldset>
@@ -149,7 +101,6 @@ require_once('traitements/edition.php');
                                     </div>
                                 </div>
                                 <div class="col-6">
-
                                     <div class="card">
                                         <div class="card-body pb-0 pl-0 pr-0">
                                             <h6 class="font-weight-bolder text-center mb-3 text-primary">Aperçu des modifications</h6>
@@ -157,14 +108,14 @@ require_once('traitements/edition.php');
                                         <hr class="m-0">
                                         <div class="card-body">
                                             <div class="row mb-4" id="entete">
-                                                <div class="col-6 text-center fs-6" id="blocGauche">
+                                                <div class="col-6 text-center fs-6 text-uppercase" id="blocGauche">
                                                     <p class="m-0">REPUBLIQUE DU BENIN</p>
                                                     <p class="m-0">*-*-*-*-*</p>
-                                                    <p class="m-0">MINISTERE DE <span id="prev_ligne1">............<strong>(ligne 1)</strong></span></p>
+                                                    <p class="m-0">MINISTERE DE <span id="prev_ligne1">............<strong class="text-capitalize">(ligne 1)</strong></span></p>
                                                     <p class="m-0">*-*-*-*-*</p>
-                                                    <p class="m-0">DIRECTION DES <span id="prev_ligne2">......<strong>(ligne 2)</strong></span></p>
+                                                    <p class="m-0">DIRECTION DES <span id="prev_ligne2">......<strong class="text-capitalize">(ligne 2)</strong></span></p>
                                                     <p class="m-0">*-*-*-*-*</p>
-                                                    <p class="m-0">SERVICE <span id="prev_ligne3">.........<strong class="text-">(ligne 3)</strong></span></p>
+                                                    <p class="m-0">SERVICE <span id="prev_ligne3">.........<strong class="text-capitalize">(ligne 3)</strong></span></p>
                                                     <p class="m-0">*-*-*-*-*</p>
                                                 </div>
                                                 <div class="col-6 text-center" id="blocDroite">
@@ -272,7 +223,7 @@ require_once('traitements/edition.php');
 
         const champs = [champLigne1, champLigne2, champLigne3, champVille, champDate1, champDate2];
         const prevs = [prevLigne1, prevLigne2, prevLigne3, prevVille, prevDate1, prevDate2];
-        const valeursDefaut = ['............<strong>(ligne 1)</strong>', '......<strong>(ligne 2)</strong>', '.........<strong>(ligne 3)</strong>', '<strong>(Ville)</strong>', '<strong>(Date 1)</strong>', '<strong>(Date 2)</strong>'];
+        const valeursDefaut = ['............<strong class="text-capitalize">(ligne 1)</strong>', '......<strong class="text-capitalize">(ligne 2)</strong>', '.........<strong class="text-capitalize">(ligne 3)</strong>', '<strong>(Ville)</strong>', '<strong>(Date 1)</strong>', '<strong>(Date 2)</strong>'];
 
         function updatePreview(input, prev) {
             prev.textContent = input.value;
