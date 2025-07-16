@@ -490,7 +490,8 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
         'note_service' => 'portant constitution des membres de la commission chargée de',
         'etat_paiement_1' => 'des indemnités et frais d\'entretien accordés aux membres de la commission chargée de',
         'etat_paiement_2' => 'indemnités et frais d\'entretien accordés aux membres de la commission chargée de la correction des examens de',
-        'etat_paiement_3' => 'des indemnités et frais d\'entretien accordés aux membres d\'encadrement dans le cadre'
+        'etat_paiement_3' => 'des indemnités et frais d\'entretien accordés aux membres d\'encadrement dans le cadre',
+        'liste_ribs' => 'Dans le cadre de la'
     ];
 
     $entete_editee = false;
@@ -541,6 +542,8 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     } elseif ($type_document == 'attestation_collective') {
         $ligne2 = 'ATTESTATION COLLECTIVE DE TRAVAIL';
     } elseif ($type_document == 'etat_paiement') {
+    }elseif($type_document == 'liste_ribs'){
+        $ligne2 = 'LISTE DES RIBS';
     }
 
     $pdf->setFont('trebucbd', '', '11');

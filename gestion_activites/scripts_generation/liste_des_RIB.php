@@ -5,8 +5,12 @@ require_once(__DIR__ . '/../../tcpdf/tcpdf.php');
 require_once(__DIR__ . '/../../includes/bdd.php');
 require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
-$id_activite = 3;
-$banque = 'UBA';
+// Validations
+
+if(!valider_id('get', 'id', '', 'participations_activites')){
+    redirigerVersPageErreur(404, $_SESSION['previous_url']);
+}
+$id_activite = $_GET['id'];
 
 // 🔖 Récupération du titre
 $sqlTitre = "SELECT nom FROM activites WHERE id = :id_activite";
@@ -39,19 +43,35 @@ $pdf->setMargins(15, 25, 15);
 $pdf->setAutoPageBreak(true, 25);
 $pdf->AddPage();
 
-// 🎯 Header
-$infos_header = ['titre' => $titre_activite, 'banque' => $banque];
-genererHeader($pdf, 'Liste_des_RIB', $infos_header);
-$pdf->Ln(10);
+$infos_header = ['titre' => $titre_activite];
+genererHeader($pdf, 'liste_ribs', $infos_header, $id_activite);
+
+$pdf->Ln(30);
+
+// Titre de la page
+
+$pdf->setFont('trebucbd', '', 16);
+$pdf->Cell(0, 10, mb_strtoupper('Liste des RIBs des participants associés à l\'activité', 'UTF-8'), 0, 1, 'C');
+$pdf->Ln(8);
+
+$pdf->setFont('trebuc', '', 10);
 
 // 🧾 Génération du HTML
-$html = '<style>
-    table { border-collapse: collapse; width: 100%; font-size: 10pt; }
-    th, td { border: 1px solid #999; padding: 4px; text-align: center; }
-    th { background-color: #e6e6e6; font-weight: bold; }
-</style>';
+$style = '
+<style>
+th{
+background-color : #f2f2f2;
+text-align : center;
+}
+td{
+text-align : center;
+}
+</style>
+';
 
-$html .= '<table>';
+$html = $style;
+
+$html .= '<table border="1" cellpadding="5" width="100%">';
 $html .= '<tr><th>N°</th><th>NOM ET PRENOMS</th><th>RIB</th></tr>';
 
 foreach ($resultats as $i => $ligne) {

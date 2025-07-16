@@ -119,7 +119,7 @@ require_once('traitements/edition.php');
                                                     <p class="m-0">*-*-*-*-*</p>
                                                 </div>
                                                 <div class="col-6 text-center" id="blocDroite">
-                                                    <p><span id="prev_ville" class="text-capitalize"><strong>(Ville)</strong></span>, <span id="prev_date1"><strong>(Date 1)</strong></span></p>
+                                                    <p><span id="prev_ville" class="text-capitalize"><strong>(Ville)</strong></span>, le <span id="prev_date1"><strong>(Date 1)</strong></span></p>
                                                     <p class="text-uppercase font-weight-bold">Titre</p>
                                                     <p class="text-uppercase font-weight-bold">Sous-titre</p>
                                                 </div>
@@ -223,7 +223,7 @@ require_once('traitements/edition.php');
 
         const champs = [champLigne1, champLigne2, champLigne3, champVille, champDate1, champDate2];
         const prevs = [prevLigne1, prevLigne2, prevLigne3, prevVille, prevDate1, prevDate2];
-        const valeursDefaut = ['............<strong class="text-capitalize">(ligne 1)</strong>', '......<strong class="text-capitalize">(ligne 2)</strong>', '.........<strong class="text-capitalize">(ligne 3)</strong>', '<strong>(Ville)</strong>', '<strong>(Date 1)</strong>', '<strong>(Date 2)</strong>'];
+        const valeursDefaut = ['............<strong class="text-capitalize">(ligne 1)</strong>', '......<strong class="text-capitalize">(ligne 2)</strong>', '.........<strong class="text-capitalize">(ligne 3)</strong>', '<strong>(Ville), le</strong>', '<strong>(Date 1)</strong>', '<strong>(Date 2)</strong>'];
 
         function updatePreview(input, prev) {
             prev.textContent = input.value;
@@ -233,6 +233,9 @@ require_once('traitements/edition.php');
             const input = champs[i];
             const prev = prevs[i];
             input.addEventListener('input', () => updatePreview(input, prev));
+            if (input.value.trim() != '') {
+                updatePreview(input, prev);
+            }
         }
 
         document.addEventListener('keyup', () => {
