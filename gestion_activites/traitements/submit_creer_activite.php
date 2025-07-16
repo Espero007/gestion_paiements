@@ -154,7 +154,7 @@ if ($recuperation_type_activite) {
                  * Élodie/Jean
                  */
 
-                if (!preg_match('/^\/[A-Za-z0-9]+(\/[A-Za-z0-9]+)+$/', $data[$champ])) {
+                if (!preg_match('/^\/[A-Za-z0-9\-]+(\/[A-Za-z0-9\-]+)+$/', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
                     }
