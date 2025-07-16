@@ -21,6 +21,7 @@ foreach ($liste_banques as $banque) {
     $totaux_banques[] = totalBanque($id_activite, $banque);
 }
 
+
 $stmt = $bdd->query('SELECT nom FROM activites WHERE id=' . $id_activite);
 $titre_activite = $stmt->fetch(PDO::FETCH_NUM);
 $titre_activite = $titre_activite[0];
@@ -50,14 +51,14 @@ $pdf->setFont('trebucbd', '', 10);
 
 // $liste_banques = ['BOA', 'CorisBenin', 'Atlantique Bénin', 'CCP', 'NSIA', 'ORABANK', 'SGB', 'UBA', 'CorisBenin1', 'Atlantique Bénin1', 'CCP1', 'NSIA1', 'ORABANK1', 'SGB1', 'UBA1'];
 // $liste_banques = ['BOA', 'CorisBenin', 'Atlantique Bénin'];
-// $totaux_banques = [0.1, 0.2, 0.3];
+// $totaux_banques = [0.1, 0.2, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15];
 
 $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
 $tailles_colonnes = [40, 20];
 $nbr_banques_par_ligne = 3;
 
 $nbr_banques = count($liste_banques);
-$nbr_lignes = $nbr_banques <= $nbr_banques_par_ligne ? 1 : intdiv($nbr_banques, $nbr_banques_par_ligne) - 1;
+$nbr_lignes = $nbr_banques <= $nbr_banques_par_ligne ? 1 : intdiv($nbr_banques, $nbr_banques_par_ligne) -1;
 
 // echo $nbr_lignes;
 

@@ -740,6 +740,6 @@ genererHeader($pdf,'etat_paiement',$information_supplementaire );*/
     </table>';
 
     // Écriture finale
-    // $pdf->writeHTML($html, true, false, true, false, '');
-    // $pdf->Output(__DIR__.'/Etat_de_correction.pdf', 'I');
+    $pdf->writeHTML($html, true, false, true, false, '');
+    $pdf->Output(__DIR__.'/Etat_de_correction.pdf', 'I');
 }

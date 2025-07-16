@@ -22,9 +22,6 @@ if ($redirect) {
 
 $zip = isset($_GET['zip']) ? 1 : 0;
 
-// $banque = $_GET['banque'] ?? 'Coris Bénin';
-// $id_activite = $_GET['id'] ?? 2;
-
 // Récupérons les participants associés à l'activité qui ont comme banque UBA
 
 $stmt = "
