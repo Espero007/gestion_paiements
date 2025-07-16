@@ -17,7 +17,13 @@ require_once('includes/bdd.php');
 </head>
 
 <body>
-<?php echo obtenirURLcourant(true) ?>
+<?php $stmt = $bdd->query('SELECT centre FROM activites WHERE id=4');
+$resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$informations_activite = $resultat[0];
+?>
+    <pre><?php var_dump($informations_activite);?></pre>
+<?php
+?>
 
 </body>
 

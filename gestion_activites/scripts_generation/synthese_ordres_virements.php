@@ -6,13 +6,11 @@ require_once(__DIR__ . '/../../includes/bdd.php');
 require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
 // Validations 
-
 if (!valider_id('get', 'id', $bdd, 'participations_activites')) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
 
 // Il me faut la liste des banques et les montants associés à chacune de ces banques
-
 $id_activite = $_GET['id'];
 $liste_banques = listeBanques($id_activite);
 
@@ -24,8 +22,6 @@ $stmt = $bdd->query('SELECT nom FROM activites WHERE id=' . $id_activite);
 $titre_activite = $stmt->fetch(PDO::FETCH_NUM);
 $titre_activite = $titre_activite[0];
 $stmt->closeCursor();
-
-// Maintenant je peux construire le tableau mais je le mettrai sur la verticale à cause de l'espace qui peut venir à manquer
 
 // Configuration du document
 $pdf = new TCPDF('P', 'mm', 'A4');

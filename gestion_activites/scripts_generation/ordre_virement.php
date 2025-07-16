@@ -62,15 +62,14 @@ $pdf->AddFont('trebucbd', '', 'trebucbd.php');
 $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
 $pdf->setMargins(15, 25, 15, true);
 configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Ordre de virement ' . $banque);
-
 $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
 $pdf->AddPage();
 
 // Header
-$informations_necessaires = ['titre' => $resultats[0]['titre_activite'], 'banque' => $banque];
-// $informations_necessaires = ['titre' => $resultats[0]['titre_activite']];
-genererHeader($pdf, 'ordre_virement', $informations_necessaires, $id_activite);
-// genererHeader($pdf, 'note_service', $informations_necessaires);
+// $informations_necessaires = ['titre' => $resultats[0]['titre_activite'], 'banque' => $banque];
+$informations_necessaires = ['titre' => $resultats[0]['titre_activite']];
+// genererHeader($pdf, 'ordre_virement', $informations_necessaires, $id_activite);
+genererHeader($pdf, 'etat_paiement_3', $informations_necessaires, $id_activite);
 
 $pdf->Ln(20);
 
