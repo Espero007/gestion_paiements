@@ -459,8 +459,9 @@ function supprimerAccents($chaine)
     }
 }
 
-function genererHeader($pdf, $type_document, $informations)
+function genererHeader($pdf, $type_document, $informations, $id_activite)
 {
+    global $bdd;
 
     /** Commentaires explicatifs */
 
@@ -492,6 +493,13 @@ function genererHeader($pdf, $type_document, $informations)
         'etat_paiement_3' => 'des indemnités et frais d\'entretien accordés aux membres d\'encadrement dans le cadre'
     ];
 
+    $entete_editee = false;
+    $stmt = $bdd->query('SELECT * FROM informations_entete WHERE id_activite='.$id_activite);
+    if($stmt->rowCount() != 0){
+        $informations_entete = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $informations_entete = $informations_entete[0];
+        $entete_editee = true;
+    }
     // Formattage de la date en français
 
     $formatter = new IntlDateFormatter(
@@ -513,7 +521,7 @@ function genererHeader($pdf, $type_document, $informations)
     $x = $pdf->getMargins()['left'] + $largeurBloc; // sauvegarde de la position de x à droite
 
     // Gestion du bloc de gauche du header
-    $bloc_gauche =  strtoupper("REPUBLIQUE DU BENIN\n*-*-*-*-*\nMINISTERE DE L'ENSEIGNEMENT SUPERIEUR ET SECONDAIRE\n*-*-*-*-*\nDIRECTION DES ............\n*-*-*-*-*\nSERVICE ............");
+    $bloc_gauche = !$entete_editee ? strtoupper("REPUBLIQUE DU BENIN\n*-*-*-*-*\nMINISTERE DE L'ENSEIGNEMENT SUPERIEUR ET SECONDAIRE\n*-*-*-*-*\nDIRECTION DES ............\n*-*-*-*-*\nSERVICE ............") : mb_strtoupper("république du bénin\n*-*-*-*-*\nministère de ".$informations_entete['ligne1']. "\n*-*-*-*-*\nDirection des ".$informations_entete['ligne2']. "\n*-*-*-*-*\nService ".$informations_entete['ligne3'], 'UTF-8');
     $pdf->setXY($pdf->getMargins()['left'], $y);
     $pdf->MultiCell($largeurBloc, 5, $bloc_gauche, 0, 'C');
 
@@ -521,7 +529,7 @@ function genererHeader($pdf, $type_document, $informations)
     $pdf->setXY($x, $y); // Déplacement du curseur à la bonne position
 
     // Ligne 1 : date
-    $ligne1 = strtoupper("Cotonou, le " . $formatter->format(new DateTime()));
+    $ligne1 = !$entete_editee ? strtoupper("Cotonou, le " . $formatter->format(new DateTime())) : mb_strtoupper($informations_entete['ville'].', le '.$informations_entete['date1'], 'UTF-8');
     $pdf->Cell(0, 5, $ligne1, 0, 1, 'C');
     $pdf->Ln(5);
 

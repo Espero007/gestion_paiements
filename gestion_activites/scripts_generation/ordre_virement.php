@@ -70,7 +70,7 @@ $pdf->AddPage();
 // Header
 $informations_necessaires = ['titre' => $resultats[0]['titre_activite'], 'banque' => $banque];
 // $informations_necessaires = ['titre' => $resultats[0]['titre_activite']];
-genererHeader($pdf, 'ordre_virement', $informations_necessaires);
+genererHeader($pdf, 'ordre_virement', $informations_necessaires, $id_activite);
 // genererHeader($pdf, 'note_service', $informations_necessaires);
 
 $pdf->Ln(20);
