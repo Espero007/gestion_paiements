@@ -9,6 +9,11 @@ $nom_dossier_upload = 'fichiers';
 define('UPLOADS_BASE_DIR', BASE_PATH . '/' . $nom_dossier_upload);
 const PERMISSIONS = 0777;
 
+$dossier_zip =  realpath(__DIR__ . '/../gestion_activites/scripts_generation/exports');
+if (!is_dir($dossier_zip)) {
+    mkdir($dossier_zip, 0775, true); // crée récursivement avec droits suffisants
+}
+
 
 // Gestion du timezone pour qu'il s'adapte au Bénin
 
@@ -489,7 +494,7 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
         'ordre_virement' => 'des indemnités et frais d\' entretien accordés aux membres de la commission chargée de',
         'note_service' => 'portant constitution des membres de la commission chargée de',
         'etat_paiement_1' => 'des indemnités et frais d\'entretien accordés aux membres de la commission chargée de',
-        'etat_paiement_2' => 'indemnités et frais d\'entretien accordés aux membres de la commission chargée de la correction des examens de',
+        'etat_paiement_2' => 'des indemnités et frais d\'entretien accordés aux membres d\'encadrement dans le cadre',
         'etat_paiement_3' => 'des indemnités et frais d\'entretien accordés aux membres d\'encadrement dans le cadre',
         'liste_ribs' => 'Dans le cadre de la'
     ];
@@ -522,7 +527,7 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $x = $pdf->getMargins()['left'] + $largeurBloc; // sauvegarde de la position de x à droite
 
     // Gestion du bloc de gauche du header
-    $bloc_gauche = !$entete_editee ? strtoupper("REPUBLIQUE DU BENIN\n*-*-*-*-*\nMINISTERE DE L'ENSEIGNEMENT SUPERIEUR ET SECONDAIRE\n*-*-*-*-*\nDIRECTION DES ............\n*-*-*-*-*\nSERVICE ............") : mb_strtoupper("république du bénin\n*-*-*-*-*\nministère de ".$informations_entete['ligne1']. "\n*-*-*-*-*\nDirection des ".$informations_entete['ligne2']. "\n*-*-*-*-*\nService ".$informations_entete['ligne3'], 'UTF-8');
+    $bloc_gauche = !$entete_editee ? strtoupper("REPUBLIQUE DU BENIN\n*-*-*-*-*\nMINISTERE DE L'ENSEIGNEMENT SUPERIEUR ET SECONDAIRE\n*-*-*-*-*\nDIRECTION DES ............\n*-*-*-*-*\nSERVICE ............") : mb_strtoupper("république du bénin\n*-*-*-*-*\nministère de ".$informations_entete['ligne1']. "\n*-*-*-*-*\n".$informations_entete['ligne2']. "\n*-*-*-*-*\n".$informations_entete['ligne3'], 'UTF-8');
     $pdf->setXY($pdf->getMargins()['left'], $y);
     $pdf->MultiCell($largeurBloc, 5, $bloc_gauche, 0, 'C');
 
@@ -541,7 +546,8 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
         $ligne2 = 'NOTE DE SERVICE';
     } elseif ($type_document == 'attestation_collective') {
         $ligne2 = 'ATTESTATION COLLECTIVE DE TRAVAIL';
-    } elseif ($type_document == 'etat_paiement') {
+    } elseif ($type_document == 'etat_paiement_2') {
+        $ligne2 = 'ETAT DE PAIEMENT N°';
     }elseif($type_document == 'liste_ribs'){
         $ligne2 = 'LISTE DES RIBS';
     }
@@ -556,6 +562,30 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $pdf->setFont('trebuc', '', '10');
     $pdf->setX($x);
     $pdf->MultiCell($largeurBloc, 5, $ligne3, 0, 'C');
+
+    if($type_document == 'etat_paiement_2'){
+        $pdf->Ln(5);
+        // Ligne 4
+        $ligne4 = !$entete_editee ? 'aujourd\'hui' : $informations_entete['date1'];
+        $pdf->setFont('trebucbd', 'U', '10');
+        $pdf->setX($x);
+        $pdf->Write(0, 'JOURNEE');
+        $pdf->setFont('trebucbd', '', '10');
+        $pdf->Write(0, ' : '.strtoupper($ligne4));
+        $pdf->Ln(8);
+        $pdf->setFont('trebucbd', 'U', '10');
+        $pdf->setX($x);
+        $pdf->Write(0, 'CENTRE');
+        
+        $stmt = $bdd->query('SELECT centre FROM activites WHERE id='.$id_activite);
+        $resultat = $stmt->fetch(PDO::FETCH_NUM);
+        $centre = $resultat[0];
+        $stmt->closeCursor();
+
+        $pdf->setFont('trebucbd', '', '10');
+        $pdf->Write(0, ' : ' . strtoupper($centre));
+
+    }
 }
 
 function listeBanques($id_activite)

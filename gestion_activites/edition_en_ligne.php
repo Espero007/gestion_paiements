@@ -113,9 +113,9 @@ require_once('traitements/edition.php');
                                                     <p class="m-0">*-*-*-*-*</p>
                                                     <p class="m-0">MINISTERE DE <span id="prev_ligne1">............<strong class="text-capitalize">(ligne 1)</strong></span></p>
                                                     <p class="m-0">*-*-*-*-*</p>
-                                                    <p class="m-0">DIRECTION DES <span id="prev_ligne2">......<strong class="text-capitalize">(ligne 2)</strong></span></p>
+                                                    <p class="m-0"><span id="prev_ligne2">DIRECTION DES......<strong class="text-capitalize">(ligne 2)</strong></span></p>
                                                     <p class="m-0">*-*-*-*-*</p>
-                                                    <p class="m-0">SERVICE <span id="prev_ligne3">.........<strong class="text-capitalize">(ligne 3)</strong></span></p>
+                                                    <p class="m-0"><span id="prev_ligne3">SERVICE .........<strong class="text-capitalize">(ligne 3)</strong></span></p>
                                                     <p class="m-0">*-*-*-*-*</p>
                                                 </div>
                                                 <div class="col-6 text-center" id="blocDroite">
@@ -223,7 +223,7 @@ require_once('traitements/edition.php');
 
         const champs = [champLigne1, champLigne2, champLigne3, champVille, champDate1, champDate2];
         const prevs = [prevLigne1, prevLigne2, prevLigne3, prevVille, prevDate1, prevDate2];
-        const valeursDefaut = ['............<strong class="text-capitalize">(ligne 1)</strong>', '......<strong class="text-capitalize">(ligne 2)</strong>', '.........<strong class="text-capitalize">(ligne 3)</strong>', '<strong>(Ville), le</strong>', '<strong>(Date 1)</strong>', '<strong>(Date 2)</strong>'];
+        const valeursDefaut = ['............<strong class="text-capitalize">(ligne 1)</strong>', 'DIRECTION DES......<strong class="text-capitalize">(ligne 2)</strong>', 'SERVICE .........<strong class="text-capitalize">(ligne 3)</strong>', '<strong>(Ville), le</strong>', '<strong>(Date 1)</strong>', '<strong>(Date 2)</strong>'];
 
         function updatePreview(input, prev) {
             prev.textContent = input.value;

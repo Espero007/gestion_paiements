@@ -70,9 +70,9 @@ foreach ($banques as $banque) {
     $urls[$cle] = '/gestion_activites/scripts_generation/ordre_virement.php?id='.$id_activite.'&banque=' . $banque[0];
 }
 $urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id='.$id_activite;
-$urls['liste_rib'] = 'Url à définir';
+$urls['liste_rib'] = '/gestion_activites/scripts_generation/liste_des_RIB.php?id='.$id_activite;
 
-$pdfs_non_telechargeables = ['etat_paiement', 'liste_rib'];
+$pdfs_non_telechargeables = ['etat_paiement'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($documents as $document => $label) {

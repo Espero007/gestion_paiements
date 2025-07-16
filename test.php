@@ -17,7 +17,7 @@ require_once('includes/bdd.php');
 </head>
 
 <body>
-
+<?php echo obtenirURLcourant(true) ?>
 
 </body>
 

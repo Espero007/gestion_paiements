@@ -187,6 +187,12 @@ require_once('traitements/gerer_activite.php');
                                         <li>
                                             <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Associer des participants</a>
                                         </li>
+                                        <?php if (count($participants_associes) != 0) : ?>
+                                            <li>
+                                                <a href="/gestion_activites/edition_en_ligne.php?id=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Editer l'entête de vos fichiers</a>
+                                            </li>
+                                        <?php endif; ?>
+
                                         <li>
                                             <hr class="dropwdown-divider my-1">
                                         </li>

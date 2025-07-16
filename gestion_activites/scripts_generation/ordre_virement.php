@@ -7,7 +7,6 @@ require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
 // Validations pour les informations à récupérer par GET
 $redirect = true;
-
 if (valider_id('get', 'id', $bdd, 'participations_activites')) {
     // Il faut maintenant s'assurer que la banque reçue est valable
     $id_activite = $_GET['id'];
@@ -20,6 +19,8 @@ if (valider_id('get', 'id', $bdd, 'participations_activites')) {
 if ($redirect) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
+
+$zip = isset($_GET['zip']) ? 1 : 0;
 
 // $banque = $_GET['banque'] ?? 'Coris Bénin';
 // $id_activite = $_GET['id'] ?? 2;
@@ -62,8 +63,9 @@ $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $pdf = new TCPDF('P', 'mm', 'A4');
 $pdf->AddFont('trebucbd', '', 'trebucbd.php');
 $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
-configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Ordre de virement ' . $banque);
 $pdf->setMargins(15, 25, 15, true);
+configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Ordre de virement ' . $banque);
+
 $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
 $pdf->AddPage();
 
@@ -152,4 +154,8 @@ $bloc_droite = mb_strtoupper($resultats[0]['titre_responsable']);
 afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 2, 'C', 'U', 'C', 'U');
 
 // //Sortie du pdf
+
 $pdf->Output('Ordre de virement ' . $banque . '.pdf', 'I');
+if($zip){
+    $pdf->Output($dossier_zip.'/Ordre de virement '.$banque.'.pdf', 'F'); 
+}

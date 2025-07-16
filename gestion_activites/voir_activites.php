@@ -144,6 +144,8 @@ $resultat->closeCursor();
                                                                     <?php if ($generer_documents) : ?>
                                                                         <li>
                                                                             <a href="/gestion_activites/generation_documents.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item"></i>Générer les documents</a>
+
+                                                                            <a href="/gestion_activites/edition_en_ligne.php?id=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Editer l'entête de vos fichiers</a>
                                                                         </li>
                                                                     <?php endif; ?>
 
