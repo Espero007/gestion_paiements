@@ -541,38 +541,16 @@ if ($id_type_activite === 1) {
     $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE, "Europe/Paris", IntlDateFormatter::GREGORIAN);
     $dateFr = $formatter->format(new DateTime());
 
-    function formaterPeriode($dateDebut, $dateFin)
-    {
-        $debut = new DateTime($dateDebut);
-        $fin   = new DateTime($dateFin);
+    // J'ai déplacé la fonction qui était ici dans le fichier constantes_uilitaires
 
-        $jourDebut = $debut->format('j');
-        $jourFin   = $fin->format('j');
-
-        $formatterMois = new IntlDateFormatter("fr_FR", IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'MMMM');
-
-        $moisDebut = $formatterMois->format($debut);
-        $moisFin   = $formatterMois->format($fin);
-
-        $anneeDebut = $debut->format('Y');
-        $anneeFin   = $fin->format('Y');
-
-        // Période dans le même mois et année
-        if ($moisDebut === $moisFin && $anneeDebut === $anneeFin) {
-            return "$jourDebut au $jourFin $moisFin $anneeFin";
-        }
-        // Même année mais mois différents
-        elseif ($anneeDebut === $anneeFin) {
-            return "$jourDebut $moisDebut au $jourFin $moisFin $anneeFin";
-        }
-        // Mois et années différents
-        else {
-            return "$jourDebut $moisDebut $anneeDebut au $jourFin $moisFin $anneeFin";
-        }
-    }
 
     // Nécessaire pour les mois en français
     setlocale(LC_TIME, 'fr_FR.UTF-8');
+
+    // Génération du header
+
+    // $informations_necessaires = ['titre' => $data[0]['nom_activite']];
+    // genererHeader($pdf, 'etat_paiement_3', $informations_necessaires, $id_activite);
 
     $html = '
     <style>
@@ -613,7 +591,6 @@ if ($id_type_activite === 1) {
 
     $html .= '
     <p><b> NS  N° 2548/PR/DC/SGM/DAF/DEC/SAF/SIS/SEC/SD/SA DU 31 DECEMBRE 2020 </b><br></p>';
-
 
     // Titre
 
