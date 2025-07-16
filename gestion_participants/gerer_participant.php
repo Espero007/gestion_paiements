@@ -39,6 +39,7 @@ require_once('includes/gerer_participant.php');
                             <h6 class="text-primary font-weight-bold">Fiche informative</h3>
                         </div>
                         <div class="card-body">
+                            <!-- Messages divers -->
                             <?php if (isset($_SESSION['modification_ok'])) : ?>
                                 <?php afficherAlerte('Les informations du participant ont été modifiées avec succès !', 'success') ?>
                                 <?php unset($_SESSION['modification_ok']) ?>
@@ -52,6 +53,12 @@ require_once('includes/gerer_participant.php');
                             <?php if (isset($_SESSION['comptes_ajoutes'])) : ?>
                                 <?php afficherAlerte('comptes_ajoutes', 'success', true) ?>
                             <?php endif; ?>
+
+                            <?php if (isset($_SESSION['comptes_supprimes'])) : ?>
+                                <?php afficherAlerte('comptes_supprimes', 'success', true) ?>
+                            <?php endif; ?>
+
+                            <!-- Fin Messages divers -->
 
                             <!-- Informations générales -->
 
@@ -86,11 +93,6 @@ require_once('includes/gerer_participant.php');
                                     <?php if (!$quota_comptes_bancaires_atteint) : ?>
                                         <li><a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a></li>
                                     <?php endif; ?>
-                                    <?php if (count($comptes) > 1): ?>
-                                        <li>
-                                            <a href="supprimer_une_banque.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item text-danger">Supprimer un compte bancaire</a>
-                                        </li>
-                                    <?php endif; ?>
                                     <li>
                                         <a href="modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
                                     </li>
@@ -98,6 +100,11 @@ require_once('includes/gerer_participant.php');
                                     <li>
                                         <a href="lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer à une activité</a>
                                     </li>
+                                    <?php if (count($comptes) > 1): ?>
+                                        <li>
+                                            <a href="supprimer_une_banque.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item text-danger">Supprimer un compte bancaire</a>
+                                        </li>
+                                    <?php endif; ?>
                                     <li>
                                         <hr class="dropwdown-divider">
                                     </li>

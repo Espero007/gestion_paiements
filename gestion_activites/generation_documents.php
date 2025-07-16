@@ -61,15 +61,13 @@ require_once('traitements/generation_documents.php');
                             <?php if (!isset($documents_choisis)) : ?>
                                 <form action="" method="post">
                                     <div class="ml-4">
-                                        <?php $premiere_fois = 0 ?>
+                                        <?php $premiere_fois = false ?>
                                         <?php foreach ($documents as $document => $label) : ?>
                                             <?php if (str_contains($document, 'ordre_virement') && !$premiere_fois) : ?>
                                                 <div class="mt-3">
-
                                                     <p class="m-0 font-weight-bold">Ordres de virements bancaires</p>
-
                                                 </div>
-                                                <?php $premiere_fois++ ?>
+                                                <?php $premiere_fois = true ?>
                                             <?php endif; ?>
 
                                             <div class="form-check<?= str_contains($document, 'ordre_virement') ? ' ml-3 mt-2' : ' mt-3' ?>">
@@ -80,14 +78,15 @@ require_once('traitements/generation_documents.php');
                                     </div>
 
                                     <div class="divider text-start">
-                                        <div class="divider-text"><strong>Action</strong></div>
+                                        <div class="divider-text"><strong>Actions</strong></div>
                                     </div>
 
                                     <!-- Boutons d'actions -->
                                     <?php if ($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST)) : ?>
-                                        <p class="mt-0 mb-2"><small><strong>Note</strong> : Sélectionnez des documents à générer</small></p>
+                                        <p class="mt-0 mb-2"><small class="text-danger"><strong>Note</strong> : Sélectionnez des documents à générer</small></p>
                                     <?php endif; ?>
                                     <button type="submit" class="btn btn-primary">Continuer</button>
+                                    <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-secondary ml-2">Annuler</a>
                                 </form>
                             <?php else: ?>
 
@@ -102,9 +101,10 @@ require_once('traitements/generation_documents.php');
                                 </div>
 
                                 <div class="divider text-start">
-                                    <div class="divider-text"><strong>Action</strong></div>
+                                    <div class="divider-text"><strong>Actions</strong></div>
                                 </div>
                                 <button class="btn btn-primary" id='generer'>Générer</button>
+                                <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-secondary ml-2">Annuler</a>
                             <?php endif; ?>
 
 

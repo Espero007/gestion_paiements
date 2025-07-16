@@ -78,7 +78,7 @@ require_once('traitements/desactiver_compte.php');
                                     <!-- Lien de confirmation d'email invalide -->
 
                                     <?php if (isset($_SESSION['lien_invalide'])) : ?>
-                                        <?php afficherAlerte('lien_invalide', 'info', true);?>
+                                        <?php afficherAlerte('lien_invalide', 'info', true); ?>
                                     <?php endif; ?>
 
                                     <div class="d-flex align-items-start align-items-sm-center gap-4">
@@ -169,7 +169,7 @@ require_once('traitements/desactiver_compte.php');
                                     <div class="form-check mb-3">
                                         <input type="checkbox" class="form-check-input" name='suppressionCompte' id='suppressionCompte' value="yes">
                                         <label for="suppressionCompte" class="form-check-label"> Je confirme la suppression de mon compte </label>
-                                         <?php echo !$confirmation ? '<p> <small class="text-danger"> Veillez confirmer la suppression de votre compte </small></p>' : '' ?>
+                                        <?php echo !$confirmation ? '<p> <small class="text-danger"> Veillez confirmer la suppression de votre compte </small></p>' : '' ?>
                                     </div>
                                     <button type="submit" name="desactiver" class="btn btn-danger desactiver-compte">Supprimer compte</button>
                                 </form>

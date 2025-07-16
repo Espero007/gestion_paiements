@@ -125,14 +125,15 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
 
                     // Vérifier la validite du numéro de compte
                     $_POST[$champ] = strtoupper($_POST[$champ]);
+                    $valeur_champ = $_POST[$champ];
 
-                    if (!preg_match('/^[A-Z0-9]+/', $valeur_champ)) {
+                    if (!preg_match('/^[A-Z0-9]+$/', $valeur_champ)) {
                         // La valeur reçue contient d'autres caractères que les lettres et les chiffres
                         $erreurs[$champ][] = "Ce champ doit contenir uniquement des lettres et des chiffres";
-                    } elseif (!preg_match('/[0-9]+/', $valeur_champ)) {
+                    } elseif (!preg_match('/[0-9]/', $valeur_champ)) {
                         // La valeur reçue ne contient aucun chiffre
                         $erreurs[$champ][] = "Ce champ doit contenir au moins un chiffre";
-                    } elseif (!preg_match('/[A-Z]+/', $valeur_champ)) {
+                    } elseif (!preg_match('/[A-Z]/', $valeur_champ)) {
                         // La valeur reçue ne contient aucune lettre
                         $erreurs[$champ][] = "Ce champ doit contenir au moins un caractère alphabétique";
                     } else {

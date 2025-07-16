@@ -406,18 +406,23 @@ function afficherAlerte($message, $type, $session = false, $dismissible = true)
             <?= $_SESSION[$message] ?>
             <?php unset($_SESSION[$message]) ?>
         <?php endif; ?>
-        <?php if($dismissible) : ?>
+        <?php if ($dismissible) : ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
         <?php endif; ?>
     </div>
 <?php
 }
 
-function traiterCheminAcces($chemin)
+function traiterCheminAcces($chemin, $basename = false)
 {
     // Cette fonction est là pour m'aider à retrouver le lien en relatif à partir du lien en absolu. Elle va donc tout simplement couper le chemin d'accès à partir de 'fichiers' et le reste me donnera le chemin d'accès en relatif
-    $motCle = $GLOBALS['nom_dossier_upload'];
-    return strstr($chemin, $motCle);
+
+    if (!$basename) {
+        $motCle = $GLOBALS['nom_dossier_upload'];
+        return strstr($chemin, $motCle);
+    } else {
+        return basename($chemin);
+    }
 }
 
 function afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, $font, $font_size, $sauts_ligne, $bloc_gauche_align = 'C', $bloc_gauche_style = '', $bloc_droite_align = 'C', $bloc_droite_style = '')
@@ -633,4 +638,67 @@ function totalBanque($id_activite, $banque)
     }
 
     return $total;
+}
+
+function extrairePrefixe($nomfichier)
+{
+    // $nom = basename($chemin_fichier);
+    if (preg_match('/^(.*_)\d+\.pdf$/', $nomfichier, $matches)) {
+        return $matches[1];
+    }
+    return null; // Ou false si tu préfères
+}
+
+function extraireSuffixe($nomfichier)
+{
+    if (preg_match('/_(\d+)\.pdf$/', $nomfichier, $matches)) {
+        return $matches[1];
+    }
+    return null;
+}
+
+function arrangerRibs($id_participant)
+{
+    global $bdd;
+    // Je récupère les chemins d'accès vers les ribs qu'il lui reste
+    $stmt = $bdd->query('
+    SELECT id_fichier, chemin_acces
+    FROM fichiers f
+    INNER JOIN informations_bancaires ib ON ib.id_rib = f.id_fichier
+    INNER JOIN participants p ON ib.id_participant = p.id_participant
+    WHERE p.id_participant=' . $id_participant);
+
+    $donnees = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($donnees as $index => $donnee) {
+        $donnees[$index]['suffixe'] = extraireSuffixe(basename($donnee['chemin_acces']));
+        $donnees[$index]['prefixe'] = extrairePrefixe(basename($donnee['chemin_acces']));
+        $chiffres[] = $donnees[$index]['suffixe'];
+    }
+
+    $nbr_valeurs = count($chiffres);
+
+    for ($i=1; $i <= $nbr_valeurs; $i++) { 
+        $chiffre_min = min($chiffres);
+        foreach ($donnees as $donnee) {
+            $suffixe = $donnee['suffixe'];
+            if($chiffre_min == $suffixe){
+                // On modifie le nom du fichier et on actualise la bdd
+                $nouveauNom = dirname($donnee['chemin_acces']).'/'.$donnee['prefixe'].$i.'.pdf';
+                if(rename($donnee['chemin_acces'], $nouveauNom)){
+
+                    $stmt = $bdd->prepare('UPDATE fichiers SET chemin_acces=:chemin WHERE id_fichier='.$donnee['id_fichier']);
+                    $stmt->execute(['chemin' => $nouveauNom]);
+    
+                    // Recherche l'index du minimum trouvé et le retire
+                    $index = array_search($chiffre_min, $chiffres);
+                    if ($index !== false) {
+                        unset($chiffres[$index]);
+                    }
+                    // Réindexer le tableau
+                    $tab = array_values($chiffres);
+                }
+            }
+        }
+    }
 }
