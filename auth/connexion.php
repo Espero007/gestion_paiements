@@ -30,36 +30,23 @@ require_once("submit/submit_connexion.php");
                             <div class="col-12">
                                 <div class="p-5">
                                     <!-- Messages divers -->
-                                    <?php
-                                    if (isset($echec_connexion)) {
-                                    ?>
-                                        <div class="alert alert-danger text-center">Echec de la connexion ! Assurez-vous d'indiquer correctement vos identifiants de connexion !</div>
-                                    <?php
-                                    }
-                                    ?>
-                                    <?php if (isset($_SESSION['email_envoye']) && $_SESSION['email_envoye']) : ?>
-                                        <?php 
-                                        $email = $_SESSION['email'];
-                                        $lien = '<a href="https://mail.google.com/mail/u/'.htmlspecialchars($email) .'/#inbox" target="_blank" >'. htmlspecialchars($email).'</a>';
-                                        afficherAlerte('Un lien de vérification a été envoyé au mail : '. $lien .'. Cliquez dessus pour confirmer votre email et accéder à votre compte.', 'info');
-                                        unset($_SESSION['email_envoye']);
-                                        ?>
-                                        
-                                    <?php elseif (isset($_SESSION['email_envoye']) && !$_SESSION['email_envoye']): ?>
+                                    <?php if (isset($echec_connexion)) : ?>
+                                        <?php afficherAlerte('Les identifiants de connexion que vous avez indiqués sont invalides', 'danger') ?>
+                                    <?php endif; ?>
 
-                                        <?php
-                                       
-                                        afficherAlerte('Une erreur s\'est produite lors de l\'envoi du lien de confirmation de votre email, veuillez réessayer plus tard.', 'info');
-                                        unset($_SESSION['email_envoye']);  ?>
-                                        
-                                       
+                                    <?php if (isset($_SESSION['email_envoye'])) : ?>
+                                        <?php afficherAlerte('email_envoye', 'info', true); ?>
+                                    <?php endif; ?>
+
+                                    <?php if (isset($_SESSION['email_non_envoye'])): ?>
+                                        <?php afficherAlerte('email_non_envoye', 'info', true); ?>
                                     <?php endif; ?>
 
                                     <?php
                                     if (isset($_SESSION['deconnexion']) && !isset($_SESSION['timeout_atteint'])) {
                                         session_unset(); // On détruit les varaibles de la session
                                         session_destroy(); // On détruit la session
-                                        afficherAlerte('Vous êtes à présent déconnecté(e) !', 'success');
+                                        afficherAlerte('Vous êtes à présent déconnecté(e) !', 'info');
                                     } elseif (isset($_SESSION['deconnexion']) && isset($_SESSION['timeout_atteint'])) {
                                         // déconnexion due au timeout
                                         afficherAlerte('Vous avez été déconnecté(e) pour cause d\'inactivité. Veuillez vous reconnecter avant de poursuivre.', 'info');
@@ -69,7 +56,7 @@ require_once("submit/submit_connexion.php");
                                     ?>
                                     <?php if (isset($email_non_valide)) : ?>
                                         <?php
-                                        $message = 'Votre email n\'a pas encore été confirmé. Veuillez consulter votre boite mail ou <a href="' . 'renvoyerLienConfirmation.php?email=' . $_POST['email'] . '">renvoyer un lien de confirmation</a> si vous n\'avez pas reçu de lien.';
+                                        $message = 'Votre email n\'a pas encore été confirmé. Veuillez consulter votre boite mail ou <a href="' . 'renvoyerLienConfirmation.php?email=' . htmlspecialchars($_POST['email']) . '">renvoyer un lien de confirmation</a> si vous n\'avez pas reçu de lien.';
                                         afficherAlerte($message, 'info')
                                         ?>
                                     <?php endif; ?>
@@ -97,12 +84,9 @@ require_once("submit/submit_connexion.php");
                                                     echo "value = \"" . htmlspecialchars($_POST["email"]) . "\"";
                                                 } ?>>
 
-                                            <?php if (isset($erreurs["email"])) {
-                                            ?>
+                                            <?php if (isset($erreurs['email'])) : ?>
                                                 <div id="emailHelp" class="form-text"><?= $erreurs["email"] ?></div>
-                                            <?php } ?>
-
-
+                                            <?php endif; ?>
                                         </div>
                                         <div class="form-group form-password-toggle">
                                             <label for="password" class="col-form-label form-label">Mot de passe</label>
@@ -115,12 +99,9 @@ require_once("submit/submit_connexion.php");
                                                 <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                                             </div>
 
-                                            <?php if (isset($erreurs["password"])) {
-                                            ?>
+                                            <?php if (isset($erreurs['password'])) : ?>
                                                 <div id="passwordHelp" class="form-text"><?= $erreurs["password"] ?></div>
-                                            <?php } ?>
-
-                                            <!-- <div class="d-flex justify-content-end mt-3"><a href="./inscription.php">Mot de passe oublié ?</a></div> -->
+                                            <?php endif; ?>
                                         </div>
 
                                         <!-- Se souvenir de moi -->
@@ -130,12 +111,9 @@ require_once("submit/submit_connexion.php");
                                                 <label class="custom-control-label" for="customCheck" >Se souvenir de moi</label>
                                             </div>
                                         </div>
-
                                         <div class="mb-3">
                                             <button class="btn btn-primary w-100" type="submit" name="connexion">Se connecter</button>
                                         </div>
-
-                                        
                                     </form>
                                     <hr>
                                     <div class="text-center">

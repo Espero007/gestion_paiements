@@ -1,5 +1,4 @@
 <?php
-// session_unset();
 session_start();
 require_once(__DIR__.'/../../includes/bdd.php');
 require_once(__DIR__.'/../../includes/constantes_utilitaires.php');
@@ -13,16 +12,6 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
     header('location:/index.php');
     exit;
 }
-
-// if (isset($_SESSION['current_url'])) {
-//     $_SESSION['current_url'] = obtenirURLcourant();
-// }
-
-
-
-// if(isset($_SESSION['previous_url'])) {
-//     echo $_SESSION['previous_url'];
-// }
 
 if (isset($_POST['connexion'])) {
 
@@ -45,7 +34,6 @@ if (isset($_POST['connexion'])) {
         // Tout va bien avec les données : pas d'erreurs
 
         // On vérifie d'abord si les informations de l'utilisateur ne correspondent pas à ceux d'un utilisateur qui n'a pas encore confirmé son email
-
         $check_data = $bdd->prepare("SELECT email, token_verification FROM connexion WHERE email = :email AND est_verifie=0");
         $check_data->bindParam('email', $_POST['email']);
         $check_data->execute();
@@ -78,11 +66,9 @@ if (isset($_POST['connexion'])) {
                     $smt1 = $bdd->prepare('SELECT * FROM token_souvenir WHERE user_id = ?');
                     $smt1->execute([$logged_user['user_id']]);
                     $souvenir = $smt1->fetch(PDO::FETCH_ASSOC);
-                     var_dump($souvenir);
                     if($souvenir && $souvenir['expire_le'] < date('Y-m-d H:i:s')){
                         $smt2 = $bdd->prepare('DELETE FROM token_souvenir WHERE user_id = ?');
                         $smt2->execute([$logged_user['user_id']]);
-
                     }
 
                     $smt = $bdd->prepare("INSERT INTO token_souvenir(user_id,token, expire_le) VALUES (?,?,?)");
@@ -90,12 +76,13 @@ if (isset($_POST['connexion'])) {
 
                     setcookie('souvenir', $token, time()+(86400*30),'/','',true,true);
                 }
+
                 // Redirection vers la page d'accueil par défaut mais s'il y avait une url on la chope
 
                 if (isset($_SESSION['previous_url'])) {
-                    $url = $_SESSION['previous_url'];
+                    // $url = $_SESSION['previous_url'];
                     // unset($_SESSION['previous_url']);
-                    header('location:' . $url);
+                    header('location:' . $_SESSION['previous_url']);
                     exit;
                 } else {
                     header('location:/index.php');

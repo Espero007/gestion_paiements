@@ -15,7 +15,6 @@ $forfaires = [];
 if (!isset($_POST['id']) || !filter_var($_POST['id'], FILTER_VALIDATE_INT)) {
     header('Location:' . $_SESSION["previous_url"]);
     exit;
-   
 }
 $activity_id = $_POST['id'];
 
@@ -44,33 +43,33 @@ try {
 
 // Initialisation des données à vide
 $data = [
-   'nom' => '',
-        'timbre' => '',
-        'reference' => '',
-        'description' => '',
-        'centre' => '',
-        'premier_responsable' => '',
-        'titre_responsable' => '',
-        'organisateur' => '',
-        'titre_organisateur' => '',
-        'financier' => '',
-        'titre_financier' => '',
-        'note_generatrice' => '',
-        'niveaux_diplome' => '',
-        'titres_associes' => '',
-        'taux_journalier' => '',
-        'indemnite_forfaitaire' => '',
-        'taux_taches' => '',
-        'frais_deplacement_journalier' => '',
-        'date_debut' => '',
-        'date_fin' => '',
+    'nom' => '',
+    'timbre' => '',
+    'reference' => '',
+    'description' => '',
+    'centre' => '',
+    'premier_responsable' => '',
+    'titre_responsable' => '',
+    'organisateur' => '',
+    'titre_organisateur' => '',
+    'financier' => '',
+    'titre_financier' => '',
+    'note_generatrice' => '',
+    'niveaux_diplome' => '',
+    'titres_associes' => '',
+    'taux_journalier' => '',
+    'indemnite_forfaitaire' => '',
+    'taux_taches' => '',
+    'frais_deplacement_journalier' => '',
+    'date_debut' => '',
+    'date_fin' => '',
 ];
 
 // Champs à afficher dans le message de succès par type
 $fields_to_display = [
-    '1' => ['nom', 'description', 'centre', 'timbre' , 'reference' , 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier','niveaux_diplome', 'titres_associes', 'taux_journalier', 'date_debut', 'date_fin'],
-    '2' => ['nom', 'description', 'centre', 'timbre' , 'reference' ,'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier','niveaux_diplome', 'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin'],
-    '3' => ['nom', 'description', 'centre', 'timbre' , 'reference' ,'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier','niveaux_diplome', 'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin']
+    '1' => ['nom', 'description', 'centre', 'timbre', 'reference', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'date_debut', 'date_fin'],
+    '2' => ['nom', 'description', 'centre', 'timbre', 'reference', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin'],
+    '3' => ['nom', 'description', 'centre', 'timbre', 'reference', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'niveaux_diplome', 'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin']
 ];
 
 // Vérifier si le formulaire a été soumis
@@ -87,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
     } else {
         ### Validations communes
         $champs_texts = ['nom', 'timbre', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'reference'];
-        $common_fields = ['nom', 'description', 'centre', 'premier_responsable', 'organisateur', 'financier', 'niveaux_diplome', 'titres_associes', 'date_debut', 'date_fin', 'timbre' , 'reference' ,'titre_responsable' ,'titre_organisateur','titre_financier'];
+        $common_fields = ['nom', 'description', 'centre', 'premier_responsable', 'organisateur', 'financier', 'niveaux_diplome', 'titres_associes', 'date_debut', 'date_fin', 'timbre', 'reference', 'titre_responsable', 'titre_organisateur', 'titre_financier'];
         foreach ($common_fields as $field) {
             if (empty($data[$field])) {
                 $errors[$field] = 'Veuillez remplir ce champ';
@@ -165,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                         $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
                     }
                 }
-            }elseif($champ == 'reference'){
+            } elseif ($champ == 'reference') {
                 if (!preg_match('/^[A-Za-z0-9]+(\/[A-Za-z0-9]+)+$/', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
@@ -422,11 +421,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                         'timbre' => mb_strtoupper($data['timbre'], 'UTF-8'),
                         'reference' => mb_strtoupper($data['reference'], 'UTF-8'),
                         'premier_responsable' => $data['premier_responsable'],
-                        'titre_responsable' => $data['titre_responsable'] ,
+                        'titre_responsable' => $data['titre_responsable'],
                         'organisateur' => $data['organisateur'],
-                        'titre_organisateur' => $data['titre_organisateur'] ,
+                        'titre_organisateur' => $data['titre_organisateur'],
                         'financier' => $data['financier'],
-                        'titre_financier' => $data['titre_financier'] ,
+                        'titre_financier' => $data['titre_financier'],
                         'taux_journalier' => in_array($type_activite, ['1', '2']) ? $data['taux_journalier'] : null,
                         'taux_taches' => $type_activite === 3 ? $data['taux_taches'] : null,
                         'frais_deplacement_journalier' => $type_activite === 3 ? $data['frais_deplacement_journalier'] : null,
@@ -434,39 +433,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                         'id_user' => $id_user
                     ]);
 
-     // Mettre à jour les diplômes
-        $diplomes_str = implode(',', $diplomes);
-        $sql_diplome = 'UPDATE diplomes SET noms = :noms WHERE id_activite = :id_activite';
-        $stmt_diplome = $bdd->prepare($sql_diplome);
-        $stmt_diplome->execute([
-            'id_activite' => $activity_id,
-            'noms' => $diplomes_str
-            ]);
+                    // Mettre à jour les diplômes
+                    $diplomes_str = implode(',', $diplomes);
+                    $sql_diplome = 'UPDATE diplomes SET noms = :noms WHERE id_activite = :id_activite';
+                    $stmt_diplome = $bdd->prepare($sql_diplome);
+                    $stmt_diplome->execute([
+                        'id_activite' => $activity_id,
+                        'noms' => $diplomes_str
+                    ]);
 
-        // Mettre à jour les titres
-        $sql_titre = 'UPDATE titres SET nom = :nom, indemnite_forfaitaire = :indemnite_forfaitaire WHERE id_activite = :id_activite AND nom = :old_nom';
-        $stmt_titre = $bdd->prepare($sql_titre);
+                    // Mettre à jour les titres
+                    $sql_titre = 'UPDATE titres SET nom = :nom, indemnite_forfaitaire = :indemnite_forfaitaire WHERE id_activite = :id_activite AND nom = :old_nom';
+                    $stmt_titre = $bdd->prepare($sql_titre);
 
-        if ($type_activite == '1') {
-            foreach ($titres as $index => $titre) {
-                // Supposer que les titres sont dans le même ordre que les enregistrements existants
-                $stmt_titre->execute([
-                    'id_activite' => $activity_id,
-                    'nom' => $titre,
-                    'indemnite_forfaitaire' => null,
-                    'old_nom' => $titres[$index] // Utiliser le même titre comme clé de correspondance
-                ]);
-            }
-        } elseif (in_array($type_activite, ['2', '3'])) {
-            foreach (array_combine($titres, $forfaires) as $titre => $forfaire) {
-                $stmt_titre->execute([
-                    'id_activite' => $activity_id,
-                    'nom' => $titre,
-                    'indemnite_forfaitaire' => $forfaire,
-                    'old_nom' => $titre // Utiliser le même titre comme clé de correspondance
-                ]);
-            }
-        }
+                    if ($type_activite == '1') {
+                        foreach ($titres as $index => $titre) {
+                            // Supposer que les titres sont dans le même ordre que les enregistrements existants
+                            $stmt_titre->execute([
+                                'id_activite' => $activity_id,
+                                'nom' => $titre,
+                                'indemnite_forfaitaire' => null,
+                                'old_nom' => $titres[$index] // Utiliser le même titre comme clé de correspondance
+                            ]);
+                        }
+                    } elseif (in_array($type_activite, ['2', '3'])) {
+                        foreach (array_combine($titres, $forfaires) as $titre => $forfaire) {
+                            $stmt_titre->execute([
+                                'id_activite' => $activity_id,
+                                'nom' => $titre,
+                                'indemnite_forfaitaire' => $forfaire,
+                                'old_nom' => $titre // Utiliser le même titre comme clé de correspondance
+                            ]);
+                        }
+                    }
 
                     // Stocker le hash de la soumission
                     $_SESSION['last_submission_hash'] = [

@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once(__DIR__.'/../../includes/bdd.php');
-require_once(__DIR__.'/../../includes/constantes_utilitaires.php');
+require_once(__DIR__ . '/../../includes/bdd.php');
+require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
 if (isset($_POST['inscription'])) {
 
@@ -33,15 +33,12 @@ if (isset($_POST['inscription'])) {
 
     if (!isset($erreurs)) {
         // Pas d'erreurs
-
         $token = bin2hex(random_bytes(16)); // token de vérification
-        
-        $_SESSION['email'] = $_POST ['email'];
-
-        $lien_verif = obtenirURLcourant(true).'/auth/submit/verifie_email.php?email='. urldecode($_POST['email']).'&token='.$token;
+        $lien_verif = obtenirURLcourant(true) . '/auth/submit/verifie_email.php?email=' . urldecode($_POST['email']) . '&token=' . $token;
 
         if (envoyerLienValidationEmail($lien_verif, $_POST['email'], $_POST['nom'], $_POST['prenoms'], 0)) {
-            $_SESSION["email_envoye"] = true;
+            $_SESSION["email_envoye"] = 'Un lien de vérification a été envoyé au mail : <span class="text-primary">' . htmlspecialchars($_POST['email']) . '</span>. Cliquez dessus pour confirmer votre email et accéder à votre compte.';
+
             $stmt = $bdd->prepare("INSERT INTO connexion(nom,prenoms,email,password,token_verification) VALUES (:val1,:val2,:val3,:val4,:val5)");
 
             $resultat = $stmt->execute([
@@ -53,17 +50,11 @@ if (isset($_POST['inscription'])) {
             ]);
 
             if (!$resultat) {
-            $echec_enregistrement_donnees = true;
-            } else {
-                // Insertion réussie
-                // $_SESSION['inscription_reussie'] = true;
-                header('location:connexion.php');
-                exit;
+                $echec_enregistrement_donnees = true;
             }
-        }else{
+        } else {
             $_SESSION['email_non_envoye'] = 'Une erreur d\'est produite lors de l\'envoi du lien de confirmation de votre email, veuillez réessayer plus tard';
         }
-
         header('location:connexion.php');
         exit;
     }

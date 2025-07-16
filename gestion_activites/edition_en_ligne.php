@@ -271,7 +271,7 @@ require_once('traitements/edition.php');
         const prevDate2 = document.getElementById('prev_date2');
 
         const champs = [champLigne1, champLigne2, champLigne3, champVille, champDate1, champDate2];
-        const prevs = [prevLigne1, prevLigne2, prevLigne2, prevVille, prevDate1, prevDate2];
+        const prevs = [prevLigne1, prevLigne2, prevLigne3, prevVille, prevDate1, prevDate2];
         const valeursDefaut = ['............<strong>(ligne 1)</strong>', '......<strong>(ligne 2)</strong>', '.........<strong>(ligne 3)</strong>', '<strong>(Ville)</strong>', '<strong>(Date 1)</strong>', '<strong>(Date 2)</strong>'];
 
         function updatePreview(input, prev) {

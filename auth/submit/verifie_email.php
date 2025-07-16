@@ -6,6 +6,7 @@ require_once(__DIR__ . '/../../includes/bdd.php');
 $email = $_GET['email'] ?? '';
 $token = $_GET['token'] ?? '';
 $modification_email = $_GET['modification_email'] ?? '';
+$message_lien_invalide = 'Le lien de confirmation que vous avez utilisé est invalide.';
 
 // echo $email;
 // echo $token;
@@ -47,7 +48,7 @@ if ($utilisateur) {
             $_SESSION['email_modifie'] = true;
         } else {
             // Il y a un souci avec les infos, sûrement un utilisateur qui veut jouer au malin  
-            $_SESSION['lien_invalide'] = 'Le lien de confirmation que vous avez utilisé n\'est plus ou pas valide';
+            $_SESSION['lien_invalide'] = $message_lien_invalide;
         }
 
         unset($_SESSION['modification_email']);
@@ -58,7 +59,7 @@ if ($utilisateur) {
         exit;
     } else {
         // Il y a eu déconnexion entre temps ou plusieurs liens de confirmation lui ont été envoyés;
-        $_SESSION['lien_invalide'] = 'Le lien de confirmation que vous avez utilisé n\'est plus ou pas valide';
+        $_SESSION['lien_invalide'] = $message_lien_invalide;
         header('location:/parametres/gestion_compte/voir_profil.php');
         exit;
     }
@@ -70,7 +71,7 @@ if ($utilisateur) {
         "email" => $email,
     ]);
     if ($stmt->rowCount() != 0) {
-        $_SESSION['lien_invalide'] = 'Le lien de confirmation que vous avez utilisé n\'est plus ou pas valide';
+        $_SESSION['lien_invalide'] = $message_lien_invalide;
     } else {
         $_SESSION['erreur_avec_verification_email'] = "Une erreur s'est produite lors de la vérification de l'email";
     }

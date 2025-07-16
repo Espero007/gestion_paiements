@@ -6,52 +6,67 @@ require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
 session_start();
 // Activer le mode debug temporairement (à désactiver en production)
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 ob_start();
 
 // Vérifier que $bdd est un objet PDO
-if (!($bdd instanceof PDO)) {
-    ob_end_clean();
-    die('Erreur : la connexion à la base de données a échouée.');
+// if (!($bdd instanceof PDO)) {
+//     ob_end_clean();
+//     die('Erreur : la connexion à la base de données a échouée.');
+// }
+
+$redirect = true;
+
+if (valider_id('get', 'id', '', 'participations_activites')) {
+    // l'id de l'activité est bon
+    if (isset($_GET['document'])) {
+        if (in_array($_GET['document'], ['attestation', 'note'])) {
+            // On a la variable 'document' et elle a une bonne valeur
+            $redirect = false;
+            $activity_id = $_GET['id'];
+            $document = $_GET['document'];
+        }
+    }
 }
 
+if ($redirect) {
+    redirigerVersPageErreur(404, $_SESSION['previous_url']);
+}
 
-//$activity_id = 13;
-
-$errors = [];
-$id_user = $_SESSION['user_id'];
+// $errors = [];
+// $id_user = $_SESSION['user_id'];
 
 
 
 // Vérifier si l'ID de l'activité est fourni
-if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-    header('Location:' . $_SESSION["previous_url"]);
-    exit;
-}
-$activity_id = $_GET['id'];
+// if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+//     // header('Location:' . $_SESSION["previous_url"]);
+//     exit;
+// }
+// $activity_id = $_GET['id'];
 
 
-// Vérifier si l'activité existe et appartient à l'utilisateur
-try {
-    $sql = 'SELECT id_note_generatrice, type_activite FROM activites WHERE id = :id AND id_user = :id_user';
-    $stmt = $bdd->prepare($sql);
-    $stmt->execute(['id' => $activity_id, 'id_user' => $id_user]);
-    $activity = $stmt->fetch(PDO::FETCH_ASSOC);
+// // Vérifier si l'activité existe et appartient à l'utilisateur
+// try {
+//     $sql = 'SELECT id_note_generatrice, type_activite FROM activites WHERE id = :id AND id_user = :id_user';
+//     $stmt = $bdd->prepare($sql);
+//     $stmt->execute(['id' => $activity_id, 'id_user' => $id_user]);
+//     $activity = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-    if (!$activity) {
-        $_SESSION['form_errors'] = ['database' => "Activité non trouvée ou vous n'avez pas les permissions pour la modifier."];
-        header('Location:' . $_SESSION["previous_url"]);
-        exit;
-    }
-} catch (PDOException $e) {
-    $_SESSION['form_errors'] = ['database' => "Erreur lors de la vérification de l'activité. Veuillez réessayer."];
-    header('Location:' . $_SESSION["previous_url"]);
-    exit;
-}
+//     if (!$activity) {
+//         $_SESSION['form_errors'] = ['database' => "Activité non trouvée ou vous n'avez pas les permissions pour la modifier."];
+//         header('Location:' . $_SESSION["previous_url"]);
+//         exit;
+//     }
+// } catch (PDOException $e) {
+//     $_SESSION['form_errors'] = ['database' => "Erreur lors de la vérification de l'activité. Veuillez réessayer."];
+//     header('Location:' . $_SESSION["previous_url"]);
+//     exit;
+// }
 
 if(!valider_id('get', 'id', $bdd, 'participations_activites')){
     redirigerVersPageErreur(404,$_SESSION['previous_url']);
@@ -84,7 +99,7 @@ $sql = "
 ";
 
 $stmt = $bdd->prepare($sql);
-$stmt->execute(['activite_id' => $activity_id]); // Passe la valeur du type d'activité ici
+$stmt->execute(['activite_id' => $activity_id]);
 $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $titre_activite = $participants[0]['nom_activite'];
 
@@ -388,9 +403,6 @@ class Note_Service extends TCPDF
 //                 <td width="33%">' . htmlspecialchars($p['numero_compte']) . '</td>
 //               </tr>';
 // }
-
-
-$document = isset($_GET['document']) ? $_GET['document'] : '';
 
 $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE, "Europe/Paris", IntlDateFormatter::GREGORIAN);
 $dateFr = $formatter->format(new DateTime());
