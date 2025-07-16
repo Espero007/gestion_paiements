@@ -85,6 +85,9 @@ $resultat->closeCursor();
                                 <?php if (isset($_SESSION['liaison_reussie'])) : ?>
                                     <?php afficherAlerte('liaison_reussie', 'success', true); ?>
                                 <?php endif; ?>
+                                <?php if (isset($_SESSION['suppression_ok'])) : ?>
+                                    <?php afficherAlerte('suppression_ok', 'success', true) ?>
+                                <?php endif; ?>
                                 <!-- Fin Messages divers -->
 
                                 <form action="">
