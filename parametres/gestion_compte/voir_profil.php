@@ -6,15 +6,28 @@ require_once('traitements/voir_profil.php');
 require_once('traitements/desactiver_compte.php');
 
 ?>
-
-<style>
-    .card-header {
-        background-color: transparent;
-        font-weight: 700;
-    }
-</style>
+<link rel="stylesheet" href="/auth/assets/vendor/fonts/boxicons.css">
+<link rel="stylesheet" href="/auth/custom_style.css">
 
 <body id="page-top">
+
+    <style>
+        .card-header {
+            background-color: transparent;
+            font-weight: 700;
+        }
+
+        .form-label,
+        .col-form-label {
+            text-transform: inherit;
+        }
+
+        .input-group> :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+            margin-left: calc(-1 * var(--bs-border-width));
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    </style>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -155,6 +168,34 @@ require_once('traitements/desactiver_compte.php');
                                 <!-- Informations du compte -->
                         </div>
 
+                        <!-- Actualisation du mot de passe -->
+                        <div class="card mb-4">
+                            <h5 class="card-header h6">Actualisation du mot de passe</h5>
+                            <div class="card-body">
+                                <form action="" method="post">
+                                    <div class="row">
+                                        <div class="mb-3 col-md-6 form-group form-password-toggle">
+                                            <label for="password" class="col-form-label">Mot de passe actuel</label>
+                                            <div class="input-group input-group-merge">
+                                                <input type="password" class="form-control" id="password" name="mdp_actuel" value='' autofocus placeholder="············">
+                                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-6">
+                                            <label for="nouveau_mdp" class="col-form-label">Nouveau mot de passe</label>
+                                            <input type="text" class="form-control" id="nouveau_mdp" name="nouveau_mdp" value="">
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-2">
+                                        <button type="submit" class="btn btn-primary mr-2" name="modifier_mdp">Modifier le mot de passe</button>
+                                        <button type="reset" class="btn btn-outline-secondary">Annuler</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Fin Actualisation du mot de passe -->
+
                         <!-- Suppresion compte -->
                         <div class="card">
                             <h5 class="card-header h6">Suppression du compte</h5>
@@ -201,6 +242,13 @@ require_once('traitements/desactiver_compte.php');
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../../includes/logoutModal.php') ?>
     <?php require_once(__DIR__ . '/../../includes/scripts.php') ?>
+    <script src="/auth/assets/vendor/js/helpers.js"></script>
+    <script>
+        (function() {
+            // Toggle Password Visibility
+            window.Helpers.initPasswordToggle();
+        })();
+    </script>
 </body>
 
 </html>
