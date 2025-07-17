@@ -17,9 +17,9 @@ require_once("submit/submit_connexion.php");
     <script src="assets/vendor/js/helpers.js"></script>
 </head>
 
-<body>
+<body class="pb-4">
     <!-- Helpers -->
-    <div class="container-xxl mt-4">
+    <div class="container-xxl">
         <!-- Outer Row -->
         <div class="row justify-content-center">
             <div class="col-md-6 col-sm-10">
@@ -76,26 +76,15 @@ require_once("submit/submit_connexion.php");
                                     <form action="" method="post" class="user">
                                         <div class="form-group">
                                             <label for="email" class="col-form-label form-label">email</label>
-                                            <input type="email" name="email" id="email" aria-describedby="emailHelp" placeholder="Entrez votre adresse email..." class="form-control 
-                                            <?php if (isset($erreurs["email"])) {
-                                                echo "is-invalid";
-                                            } ?>"
-                                                <?php if (isset($erreurs)) {
-                                                    echo "value = \"" . htmlspecialchars($_POST["email"]) . "\"";
-                                                } ?>>
-
+                                            <input type="email" name="email" id="email" aria-describedby="emailHelp" placeholder="Entrez votre adresse email..." class="form-control form-control-user<?= isset($erreurs['email']) ? ' is-invalid"' : '' ?>" <?= isset($erreurs['email']) ? ' value="' . htmlspecialchars($_POST['email']) . '"' : '' ?>>
                                             <?php if (isset($erreurs['email'])) : ?>
                                                 <div id="emailHelp" class="form-text"><?= $erreurs["email"] ?></div>
                                             <?php endif; ?>
                                         </div>
                                         <div class="form-group form-password-toggle">
                                             <label for="password" class="col-form-label form-label">Mot de passe</label>
-
                                             <div class="input-group input-group-merge">
-                                                <input type="password" class="form-control
-                                                 <?php if (isset($erreurs["password"])) {
-                                                        echo "is-invalid";
-                                                    } ?>" id="password" name="password" placeholder="············" aria-describedby="passwordHelp">
+                                                <input type="password" class="form-control form-control-user<?= isset($erreurs['password']) ? ' is-invalid' : '' ?>" id="password" name="password" placeholder="························" aria-describedby="passwordHelp">
                                                 <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                                             </div>
 
@@ -105,20 +94,29 @@ require_once("submit/submit_connexion.php");
                                         </div>
 
                                         <!-- Se souvenir de moi -->
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck" name="souvenir"  value="yes">
-                                                <label class="custom-control-label" for="customCheck" >Se souvenir de moi</label>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox small">
+                                                    <input type="checkbox" class="custom-control-input" id="customCheck" name="souvenir" value="yes">
+                                                    <label class="custom-control-label" for="customCheck">Se souvenir de moi</label>
+                                                </div>
                                             </div>
+
+                                            <a href="mdp_oublie.php">
+                                                <small>Mot de passe oublié ?</small>
+                                            </a>
                                         </div>
+
                                         <div class="mb-3">
-                                            <button class="btn btn-primary w-100" type="submit" name="connexion">Se connecter</button>
+                                            <button class="btn btn-primary w-100 btn-user" type="submit" name="connexion">Se connecter</button>
                                         </div>
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <span>Nouveau sur la plateforme ?</span>
-                                        <a href="inscription.php" class="is-primary">Créer un compte</a>
+                                        <small>
+                                            <span>Nouveau sur la plateforme ?</span>
+                                            <a href="inscription.php" class="is-primary">Créer un compte</a>
+                                        </small>
                                     </div>
                                 </div>
                             </div>
