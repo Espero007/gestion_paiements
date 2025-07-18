@@ -109,13 +109,13 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                             redirigerVersPageErreur(404, $_SESSION['previous_url']);
                         }
 
-                        $stmt = $bdd->query('SELECT id_participant, nom, prenoms, diplome_le_plus_eleve FROM participants WHERE id_participant=' . $id_participant);
+                        $stmt = $bdd->query('SELECT id_participant, nom, prenoms FROM participants WHERE id_participant=' . $id_participant);
                         $resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         $participants[] = $resultat[0];
                     }
                 }
 
-                // A ce stade tout va bien. Je suis dans le sens 1 : de l'activité vers les participants et les ids sont ok donc ici on s'intéresse aux informations à afficher pour l'étape 2 et pour celà on va commencer par récupérer le type de l'activité
+                // A ce stade tout va bien. Je suis dans le sens 1 : de l'activité vers les participants et les ids sont ok donc ici on s'intéresse aux informations à afficher pour l'étape 2 et pour celà on va commencer par récupérer le type de l'activité et ls titres qui lui sont associés
 
                 require_once('infos_intermediaires.php');
 
@@ -131,7 +131,7 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                         // Insertions dans la table 'participations' pour chaque participant
 
                         for ($i = 0; $i < count($participants); $i++) {
-                            $stmt = $bdd->prepare('INSERT INTO participations(id_participant, id_activite, id_titre, diplome, id_compte_bancaire, nombre_jours, nombre_taches) VALUES (:id_participant, :id_activite, :id_titre, :diplome, :id_compte_bancaire, :nbr_jours, :nbr_taches)');
+                            $stmt = $bdd->prepare('INSERT INTO participations(id_participant, id_activite, id_titre, id_compte_bancaire, nombre_jours, nombre_taches) VALUES (:id_participant, :id_activite, :id_titre, :id_compte_bancaire, :nbr_jours, :nbr_taches)');
                             $stmt->bindParam(':id_participant', $participants[$i]['id_participant'], PDO::PARAM_INT);
                             $stmt->bindParam(':id_activite', $id_activite, PDO::PARAM_INT);
 
@@ -143,7 +143,7 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                             }
 
                             $stmt->bindParam(':id_titre', $id_titre, PDO::PARAM_INT);
-                            $stmt->bindParam(':diplome', $_POST['diplome'][$i]);
+                            // $stmt->bindParam(':diplome', $_POST['diplome'][$i]);
                             $stmt->bindParam(':id_compte_bancaire', $_POST['compte_bancaire'][$i], PDO::PARAM_INT);
                             $stmt->bindParam(':nbr_jours', $_POST['nbr_jours'][$i], PDO::PARAM_INT);
 
@@ -199,7 +199,7 @@ if (isset($_GET['modifier'])) {
 
     // On récupère les informations de la liaison
     $stmt = $bdd->query('
-    SELECT t.nom as titre_liaison, p.diplome, ib.numero_compte, p.nombre_jours, p.nombre_taches
+    SELECT t.nom as titre_liaison, ib.numero_compte, p.nombre_jours, p.nombre_taches
     FROM participations p
     INNER JOIN titres t ON p.id_titre = t.id_titre
     INNER JOIN informations_bancaires ib ON p.id_compte_bancaire = ib.id
@@ -221,7 +221,7 @@ if (isset($_GET['modifier'])) {
         if (!isset($erreurs)) {
             // On débute les actions de modification
             for ($i = 0; $i < count($participants); $i++) {
-                $stmt = $bdd->prepare('UPDATE participations SET id_titre=:id_titre, diplome=:diplome, id_compte_bancaire=:id_compte_bancaire, nombre_jours=:nbr_jours, nombre_taches=:nbr_taches WHERE id='.$id_participation);
+                $stmt = $bdd->prepare('UPDATE participations SET id_titre=:id_titre, id_compte_bancaire=:id_compte_bancaire, nombre_jours=:nbr_jours, nombre_taches=:nbr_taches WHERE id='.$id_participation);
 
                 // On récupère l'id du titre qui a été sélectionné
                 foreach ($titres as $titre) {
@@ -231,7 +231,7 @@ if (isset($_GET['modifier'])) {
                 }
 
                 $stmt->bindParam(':id_titre', $id_titre, PDO::PARAM_INT);
-                $stmt->bindParam(':diplome', $_POST['diplome'][$i]);
+                // $stmt->bindParam(':diplome', $_POST['diplome'][$i]);
                 $stmt->bindParam(':id_compte_bancaire', $_POST['compte_bancaire'][$i], PDO::PARAM_INT);
                 $stmt->bindParam(':nbr_jours', $_POST['nbr_jours'][$i], PDO::PARAM_INT);
 

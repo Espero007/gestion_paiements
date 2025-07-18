@@ -138,10 +138,16 @@ require_once('traitements/submit_creer_activite.php');
                                                 <div class="mb-4 row">
                                                     <label for="timbre" class="col-sm-3 col-form-label">Timbre</label>
                                                     <div class="col-sm-9">
-                                                        <input id="timbre" type="text" name="timbre" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['timbre']) ?>">
+                                                        <div class="input-group">
+                                                            <div class="input-group-text d-flex align-items-end"><span>N°</span>
+                                                                <hr class="m-0" style="width : 40px;">
+                                                            </div>
+                                                            <input id="timbre" type="text" name="timbre" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['timbre']) ?>">
+                                                        </div>
                                                         <small class="text-danger"><?= $errors['timbre'] ?? '' ?></small>
                                                         <?= isset($errors['timbre']) ? '<br>' : '' ?>
-                                                        <small> Note : Il doit être de la forme <strong>/DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD</strong></small>
+                                                        <small> Note : Il doit être de la forme <strong>N°<hr class="m-0 d-inline-block" style="width : 40px;"> /DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD
+                                                            </strong></small>
                                                     </div>
                                                 </div>
 
@@ -152,7 +158,7 @@ require_once('traitements/submit_creer_activite.php');
                                                         <input id="reference" type="text" name="reference" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['reference']) ?>">
                                                         <small class="text-danger"><?= $errors['reference'] ?? '' ?></small>
                                                         <?= isset($errors['reference']) ? '<br>' : '' ?>
-                                                        <small> Note : Elle doit être de la forme <strong>0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA</strong></small>
+                                                        <small> Note : Elle doit être de la forme <strong>NS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA du 24 août 2023 </strong></small>
                                                     </div>
                                                 </div>
 
@@ -211,7 +217,7 @@ require_once('traitements/submit_creer_activite.php');
                                                 </div>
 
                                                 <!-- Diplômes -->
-                                                <div class="mb-4 row">
+                                                <!-- <div class="mb-4 row">
                                                     <label for="niveaux_diplome" class="col-sm-3 col-form-label">Diplômes</label>
                                                     <div class="col-sm-9">
                                                         <input id="niveaux_diplome" type="text" name="niveaux_diplome" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['niveaux_diplome']) ?>">
@@ -221,7 +227,7 @@ require_once('traitements/submit_creer_activite.php');
                                                         <?php endif; ?>
                                                         <small> Note : séparés par des virgules, lettres accentuées autorisées, sans chiffres, ex : Licence,Master,Ingénieur (il s'agit de la liste des diplômes que les participants de l'activité ont. Les indiquer ici vous facilitera le travail quand vous devrez lier des participants à votre activité)</small>
                                                     </div>
-                                                </div>
+                                                </div> -->
 
                                                 <!-- Titres associés -->
                                                 <div class="mb-4 row">

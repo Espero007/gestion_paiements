@@ -16,10 +16,6 @@ for ($i = 0; $i < count($participants); $i++) {
                 if (!in_array($valeur, $titres_intitules)) {
                     $erreurs[$champ][$i][] = "Le titre que vous avez choisi n'est pas valide";
                 }
-            } else if ($champ == 'diplome') {
-                if (!in_array($valeur, $diplomes[$i])) {
-                    $erreurs[$champ][$i][] = "Le diplome que vous avez choisi n'est pas valide";
-                }
             } else if ($champ == 'compte_bancaire') {
                 if (!in_array($valeur, $id_comptes[$i])) {
                     $erreurs[$champ][$i][] = "Le compte bancaire sélectionné n'est pas valide";

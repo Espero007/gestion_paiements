@@ -33,7 +33,7 @@ if ($recuperation_type_activite) {
     // $errors = [];
     $success = false;
     $id_user = $_SESSION['user_id'];
-    $diplomes = [];
+    // $diplomes = [];
     $titres = [];
     $forfaits = [];
 
@@ -50,8 +50,6 @@ if ($recuperation_type_activite) {
         'titre_organisateur' => '',
         'financier' => '',
         'titre_financier' => '',
-        'note_generatrice' => '',
-        'niveaux_diplome' => '',
         'titres_associes' => '',
         'taux_journalier' => '',
         'indemnite_forfaitaire' => '',
@@ -71,7 +69,7 @@ if ($recuperation_type_activite) {
         // Un simple traitement des valeurs qu'on a reçu
         foreach ($data as $key => $_) {
             $data[$key] = isset($_POST[$key]) ? trim($_POST[$key]) : '';
-            if($key=='timbre' || $key == 'reference'){
+            if($key=='timbre'){
                 $data[$key] = isset($_POST[$key]) ? mb_strtoupper(trim($_POST[$key]), 'UTF-8') : '';
             }
         }
@@ -80,7 +78,7 @@ if ($recuperation_type_activite) {
 
         // Champs à valider
         $champs_texts = ['nom', 'timbre', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'reference'];
-        $common_fields = array_merge($champs_texts, ['niveaux_diplome', 'titres_associes', 'date_debut', 'date_fin']);
+        $common_fields = array_merge($champs_texts, ['titres_associes', 'date_debut', 'date_fin']);
 
         foreach ($common_fields as $field) {
             if (empty($data[$field])) {
@@ -115,8 +113,8 @@ if ($recuperation_type_activite) {
              * Elle est stricte et positive : on valide la chaîne si elle correspond entièrement au motif.
              */
 
-            if ($champ != 'timbre' && $champ != 'reference' && $champ != 'description') {
-                if (!preg_match('/^[\p{L}\p{N} \-\']+$/u', $data[$champ])) {
+            if ($champ != 'timbre' && $champ != 'description') {
+                if (!preg_match('/^[\p{L}\p{N} \-\'\°\/]+$/u', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "Ce champ contient des caractères non valides !";
                     }
@@ -161,13 +159,14 @@ if ($recuperation_type_activite) {
                         $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
                     }
                 }
-            }elseif($champ == 'reference'){
-                if (!preg_match('/^[A-Za-z0-9]+(\/[A-Za-z0-9]+)+$/', $data[$champ])) {
-                    if (!isset($errors[$champ])) {
-                        $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
-                    }
-                }
             }
+            // elseif($champ == 'reference'){
+            //     if (!preg_match('/^[A-Za-z0-9]+(\/[A-Za-z0-9]+)+$/', $data[$champ])) {
+            //         if (!isset($errors[$champ])) {
+            //             $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
+            //         }
+            //     }
+            // }
         }
 
         // Validation des dates : date_fin >= date_debut
@@ -193,21 +192,21 @@ if ($recuperation_type_activite) {
         }
 
         // Validation des diplômes
-        if ($data['niveaux_diplome'] !== '' && strpos($data['niveaux_diplome'], ',,') !== false) {
-            $errors['niveaux_diplome'] = "Les niveaux contiennent des virgules consécutives non valides.";
-        } elseif ($data['niveaux_diplome'] !== '' && !preg_match('/^[^,]+(,[^,]+)*$/', $data['niveaux_diplome'])) {
-            $errors['niveaux_diplome'] = "Les niveaux doivent être séparés par des virgules (ex. : Licence,Master,Ingénieur).";
-        } elseif (!empty($data['niveaux_diplome'])) {
-            $diplomes = array_map('trim', explode(',', $data['niveaux_diplome']));
-            foreach ($diplomes as $diplome) {
-                if (empty($diplome)) {
-                    $errors['niveaux_diplome'] = "Chaque niveau doit être une chaîne non vide.";
-                } elseif (!preg_match('/^[\p{L}\s-]+$/u', $diplome) || preg_match('/[0-9]/', $diplome)) {
-                    $errors['niveaux_diplome'] = "Chaque niveau doit contenir uniquement des lettres (accentuées ou non), espaces ou tirets, sans chiffres.";
-                    break;
-                }
-            }
-        }
+        // if ($data['niveaux_diplome'] !== '' && strpos($data['niveaux_diplome'], ',,') !== false) {
+        //     $errors['niveaux_diplome'] = "Les niveaux contiennent des virgules consécutives non valides.";
+        // } elseif ($data['niveaux_diplome'] !== '' && !preg_match('/^[^,]+(,[^,]+)*$/', $data['niveaux_diplome'])) {
+        //     $errors['niveaux_diplome'] = "Les niveaux doivent être séparés par des virgules (ex. : Licence,Master,Ingénieur).";
+        // } elseif (!empty($data['niveaux_diplome'])) {
+        //     $diplomes = array_map('trim', explode(',', $data['niveaux_diplome']));
+        //     foreach ($diplomes as $diplome) {
+        //         if (empty($diplome)) {
+        //             $errors['niveaux_diplome'] = "Chaque niveau doit être une chaîne non vide.";
+        //         } elseif (!preg_match('/^[\p{L}\s-]+$/u', $diplome) || preg_match('/[0-9]/', $diplome)) {
+        //             $errors['niveaux_diplome'] = "Chaque niveau doit contenir uniquement des lettres (accentuées ou non), espaces ou tirets, sans chiffres.";
+        //             break;
+        //         }
+        //     }
+        // }
 
         // Validations spécifiques par type
         if (in_array($type_activite, [1, 2])) {
@@ -349,19 +348,19 @@ if ($recuperation_type_activite) {
                         'taux_journalier' => in_array($type_activite, ['1', '2']) ? $data['taux_journalier'] : null,
                         'taux_taches' => $type_activite == 3 ? $data['taux_taches'] : null,
                         'frais_deplacement_journalier' => $type_activite == 3 ? $data['frais_deplacement_journalier'] : null,
-                        'reference' => mb_strtoupper($data['reference'], 'UTF-8')
+                        'reference' => $data['reference']
                     ]);
 
                     $id_activite = $bdd->lastInsertId();
 
-                    // Insertion des diplômes
-                    $sql = 'INSERT INTO diplomes(noms, id_activite) VALUES (:diplomes, :id_activite)';
-                    $stmt = $bdd->prepare($sql);
+                    // // Insertion des diplômes
+                    // $sql = 'INSERT INTO diplomes(noms, id_activite) VALUES (:diplomes, :id_activite)';
+                    // $stmt = $bdd->prepare($sql);
 
-                    $stmt->execute([
-                        'id_activite' => $id_activite,
-                        'diplomes' => $_POST['niveaux_diplome']
-                    ]);
+                    // $stmt->execute([
+                    //     'id_activite' => $id_activite,
+                    //     'diplomes' => $_POST['niveaux_diplome']
+                    // ]);
 
                     // Insertion des titres associés
                     $sql = 'INSERT INTO titres(id_activite, nom, indemnite_forfaitaire) VALUES (:id_activite, :nom, :indemnite_forfaitaire)';
