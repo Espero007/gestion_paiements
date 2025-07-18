@@ -10,6 +10,7 @@ if(!$_SESSION['user_id'] && isset($_COOKIE['souvenir'])){
 
     $smt->execute([$token]);
     $user = $smt->fetch();
+    $stmt->closeCursor();
 
     if($user){
         $_SESSION['user_id'] = $user['user_id'];

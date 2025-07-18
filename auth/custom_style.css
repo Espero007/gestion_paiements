@@ -45,7 +45,7 @@
        border-radius: 0 10rem 10rem 0;
        width: 3rem;
    }
-   
+
  .input-group-text i {
      font-size: 0.9375rem;
  }
@@ -64,8 +64,8 @@
      display: block;
      min-height: 1.5rem;
      padding-left: 1.5rem;
-     -webkit-print-color-adjust: exact;
-     color-adjust: exact;
+     /* pint-color-adjust: exact; */
+     /* -webkit-print-color-adjust: exact; */
  }
 
  .custom-checkbox .custom-control-label::before {

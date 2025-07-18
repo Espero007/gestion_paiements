@@ -170,7 +170,7 @@ $pdf->Ln(15);
 
 // On s'attaque à la phrase en dessous du tableau
 $formatter = new NumberFormatter('fr_FR', NumberFormatter::SPELLOUT);
-$pdf->MultiCell(0, 10, "Arrêté le présent ordre de virement à la somme de " . mb_strtoupper($formatter->format($total), 'UTF-8') . "\n (" . number_format($total, 0, ',', '.') . ") Francs CFA", 0, 'C');
+$pdf->MultiCell(0, 10, "Arrêté le présent ordre de virement à la somme de " . mb_strtoupper($formatter->format($total), 'UTF-8') . "(" . number_format($total, 0, ',', '.') . ") Francs CFA", 0, 'C');
 $pdf->Ln(8);
 
 // Bloc du bas avec le financier et le premier responsable
