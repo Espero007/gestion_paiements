@@ -41,7 +41,7 @@ require_once('includes/traitements_lier_participant_activite.php');
 
                                 <!-- On est encore à l'étape 1 -->
 
-                                <p>Sélectionnez <?= ($sens == 0) ? 'l\'activité.' : 'le participant.' ?></p>
+                                <p>Sélectionnez <?= ($sens == 0) ? 'l\'activité.' : 'l\'acteur' ?></p>
                                 <?= ($aucun_participant_1 || $aucun_participant_2 || $aucune_activite_1 || $aucune_activite_2) ? '<hr>' : '' ?>
                                 <form action="" method="post">
                                     <input type="hidden" name="<?= ($sens == 0) ? 'id_participant' : 'id_activite' ?>" value="<?= ($sens == 0) ? $id_participant : $id_activite ?>">
@@ -109,7 +109,7 @@ require_once('includes/traitements_lier_participant_activite.php');
 
                                     <!-- Boutons d'actions -->
                                     <?php if (!$aucun_participant_1 && !$aucun_participant_2 && !$aucune_activite_1 && !$aucune_activite_2) : ?>
-                                        <div class="mt-2">
+                                        <div class="mt-4">
                                             <button type="submit" class="btn btn-primary mr-2" id="submitBtn1" name='continuer'>Continuer</button>
                                             <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-outline-primary">Annuler</a>
                                         </div>
@@ -148,7 +148,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         </div>
 
                                         <!-- Diplome -->
-                                        <div class="mb-4 row">
+                                        <!-- <div class="mb-4 row">
                                             <label for="diplome_<?= $i ?>" class="col-form-label col-sm-4">Diplôme</label>
                                             <div class="col-sm-8">
                                                 <select name="diplome[]" id="diplome_<?= $i ?>" class="form-control <?= isset($erreurs['diplome'][$i]) ? 'is-invalid' : '' ?>" aria-describdly=" diplomeAide_<?= $i ?>">
@@ -166,7 +166,7 @@ require_once('includes/traitements_lier_participant_activite.php');
 
                                                 <small>Note : Ici vous avez la liste des diplômes que vous avez indiqués lors de la création de votre activité. Vous avez oublié d'en enregistrer un ? <a href="/gestion_activites/modifier_infos.php?id=<?= $id_activite ?>">Cliquez ici</a> pour accéder aux informations de votre activité et modifier les diplômes qui lui sont associés.</small>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                         <!-- Nombre de jours -->
                                         <div class="mb-4 row">
@@ -203,16 +203,17 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         <?php endif; ?>
 
                                         <!-- Compte bancaire -->
+                                         <?php $index_participant = array_search($participant, $participants)?>
 
                                         <div class="mb-2 row">
-                                            <span class="col-form-label col-sm-4">Compte(s) bancaire(s)</span>
+                                            <span class="col-form-label col-sm-4"><?= count($comptes[$index_participant]) > 1 ? 'Comptes bancaires' : 'Compte bancaire' ?></span>
                                             <div class="col-sm-8">
                                                 <div class="d-flex col-form-label pb-0">
                                                     <?php $index = 0; ?>
                                                     <?php foreach ($comptes[$i] as $compte) : ?>
                                                         <?php $index++; ?>
                                                         <div class="form-check mr-4">
-                                                            <input name="compte_bancaire[<?= $i ?>]" class="form-check-input" type="radio" value="<?= $compte['id'] ?>" id="compte<?= $index ?>_<?= $i ?>" <?= isset($erreurs) ? ($compte['id'] == $_POST['compte_bancaire'][$i] ? 'checked' : '') : (isset($modification) && $compte['numero_compte'] == $infos_liaison['numero_compte'] ? 'checked' : '') ?> aria-describedby="compte_bancaireAide_<?= $i ?>">
+                                                            <input name="compte_bancaire[<?= $i ?>]" class="form-check-input" type="radio" value="<?= $compte['id'] ?>" id="compte<?= $index ?>_<?= $i ?>" <?= isset($erreurs) ? ($compte['id'] == $_POST['compte_bancaire'][$i] ? 'checked' : '') : (isset($modification) && $compte['numero_compte'] == $infos_liaison['numero_compte'] ? 'checked' : '') ?> aria-describedby="compte_bancaireAide_<?= $i ?>"<?= count($comptes[$i]) == 1 ? ' checked' : '' ?>>
                                                             <label class="form-check-label" for="compte<?= $index ?>_<?= $i ?>"> <?= htmlspecialchars($compte['banque']) . ' (<i>' . htmlspecialchars($compte['numero_compte']) . '</i>)' ?></label>
                                                         </div>
                                                     <?php endforeach; ?>
@@ -223,7 +224,9 @@ require_once('includes/traitements_lier_participant_activite.php');
                                                     </div>
                                                 <?php endif; ?>
 
-                                                <small>Note : Sélectionnez le compte bancaire de l'acteur qu'on devra considérer dans le cadre de l'activité.</small>
+                                                <?php if(count($comptes[$index_participant]) > 1) : ?>                                                    
+                                                    <small>Note : Sélectionnez le compte bancaire de l'acteur qu'on devra considérer dans le cadre de l'activité.</small>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
 

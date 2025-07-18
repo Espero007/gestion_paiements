@@ -47,7 +47,7 @@ if ($activite['type_activite'] == 1) {
 // Participants associés : récupération et mise en place de la logique nécessaire pour utiliser la fonction afficherSousFormeTableau
 
 $stmt = $bdd->query('
-SELECT p1.id, p1.id_participant, p2.nom, p2.prenoms, p2.matricule_ifu, t.nom as titre, p1.diplome, p1.nombre_jours, p1.nombre_taches, ib.banque, ib.numero_compte
+SELECT p1.id, p1.id_participant, p2.nom, p2.prenoms, p2.matricule_ifu, t.nom as titre, p1.nombre_jours, p1.nombre_taches, ib.banque, ib.numero_compte
 FROM participations p1
 INNER JOIN participants p2 ON p1.id_participant = p2.id_participant
 INNER JOIN titres t ON t.id_titre = p1.id_titre
@@ -57,13 +57,13 @@ $participants_associes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $compteur = 0;
 
 if (count($participants_associes) != 0) {
-    $informations[0] = ['Nom', 'Prénoms', 'Titre', 'Diplome', 'Nombre de jours'];
+    $informations[0] = ['Nom', 'Prénoms', 'Titre', 'Nombre de jours'];
     if ($activite['type_activite'] == 3)
         $informations[0][] = 'Nombre de tâches';
     $informations[0][] = 'Compte bancaire';
 
     foreach ($participants_associes as $participant) {
-        $informations[1][] = [$participant['nom'], $participant['prenoms'], $participant['titre'], $participant['diplome'], $participant['nombre_jours']];
+        $informations[1][] = [$participant['nom'], $participant['prenoms'], $participant['titre'], $participant['nombre_jours']];
         if ($activite['type_activite'] == 3)
             $informations[1][count($informations[1]) - 1][] = $participant['nombre_taches'];
         $informations[1][count($informations[1]) - 1][] = $participant['banque'] . ' (' . $participant['numero_compte'] . ')';

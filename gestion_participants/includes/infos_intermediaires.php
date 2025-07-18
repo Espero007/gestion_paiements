@@ -4,7 +4,7 @@ $type_activite = $bdd->query('SELECT type_activite FROM activites WHERE id=' . $
 $type_activite = $type_activite->fetchAll(PDO::FETCH_ASSOC);
 $type_activite = $type_activite[0]['type_activite'];
 
-$champs_attendus = ['titre', 'diplome', 'compte_bancaire', 'nbr_jours'];
+$champs_attendus = ['titre', 'compte_bancaire', 'nbr_jours'];
 
 if ($type_activite == 3) {
     $champs_attendus[] = 'nbr_taches';
@@ -20,15 +20,15 @@ foreach ($titres as $index => $titre) {
 }
 
 // On récupère les diplômes associés à l'activité et à chaque participant
-$stmt = $bdd->query('SELECT noms FROM diplomes WHERE id_activite=' . $id_activite);
-$diplomes_activite = $stmt->fetch(PDO::FETCH_NUM); // puisque je sais qu'on va récupérer une seule ligne
-$diplomes_activite = $diplomes_activite[0];
-$diplomes_activite = explode(',', $diplomes_activite);
+// $stmt = $bdd->query('SELECT noms FROM diplomes WHERE id_activite=' . $id_activite);
+// $diplomes_activite = $stmt->fetch(PDO::FETCH_NUM); // puisque je sais qu'on va récupérer une seule ligne
+// $diplomes_activite = $diplomes_activite[0];
+// $diplomes_activite = explode(',', $diplomes_activite);
 
 // $index = 0;
 
 for ($i = 0; $i < count($participants); $i++) {
-    $diplomes[] = array_merge($diplomes_activite, [$participants[$i]['diplome_le_plus_eleve']]);
+    // $diplomes[] = array_merge($diplomes_activite, [$participants[$i]['diplome_le_plus_eleve']]);
     // On récupère les comptes bancaires du participant
     $stmt = $bdd->prepare('SELECT id, banque, numero_compte FROM informations_bancaires WHERE id_participant=' . $participants[$i]['id_participant']);
     $stmt->execute();
