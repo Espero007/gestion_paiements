@@ -54,7 +54,7 @@ if ($id_type_activite === 1) {
     $nom_activite = isset($data[0]['nom_activite']) ? htmlspecialchars($data[0]['nom_activite']) : '';
 
     // Création du PDF
-    $pdf = new TCPDF('L', 'mm', 'A4');
+    $pdf = new TCPDF('P', 'mm', 'A4');
     $pdf->AddFont('trebucbd', '', 'trebucbd.php');
     $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
     $pdf->setMargins(15, 25, 15, true);
@@ -77,8 +77,9 @@ if ($id_type_activite === 1) {
     $dateFr = $formatter->format(new DateTime());
 
     $information_supplementaire = ['type' => $nom_activite];
-    genererHeader($pdf, 'etat_paiement_1', $information_supplementaire);
+    genererHeader($pdf, 'etat_paiement_1', $information_supplementaire, $id_activite);
 
+    $pdf->Ln(10);
     $html = '<p align="center"><b>REF NS N°0569/MES/DC/SGM/DEC/SAFM/SIS/SEMC/SA DU 04 DECEMBRE 2023 PORTANT CONSTITUTION DES COMMISSIONS CHARGEES DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</b></p><br>';
 
     // Initialisations
@@ -111,9 +112,9 @@ if ($id_type_activite === 1) {
                 <tbody>';
     }
 
-    $pdf->SetFont('trebucbd', '', 8);
-    $html .= startTable();
     $pdf->SetFont('trebuc', '', 8);
+    $html .= startTable();
+    $pdf->SetFont('trebucbd', '', 8);
 
     if (empty($data)) {
         // Fermer le tableau proprement même s'il est vide
@@ -158,9 +159,9 @@ if ($id_type_activite === 1) {
                     $pdf->writeHTML($html, true, false, true, false, '');
                     $pdf->AddPage();
                     $html = '<p><strong>Cumul précédent :</strong> ' . number_format($cumulativeTotal, 0, ',', '.') . ' FCFA</p>';
-                    $pdf->SetFont('trebucbd', '', 8);
-                    $html .= startTable();
                     $pdf->SetFont('trebuc', '', 8);
+                    $html .= startTable();
+                    $pdf->SetFont('trebucbd', '', 8);
                 }
             }
         }
@@ -181,9 +182,9 @@ if ($id_type_activite === 1) {
     $fmt = new NumberFormatter('fr', NumberFormatter::SPELLOUT);
     $totalEnLettres = ucfirst($fmt->format($total));
 
-    $pdf->SetFont('trebucbd', '', 10);
-    $html .= '<br><p align="center"><b><span style="font-weight: bold;">Arrêté le présent état de paiement à la somme de : ' . mb_strtoupper($totalEnLettres, 'UTF-8') . ' (' . number_format($total, 0, ',', '.') . ') Francs CFA</span></b></p>';
     $pdf->SetFont('trebuc', '', 10);
+    $html .= '<br><p align="center"><b><span style="font-weight: bold;">Arrêté le présent état de paiement à la somme de : ' . mb_strtoupper($totalEnLettres, 'UTF-8') . ' (' . number_format($total, 0, ',', '.') . ') Francs CFA</span></b></p>';
+    $pdf->SetFont('trebucbd', '', 10);
 
     // Signatures
     $pr_nom = htmlspecialchars($data[0]['premier_responsable'] ?? '');
@@ -212,7 +213,9 @@ if ($id_type_activite === 1) {
 
     ob_end_clean(); // Nettoyer le tampon de sortie
     $pdf->Output('Etat de paiement.pdf', 'I');
-} elseif ($id_type_activite === 2) {
+}
+
+elseif ($id_type_activite === 2) {
 
 // Requête
 $sql = "
