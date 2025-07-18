@@ -41,9 +41,10 @@ try {
 // On va récupérer les 'anciens' titres de l'activité en instance
 $stmt = $bdd->query('SELECT id_titre, nom FROM titres WHERE id_activite='.$activity_id);
 $anciens_titres = $stmt->fetchAll(PDO::FETCH_ASSOC);
+/*
 ?>
     <pre><?php var_dump($anciens_titres);?></pre>
-<?php
+<?php*/
 
 // Initialisation des données à vide
 $data = [
@@ -241,9 +242,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
             }
         }
 
+        /*
         ?>
             <pre><?php var_dump($titres);?></pre>
-        <?php
+        <?php*/
 
         if (empty($errors)) {
 
@@ -413,9 +415,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                     } elseif (in_array($type_activite, ['2', '3'])) {
                         $tableau = array_combine($titres, $forfaires);
 
+                        /*
                         ?>
                             <pre><?php var_dump($tableau);?></pre>
-                        <?php
+                        <?php */
 
                         foreach ($tableau as $titre => $forfaire) {
                             $stmt_titre->execute([
@@ -444,9 +447,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                     //$_SESSION['success_data'] = $data;
                     // Rediriger pour éviter les doubles soumissions
                     if ($success) {
-                        // $_SESSION['success'] = 'Vos modifications ont été enregistrées avec succès !';
-                        // header('Location: ../gerer_activite.php?id=' . $activity_id);
-                        // exit;
+                         $_SESSION['success'] = 'Vos modifications ont été enregistrées avec succès !';
+                         header('Location: ../gerer_activite.php?id=' . $activity_id);
+                         exit;
                     }
                 } catch (PDOException $e) {
                     die('Erreur : ' . $e->getMessage());
@@ -466,7 +469,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
         $_SESSION['form_data'] = $data;
         $_SESSION['form_errors'] = $errors;
 
-        // header('Location: ../modifier_infos.php?id=' . urlencode($activity_id));
-        // exit;
+         header('Location: ../modifier_infos.php?id=' . urlencode($activity_id));
+         exit;
     }
 }

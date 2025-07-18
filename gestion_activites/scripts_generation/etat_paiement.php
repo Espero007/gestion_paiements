@@ -54,10 +54,13 @@ if ($id_type_activite === 1) {
     $nom_activite = isset($data[0]['nom_activite']) ? htmlspecialchars($data[0]['nom_activite']) : '';
 
     // Création du PDF
-    $pdf = new TCPDF();
+    $pdf = new TCPDF('L', 'mm', 'A4');
+    $pdf->AddFont('trebucbd', '', 'trebucbd.php');
+    $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
+    $pdf->setMargins(15, 25, 15, true);
+    configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Etat de paiement');
+    $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
     $pdf->AddPage();
-    $pdf->setPrintHeader(false);
-    $pdf->setPrintFooter(false);
     $pdf->SetFont('trebuc', '', 10);
 
     $compteurFile = __DIR__ . '/compteur.txt';
@@ -72,35 +75,11 @@ if ($id_type_activite === 1) {
     // Titre
     $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE, "Europe/Paris", IntlDateFormatter::GREGORIAN);
     $dateFr = $formatter->format(new DateTime());
-    $html = '
-        <style>
-            h1 { text-align: center; font-size: 16pt; }
-            h2 { text-align: center; font-size: 14pt; }
-            table { border-collapse: collapse; width: 100%; }
-            td, th { border: 1px solid #000; padding: 5px; }
-            tr {font-size:9px; }
-            p {font-size:11px; }
-        </style>
-        <table border="0">
-            <tr>
-                <td style="width: 50%; font-size: 10pt; text-align: center; border: none;">
-                    <p><b>REPUBLIQUE DU BENIN</b><br></p>
-                    <p>MINISTÈRE ...<br></p>
-                    <p>DIRECTION ...<br></p>
-                    <p>SERVICE ...<br></p>
-                </td>
-                <td style="width: 50%; font-size: 10pt; text-align: center; border: none;">
-                    <p>Cotonou, le ' . $dateFr . '</p>
-                    <h2>ETAT DE PAIEMENT N°' . $numeroEtat . '</h2>
-                    <h4>DES INDEMNITES ET FRAIS D\'ENTRETIEN ACCORDES AUX MEMBRES DE LA COMMISSION CHARGEE DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</h4>
-                </td>
-            </tr>
-        </table>';
 
-    /*$information_supplementaire = ['type' => $nom_activite] ;
-    genererHeader($pdf,'etat_paiement',$information_supplementaire );
-    */
-    $html .= '<p><b> REF NS N°0569/MES/DC/SGM/DEC/SAFM/SIS/SEMC/SA DU 04 DECEMBRE 2023 PORTANT CONSTITUTION DES COMMISSIONS CHARGEES DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</b><br></p>';
+    $information_supplementaire = ['type' => $nom_activite];
+    genererHeader($pdf, 'etat_paiement_1', $information_supplementaire);
+
+    $html = '<p align="center"><b>REF NS N°0569/MES/DC/SGM/DEC/SAFM/SIS/SEMC/SA DU 04 DECEMBRE 2023 PORTANT CONSTITUTION DES COMMISSIONS CHARGEES DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</b></p><br>';
 
     // Initialisations
     $rowsPerPage = 25;
@@ -112,6 +91,10 @@ if ($id_type_activite === 1) {
     function startTable()
     {
         return '
+            <style>
+                td { font-weight: normal; }
+                th { font-weight: bold; }
+            </style>
             <table border="1" cellpadding="4" align="center">
                 <thead>
                     <tr style="background-color:#f0f0f0; font-size:8px;">
@@ -128,30 +111,31 @@ if ($id_type_activite === 1) {
                 <tbody>';
     }
 
+    $pdf->SetFont('trebucbd', '', 8);
     $html .= startTable();
+    $pdf->SetFont('trebuc', '', 8);
 
     if (empty($data)) {
         // Fermer le tableau proprement même s'il est vide
         $html .= '<tr>
-                <td colspan="9" style="text-align:center;">Aucune donnée disponible</td>
+                <td colspan="8" style="text-align:center;">Aucune donnée disponible</td>
             </tr>';
         $html .= '</tbody></table>';
     } else {
-
         foreach ($data as $index => $row) {
             $i++;
             $pageTotal += $row['montant'];
 
             $html .= '
             <tr>
-                <td width="6%">' . $i . '</td>
-                <td width="20%">' . htmlspecialchars($row['nom_participant'] . ' ' . $row['prenoms']) . '</td>
-                <td width="15%">' . htmlspecialchars($row['titre_participant']) . '</td>
-                <td width="6%">' . number_format($row['taux_journalier'], 2, ',', ' ') . '</td>
-                <td width="6%">' . (int)$row['nombre_jours'] . '</td>
-                <td width="12%">' . number_format($row['montant'], 2, ',', ' ') . '</td>
-                <td width="10%">' . htmlspecialchars($row['banque']) . '</td>
-                <td width="25%">' . htmlspecialchars($row['rib']) . '</td>
+                <td width="6%"><span style="font-family: trebuc;">' . $i . '</span></td>
+                <td width="20%"><span style="font-family: trebuc;">' . htmlspecialchars($row['nom_participant'] . ' ' . $row['prenoms']) . '</span></td>
+                <td width="15%"><span style="font-family: trebuc;">' . htmlspecialchars($row['titre_participant']) . '</span></td>
+                <td width="6%"><span style="font-family: trebuc;">' . number_format($row['taux_journalier'], 0, ',', '.') . '</span></td>
+                <td width="6%"><span style="font-family: trebuc;">' . (int)$row['nombre_jours'] . '</span></td>
+                <td width="12%"><span style="font-family: trebuc;">' . number_format($row['montant'], 0, ',', '.') . '</span></td>
+                <td width="10%"><span style="font-family: trebuc;">' . htmlspecialchars($row['banque']) . '</span></td>
+                <td width="25%"><span style="font-family: trebuc;">' . htmlspecialchars($row['rib']) . '</span></td>
             </tr>';
 
             $isLastLine = ($index + 1 === count($data));
@@ -161,7 +145,7 @@ if ($id_type_activite === 1) {
                 $html .= '
                 <tr>
                     <td colspan="5" width="53%"><strong>Total de cette page</strong></td>
-                    <td width="12%"><strong>' . number_format($pageTotal, 2, ',', ' ') . '</strong></td>
+                    <td width="12%"><strong>' . number_format($pageTotal, 0, ',', '.') . '</strong></td>
                     <td colspan="2" width="35%"></td>
                 </tr>';
 
@@ -173,8 +157,10 @@ if ($id_type_activite === 1) {
                 if (!$isLastLine) {
                     $pdf->writeHTML($html, true, false, true, false, '');
                     $pdf->AddPage();
-                    $html = '<p><strong>Cumul précédent :</strong> ' . number_format($cumulativeTotal, 2, ',', ' ') . ' FCFA</p>';
+                    $html = '<p><strong>Cumul précédent :</strong> ' . number_format($cumulativeTotal, 0, ',', '.') . ' FCFA</p>';
+                    $pdf->SetFont('trebucbd', '', 8);
                     $html .= startTable();
+                    $pdf->SetFont('trebuc', '', 8);
                 }
             }
         }
@@ -182,12 +168,12 @@ if ($id_type_activite === 1) {
 
     // Total général
     $total = $cumulativeTotal + $pageTotal;
-    $html .= ' <br> <br>
+    $html .= '<br><br>
         <table border="1" cellpadding="4" align="center">
             <tr>
-                <td colspan="5"  width="53%"><strong>Total général</strong></td>
-                    <td width="12%"><strong>' . number_format($total, 2, ',', ' ') . '</strong></td>
-                    <td colspan="2" width="35%"></td>
+                <td colspan="5" width="53%"><strong>Total général</strong></td>
+                <td width="12%"><strong>' . number_format($total, 0, ',', '.') . '</strong></td>
+                <td colspan="2" width="35%"></td>
             </tr>
         </table>';
 
@@ -195,7 +181,9 @@ if ($id_type_activite === 1) {
     $fmt = new NumberFormatter('fr', NumberFormatter::SPELLOUT);
     $totalEnLettres = ucfirst($fmt->format($total));
 
-    $html .= '<p><strong>Arrêté le présent état de paiement à la somme de :</strong> ' . $totalEnLettres . ' (' . number_format($total, 0, ',', ' ') . ') FCFA</p>';
+    $pdf->SetFont('trebucbd', '', 10);
+    $html .= '<br><p align="center"><b><span style="font-weight: bold;">Arrêté le présent état de paiement à la somme de : ' . mb_strtoupper($totalEnLettres, 'UTF-8') . ' (' . number_format($total, 0, ',', '.') . ') Francs CFA</span></b></p>';
+    $pdf->SetFont('trebuc', '', 10);
 
     // Signatures
     $pr_nom = htmlspecialchars($data[0]['premier_responsable'] ?? '');
@@ -204,28 +192,31 @@ if ($id_type_activite === 1) {
     $fin_titre = htmlspecialchars($data[0]['titre_financier'] ?? '');
 
     $html .= '
-        <table border="0">
+        <br><br><br>
+        <table border="0" align="center">
             <tr>
-                <td style="text-align: center; border: none;">
-                    <h4>' . $fin_titre . '</h4>
-                    <h4 style="text-decoration: underline;">' . $fin_nom . '</h4>
+                <td style="border:none; text-align:center;">
+                    <h4 style="margin-bottom:1em">' . htmlspecialchars($fin_titre) . '</h4>
+                    <br>
+                    <h4 style="text-decoration:underline;">' . htmlspecialchars($fin_nom) . '</h4>
                 </td>
-                <td style="text-align: center; border: none;">
-                    <h4>' . $pr_titre . '</h4>
-                    <h4 style="text-decoration: underline;">' . $pr_nom . '</h4>
+                <td style="border:none; text-align:center;">
+                    <h4 style="margin-bottom:1em">' . htmlspecialchars($pr_titre) . '</h4>
+                    <br>
+                    <h4 style="text-decoration:underline;">' . htmlspecialchars($pr_nom) . '</h4>
                 </td>
             </tr>
         </table>';
 
     $pdf->writeHTML($html, true, false, true, false, '');
 
-    //ob_end_clean(); // Nettoyer le tampon de sortie
-    // $pdf->Output(__DIR__ . '/Etat_deliberation.pdf', 'I');
+    ob_end_clean(); // Nettoyer le tampon de sortie
+    $pdf->Output('Etat de paiement.pdf', 'I');
 } elseif ($id_type_activite === 2) {
 
-
-    // Requête
-    $sql = "SELECT 
+// Requête
+$sql = "
+    SELECT 
         p.nom AS nom_participant,
         p.prenoms,
         t.nom AS titre_participant,
@@ -248,235 +239,177 @@ if ($id_type_activite === 1) {
     LEFT JOIN titres t ON pa.id_titre = t.id_titre
     LEFT JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
     WHERE a.type_activite = :type_activite AND a.id = :id_activite
-    ";
+";
 
-    $stmt = $bdd->prepare($sql);
-    $stmt->execute([
-        'type_activite' => $id_type_activite,
-        'id_activite' => $id_activite
-    ]);
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $bdd->prepare($sql);
+$stmt->execute([
+    'type_activite' => $id_type_activite,
+    'id_activite' => $id_activite
+]);
+$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Initialisation PDF
-    $pdf = new TCPDF('P', 'mm', 'A4');
-    $pdf->AddFont('trebucbd', '', 'trebucbd.php');
-    $pdf->setPrintHeader(false);
-    $pdf->setMargins(15, 25, 15, true);
-    configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Etat de paiement');
-    $pdf->setAutoPageBreak(true, 25);
-    $pdf->AddPage();
+// Initialisation PDF
+$pdf = new TCPDF('P', 'mm', 'A4');
+$pdf->AddFont('trebucbd', '', 'trebucbd.php');
+$pdf->setPrintHeader(false);
+$pdf->setMargins(15, 25, 15, true);
+configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Etat de paiement');
+$pdf->setAutoPageBreak(true, 25);
+$pdf->AddPage();
 
-    // Header
-    $informations_necessaires = ['titre' => $data[0]['nom_activite']];
-    genererHeader($pdf, 'etat_paiement_2', $informations_necessaires, $id_activite);
+// Header
+$informations_necessaires = ['titre' => $data[0]['nom_activite']];
+genererHeader($pdf, 'etat_paiement_2', $informations_necessaires, $id_activite);
 
-    // Infos générales
-    // $titre_activite = htmlspecialchars($data[0]['nom_activite'] ?? '');
-    // $centre = htmlspecialchars($data[0]['centre'] ?? '');
+$pdf->Ln(10);
 
-    // $compteurFile = __DIR__ . '/compteur.txt';
-    // if (!file_exists($compteurFile)) file_put_contents($compteurFile, "1");
-    // $numero = (int)file_get_contents($compteurFile);
-    // $numeroEtat = str_pad($numero, 4, '0', STR_PAD_LEFT);
+$entete_editee = false;
+$stmt = $bdd->query('SELECT * FROM informations_entete WHERE id_activite=' . $id_activite);
+if ($stmt->rowCount() != 0) {
+    $informations_entete = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $informations_entete = $informations_entete[0];
+    $entete_editee = true;
+}
 
-    // $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE, "Europe/Paris", IntlDateFormatter::GREGORIAN);
-    // $dateFr = $formatter->format(new DateTime());
+$pdf->MultiCell(0, 0, mb_strtoupper('NS N°' . $data[0]['reference'] . ' DU ' . (!$entete_editee ? '24 août 2023' : $informations_entete['date2']) . ' portant Constitution des commissions chargées de superviser le déroulement des épreuves écrites de ' . $data[0]['nom_activite']), 0, '', false, 1);
 
-    // // En-tête HTML
-    // $headerHtml = '
-    // <style>
-    //     h1 { text-align: center; font-size: 16pt; }
-    //     h2 { text-align: center; font-size: 14pt; }
-    //     table { border-collapse: collapse; width: 100%; }
-    //     td, th { border: 1px solid #000; padding: 5px; }
-    //     tr {font-size:8px; }
-    //     p {font-size:11px}
-    // </style>
-    // <table>
-    // <tr>
-    //     <td style="width: 50%; text-align:center;border: none;">
-    //         <p><b>REPUBLIQUE DU BENIN <br>*</b></p>
-    //         <p><b>MINISTÈRE ... <br>*</b></p>
-    //         <p><b>DIRECTION ... <br>*</b></p>
-    //         <p><b>SERVICE ... <br>*</b></p>
-    //     </td>
-    //     <td style="width: 50%; text-align:center; border: none;">
-    //         <p>Cotonou, le $dateFr</p>
-    //         <h2>ETAT DE PAIEMENT N°' . $numeroEtat . '</h2>
-    //         <h4>DES INDEMNITÉS ET FRAIS D’ENTRETIEN ACCORDÉS AUX MEMBRES D’ENCADREMENT DANS LE CADRE DE ' . mb_strtoupper($titre_activite, 'UTF-8') . '</h4>
-    //     </td>
-    // </tr>
-    // <tr>
-    //     <td style="border:none;"></td>
-    //     <td style="text-align:left; border:none;">
-    //         <p><b><u>JOURNEE</u>:' . $dateFr . '</b></p>
-    //         <p><b><u>CENTRE</u>: ' . $centre . '</b></p>
-    //     </td>
-    // </tr>
-    // </table>
+$pdf->setFont('trebuc', '', 10);
 
-    // <p><b>NS N°0416/... portant Constitution des commissions chargées de superviser le déroulement de ' . mb_strtolower($titre_activite, 'UTF-8') . '</b></p>
-    // <br>
-    // ';
+// Fonction en-tête tableau
+function generateTableHeader()
+{
+    return '
+    <style>
+        td { font-weight: normal; }
+        th { font-weight: bold; }
+    </style>
+    <br><br><br>
+    <table border="1" cellpadding="4" align="center">
+        <thead>
+            <tr style="background-color:#f0f0f0; font-size:8px;">
+                <th width="5%">N°</th>
+                <th width="18%">NOM ET PRENOMS</th>
+                <th width="12%">QUALITE</th>
+                <th width="6%">TAUX/JOUR</th>
+                <th width="7%">NOMBRE DE JOURS</th>
+                <th width="11%">INDEMNITE FORFAITAIRE</th>
+                <th width="11%">MONTANT</th>
+                <th width="10%">BANQUE</th>
+                <th width="20%">RIB</th>
+            </tr>
+        </thead>
+        <tbody>
+    ';
+}
 
-    // $pdf->writeHTML($headerHtml, true, false, true, false, '');
-    /* 
-    $information_supplementaire = ['type' => $titre_activite] ;
-    genererHeader($pdf,'etat_paiement',$information_supplementaire );
-    */
+//$pdf->SetFont('trebucbd', '', 8);
 
-    $pdf->Ln(10);
+// Affichage tableau
+$ligne_par_page = 25;
+$total_general = 0;
+$total_partiel = 0;
+$numero = 0;
+$cumul_precedent = 0;
 
-    $entete_editee = false;
-    $stmt = $bdd->query('SELECT * FROM informations_entete WHERE id_activite=' . $id_activite);
-    if ($stmt->rowCount() != 0) {
-        $informations_entete = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $informations_entete = $informations_entete[0];
-        $entete_editee = true;
-    }
-
-    $pdf->MultiCell(0, 0, mb_strtoupper('NS  N°' . $data[0]['reference'] . ' DU ' . (!$entete_editee ? '24 août  2023' : $informations_entete['date2']) . ' portant Constitution des commissions chargées de superviser le déroulement des épreuves écrites de '.$data[0]['nom_activite']), 0, '', false, 1);
-
-    $pdf->setFont('trebuc', '', 10);
-
-    // Fonction en-tête tableau
-    function generateTableHeader()
-    {
-        return '
-        <br><br><br>
-        <table border="1" cellpadding="4" align="center">
-            <thead>
-                <tr style="background-color:#f0f0f0; font-size:8px;">
-                    <th width="5%">N°</th>
-                    <th width="18%">NOM ET PRENOMS</th>
-                    <th width="12%">QUALITE</th>
-                    <th width="6%">TAUX/JOUR</th>
-                    <th width="7%">NOMBRE DE JOURS</th>
-                    <th width="11%">INDEMNITE FORFAITAIRE</th>
-                    <th width="11%">MONTANT</th>
-                    <th width="10%">BANQUE</th>
-                    <th width="20%">RIB</th>
-                </tr>
-            </thead>
-            <tbody>
-        ';
-    }
-
-    // Affichage tableau
+$pdf->SetFont('trebuc', '', 8);
+$tableHtml = generateTableHeader(); // commence le tableau
+$pdf->SetFont('trebucbd', '', 8);
 
 
-    $ligne_par_page = 25;
-    $total_general = 0;
-    $total_partiel = 0;
-    $numero = 0;
-    $cumul_precedent = 0;
+if (empty($data)) {
+    // Fermer le tableau proprement même s'il est vide
+    $tableHtml .= '<tr>
+        <td colspan="9" style="text-align:center;">Aucune donnée disponible</td>
+    </tr>';
+    $tableHtml .= '</tbody></table>';
+    $pdf->writeHTML($tableHtml, true, false, true, false, '');
+} else {
+    foreach ($data as $index => $row) {
+        $numero++;
+        $indemnite = $row['indemnite_forfaitaire'] ?? 0;
+        $montant = $row['montant'];
+        $total_general += $montant;
+        $total_partiel += $montant;
 
-    $tableHtml = generateTableHeader(); // commence le tableau
-
-    $numero = 0;
-    $ligne_par_page = 25;
-    $total_general = 0;
-    $total_partiel = 0;
-    $cumul_precedent = 0;
-
-    if (empty($data)) {
-        // Fermer le tableau proprement même s'il est vide
         $tableHtml .= '<tr>
-            <td colspan="9" style="text-align:center;">Aucune donnée disponible</td>
+            <td width="5%"><span style="font-family: trebuc;">' . $numero . '</span></td>
+            <td width="18%"><span style="font-family: trebuc;">' . htmlspecialchars($row['nom_participant'] . ' ' . $row['prenoms']) . '</span></td>
+            <td width="12%"><span style="font-family: trebuc;">' . htmlspecialchars($row['titre_participant']) . '</span></td>
+            <td width="6%"><span style="font-family: trebuc;">' . number_format($row['taux_journalier'], 0, ',', '.') . '</span></td>
+            <td width="7%"><span style="font-family: trebuc;">' . (int)$row['nombre_jours'] . '</span></td>
+            <td width="11%"><span style="font-family: trebuc;">' . number_format($indemnite, 0, ',', '.') . '</span></td>
+            <td width="11%"><span style="font-family: trebuc;">' . number_format($montant, 0, ',', '.') . '</span></td>
+            <td width="10%"><span style="font-family: trebuc;">' . htmlspecialchars($row['banque']) . '</span></td>
+            <td width="20%"><span style="font-family: trebuc;">' . htmlspecialchars($row['rib']) . '</span></td>
         </tr>';
-        $tableHtml .= '</tbody></table>';
 
-        // $pdf->writeHTML($tableHtml, true, false, true, false, '');
-    } else {
+        // Si page pleine ou dernière ligne
+        $fin_page = ($numero % $ligne_par_page === 0) || ($index === count($data) - 1);
 
-
-
-        foreach ($data as $index => $row) {
-            $numero++;
-
-            $indemnite = $row['indemnite_forfaitaire'] ?? 0;
-            $montant = $row['montant'];
-            $total_general += $montant;
-            $total_partiel += $montant;
-
+        if ($fin_page) {
             $tableHtml .= '<tr>
-            <td width="5%">' . $numero . '</td>
-            <td width="18%">' . htmlspecialchars($row['nom_participant'] . ' ' . $row['prenoms']) . '</td>
-            <td width="12%">' . htmlspecialchars($row['titre_participant']) . '</td>
-            <td  width="6%">' . number_format($row['taux_journalier'], 2, ',', ' ') . '</td>
-            <td width="7%">' . (int)$row['nombre_jours'] . '</td>
-            <td width="11%">' . number_format($indemnite, 2, ',', ' ') . '</td>
-            <td width="11%">' . number_format($montant, 2, ',', ' ') . '</td>
-            <td width="10%">' . htmlspecialchars($row['banque']) . '</td>
-            <td width="20%">' . htmlspecialchars($row['rib']) . '</td>
-        </tr>';
-
-            // Si page pleine ou dernière ligne
-            $fin_page = ($numero % $ligne_par_page === 0) || ($index === count($data) - 1);
-
-            if ($fin_page) {
-                $tableHtml .= '<tr>
                 <td colspan="7" width="59%"><b>Total partiel</b></td>
-                <td width="11%"><b>' . number_format($total_partiel, 2, ',', ' ') . '</b></td>
+                <td width="11%"><b>' . number_format($total_partiel, 0, ',', '.') . '</b></td>
                 <td width="30%"></td>
             </tr></tbody></table>';
 
-                $pdf->writeHTML($tableHtml, true, false, true, false, '');
+            $pdf->writeHTML($tableHtml, true, false, true, false, '');
 
-                if ($index !== count($data) - 1) {
-                    $cumul_precedent += $total_partiel;
-                    $total_partiel = 0;
-                    $pdf->AddPage();
+            if ($index !== count($data) - 1) {
+                $cumul_precedent += $total_partiel;
+                $total_partiel = 0;
+                $pdf->AddPage();
 
-                    $pdf->writeHTML('<p style="text-align:right;"><b>Total cumulé précédent : ' . number_format($cumul_precedent, 2, ',', ' ') . ' FCFA</b></p>', true, false, true, false, '');
-                    $tableHtml = generateTableHeader();
-                }
+                $pdf->writeHTML('<p style="text-align:right;"><b>Total cumulé précédent : ' . number_format($cumul_precedent, 0, ',', '.') . '</b></p>', true, false, true, false, '');
+                $tableHtml = generateTableHeader();
             }
         }
     }
-    // Pieds de tableau
+}
 
-    $fin_nom = $data[0]['financier'] ?? '';
-    $fin_titre = $data[0]['titre_financier'] ?? '';
-    $pr_nom = $data[0]['premier_responsable'] ?? '';
-    $pr_titre = $data[0]['titre_responsable'] ?? '';
+// Total général
+$fin_nom = $data[0]['financier'] ?? '';
+$fin_titre = $data[0]['titre_financier'] ?? '';
+$pr_nom = $data[0]['premier_responsable'] ?? '';
+$pr_titre = $data[0]['titre_responsable'] ?? '';
 
-    $total_en_lettres = convertir_en_lettres($total_general);
-    $total_formate = number_format($total_general, 0, ',', ' ');
+$total_en_lettres = convertir_en_lettres($total_general);
+$total_formate = number_format($total_general, 0, ',', '.');
 
-    // Total général
-    $footerHtml = '<br><br>
-    <table border="1" cellpadding="4" align="center">
-        <tr>
-            <td colspan="7" width="59%"><b>Total général</b></td>
-            <td width="11%"><b>' . number_format($total_general, 2, ',', ' ') . '</b></td>
-            <td width="30%"></td>
-        </tr>
-    </table>';
+$footerHtml = '<br><br>
+<table border="1" cellpadding="4" align="center">
+    <tr>
+        <td colspan="7" width="59%"><b>Total général</b></td>
+        <td width="11%"><b>' . number_format($total_general, 0, ',', '.') . '</b></td>
+        <td width="30%"></td>
+    </tr>
+</table>';
 
-    // Montant en lettres
-    $footerHtml .= '<br><p><strong>Arrêté le présent état de paiement à la somme de : '
-        . $total_en_lettres . ' (' . $total_formate . ') FCFA</strong></p>';
+// Montant en lettres
+$footerHtml .= '<br><p align="center"><span style="font-weight: bold;">Arrêté le présent état de paiement à la somme de : ' . mb_strtoupper($total_en_lettres, 'UTF-8') . ' (' . $total_formate . ') Francs CFA</span></p>';
 
-    // Signatures
-    $footerHtml .= '
-    <br><br><br>
-    <table border="0" align="center">
-        <tr>
-            <td style="border:none; text-align:center;">
-                <h4>' . htmlspecialchars($data[0]['titre_financier']) . '</h4>
-                <h4 style="text-decoration:underline;">' . htmlspecialchars($data[0]['financier']) . '</h4>
-            </td>
-            <td style="border:none; text-align:center;">
-                <h4>' . htmlspecialchars($data[0]['titre_responsable']) . '</h4>
-                <h4 style="text-decoration:underline;">' . htmlspecialchars($data[0]['premier_responsable']) . '</h4>
-            </td>
-        </tr>
-    </table>';
+// Signatures
+$footerHtml .= '
+<br><br><br>
+<table border="0" align="center">
+    <tr>
+        <td style="border:none; text-align:center;">
+            <h4 style="margin-bottom:1em">' . htmlspecialchars($data[0]['titre_financier']) . '</h4>
+            <br>
+            <h4 style="text-decoration:underline;">' . htmlspecialchars($data[0]['financier']) . '</h4>
+        </td>
+        <td style="border:none; text-align:center;">
+            <h4 style="margin-bottom:1em">' . htmlspecialchars($data[0]['titre_responsable']) . '</h4>
+            <br>
+            <h4 style="text-decoration:underline;">' . htmlspecialchars($data[0]['premier_responsable']) . '</h4>
+        </td>
+    </tr>
+</table>';
 
-    $pdf->writeHTML($footerHtml, true, false, true, false, '');
-    ob_end_clean();
-    $pdf->Output(__DIR__ . '/Etat_de_paiement.pdf', 'I');
+$pdf->writeHTML($footerHtml, true, false, true, false, '');
+ob_end_clean();
+$pdf->Output('Etat de paiement.pdf', 'I');
+
 } elseif ($id_type_activite === 3) {
 
     //echo "Bonjour 1";
@@ -523,9 +456,15 @@ if ($id_type_activite === 1) {
     $fin = isset($data[0]['date_fin']) ? htmlspecialchars($data[0]['date_fin']) : '';
 
     // Création du PDF
-    $pdf = new TCPDF();
+    $pdf = new TCPDF('L', 'mm', 'A4');
+    $pdf->AddFont('trebucbd', '', 'trebucbd.php');
+    $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
+    $pdf->setMargins(15, 25, 15, true);
+    configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Etat de paiement');
+    $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
     $pdf->AddPage();
     $pdf->SetFont('trebuc', '', 10);
+
 
     $compteurFile = __DIR__ . '/compteur.txt';
 
@@ -549,9 +488,10 @@ if ($id_type_activite === 1) {
 
     // Génération du header
 
-    // $informations_necessaires = ['titre' => $data[0]['nom_activite']];
-    // genererHeader($pdf, 'etat_paiement_3', $informations_necessaires, $id_activite);
+    $informations_necessaires = ['titre' => $data[0]['nom_activite']];
+    genererHeader($pdf, 'etat_paiement_3', $informations_necessaires, $id_activite);
 
+    /*
     $html = '
     <style>
         
@@ -585,11 +525,13 @@ if ($id_type_activite === 1) {
         </td>
     </tr>
     </table>';
+    */
 
     /*$information_supplementaire = ['type' => $titre_activite] ;
     genererHeader($pdf,'etat_paiement',$information_supplementaire );*/
 
-    $html .= '
+    $pdf->Ln(10);
+    $html = '
     <p><b> NS  N° 2548/PR/DC/SGM/DAF/DEC/SAF/SIS/SEC/SD/SA DU 31 DECEMBRE 2020 </b><br></p>';
 
     // Titre
@@ -601,15 +543,19 @@ if ($id_type_activite === 1) {
     $cumulativeTotal = 0;
 
     $i = 0;
-
+    //font-size:7px;
     // Début du tableau
     function startTable()
     {
-        return '<table border="1" cellpadding="4" align="center">
-            <thead>
-                <tr  style="background-color:#eeeeee; font-size:7px; ">
+        return '<style>
+        td { font-weight: normal; }
+        th { font-weight: bold; }
+    </style>
+    <table border="1" cellpadding="5" align="center">
+        <thead>
+            <tr style="background-color:#f2f2f2;">
                 <th width="5%">N°</th>
-                <th width="13%">NOM & PRENOM</th>
+                <th width="13%">NOM ET PRENOM</th>
                 <th width="9%">TITRE</th>
                 <th width="6%">TAUX/ TÂCHE</th>
                 <th width="7%">NOMBRE DE TÂCHE</th>
@@ -619,11 +565,12 @@ if ($id_type_activite === 1) {
                 <th width="8%">MONTANT</th>
                 <th width="8%">BANQUE</th>
                 <th width="19%">RIB</th>
-                </tr>
-            </thead>
-            <tbody>';
+            </tr>
+        </thead>
+        <tbody>';
     }
 
+    //$pdf->SetFont('trebuc', '', 8);
     $html .= startTable();
 
     if (empty($data)) {
@@ -640,19 +587,19 @@ if ($id_type_activite === 1) {
             $indemnite = $row['indemnite_forfaitaire'] ?? 0;
             $montant = $row['montant'];
 
-            $html .= '<tr>
-            <td width="5%">' . $i . '</td>
-            <td width="13%">' . htmlspecialchars($row['nom_participant']) . ' ' . htmlspecialchars($row['prenoms']) . '</td>
-            <td width="9%">' . htmlspecialchars($row['titre_participant']) . '</td>
-            <td width="6%">' . number_format($row['taux_taches'], 2, ',', ' ') . '</td>
-            <td width="7%">' . (int)$row['nombre_taches'] . '</td>
-            <td width="9%">' . number_format($row['frais_deplacement_journalier'], 2, ',', ' ') . '</td>
-            <td width="7%">' . (int)$row['nombre_jours'] . '</td>
-            <td width="9%">' . number_format($indemnite, 2, ',', ' ') . '</td>
-            <td width="8%">' . number_format($montant, 2, ',', ' ') . '</td>
-            <td width="8%">' . htmlspecialchars($row['banque']) . '</td>
-            <td width="19%">' . htmlspecialchars($row['rib']) . '</td>
-        </tr>';
+           $html .= '<tr>
+    <td width="5%"><span style="font-family: trebuc;">' . $i . '</span></td>
+    <td width="13%"><span style="font-family: trebuc;">' . htmlspecialchars($row['nom_participant']) . ' ' . htmlspecialchars($row['prenoms']) . '</span></td>
+    <td width="9%"><span style="font-family: trebuc;">' . htmlspecialchars($row['titre_participant']) . '</span></td>
+    <td width="6%"><span style="font-family: trebuc;">' . number_format($row['taux_taches'], 0, ',', '.') . '</span></td>
+    <td width="7%"><span style="font-family: trebuc;">' . (int)$row['nombre_taches'] . '</span></td>
+    <td width="9%"><span style="font-family: trebuc;">' . number_format($row['frais_deplacement_journalier'], 0, ',', '.') . '</span></td>
+    <td width="7%"><span style="font-family: trebuc;">' . (int)$row['nombre_jours'] . '</span></td>
+    <td width="9%"><span style="font-family: trebuc;">' . number_format($indemnite, 0, ',', '.') . '</span></td>
+    <td width="8%"><span style="font-family: trebuc;">' . number_format($montant, 0, ',', '.') . '</span></td>
+    <td width="8%"><span style="font-family: trebuc;">' . htmlspecialchars($row['banque']) . '</span></td>
+    <td width="19%"><span style="font-family: trebuc;">' . htmlspecialchars($row['rib']) . '</span></td>
+</tr>';
 
             $isLastLine = ($index + 1 === count($data));
             $isPageFull = (($index + 1) % $rowsPerPage === 0);
@@ -661,7 +608,7 @@ if ($id_type_activite === 1) {
                 // Total de la page
                 $html .= '<tr>
                 <td colspan="8" width="65%" ><strong>Total de cette page</strong></td>
-                <td width="8%"><strong>' . number_format($pageTotal, 2, ',', ' ') . '</strong></td>
+                <td width="8%"><strong>' . number_format($pageTotal, 0, ',', '.') . '</strong></td>
                 <td colspan="2" width="27%"></td>
             </tr>';
 
@@ -676,7 +623,7 @@ if ($id_type_activite === 1) {
                     $pdf->AddPage();
 
                     // Afficher le cumul précédent
-                    $html = '<p><strong>Cumul précédent :</strong> ' . number_format($cumulativeTotal, 2, ',', ' ') . ' FCFA</p>';
+                    $html = '<p><strong>Cumul précédent :</strong> ' . number_format($cumulativeTotal, 0, ',', '.') . ' FCFA</p>';
                     $html .= startTable();
                 }
             }
@@ -686,10 +633,10 @@ if ($id_type_activite === 1) {
     // Total général (sous le dernier tableau, sans saut de page ni <br><br>)
     $total = $cumulativeTotal;
 
-    $html .= '<br><br><table border="1" cellpadding="4"  align="center">
+    $html .= '<br><br><table border="1" cellpadding="5"  align="center">
     <tr>
-        <td colspan="8" width="65%"><strong>Total général</strong></td>
-        <td width="8%"><strong>' . number_format($total, 2, ',', ' ') . '</strong></td>
+        <td colspan="8" width="65%"><strong>Total</strong></td>
+        <td width="8%"><strong>' . number_format($total, 0, ',', '.') . '</strong></td>
         <td colspan="2" width="27%"></td>
     </tr>
     </table>';
@@ -698,8 +645,7 @@ if ($id_type_activite === 1) {
     $fmt = new NumberFormatter('fr', NumberFormatter::SPELLOUT);
     $totalEnLettres = ucfirst($fmt->format($total));
 
-    $html .= '<p><strong>Arrêté le présent état de paiement à la somme de :</strong> ' . $totalEnLettres . ' (' . number_format($total, 0, ',', ' ') . ') FCFA</p>';
-
+$html .= '<p align="center"><span style="font-weight: bold;">Arrêté le présent état de paiement à la somme de : ' . mb_strtoupper($totalEnLettres, 'UTF-8') . ' (' . number_format($total, 0, ',', '.') . ') Francs CFA</span></p>';
     // Signatures
     $pr_nom = $data[0]['premier_responsable'] ?? '';
     $pr_titre = $data[0]['titre_responsable'] ?? '';
@@ -710,11 +656,13 @@ if ($id_type_activite === 1) {
     <br><br><table border="0"  align="center">
         <tr>
             <td style=" border:none;">
-            <h4 style="margin-bottom:3em">' . htmlspecialchars($fin_titre) . '</h4>  
-            <h4 style="text-decoration:underline">' . htmlspecialchars($fin_nom) . '</h4>
+                <h4 style="margin-bottom:3em">' . htmlspecialchars($fin_titre) . '</h4>
+                <br>
+                <h4 style="text-decoration:underline">' . htmlspecialchars($fin_nom) . '</h4>
             </td>
             <td style=" border:none;">
                 <h4 style="margin-bottom:3em">' . htmlspecialchars($pr_titre) . '</h4>
+                <br>
                 <h4 style="text-decoration:underline">'  . htmlspecialchars($pr_nom) . '</h4>
             </td>
         </tr>
@@ -722,5 +670,5 @@ if ($id_type_activite === 1) {
 
     // Écriture finale
     $pdf->writeHTML($html, true, false, true, false, '');
-    $pdf->Output(__DIR__.'/Etat_de_correction.pdf', 'I');
+    $pdf->Output('Etat de paiement.pdf', 'I');
 }
