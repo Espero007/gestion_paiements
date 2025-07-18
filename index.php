@@ -2,24 +2,6 @@
 $titre_page = "Tableau de bord";
 require_once('includes/header.php');
 
-if(!$_SESSION['user_id'] && isset($_COOKIE['souvenir'])){
-    $token = hash('sha256', $_COOKIE['souvenir']) ;
-    $smt = $bdd->prepare("SELECT c.user_id FROM token_souvenir t
-        JOIN connexion c ON c.user_id = t.user_id
-        WHERE t.token = ? AND t.expire_le > NOW() LIMIT 1" );
-
-    $smt->execute([$token]);
-    $user = $smt->fetch();
-    $stmt->closeCursor();
-
-    if($user){
-        $_SESSION['user_id'] = $user['user_id'];
-    }
-
-}
-if(!isset($_SESSION['user_id'])){
-    header("Location: auth/connexion.php");
-}
 // L'idéal serait ici que je récupère les trois derniers et non tout à vrai dire
 
 $stmt = 'SELECT nom, description, date_debut, date_fin, centre FROM activites WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id DESC';
