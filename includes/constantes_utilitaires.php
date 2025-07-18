@@ -4,7 +4,7 @@
 define('BASE_PATH', realpath(__DIR__ . '/../'));
 const NBR_ACTIVITES_A_AFFICHER = 6;
 const NOMBRE_MAXIMAL_COMPTES = 3;
-define('TIMEOUT', 360 * 60); // 1h d'inactivité soit 20*60 secondes.
+define('TIMEOUT', 1 * 86400); // 1 journée d'inactivité soit 86400
 $nom_dossier_upload = 'fichiers';
 define('UPLOADS_BASE_DIR', BASE_PATH . '/' . $nom_dossier_upload);
 const PERMISSIONS = 0777;
@@ -21,9 +21,13 @@ date_default_timezone_set('Africa/Lagos');
 
 // Fonctions utilitaires
 
-function redirigerVersPageErreur($code_erreur, $url)
+function redirigerVersPageErreur($code_erreur, $url=null)
 {
-    $_SESSION['previous_url'] = $url;
+    if($url){
+        $_SESSION['previous_url'] = $url;
+    }else{
+        // On a pas inqué l'url donc par défaut c'est l'url précédent qui est utilisé
+    }
     $_SESSION['code_erreur'] = $code_erreur;
     header('location:/page_erreur.php');
     exit;

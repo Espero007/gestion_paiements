@@ -185,7 +185,7 @@ require_once('traitements/gerer_activite.php');
 
                                     <ul class="dropdown-menu shadow">
                                         <li>
-                                            <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Associer des participants</a>
+                                            <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Associer des acteurs</a>
                                         </li>
                                         <?php if (count($participants_associes) != 0) : ?>
                                             <li>
@@ -207,7 +207,7 @@ require_once('traitements/gerer_activite.php');
 
                     <div class="card shadow mb-4">
                         <div class="card-header">
-                            <h6 class="text-primary font-weight-bold">Participants associés</h6>
+                            <h6 class="text-primary font-weight-bold">Acteurs associés</h6>
                         </div>
                         <div class="card-body">
                             <!-- Messages divers -->
@@ -216,8 +216,8 @@ require_once('traitements/gerer_activite.php');
 
                             <?php if (count($participants_associes) == 0) : ?>
                                 <div class="text-center">
-                                    <p class="">Il semble que vous n'avez encore associé à votre activité aucun participant. Pourquoi ne pas le faire dès maintenant ?</p>
-                                    <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="btn btn-outline-primary">Associer des participants</a>
+                                    <p class="">Il semble que vous n'avez encore associé à votre activité aucun acteur. Pourquoi ne pas le faire dès maintenant ?</p>
+                                    <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="btn btn-outline-primary">Associer des acteurs</a>
                                 </div>
                             <?php else : ?>
                                 <?php afficherSousFormeTableau($informations, 'table-responsive text-nowrap', 'table-bordered text-center', false, true) ?>

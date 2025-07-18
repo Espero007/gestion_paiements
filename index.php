@@ -2,23 +2,6 @@
 $titre_page = "Tableau de bord";
 require_once('includes/header.php');
 
-if(!$_SESSION['user_id'] && isset($_COOKIE['souvenir'])){
-    $token = hash('sha256', $_COOKIE['souvenir']) ;
-    $smt = $bdd->prepare("SELECT c.user_id FROM token_souvenir t
-        JOIN connexion c ON c.user_id = t.user_id
-        WHERE t.token = ? AND t.expire_le > NOW() LIMIT 1" );
-
-    $smt->execute([$token]);
-    $user = $smt->fetch();
-
-    if($user){
-        $_SESSION['user_id'] = $user['user_id'];
-    }
-
-}
-if(!isset($_SESSION['user_id'])){
-    header("Location: auth/connexion.php");
-}
 // L'idéal serait ici que je récupère les trois derniers et non tout à vrai dire
 
 $stmt = 'SELECT nom, description, date_debut, date_fin, centre FROM activites WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id DESC';
@@ -120,7 +103,7 @@ $resultat->closeCursor();
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Nombre de participants
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Nombre d'acteurs
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
@@ -447,11 +430,10 @@ $resultat->closeCursor();
 
                     <?php if (isset($nbr_activites) && $nbr_activites == 0) : ?>
                         <div class="text-center">
-                            <p class="mt-2">Il semble que vous n'avez aucune activité à votre actif. Pensez à en ajouter ! Ou préférez-vous commencer par l'ajout de participants ?</p>
+                            <p class="mt-2">Il semble que vous n'avez aucune activité à votre actif. Pensez à en ajouter ! Ou préférez-vous commencer par l'ajout de vos acteurs ?</p>
                             <div>
                                 <a href="/gestion_activites/creer_activite.php" class="btn btn-primary mr-2">Créer une activité</a>
-                                <a href="/gestion_participants/ajouter_participant.php" class="btn btn-outline-primary">Ajouter un participant</a>
-
+                                <a href="/gestion_participants/ajouter_participant.php" class="btn btn-outline-primary">Ajouter un acteur</a>
                             </div>
                         </div>
                     <?php endif; ?>

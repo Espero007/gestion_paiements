@@ -59,7 +59,7 @@ if (isset($traitement_fichiers_ok) && $traitement_fichiers_ok) {
     $_SESSION['participant_ajoute'] = "
          <div>
             <!-- Message proprement dit -->
-            <p class=\"m-0\">Le participant a été enregistré avec succès !</p>
+            <p class=\"m-0\">L'acteur a été enregistré avec succès !</p>
             <p class=\"m-0\"><a href=\"ajouter_comptes.php?id_participant=$id_participant\">Cliquez ici</a> si vous souhaitez lui ajouter des comptes bancaires ou ici si vous préférez vous l'<a href=\"/gestion_participants/lier_participant_activite.php?id_participant=$id_participant\">associer</a> directement à une activité</p>
         </div>
     ";

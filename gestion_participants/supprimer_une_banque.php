@@ -26,8 +26,8 @@ require_once('includes/suppression_banque.php');
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <h1 class="h4 mb-2 text-gray-800">Participants / <strong>Suppression de compte(s) bancaire(s)</strong></h1>
-                    <p class="mt-2">Sélectionnez le compte bancaire associé au participant que vous souhaitez supprimer puis achevez la suppression</p>
+                    <h1 class="h4 mb-2 text-gray-800">Acteurs / <strong>Suppression de compte(s) bancaire(s)</strong></h1>
+                    <p class="mt-2">Sélectionnez le compte bancaire associé à l'acteur que vous souhaitez supprimer puis achevez la suppression</p>
 
                     <div class="card shadow mb-4">
                         <div class="card-header">
