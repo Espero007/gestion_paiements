@@ -1,7 +1,6 @@
 <?php
 
 session_start();
-// session_unset();
 require_once('bdd.php');
 require_once('constantes_utilitaires.php');
 
@@ -13,23 +12,26 @@ if ($_SESSION['current_url'] != obtenirURLcourant()) {
 // Récupération de l'adresse courante
 $_SESSION['current_url'] = obtenirURLcourant();
 
-// $_SESSION['previous_url'] = obtenirURLcourant();
-// $_SESSION['current_url'] = obtenirURLcourant();
-
-
 if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION['prenoms']))) {
     // Utilisateur non connecté
-
     // On le dirige vers la page de connexion en sauvegardant l'url à laquelle il voulait accéder de base. Ainsi on s'arrange pour qu'il revienne sur cette page une fois qu'il se sera connecté
     $_SESSION['previous_url'] = obtenirURLcourant();
     header('location:/auth/connexion.php');
     exit;
 } elseif ((time() - $_SESSION['dernier_signe_activite']) > TIMEOUT) {
-    // Le timeout est atteint
-    $_SESSION['timeout_atteint'] = true;
-    $_SESSION['previous_url'] = obtenirURLcourant();
-    header('location:/auth/deconnexion.php');
-    exit;
+    // Le timeout est atteint mais il ne faut pas le déconnecter s'il a un cookie actif donc il faut s'assurer qu'il n'a pas de cookie
+
+    $stmt = $bdd->query('SELECT * FROM token_souvenir WHERE user_id=' . $_SESSION['user_id']);
+    if ($stmt->rowCount() == 0 && !isset($_COOKIE['souvenir'])) {
+        // Il n'a pas de cookie ni dans la superglobale ni dans la bdd
+        $_SESSION['timeout_atteint'] = true;
+        $_SESSION['previous_url'] = obtenirURLcourant();
+        header('location:/auth/deconnexion.php');
+        exit;
+    }else{
+        // Il a un cookie actif donc on remet le compteur à 0
+        $_SESSION['dernier_signe_activite'] = time();
+    }
 } else {
 
     // On vérifie la présence de l'individu dans la base de données
@@ -51,7 +53,18 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
             header('location:/auth/connexion.php');
             exit;
         } else {
-            // Le gars est bien retrouvé dans la bdd et n'a pas de soucis
+
+            // Le gars est bien retrouvé dans la bdd
+            // On vérifie que son cookie (s'il en a) n'est pas encore arrivé à expiration : bh en fait quand bien même il aurait un cookie, s'il arrive à expiration, il est supprimé automatiquement donc poser des conditions sur la présence du cookie après expiration n'est pas une bonne idée.
+
+            $stmt = $bdd->query('SELECT * FROM token_souvenir WHERE user_id=' . $_SESSION['user_id']);
+            if ($stmt->rowCount() != 0 && !isset($_COOKIE['souvenir'])) {
+                // Il avait un cookie mais le cookie en question est arrivé à expiration donc on le déconnecte automatiquement
+                $_SESSION['cookie_expire'] = 'Veuillez vous connecter à nouveau.';
+                header('location:/auth/deconnexion.php');
+                exit;
+            }
+
             $_SESSION['dernier_signe_activite'] = time();
             $_SESSION['current_url'] = obtenirURLcourant();
         }
@@ -91,5 +104,8 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
 
     <!-- Custom styles for this page -->
     <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <!-- Style loader -->
+     <link rel="stylesheet" href="/includes/loader.css">
 
 </head>

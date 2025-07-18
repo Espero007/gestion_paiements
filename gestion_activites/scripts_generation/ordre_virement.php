@@ -22,9 +22,6 @@ if ($redirect) {
 
 $zip = isset($_GET['zip']) ? 1 : 0;
 
-// $banque = $_GET['banque'] ?? 'Coris Bénin';
-// $id_activite = $_GET['id'] ?? 2;
-
 // Récupérons les participants associés à l'activité qui ont comme banque UBA
 
 $stmt = "
@@ -65,20 +62,19 @@ $pdf->AddFont('trebucbd', '', 'trebucbd.php');
 $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
 $pdf->setMargins(15, 25, 15, true);
 configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Ordre de virement ' . $banque);
-
 $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
 $pdf->AddPage();
 
 // Header
-$informations_necessaires = ['titre' => $resultats[0]['titre_activite'], 'banque' => $banque];
-// $informations_necessaires = ['titre' => $resultats[0]['titre_activite']];
-genererHeader($pdf, 'ordre_virement', $informations_necessaires, $id_activite);
-// genererHeader($pdf, 'note_service', $informations_necessaires);
+// $informations_necessaires = ['titre' => $resultats[0]['titre_activite'], 'banque' => $banque];
+$informations_necessaires = ['titre' => $resultats[0]['titre_activite']];
+// genererHeader($pdf, 'ordre_virement', $informations_necessaires, $id_activite);
+genererHeader($pdf, 'etat_paiement_1', $informations_necessaires, $id_activite);
 
 $pdf->Ln(20);
 
 $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
-$tailles_colonnes = [0.05, 0.22, 0.15, 0.15, 0.15, 0.28];
+$tailles_colonnes = [0.05, 0.22, 0.15, 0.15, 0.15, 0.28]; // à multiplier par 100 pour avoir les pourcentages
 
 foreach ($tailles_colonnes as $index => $taille) {
     $tailles_colonnes[$index] = $taille * $largeurPage;
@@ -86,7 +82,7 @@ foreach ($tailles_colonnes as $index => $taille) {
 
 // Tableau
 // Entête
-$pdf->setFont('trebuc', '', 10);
+$pdf->setFont('trebucbd', '', 10);
 $pdf->setFillColor(242, 242, 242); // #f2f2f2
 $hauteur = 10;
 $pdf->Cell($tailles_colonnes[0], $hauteur, 'N°', 1, 0, 'C', true); // 5%
@@ -97,34 +93,68 @@ $pdf->Cell($tailles_colonnes[4], $hauteur, strtoupper('Banque'), 1, 0, 'C', true
 $pdf->Cell($tailles_colonnes[5], $hauteur, strtoupper('Rib'), 1, 0, 'C', true);
 $pdf->Ln();
 
+foreach ($tailles_colonnes as $index => $taille) {
+    $tailles_colonnes[$index] = $taille/$largeurPage * 100;
+}
+
 $total = 0;
+$style = '
+<style>
+td{
+text-align : center;
+line-height : 16px;
+}
+</style>
+';
+
+$html = $style.'
+<table border="1" cellpadding="5" width="100%">
+<tbody>';
+
+$pdf->setFont('trebuc', '', 10);
 
 for ($i = 0; $i < count($resultats); $i++) {
     $ligne = $resultats[$i];
     $montant = montantParticipant($ligne['id_participant'], $id_activite);
 
     // Une ligne
+    $html .= '<tr>';
 
-    $pdf->setFont('trebuc', '', 10);
-    $pdf->setFillColor(255, 255, 255); // #fff
+    // $pdf->setFillColor(255, 255, 255); // #fff
     // N°
-    $pdf->Cell($tailles_colonnes[0], $hauteur, $i + 1, 1, 0, 'C');
+    $html .= '<td width="'.$tailles_colonnes[0].'%">'.($i+1).'</td>';
+    // $pdf->Cell($tailles_colonnes[0], $hauteur, $i + 1, 1, 0, 'C');
     // Nom et prénoms
-    $pdf->Cell($tailles_colonnes[1], $hauteur, $ligne['nom'] . ' ' . $ligne['prenoms'], 1);
+    $html .= '<td width="' . $tailles_colonnes[1] . '%">' . $ligne['nom'] .' '.$ligne['prenoms']. '</td>';
+    // $pdf->Cell($tailles_colonnes[1], $hauteur, $ligne['nom'] . ' ' . $ligne['prenoms'], 1);
     // Qualité
-    $pdf->Cell($tailles_colonnes[2], $hauteur, $ligne['qualite'], 1, 0, 'C');
+    $html .= '<td width="' . $tailles_colonnes[2] . '%">' . $ligne['qualite'] . '</td>';
+    // $pdf->Cell($tailles_colonnes[2], $hauteur, $ligne['qualite'], 1, 0, 'C');
     // Montant
-    $pdf->Cell($tailles_colonnes[3], $hauteur, number_format($montant, 0, ',', '.'), 1, 0, 'C');
+    $html .= '<td width="' . $tailles_colonnes[3] . '%">' . number_format($montant, 0, ',', '.') . '</td>';
+    // $pdf->Cell($tailles_colonnes[3], $hauteur, number_format($montant, 0, ',', '.'), 1, 0, 'C');
     // Banque
-    $pdf->Cell($tailles_colonnes[4], $hauteur, $banque, 1, 0, 'C');
+    $html .= '<td width="' . $tailles_colonnes[4] . '%">' . $banque . '</td>';
+    // $pdf->Cell($tailles_colonnes[4], $hauteur, $banque, 1, 0, 'C');
     // Rib
-    $pdf->Cell($tailles_colonnes[5], $hauteur, $ligne['rib'], 1, 0, 'C');
-    $pdf->Ln();
-
+    $html .= '<td width="' . $tailles_colonnes[5] . '%">' . $ligne['rib'] . '</td>';
+    // $pdf->Cell($tailles_colonnes[5], $hauteur, $ligne['rib'], 1, 0, 'C');
+    // $pdf->Ln();
+    $html .= '</tr>';
     $total += $montant;
 }
 
+$html .= '
+</tbody>
+</table>';
+
+$pdf->writeHTML($html, false, false, true, false, '');
+
 // Dernière ligne du tableau pour le total
+
+foreach ($tailles_colonnes as $index => $taille) {
+    $tailles_colonnes[$index] = $taille / 100 * $largeurPage;
+}
 
 $pdf->setFont('trebucbd', '', 10);
 $pdf->setFillColor(242, 242, 242); // #f2f2f2
@@ -140,7 +170,7 @@ $pdf->Ln(15);
 
 // On s'attaque à la phrase en dessous du tableau
 $formatter = new NumberFormatter('fr_FR', NumberFormatter::SPELLOUT);
-$pdf->MultiCell(0, 10, "Arrêté le présent ordre de virement à la somme de " . mb_strtoupper($formatter->format($total), 'UTF-8') . "\n (" . number_format($total, 0, ',', '.') . ") Francs CFA", 0, 'C');
+$pdf->MultiCell(0, 10, "Arrêté le présent ordre de virement à la somme de " . mb_strtoupper($formatter->format($total), 'UTF-8') . "(" . number_format($total, 0, ',', '.') . ") Francs CFA", 0, 'C');
 $pdf->Ln(8);
 
 // Bloc du bas avec le financier et le premier responsable

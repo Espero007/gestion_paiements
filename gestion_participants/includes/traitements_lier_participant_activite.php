@@ -158,9 +158,9 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
 
                         // Redirection en cas de succès
                         if (count($participants) > 1) {
-                            $_SESSION['liaison_reussie'] = 'Les participants ont été associés à l\'activité avec succès';
+                            $_SESSION['liaison_reussie'] = 'Les acteurs ont été associés à l\'activité avec succès';
                         } else {
-                            $_SESSION['liaison_reussie'] = 'Le participant a été associé à l\'activité avec succès';
+                            $_SESSION['liaison_reussie'] = 'L\'acteur a été associé à l\'activité avec succès';
                         }
 
                         // header('location:' . $_SESSION['previous_url']);

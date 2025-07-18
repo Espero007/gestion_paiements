@@ -30,11 +30,11 @@ require_once('includes/traitements_ajout_comptes.php');
 
                     <!-- Page Heading -->
                     <div>
-                        <h1 class="h4 mb-4 text-gray-800">Participants / <strong>Ajout de comptes bancaires</strong></h1>
+                        <h1 class="h4 mb-4 text-gray-800">Acteurs / <strong>Ajout de comptes bancaires</strong></h1>
                         <?php if (isset($quota_comptes_bancaires_atteint) && $quota_comptes_bancaires_atteint) : ?>
 
                             <!-- On ne peut plus ajouter de comptes bancaires à ce participant -->
-                            <p class="mt-2">Il semble que vous avez atteint le nombre maximal de comptes bancaires permis pour ce participant (<?= NOMBRE_MAXIMAL_COMPTES ?>)</p>
+                            <p class="mt-2">Il semble que vous avez atteint le nombre maximal de comptes bancaires permis pour cet acteur (<?= NOMBRE_MAXIMAL_COMPTES ?>)</p>
                             <a href="gerer_participant.php?id=<?= $id_participant ?>">Annuler</a>
 
                         <?php elseif (isset($quota_comptes_bancaires_atteint) && !$quota_comptes_bancaires_atteint): ?>

@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once(__DIR__.'/../../includes/bdd.php');
-require_once(__DIR__.'/../../includes/constantes_utilitaires.php');
+require_once(__DIR__ . '/../../includes/bdd.php');
+require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
 $_SESSION['current_url'] = obtenirURLcourant();
 
@@ -14,8 +14,6 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
 }
 
 if (isset($_POST['connexion'])) {
-
-    // $champs_attendus = array('email', 'password');
 
     if (!isset($_POST['email']) || !isset($_POST['password'])) {
         $echec_connexion = true;
@@ -38,10 +36,10 @@ if (isset($_POST['connexion'])) {
         $check_data->bindParam('email', $_POST['email']);
         $check_data->execute();
 
-        if($check_data->rowCount() == 1){
+        if ($check_data->rowCount() == 1) {
             // L'utilisateur n'a pas encore validé son email
             $email_non_valide = true;
-        }else{
+        } else {
             // L'email indiqué n'est soit pas dans la bdd soit il est déjà validé
             // On vérifie la présence de l'individu dans la base de données
             $check_data = $bdd->prepare("SELECT user_id, nom, prenoms, photo_profil, password FROM connexion WHERE email = :email AND est_verifie= 1");
@@ -58,31 +56,29 @@ if (isset($_POST['connexion'])) {
                 $_SESSION['prenoms'] = $logged_user['prenoms'];
                 $_SESSION['photo_profil'] = $logged_user['photo_profil'];
                 $_SESSION['dernier_signe_activite'] = time();
-                
-                if(isset($_POST['souvenir'])){
+
+                if (isset($_POST['souvenir'])) {
                     $token = bin2hex(random_bytes(16));
-                    $expire = date('Y-m-d H:i:s', time() + (86400*30)); // expire au bout de 30 jours
+                    $nbr_jours = 15;
+                    $expire = date('Y-m-d H:i:s', time() + (86400 * $nbr_jours)); // expire au bout de $nbr_jours jours
 
                         $smt2 = $bdd->prepare('DELETE FROM token_souvenir WHERE user_id = ?');
                         $smt2->execute([$logged_user['user_id']]);
                     
                     $smt = $bdd->prepare("INSERT INTO token_souvenir(user_id,token, expire_le) VALUES (?,?,?)");
                     $smt->execute([$logged_user['user_id'],hash('sha256',$token),$expire]);
-                    setcookie('souvenir', $token, time()+(86400*30),'/','',false,true); // expire au bout 30 jours
+                    setcookie('souvenir', $token, time()+(86400 * $nbr_jour),'/','',false,true); // expire au bout 30 jours
                 }
 
                 // Redirection vers la page d'accueil par défaut mais s'il y avait une url on la chope
-
                 if (isset($_SESSION['previous_url'])) {
-                    // $url = $_SESSION['previous_url'];
-                    // unset($_SESSION['previous_url']);
                     header('location:' . $_SESSION['previous_url']);
                     exit;
                 } else {
                     header('location:/index.php');
                     exit;
                 }
-            }else{
+            } else {
                 $echec_connexion = true;
             }
         }

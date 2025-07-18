@@ -62,7 +62,7 @@ $documents['liste_rib'] = 'Liste des RIBs';
 $urls = [
     'note_service' => '/gestion_activites/scripts_generation/note_attestation.php?document=note&id=' . $id_activite,
     'attestation_collective' => '/gestion_activites/scripts_generation/note_attestation.php?document=attestation&id='.$id_activite,
-    'etat_paiement' => 'url à définir',
+    'etat_paiement' => '/gestion_activites/scripts_generation/etat_paiement.php?id='.$id_activite
 ];
 
 foreach ($banques as $banque) {
@@ -72,7 +72,7 @@ foreach ($banques as $banque) {
 $urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id='.$id_activite;
 $urls['liste_rib'] = '/gestion_activites/scripts_generation/liste_des_RIB.php?id='.$id_activite;
 
-$pdfs_non_telechargeables = ['etat_paiement'];
+$pdfs_non_telechargeables = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($documents as $document => $label) {

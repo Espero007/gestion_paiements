@@ -17,7 +17,19 @@ require_once('includes/bdd.php');
 </head>
 
 <body>
-<?php echo obtenirURLcourant(true) ?>
+<style>
+    td{
+        line-height: 20px;
+    }
+</style>
+
+<table width="10%" border="1">
+    <tbody>
+        <tr>
+            <td>AKANDO Espéro Eléazar Ogoluwa</td>
+        </tr>
+    </tbody>
+</table>
 
 </body>
 

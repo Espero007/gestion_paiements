@@ -1,6 +1,6 @@
 <?php
 $section = 'Participants';
-$titre_page = "Gestion du participant";
+$titre_page = "Gestion de l'acteur";
 require_once(__DIR__ . '/../includes/header.php');
 
 require_once('includes/gerer_participant.php');
@@ -31,8 +31,8 @@ require_once('includes/gerer_participant.php');
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h4 mb-4 text-gray-800">Participants / <strong>Gestion du participant</strong></h1>
-                    <p class="mt-2">Gérez ici votre participant</p>
+                    <h1 class="h4 mb-4 text-gray-800">Acteurs / <strong>Gestion du participant</strong></h1>
+                    <p class="mt-2">Gérez ici votre acteur</p>
 
                     <div class="card shadow mb-4">
                         <div class="card-header">

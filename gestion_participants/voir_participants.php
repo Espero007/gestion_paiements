@@ -1,12 +1,10 @@
 <?php
 $section = 'Participants';
-$titre_page = "Liste des participants";
+$titre_page = "Liste des acteurs";
 require_once(__DIR__ . '/../includes/header.php');
 
 $stmt = 'SELECT id_participant, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance FROM participants WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id_participant';
 $resultat = $bdd->query($stmt);
-
-
 
 if (!$resultat) {
     redirigerVersPageErreur(500, obtenirURLcourant());
@@ -24,7 +22,6 @@ if (!$resultat) {
 }
 $resultat->closeCursor();
 
-// $participants = [];
 ?>
 
 <body id="page-top">
@@ -52,12 +49,12 @@ $resultat->closeCursor();
                         <!-- Nous avons des participants -->
 
                         <!-- Page Heading -->
-                        <h1 class="h4 mb-4 text-gray-800">Participants / <strong>Vos participants</strong></h1>
-                        <p class="mt-2">Ici vous avez la liste de tous les participants que vous avez déjà ajouter. A partir des options disponibles vous pouvez modifier leurs informations, les supprimer, les associer à des activités, et bien plus.</p>
+                        <h1 class="h4 mb-4 text-gray-800">Acteurs / <strong>Vos acteurs</strong></h1>
+                        <p class="mt-2">Ici vous avez la liste de tous les acteurs que vous avez déjà ajoutés. A partir des options disponibles vous pouvez modifier leurs informations, les supprimer, les associer à des activités, et bien plus.</p>
 
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Liste des participants</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Liste des acteurs</h6>
                             </div>
                             <div class="card-body">
                                 <!-- Messages de succès -->
@@ -72,7 +69,7 @@ $resultat->closeCursor();
                                 <!-- Liaison participant-activité non autorisée -->
                                 <?php if (isset($_SESSION['liaison_non_autorisee'])) : ?>
                                     <div class="alert alert-danger mt-2 text-center alert-dismissible">
-                                        Ce participant a déjà été lié à cette activité !
+                                        Cet acteur a déjà été lié à cette activité !
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                                     </div>
                                     <?php unset($_SESSION['liaison_non_autorisee']); ?>
@@ -81,7 +78,7 @@ $resultat->closeCursor();
                                 <!-- Participant supprimé avec succès -->
                                 <?php if (isset($_SESSION['suppression_ok'])) : ?>
                                     <div class="alert alert-success mt-2 text-center alert-dismissible">
-                                        Le participant a été supprimé avec succès !
+                                        L'acteur a été supprimé avec succès !
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                                     </div>
                                     <?php unset($_SESSION['suppression_ok']); ?>
@@ -169,9 +166,9 @@ $resultat->closeCursor();
                         </div>
                     <?php else: ?>
                         <div class="text-center">
-                            <h3 class="font-weight-bold">Aucun participant retrouvé !</h3>
-                            <p class="mt-3 text-center">Il semble que vous n'ayiez aucun participant déjà ajouté. Pourquoi ne pas remédier à celà et en ajouter dès maintenant ?</p>
-                            <a href="ajouter_participant.php" class="btn btn-outline-primary">Ajouter un participant</a>
+                            <h3 class="font-weight-bold">Aucun acteur retrouvé !</h3>
+                            <p class="mt-3 text-center">Il semble que vous n'ayiez aucun acteur déjà ajouté. Pourquoi ne pas remédier à celà et en ajouter dès maintenant ?</p>
+                            <a href="ajouter_participant.php" class="btn btn-outline-primary">Ajouter un acteur</a>
                             <!-- <div class="mt-5 mb-5">
                                 <img src="/assets/illustrations/no-results-1.png" alt="no results" class="img-fluid" width="500">
                             </div> -->

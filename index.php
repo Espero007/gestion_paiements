@@ -120,7 +120,7 @@ $resultat->closeCursor();
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Nombre de participants
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Nombre d'acteurs
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
@@ -447,11 +447,10 @@ $resultat->closeCursor();
 
                     <?php if (isset($nbr_activites) && $nbr_activites == 0) : ?>
                         <div class="text-center">
-                            <p class="mt-2">Il semble que vous n'avez aucune activité à votre actif. Pensez à en ajouter ! Ou préférez-vous commencer par l'ajout de participants ?</p>
+                            <p class="mt-2">Il semble que vous n'avez aucune activité à votre actif. Pensez à en ajouter ! Ou préférez-vous commencer par l'ajout de vos acteurs ?</p>
                             <div>
                                 <a href="/gestion_activites/creer_activite.php" class="btn btn-primary mr-2">Créer une activité</a>
-                                <a href="/gestion_participants/ajouter_participant.php" class="btn btn-outline-primary">Ajouter un participant</a>
-
+                                <a href="/gestion_participants/ajouter_participant.php" class="btn btn-outline-primary">Ajouter un acteur</a>
                             </div>
                         </div>
                     <?php endif; ?>

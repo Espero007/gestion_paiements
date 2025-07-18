@@ -8,18 +8,20 @@ if (isset($_GET['type_activite'])) {
     // 2- S'assurer que c'est un nombre
     // 3- S'assurer que ce nombre est compris entre 1 et 3
     // La fonction valider_valeur_numerique() va prendre en compte les deux premiers points et le troisième point sera géré ici
+    $redirect = true;
 
-    if (valider_valeur_numerique('type_activite', $_GET)) {
+    if (filter_input(INPUT_GET, 'type_activite', FILTER_VALIDATE_INT)) {
         // Les deux premiers points sont ok, on vérifie alors le troisième point
         if ($_GET['type_activite'] == 1 || $_GET['type_activite'] == 2 || $_GET['type_activite'] == 3) {
             // Le type est valide
             $type_activite = $_GET['type_activite'];
             $recuperation_type_activite = true;
-        } else {
-            redirigerVersPageErreur('404', obtenirURLcourant());
+            $redirect = false;
         }
-    } else {
-        redirigerVersPageErreur('404', obtenirURLcourant());
+    }
+
+    if($redirect){
+        redirigerVersPageErreur(404, $_SESSION['previous_url']);
     }
 } else {
     $recuperation_type_activite = false;
@@ -154,7 +156,7 @@ if ($recuperation_type_activite) {
                  * Élodie/Jean
                  */
 
-                if (!preg_match('/^\/[A-Za-z0-9]+(\/[A-Za-z0-9]+)+$/', $data[$champ])) {
+                if (!preg_match('/^\/[A-Za-z0-9\-]+(\/[A-Za-z0-9\-]+)+$/', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
                     }
@@ -384,7 +386,7 @@ if ($recuperation_type_activite) {
 
                     // Message de succès
                     $_POST = []; // On vide la superglobale
-                    $_SESSION['success'] = 'Votre activité a été créée avec succès. Pensez à y <a href="/gestion_participants/lier_participant_activite.php?id_activite=' . $id_activite . '">associer des participants</a>';
+                    $_SESSION['success'] = 'Votre activité a été créée avec succès. Pensez à y <a href="/gestion_participants/lier_participant_activite.php?id_activite=' . $id_activite . '">associer des acteurs</a>';
                     header('Location:gerer_activite.php?id=' . $id_activite);
                     exit;
                 } catch (PDOException $e) {

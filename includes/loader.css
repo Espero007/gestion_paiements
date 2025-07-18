@@ -1,0 +1,72 @@
+/* Styles pour le loader */
+
+/* Plein écran, fond blanc */
+#loader {
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Spinner (cercle tournant) */
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #4e73df;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#loader.hide {
+    animation: hide 0.125s linear forwards;
+}
+
+@keyframes hide {
+    0% {
+        opacity: 1;
+        z-index: 9999;
+    }
+
+    100% {
+        opacity: 0;
+        z-index: -1;
+    }
+}
+
+#wrapper.hide {
+    /* display: none; */
+    transform: scale(0);
+}
+
+#wrapper.show {
+    animation: appears 0.2s linear;
+}
+
+@keyframes appears {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

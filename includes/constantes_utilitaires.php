@@ -4,7 +4,7 @@
 define('BASE_PATH', realpath(__DIR__ . '/../'));
 const NBR_ACTIVITES_A_AFFICHER = 6;
 const NOMBRE_MAXIMAL_COMPTES = 3;
-define('TIMEOUT', 360 * 60); // 1h d'inactivité soit 20*60 secondes.
+define('TIMEOUT', 1 * 86400); // 1 journée d'inactivité soit 86400
 $nom_dossier_upload = 'fichiers';
 define('UPLOADS_BASE_DIR', BASE_PATH . '/' . $nom_dossier_upload);
 const PERMISSIONS = 0777;
@@ -21,9 +21,13 @@ date_default_timezone_set('Africa/Lagos');
 
 // Fonctions utilitaires
 
-function redirigerVersPageErreur($code_erreur, $url)
+function redirigerVersPageErreur($code_erreur, $url=null)
 {
-    $_SESSION['previous_url'] = $url;
+    if($url){
+        $_SESSION['previous_url'] = $url;
+    }else{
+        // On a pas inqué l'url donc par défaut c'est l'url précédent qui est utilisé
+    }
     $_SESSION['code_erreur'] = $code_erreur;
     header('location:/page_erreur.php');
     exit;
@@ -241,6 +245,38 @@ function determinerPeriode($date_debut, $date_fin)
     $fmt = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE, 'Africa/Lagos', IntlDateFormatter::GREGORIAN);
     return "Du " . $fmt->format(new DateTime($date_debut)) . " au " . $fmt->format(new DateTime($date_fin));
 }
+
+/** Fonction mise en place par Ifè et Tobi (on respecte les droits d'auteurs ici !) */
+function formaterPeriode($dateDebut, $dateFin)
+{
+    $debut = new DateTime($dateDebut);
+    $fin   = new DateTime($dateFin);
+
+    $jourDebut = $debut->format('j');
+    $jourFin   = $fin->format('j');
+
+    $formatterMois = new IntlDateFormatter("fr_FR", IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'MMMM');
+
+    $moisDebut = $formatterMois->format($debut);
+    $moisFin   = $formatterMois->format($fin);
+
+    $anneeDebut = $debut->format('Y');
+    $anneeFin   = $fin->format('Y');
+
+    // Période dans le même mois et année
+    if ($moisDebut === $moisFin && $anneeDebut === $anneeFin) {
+        return "$jourDebut au $jourFin $moisFin $anneeFin";
+    }
+    // Même année mais mois différents
+    elseif ($anneeDebut === $anneeFin) {
+        return "$jourDebut $moisDebut au $jourFin $moisFin $anneeFin";
+    }
+    // Mois et années différents
+    else {
+        return "$jourDebut $moisDebut $anneeDebut au $jourFin $moisFin $anneeFin";
+    }
+}
+/** Fonction mise en place par Ifè et Tobi */
 
 function couperTexte($texte, $nbr_mots, $nbr_caractères)
 {
@@ -490,22 +526,29 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
 
     /** Actions préliminaires */
 
-    $titres = [
-        'ordre_virement' => 'des indemnités et frais d\' entretien accordés aux membres de la commission chargée de',
-        'note_service' => 'portant constitution des membres de la commission chargée de',
-        'etat_paiement_1' => 'des indemnités et frais d\'entretien accordés aux membres de la commission chargée de',
-        'etat_paiement_2' => 'des indemnités et frais d\'entretien accordés aux membres d\'encadrement dans le cadre',
-        'etat_paiement_3' => 'des indemnités et frais d\'entretien accordés aux membres d\'encadrement dans le cadre',
-        'liste_ribs' => 'Dans le cadre de la'
-    ];
+    // On récupère les informations associées utiles de l'activité
+    $stmt = $bdd->query('SELECT centre, date_debut, date_fin FROM activites WHERE id=' . $id_activite);
+    $resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $informations_activite = $resultat[0];
 
     $entete_editee = false;
-    $stmt = $bdd->query('SELECT * FROM informations_entete WHERE id_activite='.$id_activite);
-    if($stmt->rowCount() != 0){
+    $stmt = $bdd->query('SELECT * FROM informations_entete WHERE id_activite=' . $id_activite);
+    if ($stmt->rowCount() != 0) {
         $informations_entete = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $informations_entete = $informations_entete[0];
         $entete_editee = true;
     }
+
+    // Les sous titres du header
+    $sous_titres = [
+        'ordre_virement' => 'des indemnités et frais d\' entretien accordés aux membres de la commission chargée de',
+        'note_service' => 'portant constitution des membres de la commission chargée de',
+        'etat_paiement_1' => 'des indemnités et frais d\'entretien accordés aux membres de la commission chargée de',
+        'etat_paiement_2' => 'des indemnités et frais d\'entretien accordés aux membres d\'encadrement dans le cadre',
+        'etat_paiement_3' => 'indemnités et frais d\'entretien accordés aux membres de la commission chargee de la correction des examens de',
+        'liste_ribs' => 'Dans le cadre de la'
+    ];
+
     // Formattage de la date en français
 
     $formatter = new IntlDateFormatter(
@@ -527,7 +570,7 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $x = $pdf->getMargins()['left'] + $largeurBloc; // sauvegarde de la position de x à droite
 
     // Gestion du bloc de gauche du header
-    $bloc_gauche = !$entete_editee ? strtoupper("REPUBLIQUE DU BENIN\n*-*-*-*-*\nMINISTERE DE L'ENSEIGNEMENT SUPERIEUR ET SECONDAIRE\n*-*-*-*-*\nDIRECTION DES ............\n*-*-*-*-*\nSERVICE ............") : mb_strtoupper("république du bénin\n*-*-*-*-*\nministère de ".$informations_entete['ligne1']. "\n*-*-*-*-*\n".$informations_entete['ligne2']. "\n*-*-*-*-*\n".$informations_entete['ligne3'], 'UTF-8');
+    $bloc_gauche = !$entete_editee ? strtoupper("REPUBLIQUE DU BENIN\n*-*-*-*-*\nMINISTERE DE L'ENSEIGNEMENT SUPERIEUR ET SECONDAIRE\n*-*-*-*-*\nDIRECTION DES ............\n*-*-*-*-*\nSERVICE ............") : mb_strtoupper("république du bénin\n*-*-*-*-*\n" . $informations_entete['ligne1'] . "\n*-*-*-*-*\n" . $informations_entete['ligne2'] . "\n*-*-*-*-*\n" . $informations_entete['ligne3'], 'UTF-8');
     $pdf->setXY($pdf->getMargins()['left'], $y);
     $pdf->MultiCell($largeurBloc, 5, $bloc_gauche, 0, 'C');
 
@@ -535,7 +578,7 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $pdf->setXY($x, $y); // Déplacement du curseur à la bonne position
 
     // Ligne 1 : date
-    $ligne1 = !$entete_editee ? strtoupper("Cotonou, le " . $formatter->format(new DateTime())) : mb_strtoupper($informations_entete['ville'].', le '.$informations_entete['date1'], 'UTF-8');
+    $ligne1 = !$entete_editee ? strtoupper("Cotonou, le " . $formatter->format(new DateTime())) : mb_strtoupper($informations_entete['ville'] . ', le ' . $informations_entete['date1'], 'UTF-8');
     $pdf->Cell(0, 5, $ligne1, 0, 1, 'C');
     $pdf->Ln(5);
 
@@ -546,9 +589,9 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
         $ligne2 = 'NOTE DE SERVICE';
     } elseif ($type_document == 'attestation_collective') {
         $ligne2 = 'ATTESTATION COLLECTIVE DE TRAVAIL';
-    } elseif ($type_document == 'etat_paiement_2') {
+    } elseif (str_contains($type_document, 'etat_paiement')) {
         $ligne2 = 'ETAT DE PAIEMENT N°';
-    }elseif($type_document == 'liste_ribs'){
+    } elseif ($type_document == 'liste_ribs') {
         $ligne2 = 'LISTE DES RIBS';
     }
 
@@ -557,34 +600,38 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $pdf->Cell(0, 5, $ligne2, 0, 1, 'C');
     $pdf->Ln(5);
 
-    // Ligne 3
-    $ligne3 = mb_strtoupper($titres[$type_document] . ' ' . $informations['titre'], 'UTF-8');
+    // Ligne 3 : Sous-titre du document
+    $ligne3 = mb_strtoupper($sous_titres[$type_document] . ' ' . $informations['titre'] . (!$type_document == 'etat_paiement_3' ? '' : ', session 2020'), 'UTF-8');
     $pdf->setFont('trebuc', '', '10');
     $pdf->setX($x);
     $pdf->MultiCell($largeurBloc, 5, $ligne3, 0, 'C');
 
-    if($type_document == 'etat_paiement_2'){
+    if ($type_document == 'etat_paiement_2' || $type_document == 'etat_paiement_3') {
         $pdf->Ln(5);
         // Ligne 4
-        $ligne4 = !$entete_editee ? 'aujourd\'hui' : $informations_entete['date1'];
+        $debut_ligne_4 = '';
+        $ligne4 = '';
+        if ($type_document == 'etat_paiement_2') {
+            $debut_ligne_4 = 'Journée';
+            $ligne4 = !$entete_editee ? $formatter->format(new DateTime()) : $informations_entete['date1'];
+        } elseif ($type_document == 'etat_paiement_3') {
+            $debut_ligne_4 = 'Période';
+            $ligne4 = mb_strtoupper('du '.formaterPeriode($informations_activite['date_debut'], $informations_activite['date_fin']), 'UTF-8');
+        }
+
         $pdf->setFont('trebucbd', 'U', '10');
         $pdf->setX($x);
-        $pdf->Write(0, 'JOURNEE');
+        $pdf->Write(0, $debut_ligne_4);
         $pdf->setFont('trebucbd', '', '10');
-        $pdf->Write(0, ' : '.strtoupper($ligne4));
+        $pdf->Write(0, ' : ' . strtoupper($ligne4));
         $pdf->Ln(8);
         $pdf->setFont('trebucbd', 'U', '10');
         $pdf->setX($x);
         $pdf->Write(0, 'CENTRE');
-        
-        $stmt = $bdd->query('SELECT centre FROM activites WHERE id='.$id_activite);
-        $resultat = $stmt->fetch(PDO::FETCH_NUM);
-        $centre = $resultat[0];
-        $stmt->closeCursor();
+        $centre = $informations_activite['centre'];
 
         $pdf->setFont('trebucbd', '', '10');
         $pdf->Write(0, ' : ' . strtoupper($centre));
-
     }
 }
 
@@ -687,7 +734,7 @@ function extrairePrefixe($nomfichier)
     if (preg_match('/^(.*_)\d+\.pdf$/', $nomfichier, $matches)) {
         return $matches[1];
     }
-    return null; // Ou false si tu préfères
+    return false;
 }
 
 function extraireSuffixe($nomfichier)
@@ -695,7 +742,7 @@ function extraireSuffixe($nomfichier)
     if (preg_match('/_(\d+)\.pdf$/', $nomfichier, $matches)) {
         return $matches[1];
     }
-    return null;
+    return false;
 }
 
 function arrangerRibs($id_participant)
@@ -719,25 +766,25 @@ function arrangerRibs($id_participant)
 
     $nbr_valeurs = count($chiffres);
 
-    for ($i=1; $i <= $nbr_valeurs; $i++) { 
+    for ($i = 1; $i <= $nbr_valeurs; $i++) {
         $chiffre_min = min($chiffres);
         foreach ($donnees as $donnee) {
             $suffixe = $donnee['suffixe'];
-            if($chiffre_min == $suffixe){
+            if ($chiffre_min == $suffixe) {
                 // On modifie le nom du fichier et on actualise la bdd
-                $nouveauNom = dirname($donnee['chemin_acces']).'/'.$donnee['prefixe'].$i.'.pdf';
-                if(rename($donnee['chemin_acces'], $nouveauNom)){
+                $nouveauNom = dirname($donnee['chemin_acces']) . '/' . $donnee['prefixe'] . $i . '.pdf';
+                if (rename($donnee['chemin_acces'], $nouveauNom)) {
 
-                    $stmt = $bdd->prepare('UPDATE fichiers SET chemin_acces=:chemin WHERE id_fichier='.$donnee['id_fichier']);
+                    $stmt = $bdd->prepare('UPDATE fichiers SET chemin_acces=:chemin WHERE id_fichier=' . $donnee['id_fichier']);
                     $stmt->execute(['chemin' => $nouveauNom]);
-    
+
                     // Recherche l'index du minimum trouvé et le retire
                     $index = array_search($chiffre_min, $chiffres);
                     if ($index !== false) {
                         unset($chiffres[$index]);
                     }
                     // Réindexer le tableau
-                    $tab = array_values($chiffres);
+                    $chiffres = array_values($chiffres);
                 }
             }
         }

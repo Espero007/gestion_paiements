@@ -95,6 +95,7 @@ text-align : center;
 }
 td{
 text-align : center;
+line-height : 16px;
 }
 </style>
 ';

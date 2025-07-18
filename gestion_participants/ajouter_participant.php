@@ -1,6 +1,6 @@
 <?php
 $section = 'Participants';
-$titre_page = "Ajout d'un participant";
+$titre_page = "Ajout d'un acteur";
 require_once(__DIR__ . '/../includes/header.php');
 require_once('includes/traitements_ajout_participant.php');
 ?>
@@ -30,10 +30,10 @@ require_once('includes/traitements_ajout_participant.php');
                     <!-- Page Heading -->
                     <div>
                         <h1 class="h4 mb-4 text-gray-800">
-                            Participants /
-                            <strong>Ajout d'un participant</strong>
+                            Acteurs /
+                            <strong>Ajout d'un acteur</strong>
                         </h1>
-                        <p class="mt-2 mb-4">Vous êtes sur la page d'ajout de participants. C'est ici que vous nous donnez les informations sur le participant à ajouter.</p>
+                        <p class="mt-2 mb-4">Vous êtes sur la page d'ajout d'acteurs. C'est ici que vous nous donnez les informations sur l'acteur à ajouter.</p>
                     </div>
 
                     <div class="row">

@@ -1,9 +1,10 @@
 <?php
+session_start();
 require_once(__DIR__ . '/../includes/bdd.php');
-require_once(__DIR__ . '/../constantes_utilitaires.php');
+require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 
 if (valider_id('get', 'id', '', 'activites')) {
-    $idActivite = $_GET['id_activite'];
+    $idActivite = $_GET['id'];
 
     try {
         $bdd->beginTransaction();

@@ -3,6 +3,14 @@ session_start();
 require_once(__DIR__ . '/../../includes/bdd.php');
 require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
+// Redirection vers la page d'accueil si l'utilisateur est déjà connecté
+
+if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
+    // L'utilisateur est connecté
+    header('location:/index.php');
+    exit;
+}
+
 if (isset($_POST['inscription'])) {
 
     $champs_attendus = ['nom', 'prenoms', 'email', 'password'];

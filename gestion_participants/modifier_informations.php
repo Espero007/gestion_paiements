@@ -27,9 +27,9 @@ require_once('includes/traitements_modifier_infos.php');
                 <div class="container-fluid">
                     <!-- Page Heading -->
                     <div>
-                        <h1 class="h4 mb-4 text-gray-800"> Participants / <strong>Modification des informations</strong>
+                        <h1 class="h4 mb-4 text-gray-800"> Acteurs / <strong>Modification des informations</strong>
                         </h1>
-                        <p class="mt-2">Vous avez fait une erreur lors de l'enregistrement ? Des paramètres de la fiche du participant ont changé ? Ici vous pouvez rectifier la tir et corriger les informations de <strong><?= $infos_participant['nom'] . ' ' . $infos_participant['prenoms'] ?></strong>.</p>
+                        <p class="mt-2">Vous avez fait une erreur lors de l'enregistrement ? Des paramètres de la fiche de l'acteur ont changé ? Ici vous pouvez rectifier la tir et corriger les informations de <strong><?= $infos_participant['nom'] . ' ' . $infos_participant['prenoms'] ?></strong>.</p>
                     </div>
 
                     <div class="row">

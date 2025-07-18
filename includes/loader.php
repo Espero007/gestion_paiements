@@ -8,17 +8,19 @@
 <!-- Script JS associé -->
 
 <script>
-    document.getElementById('wrapper').classList.add('hide');
+
+    const element = document.getElementById('wrapper');
+    element.classList.add('hide');
 
     window.addEventListener('load', function() {
         // Quand tout est chargé
         document.getElementById('loader').classList.add('hide');
         setTimeout(() => {
-            document.getElementById('wrapper').classList.remove('hide');
-            document.getElementById('wrapper').classList.add('show');
+            element.classList.remove('hide');
+            element.classList.add('show');
             document.getElementById('loader').style.display = "none";
             setTimeout(() => {
-                document.getElementById('wrapper').classList.remove('show');
+               element.classList.remove('show');
             }, 1000);
         }, 200);
     })

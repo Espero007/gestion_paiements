@@ -107,7 +107,20 @@ require_once('traitements/generation_documents.php');
                                 <div class="divider text-start">
                                     <div class="divider-text"><strong>Actions</strong></div>
                                 </div>
-                                <button class="btn btn-primary" id='generer'>Générer</button>
+                                <div class="btn-group dropup">
+                                    <button class="btn btn-primary" id='generer'>Générer</button>
+                                    <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="#" class="dropdown-item custom-dropdown-item" title="Générez et téléchargez un fichier compressé (zip) contenant tous les documents sélectionnés.">Générer un fichier zip</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="#" class="dropdown-item custom-dropdown-item" title="Générez et téléchargez un seul fichier contenant tous les documents sélectionnés.">Générer un seul fichier</a>
+                                        </li>
+                                    </ul>
+                                </div>
                                 <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-secondary ml-2">Annuler</a>
                             <?php endif; ?>
 

@@ -85,6 +85,9 @@ $resultat->closeCursor();
                                 <?php if (isset($_SESSION['liaison_reussie'])) : ?>
                                     <?php afficherAlerte('liaison_reussie', 'success', true); ?>
                                 <?php endif; ?>
+                                <?php if (isset($_SESSION['suppression_ok'])) : ?>
+                                    <?php afficherAlerte('suppression_ok', 'success', true) ?>
+                                <?php endif; ?>
                                 <!-- Fin Messages divers -->
 
                                 <form action="">
@@ -138,7 +141,7 @@ $resultat->closeCursor();
                                                                         <a href="ajouter_comptes.php?id_participant=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>
                                                                     </li> -->
                                                                     <li>
-                                                                        <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer des participants</a>
+                                                                        <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer des acteurs</a>
                                                                     </li>
 
                                                                     <?php if ($generer_documents) : ?>
