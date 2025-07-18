@@ -37,7 +37,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                     if (preg_match('/[^a-zA-Z0-9-]/', $valeur_champ)) {
                         $erreurs[$champ][] = "Ce champ doit contenir uniquement des lettres, des chiffres et des tirets";
                     } else {
-                        $message = "La valeur indiquée existe déjà. Le matricule/IFU est supposé unique par participant !";
+                        $message = "La valeur indiquée existe déjà. Le matricule/IFU est supposé unique par acteur !";
                         // La valeur semble valide mais vérifions si elle se retrouve ou non dans la base de données
 
                         $stmt = $bdd->prepare("SELECT matricule_ifu FROM participants WHERE matricule_ifu = :val");
@@ -80,7 +80,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
 
                             if ($date_indiquee >= $date_reference) {
                                 // Cela veut dire que le participant est né il y a moins de 18ans, ce qui est anormal
-                                $erreurs[$champ][] = "Le participant que vous souhaitez enregistrer semble avoir moins de 18 ans !";
+                                $erreurs[$champ][] = "L'acteur que vous souhaitez enregistrer semble avoir moins de 18 ans !";
                             }
                         }
                     }

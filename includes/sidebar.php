@@ -55,13 +55,13 @@
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
             aria-expanded="true" aria-controls="collapseThree">
             <i class="fas fa-fw bi bi-person-fill"></i>
-            <span>Participants</span>
+            <span>Acteurs</span>
         </a>
         <div id="collapseThree" class="collapse <?= $section == 'Participants' ? 'show' : '' ?>" aria-labelledby="headingThree" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
-                <a class="collapse-item <?= $titre_page == 'Ajout d\'un participant' ? 'active' : '' ?>" href="/gestion_participants/ajouter_participant.php">Ajouter un participant</a>
-                <a class="collapse-item <?= $titre_page == 'Liste des participants' ? 'active' : '' ?>" href="/gestion_participants/voir_participants.php">Vos participants</a>
+                <a class="collapse-item <?= $titre_page == 'Ajout d\'un participant' ? 'active' : '' ?>" href="/gestion_participants/ajouter_participant.php">Ajouter un acteur</a>
+                <a class="collapse-item <?= $titre_page == 'Liste des participants' ? 'active' : '' ?>" href="/gestion_participants/voir_participants.php">Vos acteurs</a>
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
         </div>

@@ -21,9 +21,13 @@ date_default_timezone_set('Africa/Lagos');
 
 // Fonctions utilitaires
 
-function redirigerVersPageErreur($code_erreur, $url)
+function redirigerVersPageErreur($code_erreur, $url=null)
 {
-    $_SESSION['previous_url'] = $url;
+    if($url){
+        $_SESSION['previous_url'] = $url;
+    }else{
+        // On a pas inqué l'url donc par défaut c'est l'url précédent qui est utilisé
+    }
     $_SESSION['code_erreur'] = $code_erreur;
     header('location:/page_erreur.php');
     exit;

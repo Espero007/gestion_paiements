@@ -1,6 +1,6 @@
 <?php
 $section = 'Participants';
-$titre_page = 'Liaison Participant - Activité';
+$titre_page = 'Liaison Acteur - Activité';
 require_once(__DIR__ . '/../includes/header.php');
 require_once('includes/traitements_lier_participant_activite.php');
 ?>
@@ -26,8 +26,8 @@ require_once('includes/traitements_lier_participant_activite.php');
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <h1 class="h4 mb-4 text-gray-800">Participants / <strong> <?= isset($modification) ? 'Modification - Liaison' : 'Liaison Participant - Activité' ?></strong></h1>
-                    <p class="mt-2"> <?= !isset($modification) ? 'Liez vos participants à vos activités pour profiter de toutes les fonctionnalités disponibles !' : 'Vous avez fait une erreur lors de la liaison de votre participant à l\'activité ? Vous êtes au bon endroit !' ?> </p>
+                    <h1 class="h4 mb-4 text-gray-800">Acteurs / <strong> <?= isset($modification) ? 'Modification - Liaison' : 'Liaison Acteur - Activité' ?></strong></h1>
+                    <p class="mt-2"> <?= !isset($modification) ? 'Liez vos acteurs à vos activités pour profiter de toutes les fonctionnalités disponibles !' : 'Vous avez fait une erreur lors de la liaison de votre acteur à l\'activité ? Vous êtes au bon endroit !' ?> </p>
 
                     <div class="card shadow mb-4">
                         <div class="card-header">
@@ -50,9 +50,9 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         <table class="table table-bordered text-center">
                                             <?php if ($sens == 0) : ?>
                                                 <?php if ($aucune_activite_1) : ?>
-                                                    <p>Il semble que vous ne disposez d'aucune activité ajoutée. <a href="/gestion_activites/creer_activite.php">Cliquez ici</a> pour créer de nouvelles activités auxquelles vous pourrez ensuite des participants. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                                                    <p>Il semble que vous ne disposez d'aucune activité ajoutée. <a href="/gestion_activites/creer_activite.php">Cliquez ici</a> pour créer de nouvelles activités auxquelles vous pourrez ensuite des acteurs. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
                                                 <?php elseif ($aucune_activite_2): ?>
-                                                    <p class="">Il semble que vous avez déjà associé à ce participant toutes les activités que vous avez créés. <a href="/gestion_activites/creer_activite.php">Cliquez ici</a> pour créer une nouvelle activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                                                    <p class="">Il semble que vous avez déjà associé à ce acteur toutes les activités que vous avez créés. <a href="/gestion_activites/creer_activite.php">Cliquez ici</a> pour créer une nouvelle activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
                                                 <?php else: ?>
                                                     <!-- Participant vers activité -->
                                                     <thead>
@@ -77,9 +77,9 @@ require_once('includes/traitements_lier_participant_activite.php');
                                             <?php elseif ($sens == 1): ?>
                                                 <!-- Activité vers participant -->
                                                 <?php if ($aucun_participant_1) : ?>
-                                                    <p>Il semble que vous ne disposez d'aucun participant ajouté. <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter de nouveaux participants, ensuite vous pourrez les associer à l'activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                                                    <p>Il semble que vous ne disposez d'aucun acteur ajouté. <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter de nouveaux acteurs, ensuite vous pourrez les associer à l'activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
                                                 <?php elseif ($aucun_participant_2): ?>
-                                                    <p class="">Il semble que vous avez déjà associé à cette activité tous les participants que vous avez créés. <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter un nouveau participant, ensuite vous pourrez l'associer à l'activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                                                    <p class="">Il semble que vous avez déjà associé à cette activité tous les acteurs que vous avez créés. <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter un nouvel acteur, ensuite vous pourrez l'associer à l'activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
                                                 <?php else: ?>
                                                     <thead>
                                                         <tr>
@@ -152,7 +152,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                             <label for="diplome_<?= $i ?>" class="col-form-label col-sm-4">Diplôme</label>
                                             <div class="col-sm-8">
                                                 <select name="diplome[]" id="diplome_<?= $i ?>" class="form-control <?= isset($erreurs['diplome'][$i]) ? 'is-invalid' : '' ?>" aria-describdly=" diplomeAide_<?= $i ?>">
-                                                    <option value="defaut" <?= (!isset($_POST['diplome']) || !in_array($_POST['diplome'][$i], $diplomes[$i])) && !isset($modification) ? 'selected' : '' ?>>Choisissez le diplôme du participant</option>
+                                                    <option value="defaut" <?= (!isset($_POST['diplome']) || !in_array($_POST['diplome'][$i], $diplomes[$i])) && !isset($modification) ? 'selected' : '' ?>>Choisissez le diplôme de l'acteur</option>
                                                     <?php foreach ($diplomes[$i] as $diplome) : ?>
                                                         <option value="<?= $diplome ?>" <?= isset($erreurs) ? ($diplome == $_POST['diplome'][$i] ? 'selected' : '') : (isset($modification) && $diplome == $infos_liaison['diplome'] ? 'selected' : '') ?>><?= htmlspecialchars($diplome) ?></option>
                                                     <?php endforeach; ?>
@@ -223,7 +223,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                                     </div>
                                                 <?php endif; ?>
 
-                                                <small>Note : Sélectionnez le compte bancaire du participant qu'on devra considérer dans le cadre de l'activité.</small>
+                                                <small>Note : Sélectionnez le compte bancaire de l'acteur qu'on devra considérer dans le cadre de l'activité.</small>
                                             </div>
                                         </div>
 
