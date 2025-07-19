@@ -72,6 +72,7 @@ foreach ($banques as $banque) {
 $urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id='.$id_activite;
 $urls['liste_rib'] = '/gestion_activites/scripts_generation/liste_des_RIB.php?id='.$id_activite;
 
+$pdfs = [];
 $pdfs_non_telechargeables = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

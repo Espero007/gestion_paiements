@@ -5,10 +5,15 @@ require_once(__DIR__ . '/../../includes/bdd.php');
 require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
 session_start();
-// Activer le mode debug temporairement (à désactiver en production)
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
+
+// Classe personnalisée pour la numérotation des pages
+class MYPDF extends TCPDF {
+    public function Footer() {
+        $this->SetY(-15);
+        $this->SetFont('trebucbd', '', 8); // Police grasse pour le pied de page
+        $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0);
+    }
+}
 
 ob_start();
 
@@ -41,7 +46,6 @@ if (!valider_id('get', 'id', $bdd, 'participations_activites')) {
 }
 
 // Requête SQL pour récupérer les informations
-
 $sql = "
     SELECT 
         p.id_participant,
@@ -65,6 +69,7 @@ $sql = "
     INNER JOIN titres t ON pa.id_titre = t.id_titre
     INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
     WHERE pa.id_activite = :activite_id
+    ORDER BY p.nom ASC, p.prenoms ASC
 ";
 
 $stmt = $bdd->prepare($sql);
@@ -72,7 +77,7 @@ $stmt->execute(['activite_id' => $activity_id]);
 $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $titre_activite = $participants[0]['nom_activite'];
 
-$stmt = $bdd->query('SELECT * FROM informations_entete WHERE id_activite='.$activity_id);
+$stmt = $bdd->query('SELECT * FROM informations_entete WHERE id_activite=' . $activity_id);
 $informations_entete = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $informations_entete = $informations_entete[0];
 
@@ -80,42 +85,43 @@ $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFor
 $dateFr = $formatter->format(new DateTime());
 $nom_activite = isset($participants[0]["nom_activite"]) ? htmlspecialchars($participants[0]["nom_activite"]) : '';
 
-$pdf = new TCPDF('P', 'mm', 'A4');
-$pdf->AddFont('trebucbd', '', 'trebucbd.php');
-$pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
+$pdf = new MYPDF('P', 'mm', 'A4');
+$pdf->AddFont('trebuc', '', 'trebuc.php'); // Police non-grasse
+$pdf->AddFont('trebucbd', '', 'trebucbd.php'); // Police grasse
+$pdf->setPrintHeader(false);
+$pdf->setPrintFooter(true); // Activer le pied de page pour la numérotation
 $pdf->setMargins(15, 25, 15, true);
-$pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
+$pdf->setAutoPageBreak(true, 25); // Marge bas = 25 pour footer
 $pdf->AddPage();
 
 $style = '
 <style>
-th{
-background-color : #f2f2f2;
-text-align : center;
-}
-td{
-text-align : center;
-line-height : 16px;
-}
-</style>
-';
-
+    th {
+        background-color: #f2f2f2;
+        text-align: center;
+        font-weight: bold;
+        font-family: trebucbd;
+    }
+    td {
+        text-align: center;
+        line-height: 16px;
+        font-weight: normal;
+        font-family: trebuc;
+    }
+</style>';
 
 if ($document === 'note') {
     // *** Note de Service PDF ***
-    // $pdf = new TCPDF();
-    // $pdf->AddPage();
-    // $pdf->SetFont('trebuc', '', 10);
     configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Note de service');
     
-    $information_supplementaire = ['titre' =>$titre_activite ];
+    $information_supplementaire = ['titre' => $titre_activite];
     genererHeader($pdf, 'note_service', $information_supplementaire, $activity_id);
-    $pdf->setFont('trebuc', '', 10);
+    $pdf->setFont('trebucbd', '', 10); // Gras pour les éléments hors tableau
 
-    $html = $style.'
+    $html = $style . '
     <br><br><br><br><br>
-    <h4><b>N°:</b> '.$participants[0]['timbre'].'</h4>
-    <p><b style="text-decoration:underline;">Réf:</b> NS N° '.$participants[0]['reference'].' DU '.$informations_entete['date2'].'</p><br><br>
+    <h4><b style="font-family: trebucbd;">N°: ' . htmlspecialchars($participants[0]['timbre']) . '</b></h4>
+    <p><b style="font-family: trebucbd; text-decoration:underline;">Réf:</b> NS N° ' . htmlspecialchars($participants[0]['reference']) . ' DU ' . htmlspecialchars($informations_entete['date2']) . '</p><br><br>
     <table border="1" cellpadding="5" style="width: 100%; text-align:center">
         <thead>
             <tr>
@@ -129,11 +135,10 @@ if ($document === 'note') {
         <tbody>';
     $i = 1;
 
-
     foreach ($participants as $p) {
         $html .= '<tr>
                     <td style="width: 12%;">' . $i++ . '</td>
-                    <td style="width: 25%;">' . htmlspecialchars($p['nom'].' '.$p['prenoms'] ?? '') . '</td>
+                    <td style="width: 25%;">' . htmlspecialchars($p['nom'] . ' ' . $p['prenoms'] ?? '') . '</td>
                     <td style="width: 15%;">' . htmlspecialchars($p['titre_participant'] ?? '') . '</td>
                     <td style="width: 15%;">' . htmlspecialchars($p['banque'] ?? '') . '</td>
                     <td style="width: 33%;">' . htmlspecialchars($p['numero_compte'] ?? '') . '</td>
@@ -142,27 +147,26 @@ if ($document === 'note') {
     $html .= '</tbody></table>';
 
     $pdf->writeHTML($html, true, false, true, false, '');
+    
+    // Premier responsable et son titre
+    $pdf->Ln(10);
+    $pdf->setFont('trebucbd', '', 10);
+    $pdf->Cell(0, 10, htmlspecialchars($participants[0]['titre_responsable'] ?? ''), 0, 1, 'C');
+    $pdf->setFont('trebucbd', 'U', 10);
+    $pdf->Cell(0, 10, htmlspecialchars($participants[0]['premier_responsable'] ?? ''), 0, 1, 'C');
+
     ob_clean();
     ob_end_clean();
-
-    // Premier responsable et son titre
-    $pdf->setFont('trebucbd', '', 10);
-    $pdf->Cell(0, 10, $participants[0]['titre_responsable'], 0, 1, 'C');
-    // $pdf->Ln(8);
-    $pdf->setFont('trebucbd', 'U', 10);
-    $pdf->Cell(0, 10, $participants[0]['premier_responsable'], 0, 1, 'C');
-
-    // $pdf->MultiCell(0, 10, $participants[0]['premier_responsable']."\n".$participants[0]['premier_responsable'], 0, 'C');
-
     $pdf->Output('Note de service.pdf', 'I');
 } elseif ($document === 'attestation') {
     configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Attestation collective');
-    $information_supplementaire = ['titre' => $titre_activite ];
+    $information_supplementaire = ['titre' => $titre_activite];
     genererHeader($pdf, 'attestation_collective', $information_supplementaire, $activity_id);
     $pdf->setFont('trebuc', '', 10);
-    $html = $style. '
+
+    $html = $style . '
     <br><br><br><br><br><br><br><br>
-    <table border="1" cellpadding="5" style="width: 100%;text-align:center">
+    <table border="1" cellpadding="5" style="width: 100%; text-align:center">
         <thead>
             <tr>
                 <th style="width: 12%;">N°</th>
@@ -177,7 +181,7 @@ if ($document === 'note') {
     foreach ($participants as $p) {
         $html .= '<tr>
                     <td style="width: 12%;">' . $i++ . '</td>
-                    <td style="width: 25%;">' . htmlspecialchars($p['nom'].' '.$p['prenoms'] ?? '') . '</td>
+                    <td style="width: 25%;">' . htmlspecialchars($p['nom'] . ' ' . $p['prenoms'] ?? '') . '</td>
                     <td style="width: 15%;">' . htmlspecialchars($p['titre_participant'] ?? '') . '</td>
                     <td style="width: 15%;">' . htmlspecialchars($p['banque'] ?? '') . '</td>
                     <td style="width: 33%;">' . htmlspecialchars($p['numero_compte'] ?? '') . '</td>
@@ -186,8 +190,6 @@ if ($document === 'note') {
     $html .= '</tbody></table>';
 
     $pdf->writeHTML($html, true, false, true, false, '');
-    ob_clean();
-    ob_end_clean();
 
     $premier_responsable = isset($participants[0]['premier_responsable']) ? htmlspecialchars($participants[0]['premier_responsable']) : '';
     $titre_responsable = isset($participants[0]['titre_responsable']) ? htmlspecialchars($participants[0]['titre_responsable']) : '';
@@ -196,13 +198,16 @@ if ($document === 'note') {
 
     // Ajouter les informations du premier responsable et son titre sous le tableau
     $pdf->Ln(10);
-    $bloc_gauche = mb_strtoupper($participants[0]['titre_organisateur']);
-    $bloc_droite = mb_strtoupper($participants[0]['titre_responsable']);
+    $bloc_gauche = mb_strtoupper($participants[0]['titre_organisateur'] ?? '');
+    $bloc_droite = mb_strtoupper($participants[0]['titre_responsable'] ?? '');
     afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 5, 'C', '', 'C', '');
 
-    $bloc_gauche = mb_strtoupper($participants[0]['organisateur']);
-    $bloc_droite = mb_strtoupper($participants[0]['premier_responsable']);
+    $bloc_gauche = mb_strtoupper($participants[0]['organisateur'] ?? '');
+    $bloc_droite = mb_strtoupper($participants[0]['premier_responsable'] ?? '');
     afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 2, 'C', 'U', 'C', 'U');
 
+    ob_clean();
+    ob_end_clean();
     $pdf->Output('Attestation collective.pdf', 'I');
 }
+?>

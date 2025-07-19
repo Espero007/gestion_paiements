@@ -79,7 +79,12 @@ require_once('traitements/generation_documents.php');
                                                 <label for="<?= $document ?>" class="form-check-label"><?= $label ?></label>
                                             </div>
                                         <?php endforeach; ?>
+                                        <div class="form-check mt-3">
+                                            <input type="checkbox" name="" id="tout_cocher" class="form-check-input">
+                                            <label for="tout_cocher" class="form-check-label cursor-pointer">Tout cocher</label>
+                                        </div>
                                     </div>
+
 
                                     <div class="divider text-start">
                                         <div class="divider-text"><strong>Actions</strong></div>
@@ -154,6 +159,8 @@ require_once('traitements/generation_documents.php');
 
     <script>
         const BtnGenerer = document.getElementById('generer');
+        const BtnToutCocher = document.getElementById('tout_cocher');
+        let cbxes = document.querySelectorAll('input[type=checkbox]:not(input#tout_cocher)');
 
         function ouvrirPDFs() {
             const pdfs = <?php echo json_encode($pdfs); ?>;
@@ -165,7 +172,32 @@ require_once('traitements/generation_documents.php');
                 }
             }
         }
-        BtnGenerer.addEventListener('click', ouvrirPDFs);
+
+        function ToutCocher() {
+            cbxes.forEach(cbx => {
+                cbx.checked = true;
+            })
+        }
+
+        function ToutDecocher() {
+            cbxes.forEach(cbx => {
+                cbx.checked = false;
+            })
+        }
+
+        if (BtnGenerer) {
+            BtnGenerer.addEventListener('click', ouvrirPDFs);
+        }
+        if (BtnToutCocher) {
+            BtnToutCocher.addEventListener('change', () => {
+                if (BtnToutCocher.checked) {
+                    // On coche tout
+                    ToutCocher();
+                } else {
+                    ToutDecocher();
+                }
+            })
+        }
     </script>
 </body>
 
