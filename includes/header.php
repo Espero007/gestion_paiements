@@ -4,7 +4,7 @@ session_start();
 require_once('bdd.php');
 require_once('constantes_utilitaires.php');
 
-if ($_SESSION['current_url'] != obtenirURLcourant()) {
+if (isset($_SESSION['current_url']) && $_SESSION['current_url'] != obtenirURLcourant()) {
     // L'url a changé donc on stocke l'url passé
     $_SESSION['previous_url'] = $_SESSION['current_url'];
 }
