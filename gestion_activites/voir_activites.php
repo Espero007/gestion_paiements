@@ -171,13 +171,13 @@ $resultat->closeCursor();
                             </div>
                         </div>
                     <?php else : ?>
-                        <div class="text-center">
+                        <div class="text-center pt-4">
                             <h3 class="font-weight-bold">Aucune activité retrouvée !</h1>
                                 <p class="mt-3 text-center">Il semble que vous n'ayiez aucune activité déjà créée. Pourquoi ne pas corriger le tir et en créer dès maintenant ?</p>
                                 <a href="creer_activite.php" class="btn btn-outline-primary">Créer une activité</a>
-                                <!-- <div class="mt-5 mb-5">
+                                <div class="mt-5 mb-5">
                                     <img src="/assets/illustrations/no-results.png" alt="no results" class="img-fluid" width="400">
-                                </div> -->
+                                </div>
                         </div>
                     <?php endif; ?>
 
