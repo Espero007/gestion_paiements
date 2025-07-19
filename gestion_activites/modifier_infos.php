@@ -29,12 +29,14 @@ try {
         exit;
     }*/
 
+    /*
     // Récupérer les diplômes
     $sql = 'SELECT noms FROM diplomes WHERE id_activite = :id';
     $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id]);
     $diplomes = $stmt->fetchAll(PDO::FETCH_COLUMN);
     $niveaux_diplome = $diplomes[0];
+    */
 
     // Récupérer les titres et indemnités
     $sql = 'SELECT nom, indemnite_forfaitaire FROM titres WHERE id_activite = :id';
@@ -44,7 +46,7 @@ try {
     $titres_associes = implode(',', array_column($titres_data, 'nom'));
     $indemnite_forfaitaire = implode(',', array_filter(array_column($titres_data, 'indemnite_forfaitaire')));
 } catch (PDOException $e) {
-    $_SESSION['form_errors'] = ['database' => "Erreur lors de la récupération des données. Veuillez réessayer."];
+    $_SESSION['form_errors'] = ['database' => "Erreur lors de la récupération des données. Veuillez réessayer.".$e->getMessage()];
     die("Erreur : " . $e->getMessage());
     // header('Location: changeActivity.php');
     //exit;
@@ -65,8 +67,6 @@ $data = [
     'titre_organisateur' => $activity['titre_organisateur'] ?? '',
     'financier' => $activity['financier'],
     'titre_financier' => $activity['titre_financier'] ?? '',
-    'note_generatrice' => $activity['note_generatrice_name'] ?? '',
-    'niveaux_diplome' => $niveaux_diplome,
     'titres_associes' => $titres_associes,
     'taux_journalier' => $activity['taux_journalier'] ?? '',
     'indemnite_forfaitaire' => $indemnite_forfaitaire,
@@ -78,9 +78,9 @@ $data = [
 
 // Champs à afficher dans le message de succès par type
 $fields_to_display = [
-    '1' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'date_debut', 'date_fin', 'timbre', 'reference'],
-    '2' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin', 'timbre', 'reference'],
-    '3' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'note_generatrice', 'niveaux_diplome', 'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin', 'timbre', 'reference']
+    '1' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'taux_journalier', 'date_debut', 'date_fin', 'timbre', 'reference'],
+    '2' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin', 'timbre', 'reference'],
+    '3' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin', 'timbre', 'reference']
 ];
 
 // Récupérer les données et erreurs de la session si présentes
@@ -262,19 +262,6 @@ unset($_SESSION['success_data']);
                                                 <div class="col-sm-9">
                                                     <input id="titre_financier" type="text" name="titre_financier" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['titre_financier']) ?>">
                                                     <small class="text-danger"><?= $errors['titre_financier'] ?? '' ?></small>
-                                                </div>
-                                            </div>
-
-                                            <!-- Diplômes -->
-                                            <div class="mb-4 row">
-                                                <label for="niveaux_diplome" class="col-sm-3 col-form-label">Diplômes</label>
-                                                <div class="col-sm-9">
-                                                    <input id="niveaux_diplome" type="text" name="niveaux_diplome" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['niveaux_diplome']) ?>">
-                                                    <small class="text-danger"><?= $errors['niveaux_diplome'] ?? '' ?></small>
-                                                    <?php if (isset($errors['niveaux_diplome'])) : ?>
-                                                        <br>
-                                                    <?php endif; ?>
-                                                    <small> Note : séparés par des virgules, lettres accentuées autorisées, sans chiffres, ex : Licence,Master,Ingénieur (il s'agit de la liste des diplômes que les participants de l'activité ont. Les indiquer ici vous facilitera le travail quand vous devrez lier des participants à votre activité)</small>
                                                 </div>
                                             </div>
 
