@@ -1,21 +1,4 @@
 <?php
-if(!isset($_SESSION['user_id']) && isset($_COOKIE['souvenir'])){
-    $token = hash('sha256', $_COOKIE['souvenir']) ;
-    $smt = $bdd->prepare("SELECT user_id FROM token_souvenir 
-        WHERE token = ? AND expire_le > NOW() LIMIT 1" );
-
-    $smt->execute([$token]);
-    $user = $smt->fetch(PDO::FETCH_ASSOC);
-
-    if($user){
-        $_SESSION['user_id'] = $user['user_id'];
-    }
-
-}
-if(!isset($_SESSION['user_id'])){
-    header("Location: auth/connexion.php");
-}
-
 $titre_page = "Tableau de bord";
 require_once('includes/header.php');
 
