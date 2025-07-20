@@ -13,6 +13,7 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
     exit;
 }
 
+
 if (isset($_POST['connexion'])) {
 
     if (!isset($_POST['email']) || !isset($_POST['password'])) {
@@ -62,9 +63,12 @@ if (isset($_POST['connexion'])) {
                     $nbr_jours = 15;
                     $expire = date('Y-m-d H:i:s', time() + (86400 * $nbr_jours)); // expire au bout de $nbr_jours jours
 
+                        $smt2 = $bdd->prepare('DELETE FROM token_souvenir WHERE user_id = ?');
+                        $smt2->execute([$logged_user['user_id']]);
+                    
                     $smt = $bdd->prepare("INSERT INTO token_souvenir(user_id,token, expire_le) VALUES (?,?,?)");
-                    $smt->execute([$logged_user['user_id'], hash('sha256', $token), $expire]);
-                    setcookie('souvenir', $token, time() + (86400 * $nbr_jours), '/', '', true, true); // expire au bout 30 jours
+                    $smt->execute([$logged_user['user_id'],hash('sha256',$token),$expire]);
+                    setcookie('souvenir', $token, time()+(86400 * $nbr_jour),'/','',false,true); // expire au bout 30 jours
                 }
 
                 // Redirection vers la page d'accueil par défaut mais s'il y avait une url on la chope
