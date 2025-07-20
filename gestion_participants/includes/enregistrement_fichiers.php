@@ -40,14 +40,14 @@ foreach ($fichiers_attendus as $fichier) {
             // Enregistrement des métadonnées
 
             if(!isset($page_modification)){
-                $stmt = $bdd->prepare("INSERT INTO fichiers(chemin_acces, nom_original, date_upload, type_fichier) VALUES (:val1, :val2, :val3, :val4)");
+                $stmt = $bdd->prepare("INSERT INTO fichiers(chemin_acces, nom_original, date_upload) VALUES (:val1, :val2, :val3)");
                 $stmt->bindParam(':val1', $chemin_absolu);
             }else{
                 // On modifie les informations
 
                 // Il faut que j'identifie la ligne que je veux modifier. Pour ce faire je vais passer par la table informations_bancaires et récupérer l'id_rib associé au numéro de compte. Le travail a été fait déjà dans id_ribs donc je vais poursuivre en accédant aux valeurs tout simplement
 
-                $stmt = $bdd->prepare("UPDATE fichiers SET nom_original=:val2, date_upload=:val3, type_fichier=:val4 WHERE id_fichier=".$id_ribs[$chiffre_fin-1]);
+                $stmt = $bdd->prepare("UPDATE fichiers SET nom_original=:val2, date_upload=:val3 WHERE id_fichier=".$id_ribs[$chiffre_fin-1]);
                 // echo "Je suis ici et voici l'id fichier : ". $id_ribs[$chiffre_fin - 1];
             }
 
@@ -57,7 +57,7 @@ foreach ($fichiers_attendus as $fichier) {
             $date_upload = date("Y-m-d H:i:s"); //  peut être : 2001-03-10
             $stmt->bindParam(':val3', $date_upload);
             // $extension = strtolower(pathinfo($infos_fichier['name'], PATHINFO_EXTENSION)); // Je n'en ai plus besoin
-            $stmt->bindParam(':val4', $type_fichier); // type du fichier
+            // $stmt->bindParam(':val4', $type_fichier); // type du fichier
 
             if (!$stmt->execute()) {
                 redirigerVersPageErreur(500, obtenirURLcourant());
