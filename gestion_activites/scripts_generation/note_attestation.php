@@ -11,7 +11,9 @@ class MYPDF extends TCPDF {
     public function Footer() {
         $this->SetY(-15);
         $this->SetFont('trebucbd', '', 8); // Police grasse pour le pied de page
-        $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0);
+       // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0);
+        $this->Cell(0, 10,  $this->getAliasNumPage() , 0, false, 'C', 0);
+
     }
 }
 
