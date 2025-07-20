@@ -4,6 +4,7 @@ $titre_page = "Mon compte";
 require_once(__DIR__ . '/../../includes/header.php');
 require_once('traitements/voir_profil.php');
 require_once('traitements/desactiver_compte.php');
+require_once('traitements/actualiser_mdp.php');
 
 ?>
 <link rel="stylesheet" href="/auth/assets/vendor/fonts/boxicons.css">
@@ -67,6 +68,10 @@ require_once('traitements/desactiver_compte.php');
                                     <!-- Informations modifiées avec succès -->
                                     <?php if (isset($infos_modifiees)) : ?>
                                         <?php afficherAlerte('Vos informations ont été modifiées avec succès !', 'success') ?>
+                                    <?php endif; ?>
+
+                                     <?php if (isset($sucess)) : ?>
+                                        <?php afficherAlerte('Mot de passe actualisé avec succès !', 'success') ?>
                                     <?php endif; ?>
 
                                     <!-- Erreur ou pas lors de l'envoi de l'email -->
@@ -180,10 +185,12 @@ require_once('traitements/desactiver_compte.php');
                                                 <input type="password" class="form-control" id="password" name="mdp_actuel" value='' autofocus placeholder="············">
                                                 <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                                             </div>
+                                            <?php echo isset($error['mdp_actuel'])? '<p> <small class="text-danger">'. htmlspecialchars($error['mdp_actuel']) .' </small> </p>' : '' ?>
                                         </div>
                                         <div class="mb-3 col-md-6">
                                             <label for="nouveau_mdp" class="col-form-label">Nouveau mot de passe</label>
-                                            <input type="text" class="form-control" id="nouveau_mdp" name="nouveau_mdp" value="">
+                                            <input type="text" class="form-control" id="nouveau_mdp" name="nouveau_mdp" value=''>
+                                            <?php echo isset($error['nouveau_mdp'])? '<p> <small class="text-danger">'. htmlspecialchars($error['nouveau_mdp']) .' </small> </p>' : '' ?>
                                         </div>
                                     </div>
 
