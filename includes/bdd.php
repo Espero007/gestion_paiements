@@ -108,8 +108,7 @@ try {
         id_fichier INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         chemin_acces VARCHAR(500) NOT NULL,
         nom_original VARCHAR(100) NOT NULL,
-        date_upload DATE NOT NULL,
-        type_fichier VARCHAR(50) NOT NULL
+        date_upload DATE NOT NULL
         );
 
         CREATE TABLE IF NOT EXISTS informations_bancaires
