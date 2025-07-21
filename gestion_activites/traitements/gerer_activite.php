@@ -71,7 +71,7 @@ if (count($participants_associes) != 0) {
         // Définition des actions possibles par participant
         $informations[2][$compteur][] = [
             'intitule' => 'Modifier',
-            'lien' => '/gestion_participants/lier_participant_activite.php?modifier=' . $participant['id'].'&sens=1'
+            'lien' => '/gestion_participants/liaison.php?modifier=' . $participant['id'].'&sens=1'
         ];
         $informations[2][$compteur][] = [
             'intitule' => 'Gérer le participant',

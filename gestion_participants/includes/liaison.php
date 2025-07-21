@@ -1,6 +1,7 @@
 <?php
 
 // On a au moins l'un des trois
+$modification = false;
 // Posons quelques booléens utiles pour l'étape 2 où on prendra réellement les valeurs
 // Sens 0
 $aucune_activite_1 = false; // pas d'activités dans la bdd
@@ -69,75 +70,17 @@ if (isset($_GET['id_participant'])) {
                             $stmt = $bdd->query('SELECT id, nom, type_activite FROM activites WHERE id=' . $id_activite);
                             $resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             $activites[] = $resultat[0];
-
-                            // Titres : en deux temps, d'abord les intitulés et ensuite les ids
-
-                            $stmt = $bdd->query('SELECT nom FROM titres WHERE id_activite=' . $id_activite);
-                            $titres_intitules[] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                            $valeur = count($titres_intitules) - 1;
-                            foreach ($titres_intitules[$valeur] as $index => $titre) {
-                                $titres_intitules[$valeur][$index] = $titre['nom'];
-                            }
-                            $stmt = $bdd->query('SELECT id_titre FROM titres WHERE id_activite=' . $id_activite);
-                            $ids_titres[] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                            $valeur = count($ids_titres) - 1;
-                            foreach ($ids_titres[$valeur] as $index => $titre) {
-                                $ids_titres[$valeur][$index] = $titre['id_titre'];
-                            }
                         }
                     }
                 }
 
-                // Les comptes du participant/acteur
-
-                $stmt = $bdd->query('SELECT id, banque, numero_compte FROM informations_bancaires WHERE id_participant=' . $id_participant);
-                $comptes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                foreach ($comptes as $compte) {
-                    $ids_comptes[] = $compte['id'];
-                }
+                require_once('infos_intermediaires.php');
 
                 // On principe avec ce qui a été pris en haut, l'affichage devrait se faire donc on s'attaque à présent aux validations
 
                 if (isset($_POST['lier'])) {
                     /** Validations */
-
-                    for ($i = 0; $i < count($activites); $i++) {
-                        $champs_attendus = ['titre', 'compte_bancaire', 'nbr_jours'];
-                        if ($activites[$i]['type_activite'] == 3) {
-                            $champs_attendus[] = 'nbr_taches';
-                        }
-
-                        foreach ($champs_attendus as $champ) {
-                            if (!isset($_POST[$champ][$i]) || (isset($_POST[$champ][$i]) && empty($_POST[$champ][$i]))) {
-                                if ($champ == 'compte_bancaire') {
-                                    $erreurs[$champ][$i][] = 'Veuillez sélectionner un compte bancaire';
-                                } elseif ($champ == 'nbr_taches' && isset($_POST[$champ][$i])) {
-                                    if ($_POST[$champ][$i] == 0) {
-                                        $erreurs[$champ][$i][] = 'Veuillez indiquer une valeur numérique valide';
-                                    }
-                                } else {
-                                    $erreurs[$champ][$i][] = 'Veuillez remplir ce champ';
-                                }
-                            } else {
-                                $valeur =  $_POST[$champ][$i];
-
-                                if ($champ == 'titre') {
-                                    if (!in_array($valeur, $titres_intitules[$i])) {
-                                        $erreurs[$champ][$i][] = 'Le titre que vous avez choisi n\'est pas valide';
-                                    }
-                                } elseif ($champ == 'compte_bancaire') {
-                                    if (!in_array($valeur, $ids_comptes)) {
-                                        $erreurs[$champ][$i][] = "Le compte bancaire sélectionné n'est pas valide";
-                                    }
-                                } elseif ($champ == 'nbr_jours' || $champ == 'nbr_taches') {
-
-                                    if (!filter_var($valeur, FILTER_VALIDATE_INT)) {
-                                        $erreurs[$champ][$i][] = "Vous devez indiquer une valeur numérique valide";
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    require_once('validations_liaison.php');
 
                     // Liaisons effectives après validations
 
@@ -244,7 +187,7 @@ if (isset($_GET['id_activite'])) {
 
                         if ($stmt->rowCount() != 0) {
                             redirigerVersPageErreur();
-                        }else{
+                        } else {
                             // On peut à présent récupérer les informations du participant
                             $stmt = $bdd->query('SELECT id_participant, nom, prenoms FROM participants WHERE id_participant=' . $id_participant);
                             $resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -255,7 +198,7 @@ if (isset($_GET['id_activite'])) {
 
                 // A ce stade tout va bien. Je suis dans le sens 1 : de l'activité vers les participants et les ids sont ok donc ici on s'intéresse aux informations à afficher pour l'étape 2 et pour celà on va commencer par récupérer le type de l'activité et ls titres qui lui sont associés
 
-               require_once('infos_intermediaires.php');
+                require_once('infos_intermediaires.php');
 
                 // Les informations à afficher sont récupérées et stockées. On passe à présent aux validations nécessaires lorsque le formulaire sera soumis
 
@@ -310,4 +253,122 @@ if (isset($_GET['id_activite'])) {
         header('location:' . $_SESSION['previous_url']);
         exit;
     }
+}
+
+if (isset($_GET['modifier'])) {
+    $etape_1 = false;
+    $etape_2 = true;
+    $id_participation = $_GET['modifier'];
+    $modification = true;
+
+    // On récupère les informations de la liaison
+    $stmt = $bdd->query('
+    SELECT t.nom as titre_liaison, ib.numero_compte, ib.id as compte_bancaire, p.nombre_jours as nbr_jours, p.nombre_taches as nbr_taches, p.id_participant, p.id_activite
+    FROM participations p
+    INNER JOIN titres t ON p.id_titre = t.id_titre
+    INNER JOIN informations_bancaires ib ON p.id_compte_bancaire = ib.id
+    WHERE p.id=' . $id_participation);
+
+    $infos_liaison = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->closeCursor();
+
+    $id_activite = $infos_liaison['id_activite'];
+    $id_participant = $infos_liaison['id_participant'];
+
+    // On récupère lesinformations intermédiaires
+    require_once('infos_intermediaires.php');
+
+    // On passe aux validations et etc.
+
+    if (isset($_POST['enregistrer'])) {
+        require_once('validations_liaison.php');
+
+        if (!isset($erreurs)) {
+            $modification_effective = false;
+            if ($sens == 1) {
+                // On checke s'il y a effectivement eu une modification
+                $champs_attendus = ['titre', 'compte_bancaire', 'nbr_jours'];
+                if ($activite['type_activite'] == 3) {
+                    $champs_attendus[] = 'nbr_taches';
+                }
+
+                foreach ($champs_attendus as $champ) {
+                    $valeur = $_POST[$champ][0];
+                    $champ = $champ == 'titre' ? 'titre_liaison' : $champ;
+                    if ($valeur != $infos_liaison[$champ]) {
+                        $modification_effective = true;
+                    }
+                }
+
+                // On réalise la mise à jour à présent
+
+                if ($modification_effective) {
+
+                    $stmt = $bdd->prepare('UPDATE participations SET id_titre=:id_titre, id_compte_bancaire=:id_compte_bancaire, nombre_jours=:nbr_jours, nombre_taches=:nbr_taches WHERE id=' . $id_participation);
+
+                    // On récupère l'id du titre qui a été sélectionné
+                    foreach ($titres as $titre) {
+                        if ($titre['nom'] == $_POST['titre'][0]) {
+                            $id_titre = $titre['id_titre'];
+                        }
+                    }
+
+                    $stmt->bindParam(':id_titre', $id_titre, PDO::PARAM_INT);
+                    $stmt->bindParam(':id_compte_bancaire', $_POST['compte_bancaire'][0], PDO::PARAM_INT);
+                    $stmt->bindParam(':nbr_jours', $_POST['nbr_jours'][0], PDO::PARAM_INT);
+
+                    if ($type_activite == 3) {
+                        $stmt->bindParam(':nbr_taches', $_POST['nbr_taches'][0], PDO::PARAM_INT);
+                    } else {
+                        $stmt->bindValue(':nbr_taches', null, PDO::PARAM_NULL);
+                    }
+                    $stmt->execute();
+
+                    $_SESSION['modification_reussie'] = 'Les informations ont été mises à jour avec succès !';
+                }
+                header('location:/gestion_activites/gerer_activite.php?id=' . $id_activite);
+                exit;
+            } elseif ($sens == 0) {
+                // Pour savoir si des modifications ont été effectuées ou pas
+                $champs_attendus = ['titre', 'compte_bancaire', 'nbr_jours'];
+                if ($activites[0]['type_activite'] == 3) {
+                    $champs_attendus[] = 'nbr_taches';
+                }
+
+                foreach ($champs_attendus as $champ) {
+                    $valeur = $_POST[$champ][0];
+                    $champ = $champ == 'titre' ? 'titre_liaison' : $champ;
+                    if ($valeur != $infos_liaison[$champ]) {
+                        $modification_effective = true;
+                    }
+                }
+
+                if ($modification_effective) {
+                    // On débute la mise à jour en bonne et due forme
+                    $stmt = $bdd->prepare('UPDATE participations SET id_titre=:id_titre, id_compte_bancaire=:id_compte_bancaire, nombre_jours=:nbr_jours, nombre_taches=:nbr_taches WHERE id=' . $id_participation);
+
+                    for ($j = 0; $j < count($titres_intitules[0]); $j++) {
+                        $titre = $titres_intitules[0][$j];
+                        if ($titre == $_POST['titre'][0]) {
+                            $id_titre = $ids_titres[0][$j];
+                        }
+                    }
+
+                    $stmt->execute([
+                        'id_titre' => $id_titre,
+                        'id_compte_bancaire' => $_POST['compte_bancaire'][0],
+                        'nbr_jours' => $_POST['nbr_jours'][0],
+                        'nbr_taches' => $activites[0]['type_activite'] == 3 ? $_POST['nbr_taches'][0] : null
+                    ]);
+
+                    $_SESSION['modification_reussie'] = 'Les informations ont été mises à jour avec succès !';
+                }
+                header('location:/gestion_participants/gerer_participant.php?id=' . $id_participant);
+                exit;
+            }
+        }
+    }
+
+
+    // On récupère les informations intermédiaires selon le sens
 }

@@ -81,13 +81,13 @@ foreach ($activites_associees as $activite) {
 }
 
 if (count($activites_associees) != 0) {
-    $informations[0] = ['Titre', 'Description', 'Nombre de jours'];
+    $informations[0] = ['Titre de l\'activité', 'Titre', 'Nombre de jours'];
     if($type_3)
         $informations[0][] = 'Nombre de tâches';
     $informations[0][] = 'Compte bancaire';
 
     foreach ($activites_associees as $activite) {
-        $informations[1][] = [$activite['nom'], $activite['description'], $activite['nbr_jours']];
+        $informations[1][] = [$activite['nom'], $activite['titre'], $activite['nbr_jours']];
         if($type_3)
             $informations[1][count($informations[1]) - 1][] = $activite['nbr_taches'];
         $informations[1][count($informations[1]) - 1][] = $activite['banque'] . ' (' . $activite['numero_compte'] . ')';
@@ -95,7 +95,7 @@ if (count($activites_associees) != 0) {
         // Actions possibles
         $informations[2][$compteur][] = [
             'intitule' => 'Modifier',
-            'lien' => '/gestion_participants/lier_participant_activite.php?modifier=' . $activite['id'] . '&sens=0'
+            'lien' => '/gestion_participants/liaison.php?modifier=' . $activite['id'] . '&sens=0'
         ];
         $informations[2][$compteur][] = [
             'intitule' => 'Gérer l\'activité',

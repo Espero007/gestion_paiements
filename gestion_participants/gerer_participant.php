@@ -62,6 +62,10 @@ require_once('includes/gerer_participant.php');
                                 <?php afficherAlerte('comptes_supprimes', 'success', true) ?>
                             <?php endif; ?>
 
+                            <?php if (isset($_SESSION['modification_reussie'])) : ?>
+                                <?php afficherAlerte('modification_reussie', 'success', true) ?>
+                            <?php endif; ?>
+
                             <!-- Fin Messages divers -->
 
                             <!-- Informations générales -->
