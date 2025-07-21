@@ -428,7 +428,7 @@ function envoyerLienValidationEmail($lien_verif, $email, $nom, $prenom, $type_ma
             $mail->Subject = 'Confirmation de votre adresse email';
             $mail->Body = '
             <p>Plus q\'un clic pour actualiser votre adresse mail</p>
-            <p><a href="' . $lien_verif . '" style="text-decoration : none; color : #4e73df;">Confirmer mon adresse</a></p>
+            <p <a href="' . $lien_verif . '" style="text-decoration : none; color : #4e73df;">Confirmer mon adresse</a></p>
             <p>Très chaleureusement,<br>L\'équipe de GPaiements</p>';
         }
 
@@ -799,6 +799,39 @@ function arrangerRibs($id_participant)
     }
 }
 
+// fonction pour génerer les urls
+
+function generateUrl(string $path, array $params = []): string
+{
+    $url = '/' . trim($path, '/'); // Ajoute un slash initial et nettoie le chemin
+
+    if (!empty($params)) {
+        if ($path === 'participants/gerer' && isset($params['id'])) {
+            // Cas spécifique où l'ID doit être chiffré et encodé
+            if (function_exists('chiffrer')) {
+                $token = chiffrer($params['id']);
+                if ($token !== false) { // Vérifie que le chiffrement a réussi
+                    $url .= '/' . urlencode($token);
+                } else {
+                    // Fallback ou gestion d'erreur si le chiffrement échoue
+                    trigger_error('Échec du chiffrement de l\'ID pour l\'URL.', E_USER_WARNING);
+                    $url .= '/' . $params['id']; // Fallback non sécurisé pour débogage
+                }
+            } else {
+                trigger_error('La fonction chiffrer n\'est pas disponible. Vérifiez l\'inclusion de Crypto.php.', E_USER_ERROR);
+                $url .= '/' . $params['id']; // Fallback non sécurisé
+            }
+        } else {
+            // Pour d'autres types de paramètres (query strings, ex: ?page=2&tri=nom)
+            $queryString = http_build_query($params);
+            if (!empty($queryString)) {
+                $url .= '?' . $queryString;
+            }
+        }
+    }
+
+    return $url;
+}
 // Fonctions pour la génération des participants de façon aléatoire
 
 function genererCSVDemo($chemin_csv, $nbr_acteurs)

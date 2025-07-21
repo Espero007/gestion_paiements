@@ -1,8 +1,9 @@
 <?php
-
+require_once(__DIR__.'/../../includes/constantes_utilitaires.php');
 // On vérifie la présence de l'id du participant à gérer et si il n'est pas présent on redirige vers 'voir_participants.php'
 
 $redirect = true;
+
 if (filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT)) {
     // On vérifie la présence de l'id indiqué dans la table activités
     $stmt = $bdd->prepare('SELECT * FROM participants WHERE id_participant=' . $_GET['id'] . ' AND id_user=' . $_SESSION['user_id']);

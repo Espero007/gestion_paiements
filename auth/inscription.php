@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page d'inscription</title>
     <link rel="stylesheet" href="../assets/bootstrap-5.3.5-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="custom_style.css">
+    <link rel="stylesheet" href="/auth/custom_style.css">
     <!-- Style loader -->
     <link rel="stylesheet" href="/includes/loader.css">
 </head>
@@ -88,7 +88,7 @@
                                         <div class="text-center">
                                             <small>
                                                 <span>Déjà un compte sur la plateforme ?</span>
-                                                <a href="connexion.php" class="is-primary">Connectez-vous</a>
+                                                <a href="connexion" class="is-primary">Connectez-vous</a>
                                             </small>
                                         </div>
                                     </div>
