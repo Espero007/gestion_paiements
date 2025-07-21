@@ -43,7 +43,7 @@ require_once('includes/gerer_participant.php');
                             <?php if (isset($_SESSION['liaison_reussie'])) : ?>
                                 <?php afficherAlerte('liaison_reussie', 'success', true); ?>
                             <?php endif; ?>
-                            
+
                             <?php if (isset($_SESSION['modification_ok'])) : ?>
                                 <?php afficherAlerte('Les informations du participant ont été modifiées avec succès !', 'success') ?>
                                 <?php unset($_SESSION['modification_ok']) ?>
@@ -120,24 +120,21 @@ require_once('includes/gerer_participant.php');
                         </div>
                     </div>
 
-                    <!-- <div class="card shadow mb-4"> -->
-                    <!-- <div class="card-header"> -->
-                    <!-- <h6 class="text-pirmary font-weight-bold">Activités associées</h6> -->
-                    <!-- </div> -->
-                    <!-- <div class="card-body">
-                            Messages divers s'il y en a
-
+                    <div class="card shadow mb-4">
+                        <div class="card-header">
+                            <h6 class="text-pirmary font-weight-bold">Activités associées</h6>
+                        </div>
+                        <div class="card-body">
                             <?php if (count($activites_associees) == 0) : ?>
                                 <div class="text-center">
                                     <p>Vous n'avez encore associé <strong><?= htmlspecialchars($participant['nom'] . ' ' . $participant['prenoms']) ?></strong> à aucune activité semble t'il. Faîtes le dès maintenant.</p>
                                     <a href="/gestion_participants/lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="btn btn-outline-primary">Associer à une activité</a>
                                 </div>
-
                             <?php else: ?>
-
+                                <?php afficherSousFormeTableau($informations, 'table-responsive', 'table-bordered text-center', false, true) ?>
                             <?php endif; ?>
-                        </div> -->
-                    <!-- </div> -->
+                        </div>
+                    </div>
                 </div>
                 <!-- /.container-fluid -->
 

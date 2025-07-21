@@ -71,7 +71,7 @@ if (count($participants_associes) != 0) {
         // Définition des actions possibles par participant
         $informations[2][$compteur][] = [
             'intitule' => 'Modifier',
-            'lien' => '/gestion_participants/lier_participant_activite.php?modifier=' . $participant['id']
+            'lien' => '/gestion_participants/lier_participant_activite.php?modifier=' . $participant['id'].'&sens=1'
         ];
         $informations[2][$compteur][] = [
             'intitule' => 'Gérer le participant',
@@ -86,15 +86,3 @@ if (count($participants_associes) != 0) {
         $compteur++;
     }
 }
-
-// // Chemin note génératrice
-
-// $stmt = $bdd->query("
-//     SELECT f.chemin_acces
-//     FROM activites a INNER JOIN fichiers f ON a.id_note_generatrice = f.id_fichier
-//     WHERE a.id = $id_activite
-// ");
-// $chemin_note_generatrice = $stmt->fetch(PDO::FETCH_NUM);
-// $chemin_note_generatrice = $chemin_note_generatrice[0];
-// $chemin_note_generatrice = traiterCheminAcces($chemin_note_generatrice);
-// $stmt->closeCursor();
