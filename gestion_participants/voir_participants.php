@@ -2,6 +2,7 @@
 $section = 'Participants';
 $titre_page = "Liste des acteurs";
 require_once(__DIR__ . '/../includes/header.php');
+require_once(__DIR__.'/../crypto.php');
 
 $stmt = 'SELECT id_participant, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance FROM participants WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id_participant';
 $resultat = $bdd->query($stmt);
@@ -110,7 +111,9 @@ $resultat->closeCursor();
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-                                                <?php foreach ($participants as $participant) : ?>
+                                                <?php foreach ($participants as $participant) : 
+                                                    $token = chiffrer($participant['id_participant']);
+                                                    ?>
 
                                                     <tr>
                                                         <td><input type="checkbox" name="bref" id="bref"></th>
@@ -125,25 +128,27 @@ $resultat->closeCursor();
                                                         <td>
                                                             <!-- <a href="/gestion_participants/">Associer à une activité</a> -->
                                                             <div class="btn-group">
+                                                                
+                                                                
                                                                 <a href="/gestion_participants/gerer_participant.php?id=<?= $participant['id_participant'] ?>" class="btn btn-primary">Gérer</a><br>
 
                                                                 <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                                                 <ul class="dropdown-menu">
                                                                     <li>
-                                                                        <a href="gerer_participant.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Voir</a>
+                                                                        <a href="gestion_participants/gerer_participant.php?id=<?= $participant['id_participant']?>" class="dropdown-item custom-dropdown-item">Voir</a>
                                                                     </li>
                                                                     <li>
-                                                                        <a href="modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
+                                                                        <a href="gestion_participants/modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
                                                                     </li>
                                                                     <li>
-                                                                        <a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>
+                                                                        <a href="gestion_participants/ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>
                                                                     </li>
                                                                     <li>
-                                                                        <a href="lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer à une activité</a>
+                                                                        <a href="gestion_participants/lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer à une activité</a>
                                                                     </li>
                                                                     <?php if ($participant['banque_count'] > 1): ?>
                                                                         <li>
-                                                                            <a href="supprimer_une_banque.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item text-danger">Supprimer un compte bancaire</a>
+                                                                            <a href="gestion_participants/supprimer_une_banque.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item text-danger">Supprimer un compte bancaire</a>
                                                                         </li>
                                                                     <?php endif; ?>
                                                                     <li>
@@ -168,7 +173,7 @@ $resultat->closeCursor();
                         <div class="text-center pt-4">
                             <h3 class="font-weight-bold">Aucun acteur retrouvé !</h3>
                             <p class="mt-3 text-center">Il semble que vous n'ayiez aucun acteur déjà ajouté. Pourquoi ne pas remédier à celà et en ajouter dès maintenant ?</p>
-                            <a href="ajouter_participant.php" class="btn btn-outline-primary">Ajouter un acteur</a>
+                            <a href="ajouter_participant" class="btn btn-outline-primary">Ajouter un acteur</a>
                             <div class="mt-5 mb-5">
                                 <img src="/assets/illustrations/no-results-1.png" alt="no results" class="img-fluid" width="500">
                             </div>

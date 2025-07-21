@@ -7,7 +7,7 @@ require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
 if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
     // L'utilisateur est connecté
-    header('location:/index.php');
+    header('location:'.generateUrl(''));
     exit;
 }
 
@@ -63,7 +63,7 @@ if (isset($_POST['inscription'])) {
         } else {
             $_SESSION['email_non_envoye'] = 'Une erreur d\'est produite lors de l\'envoi du lien de confirmation de votre email, veuillez réessayer plus tard';
         }
-        header('location:connexion.php');
+        header('location:'.generateUrl('connexion'));
         exit;
     }
 }

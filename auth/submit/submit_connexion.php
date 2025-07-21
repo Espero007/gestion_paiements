@@ -9,7 +9,7 @@ $_SESSION['current_url'] = obtenirURLcourant();
 
 if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
     // L'utilisateur est connecté
-    header('location:/index.php');
+    header('location:'.generateUrl(''));
     exit;
 }
 
@@ -78,7 +78,7 @@ if (isset($_POST['connexion'])) {
                     header('location:' . $_SESSION['previous_url']);
                     exit;
                 } else {
-                    header('location:/index.php');
+                    header('location:'.generateUrl(''));
                     exit;
                 }
             } else {

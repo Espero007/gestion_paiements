@@ -1,0 +1,22 @@
+RewriteEngine On
+RewriteBase /
+
+#Ne pas réécrire si c'est un fichier ou un dossier réel
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+#Rediriger /activites/ vers gestion_activites/voir_activites.php
+RewriteRule ^activites/?$ gestion_activites/voir_activites.php [L,QSA]
+
+
+#Rediriger /participants/ vers gestion_participants/voir_participants.php
+RewriteRule ^participants/?$ gestion_participants/voir_participants.php [L,QSA]
+
+#Rediriger /connexion/ vers /auth/connexion.php
+RewriteRule ^connexion/?$ /auth/connexion.php [L,QSA]
+
+#Rediriger /mon_compte/ vers /parametres/gestion_compte/voir_profile.php
+RewriteRule ^mon_compte/?$ /parametres/gestion_compte/voir_profile.php [L,QSA]
+
+#Rediriger 
+

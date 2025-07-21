@@ -6,7 +6,7 @@ require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 
 if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
     // L'utilisateur est connecté
-    header('location:/index.php');
+    header('location:'.generateUrl(''));
     exit;
 }
 
@@ -25,9 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['envoyer_lien'])) {
     if (!isset($erreurs)) {
         $stmt = $bdd->prepare('SELECT * FROM connexion WHERE email=:email AND est_verifie=1');
         $stmt->execute(['email' => $_POST['email']]);
+        $users = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($stmt->rowCount() != 0) {
+            
             // L'utilisateur avec cet email est bien présent. On effectue à présent les actions adéquates pour la réinitialisation du mot de passe
-
+            $token = bin2hex(random_bytes(16));
+            $lien_verif = obtenirURLcourant(true) . '/auth/forgot_password.php';
+            if(envoyerLienValidationEmail($lien_verif,$_POST['email'],$users['nom'],$users['prenoms'],1)){
+               $_SESSION["email_envoye"] = 'Un lien de vérification a été envoyé au mail : <span class="text-primary">' . htmlspecialchars($_POST['email']) . '</span>. Cliquez dessus pour confirmer votre email et réinitialiser votre mot de passe.'; 
+            }else {
+                $anomalie = true;
+            }
 
         } else {
             $echec = true;
@@ -74,6 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['envoyer_lien'])) {
                                         <?php if ($echec) : ?>
                                             <?php afficherAlerte('L\'email que vous avez indiqué est invalide', 'danger') ?>
                                         <?php endif; ?>
+
+                                        <?php if (isset($_SESSION['email_envoye'])) : ?>
+                                            <?php afficherAlerte('email_envoye', 'info', true); ?>
+                                        <?php endif; ?>
                                         <!-- Fin Messages divers -->
 
                                         <div class="text-center mb-4">
@@ -94,13 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['envoyer_lien'])) {
                                         <hr>
                                         <div class="text-center">
                                             <small>
-                                                <a href="inscription.php" class="is-primary">Créer un compte</a>
+                                                <a href="inscription" class="is-primary">Créer un compte</a>
                                             </small>
                                         </div>
                                         <div class="text-center">
                                             <small>
                                                 <span>Déjà un compte ?</span>
-                                                <a href="connexion.php" class="is-primary">Se connecter</a>
+                                                <a href="connexion" class="is-primary">Se connecter</a>
                                             </small>
                                         </div>
                                     </div>

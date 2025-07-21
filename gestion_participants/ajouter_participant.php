@@ -49,7 +49,7 @@ require_once('includes/traitements_ajout_participant.php');
                                         <?php require_once('includes/fieldsets.php') ?>
                                         <div class="mt-4">
                                             <button type="submit" name="ajouter_participant" class="btn btn-primary mr-2">Ajouter le participant</button>
-                                            <a href="voir_participants.php" class="btn btn-outline-primary">Annuler</a>
+                                            <a href="<?= generateUrl('participants')?>" class="btn btn-outline-primary">Annuler</a>
                                         </div>
 
                                     </form>
