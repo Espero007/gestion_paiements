@@ -70,12 +70,11 @@ $resultat->closeCursor();
                         <div class="alert alert-danger">La récupération des données a rencontré un problème.</div>
                     <?php endif; ?>
 
-
                     <?php if (isset($activites)) : ?>
                         <!-- Page Heading -->
                         <h1 class="h4 mb-4 text-gray-800">Activités / <strong>Vos activités</strong></h1>
-                        <p class="mt-2">Ici vous avez accès à toutes les activités que vous avez créées. (<a href="creer_activite.php">Cliquez ici</a> pour en créer une autre)</p>
-                        <hr>
+                        <p class="mt-2 mb-3">Ici vous avez accès à toutes les activités que vous avez créées. (<a href="creer_activite.php">Cliquez ici</a> pour en créer une autre)</p>
+
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Liste des activités</h6>
@@ -88,10 +87,18 @@ $resultat->closeCursor();
                                 <?php if (isset($_SESSION['suppression_ok'])) : ?>
                                     <?php afficherAlerte('suppression_ok', 'success', true) ?>
                                 <?php endif; ?>
+
+                                <?php if (verifierDemoActive()) : ?>
+                                    <!-- Des informations de démo ont été générées -->
+                                    <?php
+                                    $message = 'Il semble que vous avez généré les données de démonstration. <a href="/parametres/retrait_infos_demo.php" title="Cette option vous permet de supprimer toutes les informations de démonstration qui avaient été générées, vous permettant ainsi de ne garder que vos informations. Reférez-vous à la documentation pour plus d\'informations.">Cliquez ici</a> si vous souhaitez les retirer';
+                                    ?>
+                                    <?php afficherAlerte($message, 'info') ?>
+                                <?php endif; ?>
                                 <!-- Fin Messages divers -->
 
                                 <form action="">
-                                    <div class="">
+                                    <div class="table-responsive">
                                         <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>

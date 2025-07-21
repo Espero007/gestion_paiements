@@ -19,13 +19,17 @@ if (!is_dir($dossier_zip)) {
 
 date_default_timezone_set('Africa/Lagos');
 
+// Quelques inclusions
+
+require_once(__DIR__ . '/../tcpdf/tcpdf.php');
+
 // Fonctions utilitaires
 
-function redirigerVersPageErreur($code_erreur, $url=null)
+function redirigerVersPageErreur($code_erreur = 404, $url = null)
 {
-    if($url){
+    if ($url) {
         $_SESSION['previous_url'] = $url;
-    }else{
+    } else {
         // On a pas inqué l'url donc par défaut c'est l'url précédent qui est utilisé
     }
     $_SESSION['code_erreur'] = $code_erreur;
@@ -300,7 +304,7 @@ function couperTexte($texte, $nbr_mots, $nbr_caractères)
 
 // En cours de développement
 
-function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $actions = true)
+function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $actions = true, $cbxs = null)
 {
     // $elements : les éléments à afficher sous la forme d'un tableau. Je considère que dans $elements est constitué de deux tableaux, un pour l'entête du tableau et un second pour le body
     // $style correspond au style additionnel qu'on pourrait ajouter au tableau
@@ -309,9 +313,12 @@ function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $a
     //    [1]['intitule'=>'Gérer', 'lien'=>'...']
     // Pour la dernière action de la liste ajouter dans le tableau associatif un booléen avec comme clé 'dernier'
     // On peut ajouter du style aussi si on le souhaite dans une valeur dont la clé sera 'style'
+
+    // Okay, si j'ai bien compris la logique que je suivais, si $cbxs a une valeur, à l'index 0 on aura le nom que les checkbox doivent prendre dans la post et dans l'index 2 on a les ids pour chaque chechbox
+
     $head = $elements[0];
     $body = $elements[1];
-    $actions = $elements[2];
+    $actions = $actions ? $elements[2] : $actions;
     $index = 0; // variable d'incrémentation
 
 ?>
@@ -348,7 +355,7 @@ function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $a
                 <?php foreach ($body as $ligne) : ?>
                     <tr>
                         <?php if ($choix) : ?>
-                            <td><input type="checkbox" name="bref" id="bref"></td>
+                            <td><input type="checkbox" name="<?= $cbxs ? $cbxs[0] : 'bref' ?>[]" value="<?= $cbxs ? $cbxs[1][$index] : 'bref' ?>"></td>
                         <?php endif; ?>
                         <?php foreach ($ligne as $cellule) : ?>
                             <td><?= $cellule != null ? htmlspecialchars($cellule) : '-' ?></td>
@@ -374,8 +381,8 @@ function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $a
                                     </ul>
                                 </div>
                             </td>
-                            <?php $index++ ?>
                         <?php endif; ?>
+                        <?php $index++ ?>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -616,22 +623,21 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
             $ligne4 = !$entete_editee ? $formatter->format(new DateTime()) : $informations_entete['date1'];
         } elseif ($type_document == 'etat_paiement_3') {
             $debut_ligne_4 = 'Période';
-            $ligne4 = mb_strtoupper('du '.formaterPeriode($informations_activite['date_debut'], $informations_activite['date_fin']), 'UTF-8');
+            $ligne4 = mb_strtoupper('du ' . formaterPeriode($informations_activite['date_debut'], $informations_activite['date_fin']), 'UTF-8');
         }
 
         $pdf->setFont('trebucbd', 'U', '10');
         $pdf->setX($x);
         $pdf->Write(0, $debut_ligne_4);
         $pdf->setFont('trebucbd', '', '10');
-        $pdf->Write(0, ' : ' . strtoupper($ligne4));
+        $pdf->Write(0, ' : ' . mb_strtoupper($ligne4, 'UTF-8'));
         $pdf->Ln(8);
         $pdf->setFont('trebucbd', 'U', '10');
         $pdf->setX($x);
         $pdf->Write(0, 'CENTRE');
         $centre = $informations_activite['centre'];
-
         $pdf->setFont('trebucbd', '', '10');
-        $pdf->Write(0, ' : ' . strtoupper($centre));
+        $pdf->Write(0, ' : ' . mb_strtoupper($centre, 'UTF-8'));
     }
 }
 
@@ -791,6 +797,7 @@ function arrangerRibs($id_participant)
     }
 }
 
+// fonction pour génerer les urls
 
 function generateUrl(string $path, array $params = []): string
 {
@@ -822,4 +829,403 @@ function generateUrl(string $path, array $params = []): string
     }
 
     return $url;
+}
+// Fonctions pour la génération des participants de façon aléatoire
+
+function genererCSVDemo($chemin_csv, $nbr_acteurs)
+{
+
+    function genererIFU()
+    {
+        // Format IFU : 13 chiffres (ex: 3202101234567)
+        $prefix = rand(100, 999);
+        $annee = rand(2000, 2023);
+        $suffix = rand(100000, 999999);
+        return $prefix . $annee . $suffix;
+    }
+
+    function genererDateNaissance()
+    {
+        $timestamp = strtotime('-' . rand(18, 60) . ' years');
+        return date('Y/m/d', $timestamp);
+    }
+
+    // Données de base
+    $noms = [
+        "Ahouansou",
+        "Kouassi",
+        "Soglo",
+        "Zinsou",
+        "Agbangla",
+        "Chabi",
+        "Gnonlonfoun",
+        "Azon",
+        "Dossou",
+        "Houngbédji",
+        "Agbo",
+        "Kakaï",
+        "Yabi",
+        "Toko",
+        "Lawani",
+        "Boko",
+        "Allagbé",
+        "Assogba",
+        "Bio",
+        "Codjia"
+    ];
+
+    $prenoms_masculins = [
+        "Sébastien",
+        "Yves",
+        "Romuald",
+        "Blaise",
+        "Barnabé",
+        "Marcel",
+        "Ignace",
+        "Ulrich",
+        "Dona",
+        "Pascal",
+        "Andréas",
+        "Komi",
+        "Sylvestre",
+        "Ismaël",
+        "Ghislain"
+    ];
+
+    $prenoms_feminins = [
+        "Afi",
+        "Adjovi",
+        "Sophie",
+        "Clarisse",
+        "Edith",
+        "Brigitte",
+        "Reine",
+        "Arlette",
+        "Chantal",
+        "Séraphine",
+        "Tatiana",
+        "Nadine",
+        "Solange",
+        "Prisca",
+        "Eliane"
+    ];
+
+    $lieux = [
+        "Cotonou",
+        "Porto-Novo",
+        "Parakou",
+        "Abomey",
+        "Bohicon",
+        "Natitingou",
+        "Djougou",
+        "Ouidah",
+        "Lokossa",
+        "Kandi",
+        "Malanville",
+        "Savalou",
+        "Covè",
+        "Comè",
+        "Sakété"
+    ];
+
+    $diplomes = [
+        "CEP",
+        "BEPC",
+        "BAC",
+        "Licence en Informatique",
+        "Licence en Droit",
+        "Licence en Économie",
+        "Master en Finance",
+        "Master en Agronomie",
+        "Doctorat en Médecine",
+        "DUT en Génie Civil",
+        "BTS en Gestion Commerciale",
+        "Certificat en Programmation",
+        "Diplôme en Marketing Digital",
+        "Licence en Mathématiques",
+        "Master en Relations Internationales"
+    ];
+
+    // Générer identités
+    $csvFile = fopen($chemin_csv, "w");
+    fputcsv($csvFile, ["Nom", "Prénoms", "Date de Naissance", "Lieu de Naissance", "IFU", "Diplôme"]);
+
+    for ($i = 0; $i < $nbr_acteurs; $i++) {
+        $sexe = rand(0, 1) ? 'M' : 'F';
+        $nom = $noms[array_rand($noms)];
+        $sourcePrenoms = $sexe === 'M' ? $prenoms_masculins : $prenoms_feminins;
+
+        // Choisir 1 ou 2 prénoms aléatoirement sans doublons
+        shuffle($sourcePrenoms);
+        $prenoms = implode(" ", array_slice($sourcePrenoms, 0, rand(1, 2)));
+
+        $dateNaissance = genererDateNaissance();
+        $lieuNaissance = $lieux[array_rand($lieux)];
+        $ifu = genererIFU();
+        $diplome = $diplomes[array_rand($diplomes)];
+
+        fputcsv($csvFile, [$nom, $prenoms, $dateNaissance, $lieuNaissance, $ifu, $diplome]);
+    }
+    fclose($csvFile);
+}
+
+function creerActivitesDemo()
+{
+    global $bdd;
+    $liste_activites = '';
+    /** Création en premier lieu de 3 activités de types distincts chacun */
+
+    // Requête
+    $sql = "INSERT INTO activites(type_activite, id_user, nom, description, date_debut, date_fin, centre, premier_responsable, titre_responsable, organisateur, titre_organisateur, financier, titre_financier, timbre, taux_journalier, taux_taches, frais_deplacement_journalier, reference) VALUES (:type_activite,{$_SESSION['user_id']},:nom, 'C\'est une activité de démonstration pour tester les diverses fonctionnalités de la plateforme', '2025-01-01', '2025-12-31', :centre, 'AKANDO Espéro Eléazar Ogoluwa', 'Ingénrieur Télécoms', 'COMLAN Ifè', 'Ingénieur Télécoms', 'MONSI Olowun-Tobi', 'Ingénieur Réseaux', :timbre_activite, :taux_journalier, :taux_taches, :frais_deplacement_journalier, :reference)";
+    $stmt = $bdd->prepare($sql);
+
+    // Activité de type 1
+    $stmt->execute([
+        'type_activite' => 1,
+        'nom' => 'Activité de démo 1',
+        'centre' => 'Parakou',
+        'timbre_activite' => '/DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD',
+        'taux_journalier' => 1075,
+        'taux_taches' => null,
+        'frais_deplacement_journalier' => null,
+        'reference' => 'NS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA DU 29 DECEMBRE 2023'
+    ]);
+    $ids_activites[] = $bdd->lastInsertId();
+    $titres = ['Sécrétaire', 'Directeur', 'Gardien', 'Recteur'];
+    $sql = 'INSERT INTO titres(id_activite, nom, indemnite_forfaitaire) VALUES (:id_activite, :nom, :indemnite_forfaitaire)';
+    $stmt2 = $bdd->prepare($sql);
+    foreach ($titres as $titre) {
+        $stmt2->execute([
+            'id_activite' => $ids_activites[0],
+            'nom' => $titre,
+            'indemnite_forfaitaire' => null
+        ]);
+        $titres_activites[0][] = $bdd->lastInsertId();
+    }
+
+    $liste_activites .= $ids_activites[count($ids_activites) - 1];
+
+
+    // Activité de type 2
+    $stmt->execute([
+        'type_activite' => 2,
+        'nom' => 'Activité de démo 2',
+        'centre' => 'Cotonou',
+        'timbre_activite' => '/DEG/MAS/UAC/GIT-EPAC/SEL/SEMC/SIS/SD',
+        'taux_journalier' => 1075,
+        'taux_taches' => null,
+        'frais_deplacement_journalier' => null,
+        'reference' => 'AS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA DU 31 DECEMBRE 2025'
+    ]);
+    $ids_activites[] = $bdd->lastInsertId();
+    $titres = ['Journaliste', 'Commentateur', 'Joueur', 'Virgile'];
+    $forfaits = [500, 500, 1000, 0];
+    foreach (array_combine($titres, $forfaits) as $titre => $forfait) {
+        $stmt2->execute([
+            'id_activite' => $ids_activites[1],
+            'nom' => $titre,
+            'indemnite_forfaitaire' => $forfait
+        ]);
+        $titres_activites[1][] = $bdd->lastInsertId();
+    }
+
+    $liste_activites .= ',' . $ids_activites[count($ids_activites) - 1];
+
+    // Activité de type 3
+    $stmt->execute([
+        'type_activite' => 3,
+        'nom' => 'Activité de démo 3',
+        'centre' => 'Malanville',
+        'timbre_activite' => '/DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD/ACTIVITE3',
+        'taux_journalier' => null,
+        'taux_taches' => 1000,
+        'frais_deplacement_journalier' => 500,
+        'reference' => 'NS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA DU 01 JANVIER 2024'
+    ]);
+    $ids_activites[] = $bdd->lastInsertId();
+    $titres = ['Chanteur', 'Producteur', 'Guitariste'];
+    $forfaits = [5000, 2500, 2000];
+    foreach (array_combine($titres, $forfaits) as $titre => $forfait) {
+        $stmt2->execute([
+            'id_activite' => $ids_activites[2],
+            'nom' => $titre,
+            'indemnite_forfaitaire' => $forfait
+        ]);
+        $titres_activites[2][] = $bdd->lastInsertId();
+    }
+
+    $liste_activites .= ',' . $ids_activites[count($ids_activites) - 1];
+
+    return [
+        'ids_activites' => $ids_activites,
+        'titres_activites' => $titres_activites,
+        'liste_activites' => $liste_activites
+    ];
+}
+
+function ConfigurerInformationsDemo()
+{
+    global $bdd;
+
+    // 1 ère étape : Génération des données associées aux 150 participants dans un fichier csv
+    $chemin_csv = __DIR__ . '/../parametres/donnees.csv';
+    $nbr_acteurs = 150;
+    genererCSVDemo($chemin_csv, $nbr_acteurs);
+
+    // 2ème étape : je crée trois (03) activités l'un de type 1, le second de type 2 et le dernier de type 3
+    $infos_activites = creerActivitesDemo();
+
+    // 3ème étape : je crée les participants avec des nombres de comptes bancaires aléatoires (insertions en bdd comprises)
+    $banques = ['BOA', 'UBA', 'BIIC', 'ECOBANK', 'BSIC', 'ORABANK', 'NSIA', 'Coris Bank', 'Atlantique', 'CCP', 'SGB'];
+
+    if (($handle = fopen($chemin_csv, 'r')) !== false) {
+        // Lire les entêtes
+        $entetes = fgetcsv($handle);
+    }
+
+    // Lire chaque ligne (les informations de chaque acteur généré de façon aléatoire)
+    $ids_acteurs = [];
+    $liste_acteurs = '';
+    $compteur = 0;
+
+    while (($ligne = fgetcsv($handle)) !== false) {
+        // Associer les colonnes aux en-têtes
+        $acteur = array_combine($entetes, $ligne);
+
+        // Primo j'insère dans la table participants : j'ai tout ce qu'il faut comme information
+        $stmt = "INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome_le_plus_eleve) VALUES ({$_SESSION['user_id']}, :nom, :prenoms, :matricule_ifu, :date_naissance, :lieu_naissance, :diplome_le_plus_eleve)";
+        $stmt = $bdd->prepare($stmt);
+
+        $stmt->execute([
+            'nom' => mb_strtoupper($acteur['Nom'], 'UTF-8'),
+            'prenoms' => $acteur['Prénoms'],
+            'matricule_ifu' => $acteur['IFU'],
+            'date_naissance' => $acteur['Date de Naissance'],
+            'lieu_naissance' => $acteur['Lieu de Naissance'],
+            'diplome_le_plus_eleve' => $acteur['Diplôme']
+        ]);
+
+        $id_acteur = $bdd->lastInsertId();
+        $ids_acteurs[] = $id_acteur;
+
+        if ($compteur == 0) {
+            $liste_acteurs .= $id_acteur;
+        } else {
+            $liste_acteurs .= ',' . $id_acteur;
+        }
+
+        $nbr_comptes = rand(1, NOMBRE_MAXIMAL_COMPTES); // En principe entre 1 et 3 puisqu'à l'heure où je conçois cette fonction le nombre maximal de comptes vaut 3
+
+        for ($i = 0; $i < $nbr_comptes; $i++) {
+            $banque = $banques[rand(0, count($banques) - 1)]; // On prend une banque de façon aléatoire
+
+            // Ici je crée le fichier pdf nécessaire
+            $pdf = new TCPDF('P', 'mm', 'A4');
+            $pdf->AddFont('trebucbd', '', 'trebucbd.php');
+            $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
+            configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Copie PDF RIB');
+            $pdf->setMargins(15, 25, 15, true);
+            $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
+            $pdf->AddPage();
+
+            // Titre de la page
+
+            $pdf->setFont('trebucbd', '', 16);
+            $pdf->Cell(0, 10, mb_strtoupper('Copie PDF du RIB N°' . ($i + 1) . ' de ' . $acteur['Nom'] . ' ' . $acteur['Prénoms'], 'UTF-8'), 0, 1, 'C');
+            $pdf->Ln(2);
+            $pdf->setFont('trebucbd', '', 12);
+            // $pdf->Cell(0, 10, mb_strtoupper($acteur['Nom'] . ' ' . $acteur['Prénoms'], 'UTF-8'), 0, 1, 'C');
+            $numero_compte = mb_strtoupper($banque . rand(10000000, 19999999), 'UTF-8');
+            $pdf->Cell(0, 10, mb_strtoupper($banque . ' (' . $numero_compte . ')'), 0, 1, 'C');
+            $upload_path = creer_dossiers_upload() . 'demo/';
+            if (!is_dir($upload_path)) {
+                mkdir($upload_path, PERMISSIONS);
+            }
+            $nom_fichier = $upload_path . 'pdf_' . $acteur['IFU'] . '_' . ($i + 1) . '.pdf';
+            $pdf->Output($nom_fichier, 'F');
+
+            // J'enregistre les informations en bdd
+
+            // On commence par la table fichiers
+            $stmt = $bdd->prepare('INSERT INTO fichiers(chemin_acces, nom_original, date_upload) VALUES (:chemin_acces, :nom_original, :date_upload)');
+            $stmt->execute([
+                'chemin_acces' => $nom_fichier,
+                'nom_original' => 'copie_pdf_demo.pdf',
+                'date_upload' => date("Y-m-d H:i:s")
+            ]);
+            $id_fichier = $bdd->lastInsertId();
+
+            // Puis viens la table informations_bancaires
+
+            $stmt = $bdd->prepare('INSERT INTO informations_bancaires(id_participant, banque, numero_compte, id_rib) VALUES (:id_participant, :banque, :numero_compte, :id_rib)');
+            $stmt->execute([
+                'id_participant' => $id_acteur,
+                'banque' => $banque,
+                'numero_compte' => $numero_compte,
+                'id_rib' => $id_fichier
+            ]);
+
+            $id_compte = $bdd->lastInsertId();
+            $ids_comptes[count($ids_acteurs) - 1][] = $id_compte;
+        }
+        $compteur++;
+        // Et c'est tout pour la création pseudo-aléatoire des acteurs
+    }
+    fclose($handle);
+
+    // 4ème étape : réaliser 50 liaisons par activités
+
+    $compteur = 0;
+    for ($i = 0; $i < count($infos_activites['ids_activites']); $i++) {
+        $id_activite = $infos_activites['ids_activites'][$i];
+
+        for ($j = 0; $j < $nbr_acteurs / 3; $j++) {
+            // Pour réaliser une liaison, il me faut l'id du participant, l'id de l'activité, l'id du titre, l'id du compte bancaire, le nombre de jours et le nombre de tâches
+
+            $id_acteur = $ids_acteurs[$compteur];
+            $titres = $infos_activites['titres_activites'][$i];
+            $id_titre = $titres[rand(0, count($titres) - 1)];
+            $comptes = $ids_comptes[$compteur];
+            $id_compte = $comptes[rand(0, count($comptes) - 1)];
+            $nbr_jours = rand(1, 100);
+
+            if ($i == 2) {
+                // Activité de type 3
+                $nbr_taches = rand(1, 100);
+            } else {
+                $nbr_taches = null;
+            }
+
+            $stmt = $bdd->prepare('INSERT INTO participations(id_participant, id_activite, id_titre, id_compte_bancaire, nombre_jours, nombre_taches) VALUES (:id_participant, :id_activite, :id_titre, :id_compte_bancaire, :nbr_jours, :nbr_taches)');
+            $stmt->execute([
+                'id_participant' => $id_acteur,
+                'id_activite' => $id_activite,
+                'id_titre' => $id_titre,
+                'id_compte_bancaire' => $id_compte,
+                'nbr_jours' => $nbr_jours,
+                'nbr_taches' => $nbr_taches
+            ]);
+            $compteur++;
+        }
+    }
+
+    // 5ème et dernière étape : On insère dans la bdd les informations liées aux informations de demo
+
+    $stmt = $bdd->prepare('INSERT INTO informations_demo(id_user, ids_activites, ids_participants) VALUES (' . $_SESSION['user_id'] . ', :ids_activites, :ids_participants)');
+    $stmt->execute([
+        'ids_activites' => $infos_activites['liste_activites'],
+        'ids_participants' => $liste_acteurs
+    ]);
+
+    // C'est tout
+
+    return true;
+}
+
+function verifierDemoActive()
+{
+    // Une fonction pour savoir si des données de démo ont été générées ou pas
+    global $bdd;
+    $stmt = $bdd->query('SELECT * FROM connexion WHERE user_id=' . $_SESSION['user_id'] . ' AND demo=1');
+    return $stmt->rowCount() == 1 ? true : false;
 }

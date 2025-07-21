@@ -17,19 +17,12 @@ require_once('includes/bdd.php');
 </head>
 
 <body>
-<style>
-    td{
-        line-height: 20px;
-    }
-</style>
+    <?php
 
-<table width="10%" border="1">
-    <tbody>
-        <tr>
-            <td>AKANDO Espéro Eléazar Ogoluwa</td>
-        </tr>
-    </tbody>
-</table>
+    $valeur = "0";
+
+    ?>
+
 
 </body>
 

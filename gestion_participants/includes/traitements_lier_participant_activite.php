@@ -242,12 +242,11 @@ if (isset($_GET['modifier'])) {
                 }
 
                 $stmt->execute();
-
-                // Redirection en cas de succès
-                $_SESSION['modification_reussie'] = 'Les informations ont été mises à jour avec succès !';
-                header('location:/gestion_activites/gerer_activite.php?id=' . $id_activite);
-                exit;
             }
+            // Redirection en cas de succès
+            $_SESSION['modification_reussie'] = 'Les informations ont été mises à jour avec succès !';
+            header('location:/gestion_activites/gerer_activite.php?id=' . $id_activite);
+            exit;
         }
     }
 }

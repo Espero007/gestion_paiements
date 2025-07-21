@@ -16,8 +16,8 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
     // Utilisateur non connecté
     // On le dirige vers la page de connexion en sauvegardant l'url à laquelle il voulait accéder de base. Ainsi on s'arrange pour qu'il revienne sur cette page une fois qu'il se sera connecté
     $_SESSION['previous_url'] = obtenirURLcourant();
-    //header('location:/auth/connexion.php');
-    //exit;
+    header('location:/auth/connexion.php');
+    exit;
 } elseif ((time() - $_SESSION['dernier_signe_activite']) > TIMEOUT) {
     // Le timeout est atteint mais il ne faut pas le déconnecter s'il a un cookie actif donc il faut s'assurer qu'il n'a pas de cookie
 

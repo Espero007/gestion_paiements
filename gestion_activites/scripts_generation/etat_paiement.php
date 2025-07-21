@@ -700,7 +700,7 @@ class MYPDF extends TCPDF {
     public function Footer() {
         $this->SetY(-15);
         $this->SetFont('trebucbd', '', 8); // Police grasse pour le pied de page
-        $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0);
+        $this->Cell(0, 10,  $this->getAliasNumPage() , 0, false, 'C', 0);
     }
 }
 
@@ -858,8 +858,8 @@ function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite) {
     $information_supplementaire = ($type_activite == 1) ? ['type' => $nom_activite] : ['titre' => $nom_activite];
     genererHeader($pdf, 'etat_paiement_' . $type_activite, $information_supplementaire, $id_activite);
 
-    $pdf->Ln(10);
-    $reference = ($type_activite == 3) 
+    $pdf->Ln(20);
+    $reference = ($type_activite === 3) 
         ? 'NS N°2548/PR/DC/SGM/DAF/DEC/SAF/SIS/SEC/SD/SA DU 31 DECEMBRE 2020'
         : 'REF NS N°0569/MES/DC/SGM/DEC/SAFM/SIS/SEMC/SA DU 04 DECEMBRE 2023';
     $html = '<p align="center"><b style="font-family: trebucbd;">' . $reference . ' PORTANT CONSTITUTION DES COMMISSIONS CHARGEES DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</b></p><br>';
@@ -871,11 +871,14 @@ function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite) {
             $informations_entete = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $informations_entete = $informations_entete[0];
             $reference = 'NS N°' . htmlspecialchars($informations_entete['reference']) . ' DU ' . htmlspecialchars($informations_entete['date2']);
+            $pdf->Ln(20);
         } else {
-            $reference = 'NS N°' . htmlspecialchars($data[0]['reference'] ?? 'N/A') . ' DU 24 AOÛT 2023';
+            $reference =  htmlspecialchars($data[0]['reference'] ?? 'N/A');
+            $pdf->Ln(20);
         }
         $html = '<p align="center"><b style="font-family: trebucbd;">' . $reference . ' PORTANT CONSTITUTION DES COMMISSIONS CHARGEES DE SUPERVISER LE DÉROULEMENT DES ÉPREUVES ÉCRITES DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</b></p><br>';
         $stmt->closeCursor();
+        
     }
 
     $pageTotal = 0;
@@ -886,6 +889,7 @@ function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite) {
 
     $pdf->SetFont('trebuc', '', 8); // Police non-grasse pour le tableau
     $html .= startTable($type_activite);
+    
 
     if (empty($data)) {
         $html .= '<tr><td colspan="' . ($type_activite == 3 ? '11' : ($type_activite == 2 ? '9' : '8')) . '" style="text-align:center;">Aucune donnée disponible</td></tr>';
@@ -898,6 +902,7 @@ function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite) {
             $pageTotal += $row['montant'];
 
             // Ajouter la ligne de données
+            //$pdf->Ln(20);
             $rowHtml = generateRow($row, $type_activite, $i);
             $html .= $rowHtml;
 

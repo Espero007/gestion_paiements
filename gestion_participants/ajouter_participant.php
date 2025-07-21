@@ -43,6 +43,12 @@ require_once('includes/traitements_ajout_participant.php');
                                     <h6 class="m-0 font-weight-bold text-primary">Formulaire d'ajout</h6>
                                 </div>
                                 <div class="card-body">
+                                    <!-- Messages divers -->
+                                    <?php if (isset($doublon) && $doublon) : ?>
+                                        <?php afficherAlerte('Il semble que vous ayiez déjà enregistré un acteur avec des informations très similaires', 'danger') ?>
+                                    <?php endif; ?>
+                                    <!-- Fin Messages divers -->
+
                                     <!-- Formulaire : Début -->
 
                                     <form action="" method="post" enctype="multipart/form-data">

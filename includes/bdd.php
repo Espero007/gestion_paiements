@@ -45,7 +45,8 @@ try {
         password VARCHAR(100) NOT NULL,
         photo_profil VARCHAR(500) NULL,
         token_verification VARCHAR(255) NOT NULL,
-        est_verifie BOOLEAN DEFAULT FALSE
+        est_verifie BOOLEAN DEFAULT FALSE,
+        demo BOOLEAN DEFAULT FALSE
         );
 
         CREATE TABLE IF NOT EXISTS activites
@@ -148,6 +149,15 @@ try {
         date1 VARCHAR(200) NULL,
         date2 VARCHAR(200) NULL,
         FOREIGN KEY (id_activite) REFERENCES activites(id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS informations_demo
+        (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id_user INT NOT NULL,
+        ids_activites VARCHAR(300) NOT NULL,
+        ids_participants VARCHAR(1000) NOT NULL,
+        FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
     ";
 

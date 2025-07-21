@@ -93,3 +93,5 @@ $pdf->writeHTML($html, true, false, true, false, '');
 // 📤 Sortie
 ob_end_clean();
 $pdf->Output('', 'I');
+
+// $pdf->Cell()
