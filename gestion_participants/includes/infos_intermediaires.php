@@ -19,16 +19,7 @@ foreach ($titres as $index => $titre) {
     $titres_intitules[] = $titre['nom'];
 }
 
-// On récupère les diplômes associés à l'activité et à chaque participant
-// $stmt = $bdd->query('SELECT noms FROM diplomes WHERE id_activite=' . $id_activite);
-// $diplomes_activite = $stmt->fetch(PDO::FETCH_NUM); // puisque je sais qu'on va récupérer une seule ligne
-// $diplomes_activite = $diplomes_activite[0];
-// $diplomes_activite = explode(',', $diplomes_activite);
-
-// $index = 0;
-
 for ($i = 0; $i < count($participants); $i++) {
-    // $diplomes[] = array_merge($diplomes_activite, [$participants[$i]['diplome_le_plus_eleve']]);
     // On récupère les comptes bancaires du participant
     $stmt = $bdd->prepare('SELECT id, banque, numero_compte FROM informations_bancaires WHERE id_participant=' . $participants[$i]['id_participant']);
     $stmt->execute();

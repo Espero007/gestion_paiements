@@ -4,27 +4,34 @@ require_once('includes/header.php');
 
 // L'idéal serait ici que je récupère les trois derniers et non tout à vrai dire
 
-$stmt = 'SELECT nom, description, date_debut, date_fin, centre FROM activites WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id DESC';
-$resultat = $bdd->query($stmt);
+// $stmt = 'SELECT nom, description, date_debut, date_fin, centre FROM activites WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id DESC';
+// $resultat = $bdd->query($stmt);
 
-if (!$resultat) {
-    redirigerVersPageErreur(500, $current_url);
-}
+// if (!$resultat) {
+//     redirigerVersPageErreur(500, $current_url);
+// }
 
-$activites = $resultat->fetchAll(PDO::FETCH_ASSOC);
-$nbr_activites = count($activites);
+// $activites = $resultat->fetchAll(PDO::FETCH_ASSOC);
+// $nbr_activites = count($activites);
 
-// Récupération du nombre de participants enregistrés
+// // Récupération du nombre de participants enregistrés
 
-$stmt = "SELECT id_participant FROM participants WHERE id_user=" . $_SESSION['user_id'];
-$resultat = $bdd->query($stmt);
+// $stmt = "SELECT id_participant FROM participants WHERE id_user=" . $_SESSION['user_id'];
+// $resultat = $bdd->query($stmt);
 
-if (!$resultat) {
-    redirigerVersPageErreur(500, $current_url);
-}
+// if (!$resultat) {
+//     redirigerVersPageErreur(500, $current_url);
+// }
 
-$nbr_participants = $resultat->rowCount();
-$resultat->closeCursor();
+$stmt = $bdd->query('SELECT COUNT(*) FROM activites WHERE id_user = ' . $_SESSION['user_id']);
+$nbr_activites = $stmt->fetch(PDO::FETCH_NUM);
+$nbr_activites = $nbr_activites[0];
+$stmt->closeCursor();
+
+$stmt = $bdd->query('SELECT COUNT(*) FROM participants WHERE id_user = ' . $_SESSION['user_id']);
+$nbr_participants = $stmt->fetch(PDO::FETCH_NUM);
+$nbr_participants = $nbr_participants[0];
+$stmt->closeCursor();
 ?>
 
 <body id="page-top">
@@ -47,11 +54,31 @@ $resultat->closeCursor();
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
+                    <!-- Messages divers -->
+                    <?php if (isset($_SESSION['infos_demo_ok'])) : ?>
+                        <?php afficherAlerte('infos_demo_ok', 'success', true) ?>
+                    <?php endif; ?>
+                    <!-- Fin Messages divers -->
+
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Tableau de bord</h1>
-                        <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Générer les documents</a> -->
+                        <h1 class="h4 mb-0 text-gray-800">Tableau de bord</h1>
+
+                        <?php
+                        $stmt = $bdd->query('SELECT * FROM connexion WHERE user_id=' . $_SESSION['user_id'] . ' AND demo=0');
+                        $demo_active = $stmt->rowCount() == 1 ? true : false;
+                        ?>
+
+                        <?php if ($demo_active) : ?>
+                            <!-- Les informations de demo n'ont pas encore été générées -->
+                            <p class="mt-3 text-center">(<a href="/parametres/generation_demo.php" title="Cette option vous permet de générer des informations aléatoires qui vous permettront de simuler le fonctionnement de la plateforme (notez qu'il est à usage unique). Reférez-vous à la documentation pour plus d'informations">Générer des informations pour une démonstration</a>)</p>
+                        <?php else : ?>
+                            <!-- Elles ont été générées -->
+                            <p class="mt-3 text-center">(<a href="/parametres/retrait_infos_demo.php" title="Cette option vous permet de supprimer toutes les informations de démonstration qui avaient été générées, vous permettant ainsi de ne garder que vos informations. Reférez-vous à la documentation pour plus d'informations.">Retirer les informations de démonstration</a>)</p>
+                        <?php endif; ?>
+
+
+
                     </div>
 
                     <!-- Content Row -->

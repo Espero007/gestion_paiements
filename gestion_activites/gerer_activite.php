@@ -78,7 +78,7 @@ require_once('traitements/gerer_activite.php');
                             <!-- Période -->
                             <p class="mb-3">
                                 <span class="font-weight-bold">Période : </span>
-                                <span>Du <?= $activite['date_debut'] ?> au <?= $activite['date_fin'] ?></span>
+                                <span>Du <?= formaterPeriode($activite['date_debut'], $activite['date_fin']) ?></span>
                             </p>
 
                             <!-- Centre -->
