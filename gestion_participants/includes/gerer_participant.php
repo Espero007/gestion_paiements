@@ -26,7 +26,7 @@ if ($redirect) {
 $infos = [
     'nom' => "Nom",
     "prenoms" => "Prénom(s)",
-    "matricule_ifu" => "Matricule/IFU",
+    "matricule_ifu" => "Matricule IFU",
     "date_naissance" => "Date de naissance",
     "lieu_naissance" => "Lieu de naissance",
     "diplome_le_plus_eleve" => "Diplôme le plus élevé"

@@ -31,7 +31,7 @@ require_once('includes/gerer_participant.php');
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h4 mb-4 text-gray-800">Acteurs / <strong>Gestion du participant</strong></h1>
+                    <h1 class="h4 mb-4 text-gray-800">Acteurs / <strong>Gestion de l'acteur</strong></h1>
                     <p class="mt-2">Gérez ici votre acteur</p>
 
                     <div class="card shadow mb-4">
