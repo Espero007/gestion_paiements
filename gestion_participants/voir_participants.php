@@ -50,14 +50,14 @@ $resultat->closeCursor();
 
                         <!-- Page Heading -->
                         <h1 class="h4 mb-4 text-gray-800">Acteurs / <strong>Vos acteurs</strong></h1>
-                        <p class="mt-2">Ici vous avez la liste de tous les acteurs que vous avez déjà ajoutés. A partir des options disponibles vous pouvez modifier leurs informations, les supprimer, les associer à des activités, et bien plus.</p>
+                        <p class="mt-2 mb-3">Ici vous avez la liste de tous les acteurs que vous avez déjà ajoutés. A partir des options disponibles vous pouvez modifier leurs informations, les supprimer, les associer à des activités, et bien plus.</p>
 
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Liste des acteurs</h6>
                             </div>
                             <div class="card-body">
-                                <!-- Messages de succès -->
+                                <!-- Messages divers -->
 
                                 <!-- Liaison participant-activité réussie -->
                                 <?php if (isset($_SESSION['liaison_reussie'])) : ?>
@@ -88,6 +88,16 @@ $resultat->closeCursor();
                                     <?php afficherAlerte('comptes_supprimes', 'success', true) ?>
                                 <?php endif; ?>
 
+                                <?php if (verifierDemoActive()) : ?>
+                                    <!-- Des informations de démo ont été générées -->
+                                    <?php
+                                    $message = 'Il semble que vous avez généré les données de démonstration. <a href="/parametres/retrait_infos_demo.php" title="Cette option vous permet de supprimer toutes les informations de démonstration qui avaient été générées, vous permettant ainsi de ne garder que vos informations. Reférez-vous à la documentation pour plus d\'informations.">Cliquez ici</a> si vous souhaitez les retirer';
+                                    ?>
+                                    <?php afficherAlerte($message, 'info') ?>
+                                <?php endif; ?>
+
+                                <!-- Fin Messages divers -->
+
                                 <form action="">
                                     <div class="">
                                         <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
@@ -96,7 +106,7 @@ $resultat->closeCursor();
                                                     <th>Choix</th>
                                                     <th>Nom</th>
                                                     <th>Prénom(s)</th>
-                                                    <th>Matricule/IFU</th>
+                                                    <th>Matricule IFU</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>

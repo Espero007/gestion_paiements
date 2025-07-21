@@ -25,7 +25,7 @@ require_once(__DIR__ . '/../tcpdf/tcpdf.php');
 
 // Fonctions utilitaires
 
-function redirigerVersPageErreur($code_erreur=404, $url = null)
+function redirigerVersPageErreur($code_erreur = 404, $url = null)
 {
     if ($url) {
         $_SESSION['previous_url'] = $url;
@@ -1095,7 +1095,7 @@ function ConfigurerInformationsDemo()
             // Titre de la page
 
             $pdf->setFont('trebucbd', '', 16);
-            $pdf->Cell(0, 10, mb_strtoupper('Copie PDF du RIB N°' . ($i + 1).' de '.$acteur['Nom'].' '.$acteur['Prénoms'], 'UTF-8'), 0, 1, 'C');
+            $pdf->Cell(0, 10, mb_strtoupper('Copie PDF du RIB N°' . ($i + 1) . ' de ' . $acteur['Nom'] . ' ' . $acteur['Prénoms'], 'UTF-8'), 0, 1, 'C');
             $pdf->Ln(2);
             $pdf->setFont('trebucbd', '', 12);
             // $pdf->Cell(0, 10, mb_strtoupper($acteur['Nom'] . ' ' . $acteur['Prénoms'], 'UTF-8'), 0, 1, 'C');
@@ -1175,7 +1175,7 @@ function ConfigurerInformationsDemo()
 
     // 5ème et dernière étape : On insère dans la bdd les informations liées aux informations de demo
 
-    $stmt = $bdd->prepare('INSERT INTO informations_demo(id_user, ids_activites, ids_participants) VALUES ('.$_SESSION['user_id'].', :ids_activites, :ids_participants)');
+    $stmt = $bdd->prepare('INSERT INTO informations_demo(id_user, ids_activites, ids_participants) VALUES (' . $_SESSION['user_id'] . ', :ids_activites, :ids_participants)');
     $stmt->execute([
         'ids_activites' => $infos_activites['liste_activites'],
         'ids_participants' => $liste_acteurs
@@ -1184,4 +1184,12 @@ function ConfigurerInformationsDemo()
     // C'est tout
 
     return true;
+}
+
+function verifierDemoActive()
+{
+    // Une fonction pour savoir si des données de démo ont été générées ou pas
+    global $bdd;
+    $stmt = $bdd->query('SELECT * FROM connexion WHERE user_id=' . $_SESSION['user_id'] . ' AND demo=1');
+    return $stmt->rowCount() == 1 ? true : false;
 }
