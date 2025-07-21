@@ -811,7 +811,7 @@ function genererCSVDemo($chemin_csv, $nbr_acteurs)
     function genererDateNaissance()
     {
         $timestamp = strtotime('-' . rand(18, 60) . ' years');
-        return date('d/m/Y', $timestamp);
+        return date('Y/m/d', $timestamp);
     }
 
     // Données de base
