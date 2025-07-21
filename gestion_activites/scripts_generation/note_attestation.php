@@ -154,6 +154,7 @@ if ($document === 'note') {
     $pdf->Ln(10);
     $pdf->setFont('trebucbd', '', 10);
     $pdf->Cell(0, 10, htmlspecialchars($participants[0]['titre_responsable'] ?? ''), 0, 1, 'C');
+    $pdf->Ln(10);
     $pdf->setFont('trebucbd', 'U', 10);
     $pdf->Cell(0, 10, htmlspecialchars($participants[0]['premier_responsable'] ?? ''), 0, 1, 'C');
 
@@ -201,9 +202,12 @@ if ($document === 'note') {
     // Ajouter les informations du premier responsable et son titre sous le tableau
     $pdf->Ln(10);
     $bloc_gauche = mb_strtoupper($participants[0]['titre_organisateur'] ?? '');
+    //$pdf->Ln(10);
     $bloc_droite = mb_strtoupper($participants[0]['titre_responsable'] ?? '');
+    //$pdf->Ln(10);
     afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 5, 'C', '', 'C', '');
 
+    $pdf->Ln(10);
     $bloc_gauche = mb_strtoupper($participants[0]['organisateur'] ?? '');
     $bloc_droite = mb_strtoupper($participants[0]['premier_responsable'] ?? '');
     afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 2, 'C', 'U', 'C', 'U');
