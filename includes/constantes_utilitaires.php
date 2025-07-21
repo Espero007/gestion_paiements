@@ -8,10 +8,9 @@ define('TIMEOUT', 1 * 86400); // 1 journée d'inactivité soit 86400
 $nom_dossier_upload = 'fichiers';
 define('UPLOADS_BASE_DIR', BASE_PATH . '/' . $nom_dossier_upload);
 const PERMISSIONS = 0777;
-
-$dossier_zip =  realpath(__DIR__ . '/../gestion_activites/scripts_generation/exports');
-if (!is_dir($dossier_zip)) {
-    mkdir($dossier_zip, 0775, true); // crée récursivement avec droits suffisants
+$dossier_exports_temp =  BASE_PATH . '/gestion_activites/scripts_generation/exports';
+if (!is_dir($dossier_exports_temp)) {
+    mkdir($dossier_exports_temp, 0777, true); // crée récursivement avec droits suffisants
 }
 
 
@@ -22,6 +21,9 @@ date_default_timezone_set('Africa/Lagos');
 // Quelques inclusions
 
 require_once(__DIR__ . '/../tcpdf/tcpdf.php');
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use setasign\Fpdi\Tcpdf\Fpdi;
 
 // Fonctions utilitaires
 
@@ -608,7 +610,7 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $pdf->Ln(5);
 
     // Ligne 3 : Sous-titre du document
-    $ligne3 = mb_strtoupper($sous_titres[$type_document] . ' ' . $informations['titre'] . (!$type_document == 'etat_paiement_3' ? '' : ', session 2020'), 'UTF-8');
+    $ligne3 = mb_strtoupper($sous_titres[$type_document] . ' ' . $informations['titre'] . ($type_document != 'etat_paiement_3' ? '' : ', session 2020'), 'UTF-8');
     $pdf->setFont('trebuc', '', '10');
     $pdf->setX($x);
     $pdf->MultiCell($largeurBloc, 5, $ligne3, 0, 'C');
@@ -1195,4 +1197,439 @@ function verifierDemoActive()
     global $bdd;
     $stmt = $bdd->query('SELECT * FROM connexion WHERE user_id=' . $_SESSION['user_id'] . ' AND demo=1');
     return $stmt->rowCount() == 1 ? true : false;
+}
+
+// Fonctions pour la génération des documents dans un seul fichier
+
+function genererOrdreVirement($id_activite, $banque, $navigateur = true, $zip = false)
+{
+    global $dossier_exports_temp, $bdd;
+
+    // Récupération des informations nécessaires
+    $stmt = "
+    SELECT
+    pa.id_participant,
+    a.type_activite,
+    p.nom, 
+    p.prenoms,
+    t.nom as qualite,
+    t.indemnite_forfaitaire,
+    ib.banque,
+    ib.numero_compte as rib,
+    a.taux_journalier,
+    a.taux_taches,
+    a.frais_deplacement_journalier as fdj,
+    pa.nombre_jours,
+    pa.nombre_taches,
+    a.nom as titre_activite,
+    a.titre_financier,
+    a.financier,
+    a.premier_responsable,
+    a.titre_responsable
+    FROM participations pa
+    INNER JOIN participants p ON pa.id_participant=p.id_participant
+    INNER JOIN titres t ON pa.id_titre = t.id_titre
+    INNER JOIN informations_bancaires ib ON p.id_participant=ib.id_participant
+    INNER JOIN activites a ON pa.id_activite=a.id
+    WHERE pa.id_activite=$id_activite AND ib.banque =:banque 
+";
+    $stmt = $bdd->prepare($stmt);
+    $stmt->bindParam('banque', $banque);
+    $stmt->execute();
+    $informations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Configuration du document
+    $pdf = new TCPDF('P', 'mm', 'A4');
+    $pdf->AddFont('trebucbd', '', 'trebucbd.php');
+    $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
+    $pdf->setMargins(15, 25, 15, true);
+    configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Ordre de virement ' . $banque);
+    $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
+    $pdf->AddPage();
+
+    // Header
+    $informations_necessaires = ['titre' => $informations[0]['titre_activite'], 'banque' => $banque];
+    // $informations_necessaires = ['titre' => $resultats[0]['titre_activite']];
+    genererHeader($pdf, 'ordre_virement', $informations_necessaires, $id_activite);
+    // genererHeader($pdf, 'etat_paiement_1', $informations_necessaires, $id_activite);
+
+    $pdf->Ln(20);
+
+    $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
+    $tailles_colonnes = [0.05, 0.22, 0.15, 0.15, 0.15, 0.28]; // à multiplier par 100 pour avoir les pourcentages
+
+    foreach ($tailles_colonnes as $index => $taille) {
+        $tailles_colonnes[$index] = $taille * $largeurPage;
+    }
+
+    // Tableau
+    // Entête
+    $pdf->setFont('trebucbd', '', 10);
+    $pdf->setFillColor(242, 242, 242); // #f2f2f2
+    $hauteur = 10;
+    // $pdf->SetLineWidth(0.2); // 0.2 mm ~ HTML border=1
+    $pdf->Cell($tailles_colonnes[0], $hauteur, 'N°', 1, 0, 'C', true); // 5%
+    $pdf->Cell($tailles_colonnes[1], $hauteur, strtoupper('Nom et prenoms'), 1, 0, 'C', true);
+    $pdf->Cell($tailles_colonnes[2], $hauteur, strtoupper('Qualite'), 1, 0, 'C', true);
+    $pdf->Cell($tailles_colonnes[3], $hauteur, strtoupper('Montant'), 1, 0, 'C', true);
+    $pdf->Cell($tailles_colonnes[4], $hauteur, strtoupper('Banque'), 1, 0, 'C', true);
+    $pdf->Cell($tailles_colonnes[5], $hauteur, strtoupper('Rib'), 1, 0, 'C', true);
+    $pdf->Ln();
+
+    foreach ($tailles_colonnes as $index => $taille) {
+        $tailles_colonnes[$index] = $taille / $largeurPage * 100;
+    }
+
+    $total = 0;
+    $style = '
+<style>
+td{
+text-align : center;
+line-height : 16px;
+}
+</style>
+';
+
+    $html = $style . '
+<table border="1" cellpadding="5" width="100%">
+<tbody>';
+
+    $pdf->setFont('trebuc', '', 10);
+
+    for ($i = 0; $i < count($informations); $i++) {
+        $ligne = $informations[$i];
+        $montant = montantParticipant($ligne['id_participant'], $id_activite);
+
+        // Une ligne
+        $html .= '<tr>';
+
+        // $pdf->setFillColor(255, 255, 255); // #fff
+        // N°
+        $html .= '<td width="' . $tailles_colonnes[0] . '%">' . ($i + 1) . '</td>';
+        // $pdf->Cell($tailles_colonnes[0], $hauteur, $i + 1, 1, 0, 'C');
+        // Nom et prénoms
+        $html .= '<td width="' . $tailles_colonnes[1] . '%">' . $ligne['nom'] . ' ' . $ligne['prenoms'] . '</td>';
+        // $pdf->Cell($tailles_colonnes[1], $hauteur, $ligne['nom'] . ' ' . $ligne['prenoms'], 1);
+        // Qualité
+        $html .= '<td width="' . $tailles_colonnes[2] . '%">' . $ligne['qualite'] . '</td>';
+        // $pdf->Cell($tailles_colonnes[2], $hauteur, $ligne['qualite'], 1, 0, 'C');
+        // Montant
+        $html .= '<td width="' . $tailles_colonnes[3] . '%">' . number_format($montant, 0, ',', '.') . '</td>';
+        // $pdf->Cell($tailles_colonnes[3], $hauteur, number_format($montant, 0, ',', '.'), 1, 0, 'C');
+        // Banque
+        $html .= '<td width="' . $tailles_colonnes[4] . '%">' . $banque . '</td>';
+        // $pdf->Cell($tailles_colonnes[4], $hauteur, $banque, 1, 0, 'C');
+        // Rib
+        $html .= '<td width="' . $tailles_colonnes[5] . '%">' . $ligne['rib'] . '</td>';
+        // $pdf->Cell($tailles_colonnes[5], $hauteur, $ligne['rib'], 1, 0, 'C');
+        // $pdf->Ln();
+        $html .= '</tr>';
+        $total += $montant;
+    }
+
+    $html .= '
+</tbody>
+</table>';
+
+    $pdf->writeHTML($html, false, false, true, false, '');
+
+    // Dernière ligne du tableau pour le total
+
+    foreach ($tailles_colonnes as $index => $taille) {
+        $tailles_colonnes[$index] = $taille / 100 * $largeurPage;
+    }
+
+    $pdf->setFont('trebucbd', '', 10);
+    $pdf->setFillColor(242, 242, 242); // #f2f2f2
+    // Total ( )
+    $pdf->Cell($tailles_colonnes[0] + $tailles_colonnes[1] + $tailles_colonnes[2], $hauteur, strtoupper('Total ( )'), 1, 0, 'C', true);
+    // Montant
+    $pdf->Cell($tailles_colonnes[3], $hauteur, number_format($total, 0, ',', '.'), 1, 0, 'C', true);
+    // Banque
+    $pdf->Cell($tailles_colonnes[4], $hauteur, '', 1, 0, 'C', true);
+    // Rib
+    $pdf->Cell($tailles_colonnes[5], $hauteur, '', 1, 0, 'C', true);
+    $pdf->Ln(15);
+
+    // On s'attaque à la phrase en dessous du tableau
+    $formatter = new NumberFormatter('fr_FR', NumberFormatter::SPELLOUT);
+    $pdf->MultiCell(0, 10, "Arrêté le présent ordre de virement à la somme de " . mb_strtoupper($formatter->format($total), 'UTF-8') . "(" . number_format($total, 0, ',', '.') . ") Francs CFA", 0, 'C');
+    $pdf->Ln(8);
+
+    // Bloc du bas avec le financier et le premier responsable
+
+    $bloc_gauche = mb_strtoupper($informations[0]['financier']);
+    $bloc_droite = mb_strtoupper($informations[0]['premier_responsable']);
+    afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 5, 'C', '', 'C', '');
+
+    $bloc_gauche = mb_strtoupper($informations[0]['titre_financier']);
+    $bloc_droite = mb_strtoupper($informations[0]['titre_responsable']);
+    afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 2, 'C', 'U', 'C', 'U');
+
+    // //Sortie du pdf
+    if ($navigateur) {
+        $pdf->Output('Ordre de virement ' . $banque . '.pdf', 'I');
+    } else {
+        // On ne veut pas le document pour une sortie en navigateur
+        $chemin_fichier = $dossier_exports_temp . '/Ordre de virement ' . $banque . '.pdf';
+        $pdf->Output($chemin_fichier, 'F');
+        return $chemin_fichier;
+    }
+}
+
+function genererSyntheseOrdres($id_activite, $navigateur = true)
+{
+    global $bdd, $dossier_exports_temp;
+    $liste_banques = listeBanques($id_activite);
+
+    foreach ($liste_banques as $banque) {
+        $totaux_banques[] = totalBanque($id_activite, $banque);
+    }
+
+    $stmt = $bdd->query('SELECT nom FROM activites WHERE id=' . $id_activite);
+    $titre_activite = $stmt->fetch(PDO::FETCH_NUM);
+    $titre_activite = $titre_activite[0];
+    $stmt->closeCursor();
+
+    // Configuration du document
+    $pdf = new TCPDF('P', 'mm', 'A4');
+    $pdf->AddFont('trebucbd', '', 'trebucbd.php');
+    $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
+    configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Tableau récapitulatif');
+    $pdf->setMargins(15, 25, 15, true);
+    $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
+    $pdf->AddPage();
+
+    // Titre de la page
+
+    $pdf->setFont('trebucbd', '', 16);
+    $pdf->Cell(0, 10, mb_strtoupper('Tableau récapitulatif', 'UTF-8'), 0, 1, 'C');
+    $pdf->Ln(8);
+
+    // Tableau
+
+    // Ecriture de l'entête
+
+    $pdf->setFont('trebucbd', '', 10);
+
+    // $liste_banques = ['BOA', 'CorisBenin', 'Atlantique Bénin', 'CCP', 'NSIA', 'ORABANK', 'SGB', 'UBA', 'CorisBenin1', 'Atlantique Bénin1', 'CCP1', 'NSIA1', 'ORABANK1', 'SGB1', 'UBA1'];
+    // $liste_banques = ['BOA', 'CorisBenin', 'Atlantique Bénin'];
+    // $totaux_banques = [0.1, 0.2, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15];
+
+    // $liste_banques = ['BOA', 'CorisBenin', 'Atlantique Bénin', 'CCP', 'NSIA', 'ORABANK', 'SGB', 'UBA', 'CorisBenin1', 'Atlantique Bénin 1', 'CCP1', 'NSIA1', 'ORABANK1', 'SGB1', 'UBA1'];
+    // $totaux_banques = [20000, 40000, 30000, 2000, 1000, 1000, 1000, 10000, 5000, 30000, 40000, 20000, 30000, 10000, 5000];
+
+    // $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
+    $tailles_colonnes = [40, 20];
+
+    $nbr_banques = count($liste_banques);
+    $var_inter = $nbr_banques;
+
+    // Détermination du nombre de lignes du tableau
+
+    if ($var_inter <= 3) {
+        // Il y a moins de 3 banques donc une seule ligne suffit
+        $nbr_lignes = 1;
+    } elseif (3 < $var_inter && $var_inter <= 8) {
+        // On est entre 3 et 8 banques, autres en dehors des trois banques affichées sur la première ligne, il y a encore entre 1 et 5 banques à afficher. Une seconde ligne suffira pour cela
+        $nbr_lignes = 2;
+    } elseif ($var_inter > 8) {
+        // On a plus de 8 banques donc on est déjà sur une troisième ligne. De là on retranche d'abord le nombre de banques qui seront affichées sur les lignes 1 et 2 à savoir 8, on détermine le reste et on boucle sur la valeur obtenue. Donc tant que ce reste sera supérieur à 5, on ajoutera une ligne au tableau.
+        $nbr_lignes = 3;
+        $var_inter -= 8;
+        // Supposons qu'en dehors des 8 banques il reste encore 12 banques à afficher
+        // A la première itération, le nombre de lignes passera à 4, nous permettant d'afficher 5 banques parmi les 12. Il en restera 7
+        // A la seconde itération (puisque le nombre de banques est toujours supérieur à 5), le nombre de lignes passera à 5 permettant d'afficher aussi 5 banques. Il en restera 2 à afficher. On sortira de la boucle while avec un 5 lignes en tout pour le tableau, un nombre suffisant dans le cas d'espèce.
+
+        // Supposons par contre qu'il y ait 17 banques plutôt
+        // Première itération : $nbr_lignes -> 4, $var_inter -> 12
+        // Seconde itération : $nbr_lignes -> 5, $var_inter -> 7
+        // Troisième itération : $nbr_lignes -> 6, $var_inter -> 2
+        // Je présume que c'est bon. En tout cas jusque là le nombre de lignes obtenu est valide
+
+        while ($var_inter > 5) {
+            $nbr_lignes++;
+            $var_inter -= 5;
+        }
+    }
+
+    $style = '
+<style>
+th{
+background-color : #f2f2f2;
+text-align : center;
+}
+td{
+text-align : center;
+line-height : 16px;
+}
+</style>
+';
+
+    $compteur = 0;
+    $compteur_2 = 0;
+
+    for ($i = 0; $i < $nbr_lignes; $i++) {
+        // Chaque ligne
+        $pourcentage = $i == 0 ? 100 - $tailles_colonnes[0] : 100;
+        $nouvelle_ligne = false; // pour le montant total
+
+        $html = $style . '
+<table border="1" cellpadding="5" width="100%">
+<thead>
+<tr>';
+        // Header
+        if ($i == 0) {
+            $html .= '
+<th width="' . $tailles_colonnes[0] . '%">ELEMENT</th>';
+            $max_j = $nbr_banques < 3 ? $nbr_banques : 3;
+        } else {
+            $max_j = $nbr_banques > 5 ? 5 : $nbr_banques;
+        }
+
+        for ($j = 0; $j < $max_j; $j++) {
+            $html  .= '
+<th width="' . $tailles_colonnes[1] . '%">' . mb_strtoupper($liste_banques[$compteur], 'UTF-8') . '</th>';
+            $compteur++;
+            $nbr_banques--;
+            $pourcentage -= $tailles_colonnes[1];
+        }
+
+        if ($i == $nbr_lignes - 1 && $pourcentage != 0) {
+            // Dernière ligne et il reste encore de la place
+            $html .= '
+    <th width="' . $pourcentage . '%">MONTANT TOTAL</th>
+            ';
+        } elseif ($i == $nbr_lignes - 1 && $pourcentage == 0) {
+            $nouvelle_ligne = true;
+        }
+
+        $html .= '
+</tr>
+</thead>
+<tbody>
+<tr>';
+        // Body
+        if ($i == 0) {
+            $html .= '
+<td width="' . $tailles_colonnes[0] . '%">' . mb_strtoupper($titre_activite, 'UTF-8') . '</td>';
+        }
+
+        for ($j = 0; $j < $max_j; $j++) {
+            $html  .= '
+<td width="' . $tailles_colonnes[1] . '%">' . number_format($totaux_banques[$compteur_2], 0, ',', '.') . '</td>';
+            $compteur_2++;
+        }
+
+        if ($i == $nbr_lignes - 1 && $pourcentage != 0) {
+            // Dernière ligne et il reste encore de la place
+            $html .= '
+    <td width="' . $pourcentage . '%">' . number_format(array_sum($totaux_banques), 0, ',', '.') . ' FCFA</td>
+            ';
+        }
+        $html .= '
+</tr>
+</tbody>
+</table>
+    ';
+        $pdf->writeHTML($html, true, false, true, false, '');
+        $pdf->Ln();
+
+        if ($nouvelle_ligne) {
+            $html =
+                $style .
+                '
+    <table border="1" cellpadding="5" width="100%">
+    <thead>
+    <tr>
+    <th>MONTANT TOTAL</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>' . number_format(array_sum($totaux_banques), 0, ',', '.') . ' FCFA</td>
+    </tr>
+    </tbody>
+    </table>
+    ';
+            $pdf->writeHTML($html, true, false, true, false, '');
+            $pdf->Ln();
+        }
+    }
+
+    //Sortie du pdf
+    if ($navigateur) {
+        $pdf->Output('Tableau récapitulatif.pdf', 'I');
+    } else {
+        $chemin_fichier = $dossier_exports_temp . '/Synthèse des ordres de virement.pdf';
+        $pdf->Output($chemin_fichier, 'F');
+        return $chemin_fichier;
+    }
+}
+
+function genererFusionPDFS($fichiers, $titre_document, $navigateur = true, $supprimerFichiers = true)
+{
+    // Classe personnalisée avec Footer()
+    class MyPDF extends Fpdi
+    {
+        public function Footer()
+        {
+            // $this->SetY(-15);
+            $this->SetFont('trebucbd', '', 10);
+            // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, 0, 'R');
+            $this->Cell(0, 10, $this->getAliasNumPage(), 0, 0, 'R');
+        }
+    }
+
+    $pdf = new MyPDF();
+    $pdf->setMargins(15, 25, 15);
+    $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
+    $pdf->SetFooterMargin(25);
+    $pdf->setPrintHeader(false);
+    configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], $titre_document);
+
+    foreach ($fichiers as $fichier) {
+        $pageCount = $pdf->setSourceFile($fichier);
+        for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+            $tpl = $pdf->importPage($pageNo);
+            $size = $pdf->getTemplateSize($tpl);
+            $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+            $pdf->useTemplate($tpl);
+        }
+    }
+
+    // Affichage du PDF final
+    if ($navigateur) {
+        $pdf->Output($titre_document . '.pdf', 'I');
+    }
+
+    if($supprimerFichiers){
+        // Suppression des éléments
+        foreach ($fichiers as $fichier) {
+            unlink($fichier);
+        }
+    }
+}
+
+function genererListeRIBS($id_activite, $navigateur = true)
+{
+    global $bdd;
+    // Process : on récupère les chemins vers les fichiers rib des acteurs associés à l'activité et on fusionne ces pdfs
+
+    $stmt = $bdd->query('
+    SELECT chemin_acces
+    FROM participations p1
+    INNER JOIN informations_bancaires ib ON p1.id_compte_bancaire = ib.id
+    INNER JOIN fichiers f ON f.id_fichier = ib.id_rib
+    INNER JOIN participants p2 ON p1.id_participant = p2.id_participant
+    WHERE p1.id_activite = ' . $id_activite . '
+    ORDER BY p2.nom ASC
+');
+
+    $chemins = $stmt->fetchAll(PDO::FETCH_NUM);
+    for ($i = 0; $i < count($chemins); $i++) {
+        $chemins[$i] = $chemins[$i][0];
+    }
+
+    genererFusionPDFS($chemins, 'Liste des RIBS', true, false);
 }

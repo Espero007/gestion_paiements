@@ -2,67 +2,136 @@
 session_start();
 require_once(__DIR__ . '/../../tcpdf/tcpdf.php');
 require_once(__DIR__ . '/../../includes/bdd.php');
-require_once(__DIR__ . '/../../includes/constantes_utilitaires.php'); // fonction genererHeader
+require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use setasign\Fpdi\Tcpdf\Fpdi;
+/** Générations des fichiers à inclure dans le document fusionné */
 
 if (!valider_id('get', 'id', '', 'participations_activites')) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
 $id_activite = $_GET['id'];
 
-$banques = listeBanques($id_activite); // pour l'ordre de virement
+// Nombre de répétition
+$nbr_ordre_virement = 2;
+$nbr_synthese_ordres = 1;
+$nbr_liste_ribs = 1;
+$nbr_note_service = 1;
+$nbr_attestation = 2;
+$nbr_etats_paiement = 3;
 
-// Crée un nouveau PDF
-$pdf = new Fpdi();
+/** Ordres de virement */
 
-// $portion_url = obtenirURLcourant(true).'/gestion_activites/scripts_generation/';
-$portion_url = 'localhost:3000/gestion_activites/scripts_generation/';
+$banques = listeBanques($id_activite);
 
-$params =[
-    'id' => 2,
-    'banque' => $banques[0]
-];
-
-$url = $portion_url .'ordre_virement.php?'. http_build_query($params);
-
-$urls = [
-    $url
-];
-
-$tempFiles = [];
-
-foreach ($urls as $url) {
-    // Récupère le contenu PDF généré à partir de l'URL
-    $pdfContent = file_get_contents($url);
-
-    if ($pdfContent === false) {
-        die("Erreur lors de la récupération du PDF depuis $url");
-    }
-
-    // Sauvegarde temporaire du fichier
-    $tempFile = tempnam(sys_get_temp_dir(), 'pdf_');
-    file_put_contents($tempFile, $pdfContent);
-    $tempFiles[] = $tempFile;
+foreach ($banques as $banque) {
+    $chemin_fichier = genererOrdreVirement($id_activite, $banque, false);
+    $chemins[] = $chemin_fichier;
 }
 
-// Fusion
-foreach ($tempFiles as $file) {
-    $pageCount = $pdf->setSourceFile($file);
+for ($i = 0; $i < $nbr_ordre_virement; $i++) {
+    for ($j = 0; $j < count($chemins); $j++) {
+        $fichiers[] = $chemins[$j];
+    }
+}
+
+/** Synthèse des ordres de virement */
+
+for ($i=0; $i < $nbr_synthese_ordres; $i++) { 
+    $fichiers[] = genererSyntheseOrdres($id_activite, false);
+}
+
+
+use setasign\Fpdi\Tcpdf\Fpdi;
+// Classe personnalisée avec Footer()
+class MyPDF extends Fpdi
+{
+    public function Footer()
+    {
+        // $this->SetY(-15);
+        $this->SetFont('trebucbd', '', 10);
+        // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, 0, 'R');
+        $this->Cell(0, 10, $this->getAliasNumPage(), 0, 0, 'R');
+    }
+}
+
+$pdf = new MyPDF();
+$pdf->setMargins(15, 25, 15);
+$pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
+$pdf->SetFooterMargin(25);
+$pdf->setPrintHeader(false);
+configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Fusion des documents');
+
+foreach ($fichiers as $fichier) {
+    $pageCount = $pdf->setSourceFile($fichier);
     for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-        $pdf->AddPage();
-        $tplIdx = $pdf->importPage($pageNo);
-        $pdf->useTemplate($tplIdx);
+        $tpl = $pdf->importPage($pageNo);
+        $size = $pdf->getTemplateSize($tpl);
+        $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+        $pdf->useTemplate($tpl);
     }
 }
 
-// Nettoyage
-foreach ($tempFiles as $file) {
-    unlink($file);
+// Affichage du PDF final
+$pdf->Output('Fusion des documents.pdf', 'I');
+
+// Suppression des éléments
+
+foreach ($fichiers as $fichier) {
+    unlink($fichier);
 }
 
-$pdf->Output('fusion.pdf', 'I');
+// $banques = listeBanques($id_activite); // pour l'ordre de virement
+
+// // Crée un nouveau PDF
+// $pdf = new Fpdi();
+
+// // $portion_url = obtenirURLcourant(true).'/gestion_activites/scripts_generation/';
+// $portion_url = 'localhost:3000/gestion_activites/scripts_generation/';
+
+// $params =[
+//     'id' => 2,
+//     'banque' => $banques[0]
+// ];
+
+// $url = $portion_url .'ordre_virement.php?'. http_build_query($params);
+
+// $urls = [
+//     $url
+// ];
+
+// $tempFiles = [];
+
+// foreach ($urls as $url) {
+//     // Récupère le contenu PDF généré à partir de l'URL
+//     $pdfContent = file_get_contents($url);
+
+//     if ($pdfContent === false) {
+//         die("Erreur lors de la récupération du PDF depuis $url");
+//     }
+
+//     // Sauvegarde temporaire du fichier
+//     $tempFile = tempnam(sys_get_temp_dir(), 'pdf_');
+//     file_put_contents($tempFile, $pdfContent);
+//     $tempFiles[] = $tempFile;
+// }
+
+// // Fusion
+// foreach ($tempFiles as $file) {
+//     $pageCount = $pdf->setSourceFile($file);
+//     for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+//         $pdf->AddPage();
+//         $tplIdx = $pdf->importPage($pageNo);
+//         $pdf->useTemplate($tplIdx);
+//     }
+// }
+
+// // Nettoyage
+// foreach ($tempFiles as $file) {
+//     unlink($file);
+// }
+
+// $pdf->Output('fusion.pdf', 'I');
 
 
 

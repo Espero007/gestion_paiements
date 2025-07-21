@@ -38,7 +38,10 @@ if ($stmt->rowCount() == 1) {
         )');
         $chemins = $stmt->fetchAll(PDO::FETCH_NUM);
         foreach ($chemins as $chemin) {
-            unlink($chemin[0]);
+            $path = $chemin[0];
+            if(file_exists($path)){
+                unlink($path);
+            }
         }
 
         // Ensuite on supprime les lignes dans la table fichiers
