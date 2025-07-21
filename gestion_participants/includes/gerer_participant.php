@@ -32,6 +32,7 @@ $infos = [
     "diplome_le_plus_eleve" => "Diplôme le plus élevé"
 ];
 
+
 // Informations bancaires
 $stmt = $bdd->prepare("
 SELECT ib.banque, ib.numero_compte, f.chemin_acces 

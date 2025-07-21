@@ -98,8 +98,8 @@ $resultat->closeCursor();
                                 <!-- Fin Messages divers -->
 
                                 <form action="">
-                                    <div class="">
-                                        <table class="table table-bordered text-center table-responsive" id="dataTable" width="100%" cellspacing="0">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
                                                     <th>Choix</th>

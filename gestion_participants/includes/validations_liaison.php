@@ -1,10 +1,19 @@
 <?php
+$champs_attendus = ['titre', 'compte_bancaire', 'nbr_jours'];
+
+if ($type_activite == 3) {
+    $champs_attendus[] = 'nbr_taches';
+}
 
 for ($i = 0; $i < count($participants); $i++) {
     foreach ($champs_attendus as $champ) {
         if (!isset($_POST[$champ][$i]) || (isset($_POST[$champ][$i]) && empty($_POST[$champ][$i]))) {
             if ($champ == 'compte_bancaire') {
                 $erreurs[$champ][$i][] = 'Veuillez sélectionner un compte bancaire';
+            } elseif ($champ == 'nbr_taches' && isset($_POST[$champ][$i])) {
+                if ($_POST[$champ][$i] == 0) {
+                    $erreurs[$champ][$i][] = 'Veuillez indiquer une valeur numérique valide';
+                }
             } else {
                 $erreurs[$champ][$i][] = 'Veuillez remplir ce champ';
             }

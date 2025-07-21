@@ -203,7 +203,7 @@ require_once('includes/traitements_lier_participant_activite.php');
                                         <?php endif; ?>
 
                                         <!-- Compte bancaire -->
-                                         <?php $index_participant = array_search($participant, $participants)?>
+                                        <?php $index_participant = array_search($participant, $participants)?>
 
                                         <div class="mb-2 row">
                                             <span class="col-form-label col-sm-4"><?= count($comptes[$index_participant]) > 1 ? 'Comptes bancaires' : 'Compte bancaire' ?></span>

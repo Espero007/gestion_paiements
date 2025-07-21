@@ -3,7 +3,7 @@ $section = 'Participants';
 $titre_page = "Liste des acteurs";
 require_once(__DIR__ . '/../includes/header.php');
 
-$stmt = 'SELECT id_participant, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance FROM participants WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id_participant';
+$stmt = 'SELECT id_participant, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance FROM participants WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id_participant DESC';
 $resultat = $bdd->query($stmt);
 
 if (!$resultat) {
@@ -99,8 +99,8 @@ $resultat->closeCursor();
                                 <!-- Fin Messages divers -->
 
                                 <form action="">
-                                    <div class="">
-                                        <table class="table table-bordered text-center table-responsive" id="dataTable" width="100%" cellspacing="0">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
                                                     <th>Choix</th>

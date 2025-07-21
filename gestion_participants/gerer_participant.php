@@ -40,6 +40,10 @@ require_once('includes/gerer_participant.php');
                         </div>
                         <div class="card-body">
                             <!-- Messages divers -->
+                            <?php if (isset($_SESSION['liaison_reussie'])) : ?>
+                                <?php afficherAlerte('liaison_reussie', 'success', true); ?>
+                            <?php endif; ?>
+                            
                             <?php if (isset($_SESSION['modification_ok'])) : ?>
                                 <?php afficherAlerte('Les informations du participant ont été modifiées avec succès !', 'success') ?>
                                 <?php unset($_SESSION['modification_ok']) ?>

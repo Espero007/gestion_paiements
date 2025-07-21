@@ -304,7 +304,7 @@ function couperTexte($texte, $nbr_mots, $nbr_caractères)
 
 // En cours de développement
 
-function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $actions = true)
+function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $actions = true, $cbxs = null)
 {
     // $elements : les éléments à afficher sous la forme d'un tableau. Je considère que dans $elements est constitué de deux tableaux, un pour l'entête du tableau et un second pour le body
     // $style correspond au style additionnel qu'on pourrait ajouter au tableau
@@ -313,9 +313,12 @@ function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $a
     //    [1]['intitule'=>'Gérer', 'lien'=>'...']
     // Pour la dernière action de la liste ajouter dans le tableau associatif un booléen avec comme clé 'dernier'
     // On peut ajouter du style aussi si on le souhaite dans une valeur dont la clé sera 'style'
+
+    // Okay, si j'ai bien compris la logique que je suivais, si $cbxs a une valeur, à l'index 0 on aura le nom que les checkbox doivent prendre dans la post et dans l'index 2 on a les ids pour chaque chechbox
+
     $head = $elements[0];
     $body = $elements[1];
-    $actions = $elements[2];
+    $actions = $actions ? $elements[2] : $actions;
     $index = 0; // variable d'incrémentation
 
 ?>
@@ -352,7 +355,7 @@ function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $a
                 <?php foreach ($body as $ligne) : ?>
                     <tr>
                         <?php if ($choix) : ?>
-                            <td><input type="checkbox" name="bref" id="bref"></td>
+                            <td><input type="checkbox" name="<?= $cbxs ? $cbxs[0] : 'bref' ?>[]" value="<?= $cbxs ? $cbxs[1][$index] : 'bref' ?>"></td>
                         <?php endif; ?>
                         <?php foreach ($ligne as $cellule) : ?>
                             <td><?= $cellule != null ? htmlspecialchars($cellule) : '-' ?></td>
@@ -378,8 +381,8 @@ function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $a
                                     </ul>
                                 </div>
                             </td>
-                            <?php $index++ ?>
                         <?php endif; ?>
+                        <?php $index++ ?>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
