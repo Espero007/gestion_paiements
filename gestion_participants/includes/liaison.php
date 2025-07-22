@@ -15,7 +15,7 @@ $etape_2 = false;
 
 // Occupons nous en premier de la partie Participant vers Activités que je pose comme étant le sens 0
 
-if ($sens == 0) {
+if ($sens == 0 && isset($_GET['id'])) {
     // $sens = 0;
     $etape_1 = true;
 
@@ -126,7 +126,7 @@ if ($sens == 0) {
 
 // On s'intéresse à présent au sens 1 : Activité vers Participants
 
-if ($sens == 1) {
+if ($sens == 1 && isset($_GET['id'])) {
     // Activité vers participant
     // $sens = 1;
     $etape_1 = true;
@@ -258,6 +258,7 @@ if (isset($_GET['modifier'])) {
     if (!valider_id('get', 'modifier', '', 'participations')) {
         redirigerVersPageErreur(404, $_SESSION['previous_url']);
     }
+
     $etape_1 = false;
     $etape_2 = true;
     $id_participation = dechiffrer($_GET['modifier']);

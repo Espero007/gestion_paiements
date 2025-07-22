@@ -533,11 +533,11 @@ $pdf->Output('Etat de paiement.pdf', 'I');
     </table>';
     */
 
-    /*$information_supplementaire = ['type' => $titre_activite] ;
+/*$information_supplementaire = ['type' => $titre_activite] ;
     genererHeader($pdf,'etat_paiement',$information_supplementaire );*/
 
 
-    /* Commentaire à enlever apès test
+/* Commentaire à enlever apès test
 
 
     $pdf->Ln(10);
@@ -696,11 +696,13 @@ require_once(__DIR__ . '/../../includes/bdd.php');
 require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
 // Classe personnalisée pour la numérotation des pages
-class MYPDF extends TCPDF {
-    public function Footer() {
+class MYPDF extends TCPDF
+{
+    public function Footer()
+    {
         $this->SetY(-15);
         $this->SetFont('trebucbd', '', 8); // Police grasse pour le pied de page
-        $this->Cell(0, 10,  $this->getAliasNumPage() , 0, false, 'C', 0);
+        $this->Cell(0, 10,  $this->getAliasNumPage(), 0, false, 'C', 0);
     }
 }
 
@@ -714,7 +716,7 @@ if (!valider_id('get', 'id', '', 'participations_activites')) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
 
-$id_activite = $_GET['id'];
+$id_activite = dechiffrer($_GET['id']);
 $stmt = $bdd->prepare('SELECT type_activite, nom FROM activites WHERE id = :id');
 $stmt->execute(['id' => $id_activite]);
 $resultat = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -726,7 +728,8 @@ $nom_activite = htmlspecialchars($resultat['nom']);
 $stmt->closeCursor();
 
 // Fonction pour générer le tableau d'en-tête
-function startTable($type_activite) {
+function startTable($type_activite)
+{
     switch ($type_activite) {
         case 1:
             return '
@@ -798,7 +801,8 @@ function startTable($type_activite) {
 }
 
 // Fonction pour générer une ligne de données
-function generateRow($row, $type_activite, $i) {
+function generateRow($row, $type_activite, $i)
+{
     switch ($type_activite) {
         case 1:
             return '
@@ -848,7 +852,8 @@ function generateRow($row, $type_activite, $i) {
 }
 
 // Fonction pour générer le PDF
-function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite) {
+function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite)
+{
     if (!($pdf instanceof MYPDF)) {
         die("Erreur : \$pdf n'est pas une instance de MYPDF");
     }
@@ -859,7 +864,7 @@ function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite) {
     genererHeader($pdf, 'etat_paiement_' . $type_activite, $information_supplementaire, $id_activite);
 
     $pdf->Ln(20);
-    $reference = ($type_activite === 3) 
+    $reference = ($type_activite === 3)
         ? 'NS N°2548/PR/DC/SGM/DAF/DEC/SAF/SIS/SEC/SD/SA DU 31 DECEMBRE 2020'
         : 'REF NS N°0569/MES/DC/SGM/DEC/SAFM/SIS/SEMC/SA DU 04 DECEMBRE 2023';
     $html = '<p align="center"><b style="font-family: trebucbd;">' . $reference . ' PORTANT CONSTITUTION DES COMMISSIONS CHARGEES DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</b></p><br>';
@@ -878,7 +883,6 @@ function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite) {
         }
         $html = '<p align="center"><b style="font-family: trebucbd;">' . $reference . ' PORTANT CONSTITUTION DES COMMISSIONS CHARGEES DE SUPERVISER LE DÉROULEMENT DES ÉPREUVES ÉCRITES DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</b></p><br>';
         $stmt->closeCursor();
-        
     }
 
     $pageTotal = 0;
@@ -889,7 +893,7 @@ function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite) {
 
     $pdf->SetFont('trebuc', '', 8); // Police non-grasse pour le tableau
     $html .= startTable($type_activite);
-    
+
 
     if (empty($data)) {
         $html .= '<tr><td colspan="' . ($type_activite == 3 ? '11' : ($type_activite == 2 ? '9' : '8')) . '" style="text-align:center;">Aucune donnée disponible</td></tr>';

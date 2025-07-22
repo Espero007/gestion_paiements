@@ -7,13 +7,14 @@ require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 session_start();
 
 // Classe personnalisée pour la numérotation des pages
-class MYPDF extends TCPDF {
-    public function Footer() {
+class MYPDF extends TCPDF
+{
+    public function Footer()
+    {
         $this->SetY(-15);
         $this->SetFont('trebucbd', '', 8); // Police grasse pour le pied de page
-       // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0);
-        $this->Cell(0, 10,  $this->getAliasNumPage() , 0, false, 'C', 0);
-
+        // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0);
+        $this->Cell(0, 10,  $this->getAliasNumPage(), 0, false, 'C', 0);
     }
 }
 
@@ -33,17 +34,13 @@ if (valider_id('get', 'id', '', 'participations_activites')) {
         if (in_array($_GET['document'], ['attestation', 'note'])) {
             // On a la variable 'document' et elle a une bonne valeur
             $redirect = false;
-            $activity_id = $_GET['id'];
+            $activity_id = dechiffrer($_GET['id']);
             $document = $_GET['document'];
         }
     }
 }
 
 if ($redirect) {
-    redirigerVersPageErreur(404, $_SESSION['previous_url']);
-}
-
-if (!valider_id('get', 'id', $bdd, 'participations_activites')) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
 
@@ -115,7 +112,7 @@ $style = '
 if ($document === 'note') {
     // *** Note de Service PDF ***
     configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Note de service');
-    
+
     $information_supplementaire = ['titre' => $titre_activite];
     genererHeader($pdf, 'note_service', $information_supplementaire, $activity_id);
     $pdf->setFont('trebucbd', '', 10); // Gras pour les éléments hors tableau
@@ -149,7 +146,7 @@ if ($document === 'note') {
     $html .= '</tbody></table>';
 
     $pdf->writeHTML($html, true, false, true, false, '');
-    
+
     // Premier responsable et son titre
     $pdf->Ln(10);
     $pdf->setFont('trebucbd', '', 10);
@@ -216,4 +213,3 @@ if ($document === 'note') {
     ob_end_clean();
     $pdf->Output('Attestation collective.pdf', 'I');
 }
-?>

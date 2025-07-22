@@ -20,6 +20,11 @@ $numeros_comptes = [];
 $stmtTotal = $bdd->prepare("SELECT COUNT(*) AS total FROM informations_bancaires WHERE id_participant = ?");
 $stmtTotal->execute([$id_participant]);
 $totalBanques = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
+$stmtTotal->closeCursor();
+
+if ($totalBanques == 0) {
+    redirigerVersPageErreur();
+}
 
 // Calculer la limite autorisée
 // $maxSuppression = ($totalBanques >= 3) ? 2 : (($totalBanques == 2) ? 1 : 0);

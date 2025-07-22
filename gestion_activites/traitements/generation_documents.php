@@ -60,17 +60,17 @@ $documents['liste_rib'] = 'Liste des RIBs';
 // Mise en place des urls de téléchargement
 
 $urls = [
-    'note_service' => '/gestion_activites/scripts_generation/note_attestation.php?document=note&id=' . $id_activite,
-    'attestation_collective' => '/gestion_activites/scripts_generation/note_attestation.php?document=attestation&id=' . $id_activite,
-    'etat_paiement' => '/gestion_activites/scripts_generation/etat_paiement.php?id=' . $id_activite
+    'note_service' => '/gestion_activites/scripts_generation/note_attestation.php?document=note&id=' . chiffrer($id_activite),
+    'attestation_collective' => '/gestion_activites/scripts_generation/note_attestation.php?document=attestation&id=' . chiffrer($id_activite),
+    'etat_paiement' => '/gestion_activites/scripts_generation/etat_paiement.php?id=' . chiffrer($id_activite)
 ];
 
 foreach ($banques as $banque) {
     $cle = strtolower(str_replace(" ", '_', 'ordre_virement_' . supprimerAccents($banque[0])));
-    $urls[$cle] = '/gestion_activites/scripts_generation/ordre_virement.php?id=' . $id_activite . '&banque=' . $banque[0];
+    $urls[$cle] = '/gestion_activites/scripts_generation/ordre_virement.php?id=' . chiffrer($id_activite) . '&banque=' . $banque[0];
 }
-$urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id=' . $id_activite;
-$urls['liste_rib'] = '/gestion_activites/scripts_generation/liste_des_RIB.php?id=' . $id_activite;
+$urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id=' . chiffrer($id_activite);
+$urls['liste_rib'] = '/gestion_activites/scripts_generation/liste_des_RIB.php?id=' . chiffrer($id_activite);
 
 $pdfs = [];
 $pdfs_non_telechargeables = [];

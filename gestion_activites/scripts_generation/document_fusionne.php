@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 if (!valider_id('get', 'id', '', 'participations_activites')) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
-$id_activite = $_GET['id'];
+$id_activite = dechiffrer($_GET['id']);
 
 // Nombre de répétition
 $nbr_ordre_virement = 2;
@@ -37,7 +37,7 @@ for ($i = 0; $i < $nbr_ordre_virement; $i++) {
 
 /** Synthèse des ordres de virement */
 
-for ($i=0; $i < $nbr_synthese_ordres; $i++) { 
+for ($i = 0; $i < $nbr_synthese_ordres; $i++) {
     $fichiers[] = genererSyntheseOrdres($id_activite, false);
 }
 

@@ -11,6 +11,6 @@ if (!valider_id('get', 'id', $bdd, 'participations_activites')) {
 }
 
 // Il me faut la liste des banques et les montants associés à chacune de ces banques
-$id_activite = $_GET['id'];
+$id_activite = dechiffrer($_GET['id']);
 
 genererSyntheseOrdres($id_activite);

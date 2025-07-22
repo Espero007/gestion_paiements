@@ -26,7 +26,7 @@ require_once('includes/suppression_banque.php');
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <h1 class="h4 mb-2 text-gray-800">Acteurs / <strong>Suppression de compte(s) bancaire(s)</strong></h1>
+                    <h1 class="h4 mb-2 text-gray-800">Acteurs / <strong>Suppression de compte(s)</strong></h1>
                     <p class="mt-2">Sélectionnez le compte bancaire associé à l'acteur que vous souhaitez supprimer puis achevez la suppression</p>
 
                     <div class="card shadow mb-4">
@@ -64,7 +64,7 @@ require_once('includes/suppression_banque.php');
 
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" name='suppressionBanque' id='suppressionBanque' value="yes" <?= isset($erreurs) ? (isset($_POST['suppressionBanque']) ? 'checked' : '') : '' ?>>
-                                    <label for="suppressionBanque" class="form-check-label">Je confirme la suppression du compte bancaire sélectionné</label>
+                                    <label for="suppressionBanque" class="form-check-label">Je confirme la suppression</label>
                                     <?php if (isset($erreurs['confirmation'])) : ?>
                                         <p class="m-0"><small class="text-danger">Veuillez confirmer la suppression de votre compte</small></p>
                                     <?php endif; ?>

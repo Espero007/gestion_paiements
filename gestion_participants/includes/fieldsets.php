@@ -8,8 +8,11 @@ if (in_array('infos_generales', $elements_a_inclure)) {
 ?>
     <!-- Fieldset : Informations générales début -->
     <fieldset>
-        <legend class="h6"><strong>Informations générales</strong></legend>
-        <hr>
+        <legend class="h6">
+            <div class="divider text-start mt-0">
+                <div class="divider-text"><strong>Informations générales</strong></div>
+            </div>
+        </legend>
 
         <?php foreach ($informations_generales as $champ => $infos) : ?>
 
@@ -67,8 +70,11 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
     <?php if (isset($page_ajout_participant)) {
         echo "mt-4";
     } ?>">
-        <legend class="h6"><strong>Informations bancaires</strong></legend>
-        <hr>
+        <legend class="h6">
+            <div class="divider text-start mt-0">
+                <div class="divider-text"><strong>Informations bancaires</strong></div>
+            </div>
+        </legend>
 
         <?php
         $counter = 0; // Compteur 

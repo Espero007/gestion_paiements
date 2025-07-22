@@ -6,7 +6,7 @@ require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 
 if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
     // L'utilisateur est connecté
-    header('location:'.generateUrl(''));
+    header('location:' . generateUrl(''));
     exit;
 }
 
@@ -27,16 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['envoyer_lien'])) {
         $stmt->execute(['email' => $_POST['email']]);
         $users = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($stmt->rowCount() != 0) {
-            
+
             // L'utilisateur avec cet email est bien présent. On effectue à présent les actions adéquates pour la réinitialisation du mot de passe
             $token = bin2hex(random_bytes(16));
             $lien_verif = obtenirURLcourant(true) . '/auth/forgot_password.php';
-            if(envoyerLienValidationEmail($lien_verif,$_POST['email'],$users['nom'],$users['prenoms'],1)){
-               $_SESSION["email_envoye"] = 'Un lien de vérification a été envoyé au mail : <span class="text-primary">' . htmlspecialchars($_POST['email']) . '</span>. Cliquez dessus pour confirmer votre email et réinitialiser votre mot de passe.'; 
-            }else {
+            if (envoyerLienValidationEmail($lien_verif, $_POST['email'], $users['nom'], $users['prenoms'], 1)) {
+                $_SESSION["email_envoye"] = 'Un lien de vérification a été envoyé au mail : <span class="text-primary">' . htmlspecialchars($_POST['email']) . '</span>. Cliquez dessus pour confirmer votre email et réinitialiser votre mot de passe.';
+            } else {
                 $anomalie = true;
             }
-
         } else {
             $echec = true;
         }
@@ -57,10 +56,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['envoyer_lien'])) {
     <link rel="stylesheet" href="assets/vendor/fonts/boxicons.css">
     <link rel="stylesheet" href="custom_style.css">
     <!-- Style loader -->
-    <link rel="stylesheet" href="/includes/loader.css">
+    <link rel="stylesheet" href="/assets/css/loader.css">
 </head>
 
 <body class="pb-4">
+    <!-- Loader -->
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p class="mt-2">Chargement...</p>
+    </div>
+
     <!-- Helpers -->
 
     <div id="wrapper">

@@ -152,6 +152,11 @@ $resultat->closeCursor();
                         </div>
                     <?php else : ?>
                         <div class="text-center pt-4">
+                            <!-- Messages divers -->
+                            <?php if (isset($_SESSION['suppression_activite_ok'])) : ?>
+                                <?php afficherAlerte('suppression_activite_ok', 'success', true) ?>
+                            <?php endif; ?>
+                            <!-- Fin Messages divers -->
                             <h3 class="font-weight-bold">Aucune activité retrouvée !</h1>
                                 <p class="mt-3 text-center">Il semble que vous n'ayiez aucune activité déjà créée. Pourquoi ne pas corriger le tir et en créer dès maintenant ?</p>
                                 <a href="/gestion_activites/creer_activite" class="btn btn-outline-primary">Créer une activité</a>

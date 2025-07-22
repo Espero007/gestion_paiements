@@ -40,14 +40,14 @@ if ($nombre_comptes_bancaires_permis == 0) {
     // Le quota n'est pas atteint. On peut maintenant s'intéresser à la valeur dans GET['nombre_comptes_bancaires']
     $quota_comptes_bancaires_atteint = false;
 
-    if (!isset($_GET['nombre_comptes_bancaires'])) {
+    if (!isset($_GET['nbr'])) {
         $recuperer_nbr_comptes_bancaires = true;
     } else {
         $recuperer_nbr_comptes_bancaires = false;
 
         // Tests de validation sur le nombre de comptes bancaires
         // On vérifie si c'est bien un nombre valide
-        $valeur = intval($_GET['nombre_comptes_bancaires']);
+        $valeur = intval($_GET['nbr']);
 
         if ($valeur < 1 || $valeur > $nombre_comptes_bancaires_permis) {
             // La valeur reçue n'est pas valide

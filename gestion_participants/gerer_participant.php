@@ -73,7 +73,7 @@ require_once('includes/gerer_participant.php');
                             <?php foreach ($infos as $info => $valeur) : ?>
                                 <p class="mb-3">
                                     <span class="font-weight-bold"><?= $valeur ?> : </span>
-                                    <span><?= htmlspecialchars($participant[$info]) ?></span>
+                                    <span><?= $info != 'date_naissance' ? htmlspecialchars($participant[$info]) : htmlspecialchars(date('d/m/Y', strtotime($participant[$info]))) ?></span>
                                 </p>
                             <?php endforeach; ?>
 
@@ -113,7 +113,7 @@ require_once('includes/gerer_participant.php');
                                     <a href="/gestion_participants/lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="btn btn-outline-primary">Associer à une activité</a>
                                 </div>
                             <?php else: ?>
-                                <?php afficherSousFormeTableau($informations, 'table-responsive', 'table-bordered text-center', false, true) ?>
+                                <?php afficherSousFormeTableau($informations, '', 'table-bordered text-center', false, true) ?>
                             <?php endif; ?>
                         </div>
                     </div>

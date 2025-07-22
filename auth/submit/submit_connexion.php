@@ -9,7 +9,8 @@ $_SESSION['current_url'] = obtenirURLcourant();
 
 if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
     // L'utilisateur est connecté
-    header('location:'.generateUrl(''));
+    // header('location:'.generateUrl(''));
+    header('location:/index.php');
     exit;
 }
 
@@ -64,13 +65,15 @@ if (isset($_POST['connexion'])) {
                     $expire = date('Y-m-d H:i:s', time() + (86400 * $nbr_jours)); // expire au bout de $nbr_jours jours
 
                     // En principe lors de la déconnexion le token doit être supprimé dans la bdd donc pas besoin de le refaire ici mais on le refait au cas il y aurait des anomalies qu'on ne peut pas forcément prédire
-                    $stmt = $bdd->query('DELETE FROM token_souvenir WHERE user_id ='.$logged_user['user_id']);
-                    if(isset($_COOKIE['souvenir']))
-                        unset($_COOKIE['souvenir']); // On shoote aussi le cookie s'il existe
+                    $stmt = $bdd->query('DELETE FROM token_souvenir WHERE user_id =' . $logged_user['user_id']);
+                    // if (isset($_COOKIE['souvenir'])) {
+                    //     unset($_COOKIE['souvenir']); // On shoote aussi le cookie s'il existe
+                    // }
 
                     $stmt = $bdd->prepare("INSERT INTO token_souvenir(user_id,token, expire_le) VALUES (?,?,?)");
                     $stmt->execute([$logged_user['user_id'], hash('sha256', $token), $expire]);
                     setcookie('souvenir', $token, time() + (86400 * $nbr_jours), '/', '', false, true); // expire au bout 30 jours
+                    // setcookie('souvenir', $token, time() + (60), '/', '', false, true); // expire au bout 30 jours
                 }
 
                 // Redirection vers la page d'accueil par défaut mais s'il y avait une url on la chope
@@ -78,7 +81,8 @@ if (isset($_POST['connexion'])) {
                     header('location:' . $_SESSION['previous_url']);
                     exit;
                 } else {
-                    header('location:'.generateUrl(''));
+                    // header('location:' . generateUrl(''));
+                    header('location:/index.php');
                     exit;
                 }
             } else {

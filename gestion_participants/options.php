@@ -35,7 +35,7 @@
      <?php elseif ($titre_page == 'Gestion de l\'acteur'): ?>
          <?php if (count($comptes) > 1): ?>
              <li>
-                 <a href="supprimer_une_banque.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Supprimer un compte bancaire</a>
+                 <a href="supprimer_une_banque.php?id=<?= chiffrer($participant['id_participant']) ?>" class="dropdown-item custom-dropdown-item">Supprimer un compte bancaire</a>
              </li>
          <?php endif; ?>
      <?php endif; ?>

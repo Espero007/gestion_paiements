@@ -42,8 +42,9 @@ require_once('includes/traitements_ajout_comptes.php');
 
                             <?php if ($recuperer_nbr_comptes_bancaires) : ?>
                                 <!-- Message à afficher quand on récupère le nombre de comptes qu'on doit lui ajouter -->
+                                <?php $formatter = new NumberFormatter('fr_FR', NumberFormatter::SPELLOUT); ?>
 
-                                <p class="mt-2"><strong><?= htmlspecialchars($nom) . ' ' . htmlspecialchars($prenoms) ?></strong> a déjà <strong><?= $nombre_comptes_existants ?></strong> compte(s) bancaire(s) enregistré(s) et ne peut en avoir que <strong><?= NOMBRE_MAXIMAL_COMPTES ?></strong> au total.</p>
+                                <p class="mt-2"><strong><?= htmlspecialchars($nom) . ' ' . htmlspecialchars($prenoms) ?></strong> a déjà <?= $formatter->format($nombre_comptes_existants) ?><strong> (<?= $nombre_comptes_existants ?>)</strong> <?= $nombre_comptes_existants > 1 ? 'comptes bancaires enregistrés' : 'compte bancaire enregistré' ?> et ne peut en avoir que <?= $formatter->format(NOMBRE_MAXIMAL_COMPTES) ?> <strong>(<?= NOMBRE_MAXIMAL_COMPTES ?>)</strong> au total.</p>
 
                             <?php else: ?>
                                 <!-- On a le nombre de comptes qu'on doit lui ajouter et donc on affiche le dernier message de la page -->
@@ -67,8 +68,8 @@ require_once('includes/traitements_ajout_comptes.php');
                                                 <div class="mb-2 row align-items-center">
                                                     <label for="nombre_comptes_bancaires" class="col-form-label col-sm-4">Nombre de comptes à ajouter</label>
                                                     <div class="col-sm-8">
-                                                        <input type="hidden" name="id_participant" value="<?= $id_participant ?>">
-                                                        <input type="number" class="form-control" id="nombre_comptes_bancaires" name="nombre_comptes_bancaires" placeholder="Indiquez le nombre" max="<?php echo $nombre_comptes_bancaires_permis; ?>" min="1" required>
+                                                        <input type="hidden" name="id" value="<?= chiffrer($id_participant) ?>">
+                                                        <input type="number" class="form-control" id="nombre_comptes_bancaires" name="nbr" placeholder="Indiquez le nombre" max="<?php echo $nombre_comptes_bancaires_permis; ?>" min="1" required>
                                                     </div>
                                                 </div>
                                                 <button type="submit" class="btn btn-primary mt-2">Continuer</button>
@@ -88,7 +89,7 @@ require_once('includes/traitements_ajout_comptes.php');
                                             <form action="" method="post" enctype="multipart/form-data">
                                                 <?php require_once('includes/fieldsets.php') ?>
                                                 <input type="hidden" name="MAX_FILE_SIZE" value="<?= $taille_admissible_fichiers_pdf ?>">
-                                                
+
                                                 <!-- Boutons d'action -->
                                                 <div class="mt-4 mb-4">
                                                     <button type="submit" name="ajouter_comptes" class="btn btn-primary mr-3">Ajouter <?= $nombre_comptes_bancaires > 1 ? 'les comptes' : 'le compte' ?></button>

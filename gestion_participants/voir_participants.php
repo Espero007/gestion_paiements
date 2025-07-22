@@ -77,7 +77,7 @@ $resultat->closeCursor();
                                 <?php endif; ?>
 
                                 <!-- Participant supprimé avec succès -->
-                                <?php if (isset($_SESSION['suppression_ok'])) : ?>
+                                <?php if (isset($_SESSION['suppression_acteur_ok'])) : ?>
                                     <div class="alert alert-success mt-2 text-center alert-dismissible">
                                         L'acteur a été supprimé avec succès !
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
@@ -150,6 +150,15 @@ $resultat->closeCursor();
                         </div>
                     <?php else: ?>
                         <div class="text-center pt-4">
+                            <!-- Messages divers -->
+                            <?php if (isset($_SESSION['suppression_acteur_ok'])) : ?>
+                                <div class="alert alert-success mt-2 text-center alert-dismissible">
+                                    L'acteur a été supprimé avec succès !
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                </div>
+                                <?php unset($_SESSION['suppression_acteur_ok']); ?>
+                            <?php endif; ?>
+                            <!-- Fin Messages divers -->
                             <h3 class="font-weight-bold">Aucun acteur retrouvé !</h3>
                             <p class="mt-3 text-center">Il semble que vous n'ayiez aucun acteur déjà ajouté. Pourquoi ne pas remédier à celà et en ajouter dès maintenant ?</p>
                             <a href="/gestion_participants/ajouter_participant" class="btn btn-outline-primary">Ajouter un acteur</a>

@@ -109,6 +109,13 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
     <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
     <!-- Style loader -->
-    <link rel="stylesheet" href="/includes/loader.css">
+    <link rel="stylesheet" href="/assets/css/loader.css">
 
 </head>
+
+<!-- Loader -->
+
+<div id="loader">
+    <div class="spinner"></div>
+    <p class="mt-2">Chargement...</p>
+</div>

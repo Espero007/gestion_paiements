@@ -9,7 +9,7 @@ require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 $redirect = true;
 if (valider_id('get', 'id', $bdd, 'participations_activites')) {
     // Il faut maintenant s'assurer que la banque reçue est valable
-    $id_activite = $_GET['id'];
+    $id_activite = dechiffrer($_GET['id']);
     if (isset($_GET['banque']) && in_array($_GET['banque'], listeBanques($id_activite))) {
         $banque = $_GET['banque'];
         $redirect = false;

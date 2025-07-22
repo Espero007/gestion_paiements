@@ -31,7 +31,7 @@ require_once('traitements/gerer_activite.php');
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h4 mb-0 text-gray-800">Activités / <strong>Gestion de l'activité</strong></h1>
                         <?php if (count($participants_associes) != 0) : ?>
-                            <a href="/gestion_activites/generation_documents.php?id_activite=<?= $id_activite ?>" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+                            <a href="/gestion_activites/generation_documents.php?id=<?= chiffrer($id_activite) ?>" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
                                 <i class="fas fa-download text-white-50 mr-2"></i> Générer les documents</a>
                         <?php endif; ?>
                     </div>

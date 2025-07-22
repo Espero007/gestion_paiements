@@ -1,7 +1,7 @@
 <?php
 // Avant toute chose je dois disposer soit de l'id du participant si on va dans le sens participant vers activités ou de l'id de l'activité si on va dans l'autre sens. Pareillement je pourrais disposer uniquement de la variable 'modifier' dans le cas d'une modification des informations donc on checke ces trois éléments et si ils sont absents on redirige purement et simplement vers la page d'erreur
 
-if (!isset($_GET['s']) || (isset($_GET['s']) && (!isset($_GET['id']) && !isset($_GET['modifier'])))) {
+if (!isset($_GET['s']) || (isset($_GET['s']) && !isset($_GET['id']) && !isset($_GET['modifier']))) {
     redirigerVersPageErreur();
 } else {
     $sens = filter_input(INPUT_GET, 's', FILTER_VALIDATE_INT);
