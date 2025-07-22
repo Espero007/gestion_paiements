@@ -2,7 +2,7 @@
 $section = 'Participants';
 $titre_page = "Liste des acteurs";
 require_once(__DIR__ . '/../includes/header.php');
-// require_once(__DIR__.'/../crypto.php');
+// require_once(__DIR__ . '/../crypto.php');
 
 $stmt = 'SELECT id_participant, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance FROM participants WHERE id_user=' . $_SESSION['user_id'] . ' ORDER BY id_participant DESC';
 $resultat = $bdd->query($stmt);

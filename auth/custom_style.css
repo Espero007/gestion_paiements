@@ -41,10 +41,10 @@
      height: calc(1.5em + .75rem + 2px);
  }
 
-   .input-group-text {
-       border-radius: 0 10rem 10rem 0;
-       width: 3rem;
-   }
+ .input-group-text:not(.pasToi) {
+     border-radius: 0 10rem 10rem 0;
+     width: 3rem;
+ }
 
  .input-group-text i {
      font-size: 0.9375rem;

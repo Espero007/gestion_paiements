@@ -168,3 +168,5 @@ try {
 } catch (PDOException $e) {
     echo "Echec lors de la connexion : " . $e->getMessage();
 }
+
+$GLOBALS['bdd'] = $bdd;

@@ -35,6 +35,7 @@ function redirigerVersPageErreur($code_erreur = 404, $url = null)
         // On a pas inqué l'url donc par défaut c'est l'url précédent qui est utilisé
     }
     $_SESSION['code_erreur'] = $code_erreur;
+
     header('location:/page_erreur.php');
     exit;
 }
