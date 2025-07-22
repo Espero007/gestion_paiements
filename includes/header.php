@@ -67,7 +67,7 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
 
             $_SESSION['dernier_signe_activite'] = time();
             $_SESSION['current_url'] = obtenirURLcourant();
-            if (!isset($_SESSION['cle'])) {
+            if (!isset($_SESSION['cle_chiffrement'])) {
                 $_SESSION['cle_chiffrement'] = bin2hex(random_bytes(16)); // Clé de chiffrementt pour cet utilisateur
             }
         }

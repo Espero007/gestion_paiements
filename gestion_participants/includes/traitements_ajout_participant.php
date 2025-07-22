@@ -40,10 +40,10 @@ if (isset($_POST['ajouter_participant'])) {
             'diplome_le_plus_eleve' => $_POST['diplome_le_plus_eleve']
         ]);
 
-        if($stmt->rowCount() != 0){
+        if ($stmt->rowCount() != 0) {
             $doublon = true;
             $erreurs = [];
-        }else{
+        } else {
             // S'il n'y a aucune erreur tout va bien je présume
             $matricule_ifu = $_POST['matricule_ifu'];
 
@@ -84,13 +84,14 @@ if (isset($_POST['ajouter_participant'])) {
 }
 
 if (isset($traitement_fichiers_ok) && $traitement_fichiers_ok) {
+    $id_participant = chiffrer($id_participant);
     $_SESSION['participant_ajoute'] = "
          <div>
             <!-- Message proprement dit -->
             <p class=\"m-0\">L'acteur a été enregistré avec succès !</p>
-            <p class=\"m-0\"><a href=\"ajouter_comptes.php?id_participant=$id_participant\">Cliquez ici</a> si vous souhaitez lui ajouter des comptes bancaires à moins que vous ne préfériez l'<a href=\"/gestion_participants/lier_participant_activite.php?id_participant=$id_participant\">associer</a> directement à une activité</p>
+            <p class=\"m-0\"><a href=\"ajouter_comptes.php?id=$id_participant\">Cliquez ici</a> si vous souhaitez lui ajouter des comptes bancaires à moins que vous ne préfériez l'<a href=\"/gestion_participants/liaison.php?id=$id_participant\"&s=0>associer</a> directement à une activité</p>
         </div>
     ";
-    header('location:gerer_participant.php?id='.$id_participant);
+    header('location:gerer_participant.php?id=' . $id_participant);
     exit;
 }

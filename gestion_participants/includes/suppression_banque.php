@@ -3,7 +3,7 @@
 if (!valider_id('get', 'id', '')) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
-$id_participant = $_GET['id'];
+$id_participant = dechiffrer($_GET['id']);
 
 // Récupérer les comptes
 $stmt = $bdd->prepare("

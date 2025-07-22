@@ -13,11 +13,10 @@ require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 */
 
 if (!valider_id('get', 'id', $bdd, 'participants')) {
-    header('location' . $_SESSION['previous_url']);
-    exit;
+    redirigerVersPageErreur();
 } else {
     // L'id est présent et valide
-    $id_participant = $_GET['id'];
+    $id_participant = dechiffrer($_GET['id']);
 
     // Je supprime dans la table 'participants'
     $stmt = "DELETE FROM participants WHERE id_participant=$id_participant";
@@ -38,7 +37,7 @@ if (!valider_id('get', 'id', $bdd, 'participants')) {
 
     foreach ($ribs as $rib) {
         // Je récupère le chemin d'accès au fichier que nous autres avons sauvegardé
-        $stmt = $bdd->query('SELECT chemin_acces FROM fichiers WHERE id_fichier='.$rib);
+        $stmt = $bdd->query('SELECT chemin_acces FROM fichiers WHERE id_fichier=' . $rib);
         $chemin = $stmt->fetchAll(PDO::FETCH_NUM);
         $chemin = $chemin[0][0];
         unlink($chemin); // Suppresion du fichier

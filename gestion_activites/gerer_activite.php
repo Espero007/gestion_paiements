@@ -183,23 +183,8 @@ require_once('traitements/gerer_activite.php');
                                 <div class="btn-group dropup">
                                     <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres actions </button>
 
-                                    <ul class="dropdown-menu shadow">
-                                        <li>
-                                            <a href="/gestion_participants/liaison.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Associer des acteurs</a>
-                                        </li>
-                                        <?php if (count($participants_associes) != 0) : ?>
-                                            <li>
-                                                <a href="/gestion_activites/edition_en_ligne.php?id=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Editer l'entête de vos fichiers</a>
-                                            </li>
-                                        <?php endif; ?>
-
-                                        <li>
-                                            <hr class="dropwdown-divider my-1">
-                                        </li>
-                                        <li>
-                                            <a href="#" class="dropdown-item text-danger fs-6 custom-dropdown-item del-btn" data-toggle="modal" data-target="#deletionModal" id="<?= $activite['id'] ?>">Supprimer</a>
-                                        </li>
-                                    </ul>
+                                    <!-- Options -->
+                                    <?php require_once('options.php') ?>
                                 </div>
                             </div>
                         </div>

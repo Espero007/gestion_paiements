@@ -1,26 +1,20 @@
 <?php
 // Validation id
 
-if (!isset($_GET['id_participant'])) {
-    header('location:'.$_SESSION['previous_url']);
-    exit;
-} else {
-    if (valider_id('get', 'id_participant', $bdd)) {
-        // L'id est valide. Je vais prendre les informations du participant
-        $id_participant = $_GET['id_participant'];
+if (valider_id('get', 'id', $bdd)) {
+    // L'id est valide. Je vais prendre les informations du participant
+    $id_participant = dechiffrer($_GET['id']);
 
-        $stmt = "SELECT * FROM participants WHERE id_participant=" . $id_participant;
-        $resultat = $bdd->query($stmt);
+    $stmt = "SELECT * FROM participants WHERE id_participant=" . $id_participant;
+    $resultat = $bdd->query($stmt);
 
-        if (!$resultat) {
-            redirigerVersPageErreur(500, obtenirURLcourant());
-        }
-        $infos_participant = $resultat->fetch(PDO::FETCH_ASSOC);
-        $resultat->closeCursor();
-    } else {
-        header('location:voir_participants.php');
-        exit;
+    if (!$resultat) {
+        redirigerVersPageErreur(500, obtenirURLcourant());
     }
+    $infos_participant = $resultat->fetch(PDO::FETCH_ASSOC);
+    $resultat->closeCursor();
+} else {
+    redirigerVersPageErreur();
 }
 
 $elements_a_inclure = ['infos_generales', 'infos_bancaires'];
@@ -62,6 +56,6 @@ if (isset($_POST['modifier_infos'])) {
 
 if (isset($traitement_fichiers_ok) && $traitement_fichiers_ok) {
     $_SESSION['modification_ok'] = true;
-    header('location:gerer_participant.php?id='.$id_participant);
+    header('location:gerer_participant.php?id=' . chiffrer($id_participant));
     exit;
 }

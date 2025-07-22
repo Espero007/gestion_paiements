@@ -19,11 +19,10 @@ require_once('includes/bdd.php');
 <body>
     <?php
 
-    $id_chiffre = chiffrer(25);
+    // $id_chiffre = chiffrer(902);
+    // echo $id_chiffre;
 
-    echo $id_chiffre . '<br>';
-    echo 'bonjour<br>';
-    echo dechiffrer($id_chiffre);
+    echo dechiffrer('OI_bP-LuNbUCPu6WCZhMEAM40g');
 
     ?>
 

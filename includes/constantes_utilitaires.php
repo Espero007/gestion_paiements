@@ -199,10 +199,6 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
         }
     }
 
-    // if ($chiffre) {
-    //     $valeur = dechiffrer($valeur);
-    // }
-
     if (in_array($table, ['participants', 'activites'])) {
         $stmt = $bdd->prepare("SELECT $type_id FROM $table WHERE $type_id=:valeur_id AND id_user=" . $_SESSION['user_id']);
     } elseif (str_contains($table, 'participations_')) {

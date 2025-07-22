@@ -97,29 +97,7 @@ require_once('includes/gerer_participant.php');
                             <div class="btn-group dropup">
                                 <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres options</button>
 
-                                <ul class="dropdown-menu shadow">
-                                    <?php if (!$quota_comptes_bancaires_atteint) : ?>
-                                        <li><a href="ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a></li>
-                                    <?php endif; ?>
-                                    <li>
-                                        <a href="modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
-                                    </li>
-
-                                    <li>
-                                        <a href="lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer à une activité</a>
-                                    </li>
-                                    <?php if (count($comptes) > 1): ?>
-                                        <li>
-                                            <a href="supprimer_une_banque.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item text-danger">Supprimer un compte bancaire</a>
-                                        </li>
-                                    <?php endif; ?>
-                                    <li>
-                                        <hr class="dropwdown-divider">
-                                    </li>
-                                    <li>
-                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item del-btn" id='<?= $participant['id_participant'] ?>' data-toggle="modal" data-target="#deletionModal">Supprimer</a>
-                                    </li>
-                                </ul>
+                                <?php require_once('options.php') ?>
                             </div>
                         </div>
                     </div>

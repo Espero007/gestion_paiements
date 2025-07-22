@@ -100,7 +100,7 @@ $resultat->closeCursor();
                                 <!-- Fin Messages divers -->
 
                                 <form action="">
-                                    <div class="table-responsive">
+                                    <div class="">
                                         <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
@@ -121,53 +121,22 @@ $resultat->closeCursor();
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-                                                <?php foreach ($participants as $participant) :
-                                                    // $token = chiffrer($participant['id_participant']);
-                                                ?>
+                                                <?php foreach ($participants as $participant) : ?>
 
                                                     <tr>
                                                         <td><input type="checkbox" name="bref" id="bref"></th>
                                                         <td><?= htmlspecialchars($participant['nom']) ?></td>
                                                         <td><?= htmlspecialchars($participant['prenoms']) ?></td>
                                                         <td><?= htmlspecialchars($participant['matricule_ifu']) ?></td>
-                                                        <!-- <td>
-                                                            Gérer
-                                                            <a href="/gestion_participants/modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>"><button class="btn btn-primary">Modifier</button></a>
-                                                            <button class="btn btn-danger">Supprimer</button>
-                                                        </td> -->
+
+                                                        <!-- Options -->
                                                         <td>
-                                                            <!-- <a href="/gestion_participants/">Associer à une activité</a> -->
                                                             <div class="btn-group">
-
-
-                                                                <a href="/gestion_participants/gerer_participant.php?id=<?= $participant['id_participant'] ?>" class="btn btn-primary">Gérer</a><br>
+                                                                <a href="/gestion_participants/gerer_participant.php?id=<?= chiffrer($participant['id_participant']) ?>" class="btn btn-primary">Gérer</a><br>
 
                                                                 <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                                                <ul class="dropdown-menu">
-                                                                    <li>
-                                                                        <a href="/gestion_participants/gerer_participant.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Voir</a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="/gestion_participants/modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="/gestion_participants/ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="/gestion_participants/lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer à une activité</a>
-                                                                    </li>
-                                                                    <?php if ($participant['banque_count'] > 1): ?>
-                                                                        <li>
-                                                                            <a href="/gestion_participants/supprimer_une_banque.php?id=<?= $participant['id_participant'] ?>" class="dropdown-item custom-dropdown-item text-danger">Supprimer un compte bancaire</a>
-                                                                        </li>
-                                                                    <?php endif; ?>
-                                                                    <li>
-                                                                        <hr class="dropdown-divider">
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item del-btn" id='<?= $participant['id_participant'] ?>' data-toggle="modal" data-target="#deletionModal">Supprimer</a>
-                                                                    </li>
-                                                                </ul>
+
+                                                                <?php include('options.php') ?>
                                                             </div>
                                                         </td>
                                                     </tr>

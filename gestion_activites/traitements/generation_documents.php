@@ -1,7 +1,7 @@
 <?php
 // On vérifie la présence de l'id de l'activité à gérer et si elle n'est pas présente on redirige vers la page précédente
 
-if(!valider_id('get', 'id_activite', '', 'participations_activites')){
+if (!valider_id('get', 'id', '', 'participations_activites')) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
 
@@ -25,11 +25,11 @@ if(!valider_id('get', 'id_activite', '', 'participations_activites')){
 // }
 
 // Arrivé ici on a une activité valide
-$id_activite = $_GET['id_activite'];
+$id_activite = dechiffrer($_GET['id']);
 
 // Vérifions si on a déjà défini pour cette activité les informations de l'entête
 
-$stmt = $bdd->query('SELECT id FROM informations_entete WHERE id_activite='.$id_activite);
+$stmt = $bdd->query('SELECT id FROM informations_entete WHERE id_activite=' . $id_activite);
 $entete_editee = $stmt->rowCount() == 0 ? false : true;
 
 // Prenons la liste des banques dont on peut générer les ordres de virement
@@ -38,7 +38,7 @@ $stmt = $bdd->prepare(
     FROM participations pa
     INNER JOIN participants p ON pa.id_participant = p.id_participant
     INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
-    WHERE p.id_user='. $_SESSION['user_id'] .' AND pa.id_activite='.$id_activite
+    WHERE p.id_user=' . $_SESSION['user_id'] . ' AND pa.id_activite=' . $id_activite
 );
 $stmt->execute();
 $banques = $stmt->fetchAll(PDO::FETCH_NUM);
@@ -50,7 +50,7 @@ $documents = [
 ];
 foreach ($banques as $banque) {
     $cle = strtolower(str_replace(" ", '_', 'ordre_virement_' . supprimerAccents($banque[0])));
-    $documents[$cle] = 'Ordre de virement '.$banque[0];
+    $documents[$cle] = 'Ordre de virement ' . $banque[0];
 }
 $documents['synthese_ordres_virements'] = 'Synthèse des ordres de virements';
 $documents['liste_rib'] = 'Liste des RIBs';
@@ -61,16 +61,16 @@ $documents['liste_rib'] = 'Liste des RIBs';
 
 $urls = [
     'note_service' => '/gestion_activites/scripts_generation/note_attestation.php?document=note&id=' . $id_activite,
-    'attestation_collective' => '/gestion_activites/scripts_generation/note_attestation.php?document=attestation&id='.$id_activite,
-    'etat_paiement' => '/gestion_activites/scripts_generation/etat_paiement.php?id='.$id_activite
+    'attestation_collective' => '/gestion_activites/scripts_generation/note_attestation.php?document=attestation&id=' . $id_activite,
+    'etat_paiement' => '/gestion_activites/scripts_generation/etat_paiement.php?id=' . $id_activite
 ];
 
 foreach ($banques as $banque) {
     $cle = strtolower(str_replace(" ", '_', 'ordre_virement_' . supprimerAccents($banque[0])));
-    $urls[$cle] = '/gestion_activites/scripts_generation/ordre_virement.php?id='.$id_activite.'&banque=' . $banque[0];
+    $urls[$cle] = '/gestion_activites/scripts_generation/ordre_virement.php?id=' . $id_activite . '&banque=' . $banque[0];
 }
-$urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id='.$id_activite;
-$urls['liste_rib'] = '/gestion_activites/scripts_generation/liste_des_RIB.php?id='.$id_activite;
+$urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id=' . $id_activite;
+$urls['liste_rib'] = '/gestion_activites/scripts_generation/liste_des_RIB.php?id=' . $id_activite;
 
 $pdfs = [];
 $pdfs_non_telechargeables = [];
@@ -79,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($documents as $document => $label) {
         if (in_array($document, $_POST)) {
             $documents_choisis[] = $document;
-            if(!in_array($document, $pdfs_non_telechargeables))
-            $pdfs[] = $urls[$document];
+            if (!in_array($document, $pdfs_non_telechargeables))
+                $pdfs[] = $urls[$document];
         }
     }
 }

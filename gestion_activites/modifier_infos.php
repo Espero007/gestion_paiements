@@ -4,18 +4,15 @@ $titre = "Modifications des informations";
 require_once(__DIR__ . '/../includes/header.php');
 
 // Vérifier si l'ID de l'activité est fourni
-if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-    header('Location:' . $_SESSION["previous_url"]);
-    exit;
+if (!valider_id('get', 'id', '', 'activites')) {
+    redirigerVersPageErreur();
 }
 
-$activity_id = $_GET['id'];
+$activity_id = dechiffrer($_GET['id']);
 
 
 // Récupérer les données de l'activité
 try {
-
-
     $sql = 'SELECT a.* 
             FROM activites a 
             WHERE a.id = :id AND a.id_user = :id_user';
@@ -46,7 +43,7 @@ try {
     $titres_associes = implode(',', array_column($titres_data, 'nom'));
     $indemnite_forfaitaire = implode(',', array_filter(array_column($titres_data, 'indemnite_forfaitaire')));
 } catch (PDOException $e) {
-    $_SESSION['form_errors'] = ['database' => "Erreur lors de la récupération des données. Veuillez réessayer.".$e->getMessage()];
+    $_SESSION['form_errors'] = ['database' => "Erreur lors de la récupération des données. Veuillez réessayer." . $e->getMessage()];
     die("Erreur : " . $e->getMessage());
     // header('Location: changeActivity.php');
     //exit;
@@ -276,7 +273,7 @@ unset($_SESSION['success_data']);
                                                     <?php endif; ?>
                                                     <small> Note : séparés par des virgules, lettres uniquement, ex. : R/DEC,Superviseur (il s'agit des titres que les participants de l'activité auront. Tout comme dans le cas des diplômes, les indiquer ici vous facilitera le travail quand vous devrez lier des participants à votre activité)</small>
                                                     <!-- Avertissement -->
-                                                    <small class="text-danger"> 
+                                                    <small class="text-danger">
                                                         Avertissement : Si vous modifiez un titre pour lequel un ou des participants ont déjà été associés à votre activité, cette modification sera prise en compte dans les informations de la liaison avec ce ou ces participants.
                                                         Par-contre, si vous supprimez un titre pour lequel un ou des participants ont été associés à votre activité, la liaison avec ce ou ces participants sera rompue.
                                                     </small>

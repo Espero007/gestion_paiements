@@ -5,7 +5,7 @@ if (!valider_id('get', 'id', '', 'participations_activites')) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
     // echo 'ici';
 }
-$id_activite = $_GET['id'];
+$id_activite = dechiffrer($_GET['id']);
 $user_id = $_SESSION['user_id'];
 $modification = false;
 
@@ -50,11 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enregistrer'])) {
 
     if (!isset($erreurs)) {
         // On démarre les insertions
-        if(!$modification){
+        if (!$modification) {
             $stmt = $bdd->prepare('INSERT INTO informations_entete(id_activite, ligne1, ligne2, ligne3, ville, date1, date2) VALUES (' . $id_activite . ', :ligne1, :ligne2, :ligne3, :ville, :date1, :date2)');
-        }else{
+        } else {
             // Une modification
-            $stmt = $bdd->prepare('UPDATE informations_entete SET ligne1=:ligne1, ligne2=:ligne2, ligne3=:ligne3, ville=:ville, date1=:date1, date2=:date2 WHERE id_activite='.$id_activite);
+            $stmt = $bdd->prepare('UPDATE informations_entete SET ligne1=:ligne1, ligne2=:ligne2, ligne3=:ligne3, ville=:ville, date1=:date1, date2=:date2 WHERE id_activite=' . $id_activite);
         }
 
         $stmt->execute([

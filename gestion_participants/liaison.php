@@ -1,31 +1,52 @@
 <?php
 // Avant toute chose je dois disposer soit de l'id du participant si on va dans le sens participant vers activités ou de l'id de l'activité si on va dans l'autre sens. Pareillement je pourrais disposer uniquement de la variable 'modifier' dans le cas d'une modification des informations donc on checke ces trois éléments et si ils sont absents on redirige purement et simplement vers la page d'erreur
 
-if (!isset($_GET['id_participant']) && !isset($_GET['id_activite']) && !isset($_GET['modifier']) && !isset($_GET['sens'])) {
-    redirigerVersPageErreur(404);
-    exit;
-}
-
-if (isset($_GET['id_participant'])) {
-    $titre_page = 'Liaison Acteur - Activités';
-    $section = 'Participants';
-} elseif (isset($_GET['id_activite'])) {
-    $titre_page = 'Liaison Activité - Acteurs';
-    $section = 'Activités';
-} elseif (isset($_GET['modifier'])) {
-    $titre_page = 'Modification Liaison';
-    $redirect = true;
-    $sens = filter_input(INPUT_GET, 'sens', FILTER_VALIDATE_INT);
-
-    if (in_array($_GET['sens'], [0, 1])) {
-        $redirect = false;
-        if ($_GET['sens'] == 0) {
-            $section = 'Participants';
-        } elseif ($_GET['sens'] == 1) {
-            $section = 'Activités';
-        }
+if (!isset($_GET['s']) || (isset($_GET['s']) && (!isset($_GET['id']) && !isset($_GET['modifier'])))) {
+    redirigerVersPageErreur();
+} else {
+    $sens = filter_input(INPUT_GET, 's', FILTER_VALIDATE_INT);
+    if (!in_array($sens, [0, 1])) {
+        redirigerVersPageErreur();
     }
 }
+
+// On définit la section
+
+if (!$sens) {
+    // $sens == 0
+    $section = 'Participants';
+} else {
+    // $sens != 0
+    $section = 'Activités';
+}
+
+// Puis le titre
+
+if (isset($_GET['modifier'])) {
+    $titre_page = 'Modification Liaison';
+} else {
+    if ($sens == 0) {
+        $titre_page = 'Liaison Acteur - Activités';
+    } else {
+        $titre_page = 'Liaison Activité - Acteurs';
+    }
+}
+
+// if (!isset($_GET['modifier']) && $sens == 0) {
+//     $titre_page = 'Liaison Acteur - Activités';
+//     $section = 'Participants';
+// } elseif (!isset($_GET['modifier']) && $sens == 1) {
+//     $titre_page = 'Liaison Activité - Acteurs';
+//     $section = 'Activités';
+// } elseif (isset($_GET['modifier'])) {
+//     $titre_page = 'Modification Liaison';
+
+//     if ($_GET['sens'] == 0) {
+//         $section = 'Participants';
+//     } elseif ($_GET['sens'] == 1) {
+//         $section = 'Activités';
+//     }
+// }
 require_once(__DIR__ . '/../includes/header.php');
 if (isset($redirect) && $redirect) {
     // Essentiellement pour le cas d'une modification de la liaison
@@ -76,7 +97,7 @@ require_once('includes/liaison.php');
                             <?php endif; ?>
                         </h1>
 
-                        <p class="mt-2"> <?= !isset($modification) ? 'Liez vos acteurs à vos activités pour profiter de toutes les fonctionnalités disponibles !' : 'Vous avez fait une erreur lors de la liaison de votre acteur à l\'activité ? Vous êtes au bon endroit !' ?></p>
+                        <p class="mt-2"> <?= !$modification ? 'Liez vos acteurs à vos activités pour profiter de toutes les fonctionnalités disponibles !' : 'Vous avez fait une erreur lors de la liaison de votre acteur à l\'activité ? Vous êtes au bon endroit !' ?></p>
                     </div>
                     <!-- Messages en cas d'erreur -->
                     <?php if ($sens == 0) : ?>
@@ -98,7 +119,7 @@ require_once('includes/liaison.php');
                         <div class="card shadow mb-4">
                             <div class="card-header">
                                 <h6 class="font-weight-bold text-primary">
-                                    <?= isset($modification) ? 'Formulaire de modification' : ($etape_1 ? 'Etape 1' : 'Etape 2') ?>
+                                    <?= $modification ? 'Formulaire de modification' : ($etape_1 ? 'Etape 1' : 'Etape 2') ?>
                                 </h6>
                             </div>
 
@@ -110,10 +131,10 @@ require_once('includes/liaison.php');
                                         <!-- Participant vers activités -->
                                         <p>Sélectionnez les activités auxquelles vous souhaitez associer l'acteur</p>
                                         <?php
-                                        $informations[0] = ['Nom', 'Description', 'Centre'];
+                                        $informations[0] = ['Nom', 'Description'];
                                         $cbxs[0] = 'activites_id';
                                         foreach ($activites as $activite) {
-                                            $informations[1][] = [$activite['nom'], $activite['description'], $activite['centre']];
+                                            $informations[1][] = [$activite['nom'], $activite['description']];
                                             $cbxs[1][] = $activite['id'];
                                         }
                                         ?>
@@ -143,7 +164,7 @@ require_once('includes/liaison.php');
                                         }
                                         ?>
                                         <form action="" method="post" class="pt-2">
-                                            <input type="hidden" name="id_activite" value="<?= $id_activite ?>">
+                                            <!-- <input type="hidden" name="id_activite" value="<?= $id_activite ?>"> -->
                                             <!-- Tableau -->
                                             <?php afficherSousFormeTableau($informations, 'table-responsive', 'table-bordered text-center', true, false, $cbxs) ?>
                                             <!-- Boutons d'actions -->
