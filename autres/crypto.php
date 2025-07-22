@@ -4,12 +4,13 @@
 // en tant que retour de require.
 // Define SECRET_KEY seulement si elle n'est pas déjà définie.
 if (!defined('SECRET_KEY')) {
-    define('SECRET_KEY', require __DIR__ . '/autres/cle.php');
+    define('SECRET_KEY', require __DIR__ . '/../autres/cle.php');
 }
 
 const METHOD = 'AES-128-CTR';
 
-function chiffrer($id) {
+function chiffrer($id)
+{
     if (empty(SECRET_KEY)) {
         trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
     }
@@ -22,7 +23,8 @@ function chiffrer($id) {
     return bin2hex($iv) . ':' . $chiffre;
 }
 
-function dechiffrer($valeur) {
+function dechiffrer($valeur)
+{
     if (empty(SECRET_KEY)) {
         trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
     }

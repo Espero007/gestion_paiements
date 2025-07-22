@@ -123,7 +123,7 @@ function valider_valeur_numerique($cle, $conteneur)
     return true;
 }
 
-function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = false)
+function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = false, $chiffre = true)
 {
     global $bdd;
     // $valeur_id nous permet de valider un id qu'on passe directement à la fonction sans passer par les superglobales
@@ -184,6 +184,10 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
         }
     } else {
         $valeur = $valeur_id;
+    }
+
+    if ($chiffre) {
+        $valeur = dechiffrer($valeur);
     }
 
     if (in_array($table, ['participants', 'activites'])) {
@@ -1666,4 +1670,80 @@ function genererListeRIBS($id_activite, $navigateur = true)
     }
 
     genererFusionPDFS($chemins, 'Liste des RIBS', true, false);
+}
+
+// Fonctions de chiffrement
+// Define SECRET_KEY seulement si elle n'est pas déjà définie.
+if (!defined('SECRET_KEY')) {
+    define('SECRET_KEY', require __DIR__ . '/../autres/cle.php');
+}
+
+const METHOD = 'AES-128-CTR';
+
+function base64url_encode($data)
+{
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
+function base64url_decode($data)
+{
+    $replaced = strtr($data, '-_', '+/');
+    $padding = strlen($data) % 4;
+    if ($padding > 0) {
+        $replaced .= str_repeat('=', 4 - $padding);
+    }
+    return base64_decode($replaced);
+}
+
+
+function chiffrer($id)
+{
+    if (empty(SECRET_KEY)) {
+        trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
+    }
+    $iv = random_bytes(openssl_cipher_iv_length(METHOD));
+    // $chiffre = openssl_encrypt($id, METHOD, SECRET_KEY, 0, $iv);
+    $chiffre = openssl_encrypt($id, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv);
+    if ($chiffre === false) {
+        trigger_error('Erreur de chiffrement: ' . openssl_error_string(), E_USER_WARNING);
+        return false;
+    }
+    return base64url_encode($iv . $chiffre);
+}
+
+function dechiffrer($valeur)
+{
+    if (empty(SECRET_KEY)) {
+        trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
+    }
+    $donnees = base64url_decode($valeur);
+    $iv_length = openssl_cipher_iv_length(METHOD);
+    $iv = substr($donnees, 0, $iv_length);
+    $chiffre = substr($donnees, $iv_length);
+    // Gérer le cas où $valeur ne contient pas ':'
+    // if (strpos($valeur, ':') === false) {
+    //     trigger_error('Format de valeur chiffrée invalide: le séparateur ":" est manquant.', E_USER_WARNING);
+    //     return false;
+    // }
+
+    // [$iv_hex, $chiffre] = explode(':', $valeur, 2); // Limite à 2 pour éviter des problèmes si le chiffré contient des ':'
+    // $iv = hex2bin($iv_hex);
+
+    // Vérifier la longueur de l'IV
+    // if (strlen($iv) !== openssl_cipher_iv_length(METHOD)) {
+    //     trigger_error('Longueur d\'IV invalide.', E_USER_WARNING);
+    //     return false;
+    // }
+
+    if (strlen($iv) !== $iv_length) {
+        trigger_error('Longueur d\'IV invalide.', E_USER_WARNING);
+        return false;
+    }
+
+    $dechiffre = openssl_decrypt($chiffre, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv);
+    if ($dechiffre === false) {
+        trigger_error('Erreur de déchiffrement: ' . openssl_error_string(), E_USER_WARNING);
+        return false;
+    }
+    return $dechiffre;
 }
