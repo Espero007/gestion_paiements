@@ -159,7 +159,6 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
 
     if (!$valeur_id) {
         // La fonction ne travaille pas directement sur la valeur de l'id mais sur les superglobables
-
         // S'assurer que la méthode, et la table sont valides
         $allowed_methods = ['get', 'post'];
         if (!in_array($methode, $allowed_methods)) {
@@ -167,7 +166,6 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
         }
 
         // Definition des valeurs globales
-
         if ($methode == 'get') {
             $const_superglobale = INPUT_GET;
             $superglobale = $_GET;
@@ -176,19 +174,34 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
             $superglobale = $_POST;
         }
 
-        if (!filter_input($const_superglobale, $cle, FILTER_VALIDATE_INT)) {
-            // C'est une chaîne de caractères ou tout simplement la valeur 0 que j'ai reçue
-            return false;
+        if (!$chiffre) {
+            // L'id n'est pas chiffré
+            if (!filter_input($const_superglobale, $cle, FILTER_VALIDATE_INT)) {
+                // C'est une chaîne de caractères ou tout simplement la valeur 0 que j'ai reçue
+                return false;
+            } else {
+                $valeur = $superglobale[$cle];
+            }
         } else {
-            $valeur = $superglobale[$cle];
+            // L'id est chiffré
+            $id = dechiffrer($superglobale[$cle]);
+            if (!filter_var($id, FILTER_VALIDATE_INT)) {
+                return false;
+            } else {
+                $valeur = $id;
+            }
         }
     } else {
-        $valeur = $valeur_id;
+        if ($chiffre) {
+            $valeur = dechiffrer($valeur_id);
+        } else {
+            $valeur = $valeur_id;
+        }
     }
 
-    if ($chiffre) {
-        $valeur = dechiffrer($valeur);
-    }
+    // if ($chiffre) {
+    //     $valeur = dechiffrer($valeur);
+    // }
 
     if (in_array($table, ['participants', 'activites'])) {
         $stmt = $bdd->prepare("SELECT $type_id FROM $table WHERE $type_id=:valeur_id AND id_user=" . $_SESSION['user_id']);
