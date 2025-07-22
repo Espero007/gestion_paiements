@@ -1,7 +1,3 @@
-<?php 
-    require_once(__DIR__.'/constantes_utilitaires.php');
-?>
-
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
@@ -46,7 +42,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
                 <a class="collapse-item <?= $titre_page == "Création d'une activité" ? 'active' : '' ?>" href="../gestion_activites/creer_activite">Créer une activité</a>
-                <a class="collapse-item <?= $titre_page == "Liste des activités" ? 'active' : '' ?>" href="<?= generateUrl('activites')?>">Vos activités</a>
+                <a class="collapse-item <?= $titre_page == "Liste des activités" ? 'active' : '' ?>" href="<?= generateUrl('activites') ?>">Vos activités</a>
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
         </div>
@@ -65,7 +61,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
                 <a class="collapse-item <?= $titre_page == 'Ajout d\'un participant' ? 'active' : '' ?>" href="../gestion_participants/ajouter_participant">Ajouter un acteur</a>
-                <a class="collapse-item <?= $titre_page == 'Liste des participants' ? 'active' : '' ?>" href="<?= generateUrl('participants')?>">Vos acteurs</a>
+                <a class="collapse-item <?= $titre_page == 'Liste des participants' ? 'active' : '' ?>" href="<?= generateUrl('participants') ?>">Vos acteurs</a>
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>
         </div>
@@ -82,7 +78,7 @@
         <div id="collapseFour" class="collapse <?= $section == 'Paramètres' ? 'show' : '' ?>" aria-labelledby="headingThree" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Actions</h6>
-                <a class="collapse-item <?= $titre_page == 'Mon compte' ? 'active' : '' ?>" href="<?= generateUrl('mon_compte')?>">Mon compte</a>
+                <a class="collapse-item <?= $titre_page == 'Mon compte' ? 'active' : '' ?>" href="<?= generateUrl('mon_compte') ?>">Mon compte</a>
                 <!-- <a class="collapse-item" href="/gestion_participants/voir_participants.php">Voir les participants</a> -->
                 <!-- <a class="collapse-item" href="cards.html">Supprimer une activité</a> -->
             </div>

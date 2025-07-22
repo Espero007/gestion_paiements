@@ -5,7 +5,7 @@ require_once(__DIR__ . '/../includes/header.php');
 $stmt = $bdd->query('SELECT * FROM connexion WHERE user_id=' . $_SESSION['user_id'] . ' AND demo=1');
 if ($stmt->rowCount() == 1) {
     // L'utilisateur a déjà généré des informations de démo et voudrait les retirer
-    unlink('donnees.csv');
+    unlink(__DIR__ . '/donnees.csv');
     // Le travail se fera avec les tables activites, participants, fichiers et informations_demo
 
     // 1ère étape : Récupérer les ids des activités et les supprimer
@@ -39,7 +39,7 @@ if ($stmt->rowCount() == 1) {
         $chemins = $stmt->fetchAll(PDO::FETCH_NUM);
         foreach ($chemins as $chemin) {
             $path = $chemin[0];
-            if(file_exists($path)){
+            if (file_exists($path)) {
                 unlink($path);
             }
         }
@@ -60,7 +60,7 @@ if ($stmt->rowCount() == 1) {
     }
 
     // 4ème étape : Table informations_demo
-    $stmt = $bdd->query('DELETE FROM informations_demo WHERE id_user='.$_SESSION['user_id']);
+    $stmt = $bdd->query('DELETE FROM informations_demo WHERE id_user=' . $_SESSION['user_id']);
 
     // 5ème étape : Ramener 'demo' à '0'
     $stmt = $bdd->query('UPDATE connexion SET demo = 0 WHERE user_id=' . $_SESSION['user_id']);

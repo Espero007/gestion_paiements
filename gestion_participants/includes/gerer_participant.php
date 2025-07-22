@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__.'/../../includes/constantes_utilitaires.php');
+// require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 // On vérifie la présence de l'id du participant à gérer et si il n'est pas présent on redirige vers 'voir_participants.php'
 
 $redirect = true;
@@ -76,20 +76,20 @@ $activites_associees = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $compteur = 0;
 $type_3 = false;
 foreach ($activites_associees as $activite) {
-    if($activite['type_activite'] == 3){
+    if ($activite['type_activite'] == 3) {
         $type_3 = true;
     }
 }
 
 if (count($activites_associees) != 0) {
     $informations[0] = ['Titre de l\'activité', 'Titre', 'Nombre de jours'];
-    if($type_3)
+    if ($type_3)
         $informations[0][] = 'Nombre de tâches';
     $informations[0][] = 'Compte bancaire';
 
     foreach ($activites_associees as $activite) {
         $informations[1][] = [$activite['nom'], $activite['titre'], $activite['nbr_jours']];
-        if($type_3)
+        if ($type_3)
             $informations[1][count($informations[1]) - 1][] = $activite['nbr_taches'];
         $informations[1][count($informations[1]) - 1][] = $activite['banque'] . ' (' . $activite['numero_compte'] . ')';
 

@@ -428,7 +428,7 @@ function envoyerLienValidationEmail($lien_verif, $email, $nom, $prenom, $type_ma
             $mail->Subject = 'Confirmation de votre adresse email';
             $mail->Body = '
             <p>Plus q\'un clic pour actualiser votre adresse mail</p>
-            <p <a href="' . $lien_verif . '" style="text-decoration : none; color : #4e73df;">Confirmer mon adresse</a></p>
+            <p><a href="' . $lien_verif . '" style="text-decoration : none; color : #4e73df;">Confirmer mon adresse</a></p>
             <p>Très chaleureusement,<br>L\'équipe de GPaiements</p>';
         }
 
@@ -1636,7 +1636,7 @@ function genererFusionPDFS($fichiers, $titre_document, $navigateur = true, $supp
         $pdf->Output($titre_document . '.pdf', 'I');
     }
 
-    if($supprimerFichiers){
+    if ($supprimerFichiers) {
         // Suppression des éléments
         foreach ($fichiers as $fichier) {
             unlink($fichier);
