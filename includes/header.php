@@ -28,7 +28,7 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
         $_SESSION['previous_url'] = obtenirURLcourant();
         header('location:/auth/deconnexion.php');
         exit;
-    }else{
+    } else {
         // Il a un cookie actif donc on remet le compteur à 0
         $_SESSION['dernier_signe_activite'] = time();
     }
@@ -67,6 +67,9 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
 
             $_SESSION['dernier_signe_activite'] = time();
             $_SESSION['current_url'] = obtenirURLcourant();
+            if (!isset($_SESSION['cle_chiffrement'])) {
+                $_SESSION['cle_chiffrement'] = bin2hex(random_bytes(16)); // Clé de chiffrementt pour cet utilisateur
+            }
         }
     }
 }
@@ -106,6 +109,13 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
     <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
     <!-- Style loader -->
-     <link rel="stylesheet" href="/includes/loader.css">
+    <link rel="stylesheet" href="/assets/css/loader.css">
 
 </head>
+
+<!-- Loader -->
+
+<div id="loader">
+    <div class="spinner"></div>
+    <p class="mt-2">Chargement...</p>
+</div>

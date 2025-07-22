@@ -20,7 +20,7 @@ if (isset($_GET['type_activite'])) {
         }
     }
 
-    if($redirect){
+    if ($redirect) {
         redirigerVersPageErreur(404, $_SESSION['previous_url']);
     }
 } else {
@@ -69,7 +69,7 @@ if ($recuperation_type_activite) {
         // Un simple traitement des valeurs qu'on a reçu
         foreach ($data as $key => $_) {
             $data[$key] = isset($_POST[$key]) ? trim($_POST[$key]) : '';
-            if($key=='timbre'){
+            if ($key == 'timbre') {
                 $data[$key] = isset($_POST[$key]) ? mb_strtoupper(trim($_POST[$key]), 'UTF-8') : '';
             }
         }
@@ -119,7 +119,7 @@ if ($recuperation_type_activite) {
                         $errors[$champ] = "Ce champ contient des caractères non valides !";
                     }
                 }
-            } 
+            }
             // elseif ($champ == 'centre') {
             //     // Ce regex par contre accepte, en plus de ce que le regex précédern accepte, des chiffres par le '\p{N}'
             //     if (!preg_match('/^[\p{L}\p{N} \-\']+$/u', $data[$champ])) {
@@ -385,8 +385,8 @@ if ($recuperation_type_activite) {
 
                     // Message de succès
                     $_POST = []; // On vide la superglobale
-                    $_SESSION['success'] = 'Votre activité a été créée avec succès. Pensez à y <a href="/gestion_participants/lier_participant_activite.php?id_activite=' . $id_activite . '">associer des acteurs</a>';
-                    header('Location:gerer_activite.php?id=' . $id_activite);
+                    $_SESSION['success'] = 'Votre activité a été créée avec succès. Pensez à y <a href="/gestion_participants/liaison.php?id=' . chiffrer($id_activite) . '&s=1">associer des acteurs</a>';
+                    header('Location:gerer_activite.php?id=' . chiffrer($id_activite));
                     exit;
                 } catch (PDOException $e) {
                     $errors['database'] = "Une erreur s'est produite. Veuillez réessayer.";

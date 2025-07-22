@@ -8,12 +8,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page d'inscription</title>
     <link rel="stylesheet" href="../assets/bootstrap-5.3.5-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/auth/custom_style.css">
+    <link rel="stylesheet" href="custom_style.css">
     <!-- Style loader -->
-    <link rel="stylesheet" href="/includes/loader.css">
+    <link rel="stylesheet" href="/assets/css/loader.css">
 </head>
 
 <body>
+    <!-- Loader -->
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p class="mt-2">Chargement...</p>
+    </div>
+
     <!-- Helpers -->
 
     <div id="wrapper">

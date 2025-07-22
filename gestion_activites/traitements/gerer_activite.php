@@ -1,25 +1,34 @@
 <?php
 
 // On vérifie la présence de l'id de l'activité à gérer et si elle n'est pas présente on redirige vers la page précédente
-$redirect = true;
+// $redirect = true;
 
-if (filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT)) {
-    // On vérifie la présence de l'id indiqué dans la table activités
-    $stmt = $bdd->prepare('SELECT * FROM activites WHERE id=' . $_GET['id']);
-    $stmt->execute();
-    $activite = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// if (filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT)) {
+//     // On vérifie la présence de l'id indiqué dans la table activités
+//     $stmt = $bdd->prepare('SELECT * FROM activites WHERE id=' . $_GET['id']);
+//     $stmt->execute();
+//     $activite = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if (count($activite) != 0) {
-        $activite = $activite[0];
-        $id_activite = $activite['id'];
-        $redirect = false;
-    }
+//     if (count($activite) != 0) {
+//         $activite = $activite[0];
+//         $id_activite = $activite['id'];
+//         $redirect = false;
+//     }
+// }
+
+// if ($redirect) {
+//     header('location:' . $_SESSION['previous_url']);
+//     exit;
+// }
+
+if (!valider_id('get', 'id', '', 'activites')) {
+    redirigerVersPageErreur();
 }
 
-if ($redirect) {
-    header('location:' . $_SESSION['previous_url']);
-    exit;
-}
+$id_activite = dechiffrer($_GET['id']);
+$stmt = $bdd->query('SELECT * FROM activites WHERE id=' . $id_activite);
+$activite = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt->closeCursor();
 
 // Champs à ne pas afficher
 
@@ -71,11 +80,11 @@ if (count($participants_associes) != 0) {
         // Définition des actions possibles par participant
         $informations[2][$compteur][] = [
             'intitule' => 'Modifier',
-            'lien' => '/gestion_participants/liaison.php?modifier=' . $participant['id'].'&sens=1'
+            'lien' => '/gestion_participants/liaison.php?modifier=' . chiffrer($participant['id']) . '&s=1'
         ];
         $informations[2][$compteur][] = [
             'intitule' => 'Gérer le participant',
-            'lien' => '/gestion_participants/gerer_participant.php?id=' . $participant['id_participant']
+            'lien' => '/gestion_participants/gerer_participant.php?id=' . chiffrer($participant['id_participant'])
         ];
         $informations[2][$compteur][] = [
             'intitule' => 'Rompre la liaison',

@@ -31,7 +31,7 @@ require_once('traitements/gerer_activite.php');
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h4 mb-0 text-gray-800">Activités / <strong>Gestion de l'activité</strong></h1>
                         <?php if (count($participants_associes) != 0) : ?>
-                            <a href="/gestion_activites/generation_documents.php?id_activite=<?= $id_activite ?>" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+                            <a href="/gestion_activites/generation_documents.php?id=<?= chiffrer($id_activite) ?>" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
                                 <i class="fas fa-download text-white-50 mr-2"></i> Générer les documents</a>
                         <?php endif; ?>
                     </div>
@@ -183,23 +183,8 @@ require_once('traitements/gerer_activite.php');
                                 <div class="btn-group dropup">
                                     <button type="button" class="dropdown-toggle btn btn-outline-primary" data-bs-toggle="dropdown" aria-expanded="false">Autres actions </button>
 
-                                    <ul class="dropdown-menu shadow">
-                                        <li>
-                                            <a href="/gestion_participants/liaison.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Associer des acteurs</a>
-                                        </li>
-                                        <?php if (count($participants_associes) != 0) : ?>
-                                            <li>
-                                                <a href="/gestion_activites/edition_en_ligne.php?id=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Editer l'entête de vos fichiers</a>
-                                            </li>
-                                        <?php endif; ?>
-
-                                        <li>
-                                            <hr class="dropwdown-divider my-1">
-                                        </li>
-                                        <li>
-                                            <a href="#" class="dropdown-item text-danger fs-6 custom-dropdown-item del-btn" data-toggle="modal" data-target="#deletionModal" id="<?= $activite['id'] ?>">Supprimer</a>
-                                        </li>
-                                    </ul>
+                                    <!-- Options -->
+                                    <?php require_once('options.php') ?>
                                 </div>
                             </div>
                         </div>

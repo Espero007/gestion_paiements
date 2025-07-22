@@ -65,7 +65,7 @@ if ($stmt->rowCount() == 1) {
     // 5ème étape : Ramener 'demo' à '0'
     $stmt = $bdd->query('UPDATE connexion SET demo = 0 WHERE user_id=' . $_SESSION['user_id']);
 
-    $_SESSION['infos_demo_ok'] = 'Les informations de démonstration ont été supprimées avec succès!';
+    $_SESSION['infos_demo_ok'] = 'Les informations de démonstration ont été supprimées avec succès !';
     header('location:/index.php');
     exit;
 } else {

@@ -1,26 +1,13 @@
 <?php
-// require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
-// On vérifie la présence de l'id du participant à gérer et si il n'est pas présent on redirige vers 'voir_participants.php'
 
-$redirect = true;
-
-if (filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT)) {
-    // On vérifie la présence de l'id indiqué dans la table activités
-    $stmt = $bdd->prepare('SELECT * FROM participants WHERE id_participant=' . $_GET['id'] . ' AND id_user=' . $_SESSION['user_id']);
-    $stmt->execute();
-    $participant = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    if (count($participant) != 0) {
-        $participant = $participant[0];
-        $id_participant = $participant['id_participant'];
-        $redirect = false;
-    }
+if (!valider_id('get', 'id', '')) {
+    redirigerVersPageErreur();
 }
 
-if ($redirect) {
-    header('location:voir_participants.php');
-    exit;
-}
+$id_participant = dechiffrer($_GET['id']);
+$stmt = $bdd->query('SELECT * FROM participants WHERE id_participant=' . $id_participant);
+$participant = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt->closeCursor();
 
 // Informations à afficher
 
@@ -55,13 +42,7 @@ foreach ($comptes as $compte) {
 
 // Vérification du nombre de comptes associé au participant pour afficher ou non l'option d'ajout de comptes
 
-$stmt = $bdd->prepare("SELECT id FROM informations_bancaires WHERE id_participant = :val");
-$stmt->bindParam(':val', $id_participant, PDO::PARAM_INT);
-$stmt->execute();
-// $resultats = $stmt->fetchAll(PDO::FETCH_NUM);
-// $nombre_comptes_existants = $stmt->rowCount();
-
-$quota_comptes_bancaires_atteint = (NOMBRE_MAXIMAL_COMPTES - $stmt->rowCount()) == 0 ? true : false; // avec $stmt->rowCount() donnant le nombre de lignes retrouvé dans la table
+$quota_comptes_bancaires_atteint = quotaComptesAtteint($id_participant);
 
 // Récupération des activités auxquelles le participant est déjà associé
 $stmt = $bdd->query('
@@ -96,11 +77,11 @@ if (count($activites_associees) != 0) {
         // Actions possibles
         $informations[2][$compteur][] = [
             'intitule' => 'Modifier',
-            'lien' => '/gestion_participants/liaison.php?modifier=' . $activite['id'] . '&sens=0'
+            'lien' => '/gestion_participants/liaison.php?modifier=' . chiffrer($activite['id']) . '&s=0'
         ];
         $informations[2][$compteur][] = [
             'intitule' => 'Gérer l\'activité',
-            'lien' => '/gestion_activites/gerer_activite.php?id=' . $activite['id_activite']
+            'lien' => '/gestion_activites/gerer_activite.php?id=' . chiffrer($activite['id_activite'])
         ];
         $informations[2][$compteur][] = [
             'intitule' => 'Rompre la liaison',

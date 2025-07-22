@@ -5,6 +5,7 @@ define('BASE_PATH', realpath(__DIR__ . '/../'));
 const NBR_ACTIVITES_A_AFFICHER = 6;
 const NOMBRE_MAXIMAL_COMPTES = 3;
 define('TIMEOUT', 1 * 86400); // 1 journée d'inactivité soit 86400
+// define('TIMEOUT', 30); // 30 secondes d'inactivité
 $nom_dossier_upload = 'fichiers';
 define('UPLOADS_BASE_DIR', BASE_PATH . '/' . $nom_dossier_upload);
 const PERMISSIONS = 0777;
@@ -159,7 +160,6 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
 
     if (!$valeur_id) {
         // La fonction ne travaille pas directement sur la valeur de l'id mais sur les superglobables
-
         // S'assurer que la méthode, et la table sont valides
         $allowed_methods = ['get', 'post'];
         if (!in_array($methode, $allowed_methods)) {
@@ -167,7 +167,6 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
         }
 
         // Definition des valeurs globales
-
         if ($methode == 'get') {
             $const_superglobale = INPUT_GET;
             $superglobale = $_GET;
@@ -176,18 +175,29 @@ function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = 
             $superglobale = $_POST;
         }
 
-        if (!filter_input($const_superglobale, $cle, FILTER_VALIDATE_INT)) {
-            // C'est une chaîne de caractères ou tout simplement la valeur 0 que j'ai reçue
-            return false;
+        if (!$chiffre) {
+            // L'id n'est pas chiffré
+            if (!filter_input($const_superglobale, $cle, FILTER_VALIDATE_INT)) {
+                // C'est une chaîne de caractères ou tout simplement la valeur 0 que j'ai reçue
+                return false;
+            } else {
+                $valeur = $superglobale[$cle];
+            }
         } else {
-            $valeur = $superglobale[$cle];
+            // L'id est chiffré
+            $id = dechiffrer($superglobale[$cle]);
+            if (!filter_var($id, FILTER_VALIDATE_INT)) {
+                return false;
+            } else {
+                $valeur = $id;
+            }
         }
     } else {
-        $valeur = $valeur_id;
-    }
-
-    if ($chiffre) {
-        $valeur = dechiffrer($valeur);
+        if ($chiffre) {
+            $valeur = dechiffrer($valeur_id);
+        } else {
+            $valeur = $valeur_id;
+        }
     }
 
     if (in_array($table, ['participants', 'activites'])) {
@@ -1674,9 +1684,9 @@ function genererListeRIBS($id_activite, $navigateur = true)
 
 // Fonctions de chiffrement
 // Define SECRET_KEY seulement si elle n'est pas déjà définie.
-if (!defined('SECRET_KEY')) {
-    define('SECRET_KEY', require __DIR__ . '/../autres/cle.php');
-}
+// if (!defined('SECRET_KEY')) {
+//     define('SECRET_KEY', require __DIR__ . '/../autres/cle.php');
+// }
 
 const METHOD = 'AES-128-CTR';
 
@@ -1698,12 +1708,12 @@ function base64url_decode($data)
 
 function chiffrer($id)
 {
-    if (empty(SECRET_KEY)) {
-        trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
-    }
+    // if (empty(SECRET_KEY)) {
+    //     trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
+    // }
     $iv = random_bytes(openssl_cipher_iv_length(METHOD));
     // $chiffre = openssl_encrypt($id, METHOD, SECRET_KEY, 0, $iv);
-    $chiffre = openssl_encrypt($id, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv);
+    $chiffre = openssl_encrypt($id, METHOD, $_SESSION['cle_chiffrement'], OPENSSL_RAW_DATA, $iv);
     if ($chiffre === false) {
         trigger_error('Erreur de chiffrement: ' . openssl_error_string(), E_USER_WARNING);
         return false;
@@ -1713,9 +1723,9 @@ function chiffrer($id)
 
 function dechiffrer($valeur)
 {
-    if (empty(SECRET_KEY)) {
-        trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
-    }
+    // if (empty(SECRET_KEY)) {
+    //     // trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
+    // }
     $donnees = base64url_decode($valeur);
     $iv_length = openssl_cipher_iv_length(METHOD);
     $iv = substr($donnees, 0, $iv_length);
@@ -1740,10 +1750,18 @@ function dechiffrer($valeur)
         return false;
     }
 
-    $dechiffre = openssl_decrypt($chiffre, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv);
+    $dechiffre = openssl_decrypt($chiffre, METHOD, $_SESSION['cle_chiffrement'], OPENSSL_RAW_DATA, $iv);
     if ($dechiffre === false) {
         trigger_error('Erreur de déchiffrement: ' . openssl_error_string(), E_USER_WARNING);
         return false;
     }
     return $dechiffre;
+}
+
+// Autres fonctions
+function quotaComptesAtteint($id)
+{
+    global $bdd;
+    $stmt = $bdd->query("SELECT id FROM informations_bancaires WHERE id_participant =" . $id);
+    return ((NOMBRE_MAXIMAL_COMPTES - $stmt->rowCount()) == 0 ? true : false);
 }

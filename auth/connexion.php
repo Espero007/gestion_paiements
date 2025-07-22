@@ -11,13 +11,19 @@ require_once("submit/submit_connexion.php");
     <title>Page de connexion</title>
     <link rel="stylesheet" href="../assets/bootstrap-5.3.5-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/vendor/fonts/boxicons.css">
-    <link rel="stylesheet" href="/auth/custom_style.css">
+    <link rel="stylesheet" href="custom_style.css">
     <!-- Style loader -->
-    <link rel="stylesheet" href="/includes/loader.css">
+    <link rel="stylesheet" href="/assets/css/loader.css">
     <script src="assets/vendor/js/helpers.js"></script>
 </head>
 
 <body class="pb-4">
+    <!-- Loader -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <p class="mt-2">Chargement...</p>
+    </div>
+
     <div id="wrapper">
         <!-- Helpers -->
         <div class="container-xxl">
@@ -134,7 +140,7 @@ require_once("submit/submit_connexion.php");
                                         <div class="text-center">
                                             <small>
                                                 <span>Nouveau sur la plateforme ?</span>
-                                                <a href="<?= generateUrl('inscription')?>" class="is-primary">Créer un compte</a>
+                                                <a href="<?= generateUrl('inscription') ?>" class="is-primary">Créer un compte</a>
                                             </small>
                                         </div>
                                     </div>

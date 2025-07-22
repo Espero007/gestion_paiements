@@ -13,47 +13,47 @@ require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 */
 
 if (!valider_id('get', 'id', $bdd, 'participants')) {
-    header('location' . $_SESSION['previous_url']);
-    exit;
+    redirigerVersPageErreur();
 } else {
     // L'id est présent et valide
-    $id_participant = $_GET['id'];
+    $id_participant = dechiffrer($_GET['id']);
 
-    // Je supprime dans la table 'participants'
-    $stmt = "DELETE FROM participants WHERE id_participant=$id_participant";
-    $bdd->exec($stmt);
+    // On supprime d'abord les fichiers
 
-    // Je récupère les ribs qui lui appartiennent
-    $stmt = $bdd->query("SELECT id_rib FROM informations_bancaires WHERE id_participant=$id_participant");
-    $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($resultats as $index => $rib) {
-        $ribs[] = $rib['id_rib'];
+    $stmt = $bdd->query('
+        SELECT chemin_acces
+        FROM fichiers
+        WHERE id_fichier IN 
+        (SELECT id_fichier
+        FROM fichiers f
+        INNER JOIN informations_bancaires ib ON ib.id_rib = f.id_fichier
+        WHERE ib.id_participant=' . $id_participant . '
+        )');
+    $chemins = $stmt->fetchAll(PDO::FETCH_NUM);
+    foreach ($chemins as $chemin) {
+        $path = $chemin[0];
+        if (file_exists($path)) {
+            unlink($path);
+        }
     }
 
-    // Je supprime dans la table 'information bancaires
-    $stmt = "DELETE FROM informations_bancaires WHERE id_participant=$id_participant";
-    $bdd->exec($stmt);
+    // Ensuite on supprime les lignes dans la table fichiers
+    $stmt = $bdd->query('
+        DELETE FROM fichiers
+        WHERE id_fichier IN
+        (
+            SELECT id_fichier
+            FROM fichiers f
+            INNER JOIN informations_bancaires ib ON ib.id_rib = f.id_fichier
+            WHERE ib.id_participant = ' . $id_participant . '
+        )');
 
-    // Je supprime les fichiers et les informations dans la table fichiers
 
-    foreach ($ribs as $rib) {
-        // Je récupère le chemin d'accès au fichier que nous autres avons sauvegardé
-        $stmt = $bdd->query('SELECT chemin_acces FROM fichiers WHERE id_fichier='.$rib);
-        $chemin = $stmt->fetchAll(PDO::FETCH_NUM);
-        $chemin = $chemin[0][0];
-        unlink($chemin); // Suppresion du fichier
-
-        // Suppression de la ligne dans la table
-        $stmt = "DELETE FROM fichiers WHERE id_fichier=$rib";
-        $bdd->exec($stmt);
-    }
-
-    // Je supprime les lignes dans la table participations
-    $stmt = "DELETE FROM participations WHERE id_participant=$id_participant";
-    $bdd->exec($stmt);
+    // Je supprime dans la table 'participants'. Par effet de cascade, les ids correspondant seront supprimés dans les tables informations_bancaires et participations
+    $stmt = $bdd->query("DELETE FROM participants WHERE id_participant=$id_participant");
 
     // Je redirige vers la page des participants avec le message de succès
-    $_SESSION['suppression_ok'] = true;
+    $_SESSION['suppression_acteur_ok'] = true;
     header('location:voir_participants.php');
     exit;
 }

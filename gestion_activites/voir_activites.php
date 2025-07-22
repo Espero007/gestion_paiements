@@ -84,8 +84,8 @@ $resultat->closeCursor();
                                 <?php if (isset($_SESSION['liaison_reussie'])) : ?>
                                     <?php afficherAlerte('liaison_reussie', 'success', true); ?>
                                 <?php endif; ?>
-                                <?php if (isset($_SESSION['suppression_ok'])) : ?>
-                                    <?php afficherAlerte('suppression_ok', 'success', true) ?>
+                                <?php if (isset($_SESSION['suppression_activite_ok'])) : ?>
+                                    <?php afficherAlerte('suppression_activite_ok', 'success', true) ?>
                                 <?php endif; ?>
 
                                 <?php if (verifierDemoActive()) : ?>
@@ -98,7 +98,7 @@ $resultat->closeCursor();
                                 <!-- Fin Messages divers -->
 
                                 <form action="">
-                                    <div class="table-responsive">
+                                    <div class="">
                                         <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
@@ -134,38 +134,11 @@ $resultat->closeCursor();
                                                         <td><?= htmlspecialchars($activite['centre']) ?></td>
                                                         <td>
                                                             <div class="btn-group">
-                                                                <a href="gerer_activite.php?id=<?= $activite['id'] ?>" class="btn btn-primary">Gérer</a>
+                                                                <a href="gerer_activite.php?id=<?= chiffrer($activite['id']) ?>" class="btn btn-primary">Gérer</a>
 
                                                                 <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                                                <ul class="dropdown-menu">
-                                                                    <li>
-                                                                        <a href="gerer_activite.php?id=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Voir</a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="modifier_infos.php?id=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
-                                                                    </li>
-                                                                    <!-- <li>
-                                                                        <a href="ajouter_comptes.php?id_participant=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Ajouter des comptes bancaires</a>
-                                                                    </li> -->
-                                                                    <li>
-                                                                        <a href="/gestion_participants/lier_participant_activite.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item"></i>Associer des acteurs</a>
-                                                                    </li>
 
-                                                                    <?php if ($generer_documents) : ?>
-                                                                        <li>
-                                                                            <a href="/gestion_activites/generation_documents.php?id_activite=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item"></i>Générer les documents</a>
-
-                                                                            <a href="/gestion_activites/edition_en_ligne.php?id=<?= $activite['id'] ?>" class="dropdown-item fs-6 custom-dropdown-item">Editer l'entête de vos fichiers</a>
-                                                                        </li>
-                                                                    <?php endif; ?>
-
-                                                                    <li>
-                                                                        <hr class="dropdown-divider">
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="#" class="dropdown-item text-danger custom-dropdown-item del-btn" data-toggle="modal" data-target="#deletionModal" id="<?= $activite['id'] ?>">Supprimer</a>
-                                                                    </li>
-                                                                </ul>
+                                                                <?php include('options.php') ?>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -179,6 +152,11 @@ $resultat->closeCursor();
                         </div>
                     <?php else : ?>
                         <div class="text-center pt-4">
+                            <!-- Messages divers -->
+                            <?php if (isset($_SESSION['suppression_activite_ok'])) : ?>
+                                <?php afficherAlerte('suppression_activite_ok', 'success', true) ?>
+                            <?php endif; ?>
+                            <!-- Fin Messages divers -->
                             <h3 class="font-weight-bold">Aucune activité retrouvée !</h1>
                                 <p class="mt-3 text-center">Il semble que vous n'ayiez aucune activité déjà créée. Pourquoi ne pas corriger le tir et en créer dès maintenant ?</p>
                                 <a href="/gestion_activites/creer_activite" class="btn btn-outline-primary">Créer une activité</a>

@@ -15,14 +15,14 @@ $etape_2 = false;
 
 // Occupons nous en premier de la partie Participant vers Activités que je pose comme étant le sens 0
 
-if (isset($_GET['id_participant'])) {
-    $sens = 0;
+if ($sens == 0 && isset($_GET['id'])) {
+    // $sens = 0;
     $etape_1 = true;
 
     // On s'assure tout d'abord que l'id du participant est valide
 
-    if (valider_id('get', 'id_participant', '', 'participants')) {
-        $id_participant = $_GET['id_participant'];
+    if (valider_id('get', 'id', '', 'participants')) {
+        $id_participant = dechiffrer($_GET['id']);
 
         if ($etape_1 && !isset($_POST['continuer'])) {
             // Nous sommes encore à l'étape 1
@@ -57,7 +57,7 @@ if (isset($_GET['id_participant'])) {
                 $activites = [];
 
                 foreach ($activites_id as $id) {
-                    if (!valider_id(null, null, null, 'activites', $id)) {
+                    if (!valider_id(null, null, null, 'activites', $id, false)) {
                         redirigerVersPageErreur(404);
                     } else {
                         $id_activite = $id;
@@ -113,7 +113,7 @@ if (isset($_GET['id_participant'])) {
                             $_SESSION['liaison_reussie'] = 'L\'acteur a été associé à l\'activité avec succès !';
                         }
 
-                        header('location:/gestion_participants/gerer_participant.php?id=' . $id_participant);
+                        header('location:/gestion_participants/gerer_participant.php?id=' . chiffrer($id_participant));
                         exit;
                     }
                 }
@@ -126,15 +126,15 @@ if (isset($_GET['id_participant'])) {
 
 // On s'intéresse à présent au sens 1 : Activité vers Participants
 
-if (isset($_GET['id_activite'])) {
+if ($sens == 1 && isset($_GET['id'])) {
     // Activité vers participant
-    $sens = 1;
+    // $sens = 1;
     $etape_1 = true;
 
     // On s'assure que l'id de l'activité est valide
 
-    if (valider_id('get', 'id_activite', $bdd, 'activites')) {
-        $id_activite = $_GET['id_activite'];
+    if (valider_id('get', 'id', $bdd, 'activites')) {
+        $id_activite = dechiffrer($_GET['id']);
 
         if ($etape_1 && !isset($_POST['continuer'])) {
             // Nous sommes encore à l'étape 1
@@ -175,7 +175,7 @@ if (isset($_GET['id_activite'])) {
                 // Bouclons donc sur les id de chaque participant pour m'assurer qu'ils sont valides
 
                 foreach ($participants_id as $id) {
-                    if (!valider_id(null, null, $bdd, 'participants', $id)) {
+                    if (!valider_id(null, null, $bdd, 'participants', $id, false)) {
                         // L'id n'existe pas en bdd
                         redirigerVersPageErreur(404, $_SESSION['previous_url']);
                     } else {
@@ -243,22 +243,25 @@ if (isset($_GET['id_activite'])) {
                         } else {
                             $_SESSION['liaison_reussie'] = 'L\'acteur a été associé à l\'activité avec succès !';
                         }
-                        header('location:/gestion_activites/gerer_activite.php?id=' . $id_activite);
+                        header('location:/gestion_activites/gerer_activite.php?id=' . chiffrer($id_activite));
                         exit;
                     }
                 }
             }
         }
     } else {
-        header('location:' . $_SESSION['previous_url']);
-        exit;
+        redirigerVersPageErreur();
     }
 }
 
 if (isset($_GET['modifier'])) {
+    if (!valider_id('get', 'modifier', '', 'participations')) {
+        redirigerVersPageErreur(404, $_SESSION['previous_url']);
+    }
+
     $etape_1 = false;
     $etape_2 = true;
-    $id_participation = $_GET['modifier'];
+    $id_participation = dechiffrer($_GET['modifier']);
     $modification = true;
 
     // On récupère les informations de la liaison
@@ -326,7 +329,7 @@ if (isset($_GET['modifier'])) {
 
                     $_SESSION['modification_reussie'] = 'Les informations ont été mises à jour avec succès !';
                 }
-                header('location:/gestion_activites/gerer_activite.php?id=' . $id_activite);
+                header('location:/gestion_activites/gerer_activite.php?id=' . chiffrer($id_activite));
                 exit;
             } elseif ($sens == 0) {
                 // Pour savoir si des modifications ont été effectuées ou pas
@@ -363,7 +366,7 @@ if (isset($_GET['modifier'])) {
 
                     $_SESSION['modification_reussie'] = 'Les informations ont été mises à jour avec succès !';
                 }
-                header('location:/gestion_participants/gerer_participant.php?id=' . $id_participant);
+                header('location:/gestion_participants/gerer_participant.php?id=' . chiffrer($id_participant));
                 exit;
             }
         }
