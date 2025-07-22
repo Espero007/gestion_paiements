@@ -1674,9 +1674,9 @@ function genererListeRIBS($id_activite, $navigateur = true)
 
 // Fonctions de chiffrement
 // Define SECRET_KEY seulement si elle n'est pas déjà définie.
-if (!defined('SECRET_KEY')) {
-    define('SECRET_KEY', require __DIR__ . '/../autres/cle.php');
-}
+// if (!defined('SECRET_KEY')) {
+//     define('SECRET_KEY', require __DIR__ . '/../autres/cle.php');
+// }
 
 const METHOD = 'AES-128-CTR';
 
@@ -1698,12 +1698,12 @@ function base64url_decode($data)
 
 function chiffrer($id)
 {
-    if (empty(SECRET_KEY)) {
-        trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
-    }
+    // if (empty(SECRET_KEY)) {
+    //     trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
+    // }
     $iv = random_bytes(openssl_cipher_iv_length(METHOD));
     // $chiffre = openssl_encrypt($id, METHOD, SECRET_KEY, 0, $iv);
-    $chiffre = openssl_encrypt($id, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv);
+    $chiffre = openssl_encrypt($id, METHOD, $_SESSION['cle_chiffrement'], OPENSSL_RAW_DATA, $iv);
     if ($chiffre === false) {
         trigger_error('Erreur de chiffrement: ' . openssl_error_string(), E_USER_WARNING);
         return false;
@@ -1713,9 +1713,9 @@ function chiffrer($id)
 
 function dechiffrer($valeur)
 {
-    if (empty(SECRET_KEY)) {
-        trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
-    }
+    // if (empty(SECRET_KEY)) {
+    //     // trigger_error('SECRET_KEY non définie ou vide dans Crypto.php', E_USER_ERROR);
+    // }
     $donnees = base64url_decode($valeur);
     $iv_length = openssl_cipher_iv_length(METHOD);
     $iv = substr($donnees, 0, $iv_length);
@@ -1740,10 +1740,18 @@ function dechiffrer($valeur)
         return false;
     }
 
-    $dechiffre = openssl_decrypt($chiffre, METHOD, SECRET_KEY, OPENSSL_RAW_DATA, $iv);
+    $dechiffre = openssl_decrypt($chiffre, METHOD, $_SESSION['cle_chiffrement'], OPENSSL_RAW_DATA, $iv);
     if ($dechiffre === false) {
         trigger_error('Erreur de déchiffrement: ' . openssl_error_string(), E_USER_WARNING);
         return false;
     }
     return $dechiffre;
+}
+
+// Autres fonctions
+function quotaComptesAtteint($id)
+{
+    global $bdd;
+    $stmt = $bdd->query("SELECT id FROM informations_bancaires WHERE id_participant =" . $id);
+    return ((NOMBRE_MAXIMAL_COMPTES - $stmt->rowCount()) == 0 ? true : false);
 }
