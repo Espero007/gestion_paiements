@@ -127,7 +127,7 @@ require_once("submit/submit_connexion.php");
                                                     </div>
                                                 </div>
 
-                                                <a href="/auth/mdp_oublie">
+                                                <a href="/auth/mdp_oublie.php">
                                                     <small>Mot de passe oublié ?</small>
                                                 </a>
                                             </div>

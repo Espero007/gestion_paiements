@@ -95,7 +95,8 @@ require_once(__DIR__ . "/submit/submit_forgot.php");
             </div>
 
             <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>
-            <?php require_once(__DIR__ . '/../includes/loader.php') ?>
+            <?php //require_once(__DIR__ . '/../includes/loader.php') 
+            ?>
 
             <script>
                 (function() {

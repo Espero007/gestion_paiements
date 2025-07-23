@@ -6,7 +6,7 @@ require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 
 if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
     // L'utilisateur est connecté
-    header('location:' . generateUrl(''));
+    header('location:/index.php');
     exit;
 }
 
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['envoyer_lien'])) {
             // L'utilisateur avec cet email est bien présent. On effectue à présent les actions adéquates pour la réinitialisation du mot de passe
             $token = bin2hex(random_bytes(16));
             $lien_verif = obtenirURLcourant(true) . '/auth/forgot_password.php';
-            if (envoyerLienValidationEmail($lien_verif, $_POST['email'], $users['nom'], $users['prenoms'], 1)) {
+            if (envoyerLienValidationEmail($lien_verif, $_POST['email'], $users['nom'], $users['prenoms'], 2)) {
                 $_SESSION["email_envoye"] = 'Un lien de vérification a été envoyé au mail : <span class="text-primary">' . htmlspecialchars($_POST['email']) . '</span>. Cliquez dessus pour confirmer votre email et réinitialiser votre mot de passe.';
             } else {
                 $anomalie = true;
@@ -112,13 +112,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['envoyer_lien'])) {
                                         <hr>
                                         <div class="text-center">
                                             <small>
-                                                <a href="inscription" class="is-primary">Créer un compte</a>
+                                                <a href="/auth/inscription.php" class="is-primary">Créer un compte</a>
                                             </small>
                                         </div>
                                         <div class="text-center">
                                             <small>
                                                 <span>Déjà un compte ?</span>
-                                                <a href="connexion" class="is-primary">Se connecter</a>
+                                                <a href="/auth/connexion.php" class="is-primary">Se connecter</a>
                                             </small>
                                         </div>
                                     </div>
@@ -134,7 +134,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['envoyer_lien'])) {
     </div>
     <script src="assets/vendor/js/helpers.js"></script>
     <script src="/assets/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js"></script>
-    <?php require_once(__DIR__ . '/../includes/loader.php') ?>
+    <?php require_once(__DIR__ . '/../includes/loader.php')
+    ?>
 
 </body>
 

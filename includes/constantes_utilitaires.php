@@ -415,8 +415,9 @@ use PHPMailer\PHPMailer\Exception;
 
 function envoyerLienValidationEmail($lien_verif, $email, $nom, $prenom, $type_mail)
 {
-    // si $type_mail est à 0, le mail est pour l'inscription
-    // si c'est à 1, le mail est pour confirmer son email
+    // si $type_mail est à 0, le mail est pour l'inscription (on veut confirmer le mail lors de l'inscription)
+    // si c'est à 1, le mail est pour confirmer son email (on veut confirmer le mail pendant que l'utilisateur essaye de changer son email)
+    // si c'est à 2, le mail est pour réinitialiser le mot de passe
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
@@ -431,7 +432,7 @@ function envoyerLienValidationEmail($lien_verif, $email, $nom, $prenom, $type_ma
         $mail->addAddress($email, 'GPaiements'); // L'email de l'utilisateur
         $mail->isHTML(true);
 
-        if (!$type_mail) {
+        if ($type_mail == 0) {
             $mail->Subject = 'Activation de votre compte GPaiements';
             $mail->Body    = '
             <p>Cher(e) ' . $nom . ' ' . $prenom . ',</p>
@@ -439,11 +440,19 @@ function envoyerLienValidationEmail($lien_verif, $email, $nom, $prenom, $type_ma
             <p>A présent, veuillez cliquez sur le lien ci-dessous pour activer votre compte et entamer l\'aventure !</p>
             <p style="text-align:center;"><a href="' . $lien_verif . '" style="text-decoration : none; color : #4e73df; font-size : 1.2rem;">Activer mon compte GPaiements</a></p>
             <p>Très chaleureusement,<br>L\'équipe de GPaiements</p>';
-        } else {
+        } elseif ($type_mail == 1) {
             $mail->Subject = 'Confirmation de votre adresse email';
             $mail->Body = '
             <p>Plus q\'un clic pour actualiser votre adresse mail</p>
             <p><a href="' . $lien_verif . '" style="text-decoration : none; color : #4e73df;">Confirmer mon adresse</a></p>
+            <p>Très chaleureusement,<br>L\'équipe de GPaiements</p>';
+        } elseif ($type_mail == 2) {
+            $mail->Subject = 'Réinitialisation du mot de passe de votre compte GPaiements';
+            $mail->Body    = '
+            <p>Cher(e) ' . $nom . ' ' . $prenom . ',</p>
+            <p>Une fois de plus merci d\'avoir entamé l\'aventure à nos côtés.</p>
+            <p>Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe.</p>
+            <p style="text-align:center;"><a href="' . $lien_verif . '" style="text-decoration : none; color : #4e73df; font-size : 1.2rem;">Réinitialiser mon mot de passe</a></p>
             <p>Très chaleureusement,<br>L\'équipe de GPaiements</p>';
         }
 
