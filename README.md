@@ -77,9 +77,6 @@
 
 ## 📝 Guide d’utilisation
 
-> **Astuce :** Des captures d’écran sont insérées pour illustrer chaque étape.  
-> *(Remplacez les chemins d’images par vos propres captures si besoin)*
-
 ### 1. Connexion & création de compte
 
 - Rendez-vous sur la page de connexion.
@@ -138,10 +135,10 @@
 
 ## 👨‍💻 Auteurs
 
-- Ifè Léonce Sokey Amour COMLAN  — ifeleoncecomlan@email.com
-- Olowun-Tobi MONSI — onellemonsiotojisca@email.com
-- Espéro AKANDO — esperoakando@email.com
-- Judicael GBAGUIDI — judicael.gbaguidi@email.com
+- Ifè Léonce Sokey Amour COMLAN  — ifeleoncecomlan@gmail.com
+- Olowun-Tobi MONSI — onellemonsiotojisca@gmail.com
+- Espéro AKANDO — esperoakando@gmail.com
+- Judicael GBAGUIDI — gbaguidijudicael520@gmail.com
 
 *N’hésitez pas à nous contacter pour toute question ou suggestion !*
 
