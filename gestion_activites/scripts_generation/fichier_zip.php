@@ -1,28 +1,77 @@
 <?php
-$dossier = __DIR__ . '/../../pdfs_temp/';
-$chemin_zip = $dossier . 'fichier_zip.zip';
+session_start();
+require_once(__DIR__ . '/../../includes/bdd.php');
+require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
+/** Générations des fichiers à inclure dans le document fusionné */
 
-// 🧪 Sélection manuelle des fichiers à inclure
-$fichiers_a_inclure = [
-    $dossier . 'liste_des_RIB.pdf',
-    $dossier . 'liste_des_RIB_enrichie.pdf', // ajoute si nécessaire
-    // Ajoute ici d'autres fichiers générés, selon leur nom exact
-];
-
-// 📦 Création de l'archive ZIP
-$zip = new ZipArchive();
-if ($zip->open($chemin_zip, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-    foreach ($fichiers_a_inclure as $fichier) {
-        if (file_exists($fichier)) {
-            $zip->addFile($fichier, basename($fichier));
-        }
-    }
-    $zip->close();
-
-    echo "✅ Archive créée avec les documents sélectionnés : ";
-   echo "<a href='/gestion_paiements/pdfs_temp/fichier_zip.zip' target='_blank'>Télécharger le ZIP</a>";
-
-} else {
-    echo "❌ Impossible de créer l'archive ZIP.";
+if (!valider_id('get', 'id', '', 'participations_activites')) {
+    redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
+$id_activite = dechiffrer($_GET['id']);
+
+/** Note de service */
+$fichiers[] = genererNoteAttestation($id_activite, 'note', false);
+
+// /** Attestation collective */
+$fichiers[] = genererNoteAttestation($id_activite, 'attestation', false);
+
+// /**Etat de paiement */
+$fichiers[] = genererEtatPaiement($id_activite, false);
+
+// /** Ordres de virement */
+$banques = listeBanques($id_activite);
+foreach ($banques as $banque) {
+    $chemin_fichier = genererOrdreVirement($id_activite, $banque, false);
+    $fichiers[] = $chemin_fichier;
+}
+
+// /** Synthèse des ordres de virement */
+$fichiers[] = genererSyntheseOrdres($id_activite, false);
+
+// /** Liste des RIBS */
+$fichiers[] = genererListeRIBS($id_activite, false);
+
+
+// Dossiers
+$repertoire_pdfs = $dossier_exports_temp;
+$dossier_archives = __DIR__ . '/';
+
+// // Création du nom unique pour l'archive ZIP
+$nom_zip = 'documents_pdfs.zip';
+$chemin_zip = $dossier_archives . $nom_zip;
+
+// Création de l'objet Zip
+$zip = new ZipArchive();
+if ($zip->open($chemin_zip, ZipArchive::CREATE) !== TRUE) {
+    die("Impossible de créer l'archive ZIP.");
+}
+
+// Récupération des fichiers PDF
+$fichiers = glob($repertoire_pdfs . '/*.pdf');
+if (empty($fichiers)) {
+    die("Aucun fichier PDF trouvé.");
+}
+
+// Ajout des fichiers PDF dans l'archive
+foreach ($fichiers as $fichier) {
+    $nom_fichier = basename($fichier);
+    $zip->addFile($fichier, $nom_fichier);
+}
+$zip->close();
+
+// Suppression des fichiers PDF originaux après la création du ZIP
+foreach ($fichiers as $fichier) {
+    unlink($fichier); // Supprime le fichier
+}
+
+// Forcer le téléchargement de l'archive ZIP
+header('Content-Type: application/zip');
+header('Content-Disposition: attachment; filename="' . basename($chemin_zip) . '"');
+header('Content-Length: ' . filesize($chemin_zip));
+readfile($chemin_zip);
+
+// Suppression du ZIP après téléchargement (optionnel)
+unlink($chemin_zip);
+header('location:' . $_SESSION['previous_url']);
+exit;

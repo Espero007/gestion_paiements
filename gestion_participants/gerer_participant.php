@@ -91,7 +91,7 @@ require_once('includes/gerer_participant.php');
                         <div class="card-body">
                             <!-- Boutons d'action -->
 
-                            <a href="modifier_informations.php?id_participant=<?= $participant['id_participant'] ?>" class="btn btn-primary mr-2">Modifier les informations</a>
+                            <a href="modifier_informations.php?id=<?= chiffrer($participant['id_participant']) ?>" class="btn btn-primary mr-2">Modifier les informations</a>
 
                             <!-- Autres options -->
                             <div class="btn-group dropup">
@@ -110,7 +110,7 @@ require_once('includes/gerer_participant.php');
                             <?php if (count($activites_associees) == 0) : ?>
                                 <div class="text-center">
                                     <p>Vous n'avez encore associé <strong><?= htmlspecialchars($participant['nom'] . ' ' . $participant['prenoms']) ?></strong> à aucune activité semble t'il. Faîtes le dès maintenant.</p>
-                                    <a href="/gestion_participants/lier_participant_activite.php?id_participant=<?= $participant['id_participant'] ?>" class="btn btn-outline-primary">Associer à une activité</a>
+                                    <a href="/gestion_participants/liaison.php?id=<?= chiffrer($participant['id_participant']) ?>&s=0" class="btn btn-outline-primary">Associer à une activité</a>
                                 </div>
                             <?php else: ?>
                                 <?php afficherSousFormeTableau($informations, '', 'table-bordered text-center', false, true) ?>

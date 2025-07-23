@@ -44,12 +44,12 @@ require_once('traitements/generation_documents.php');
 
                             <?php if (!$entete_editee) : ?>
                                 <?php
-                                $message = 'Il semble que vous n\'avez pas encore défini les informations à utiliser pour l\'entête de vos documents. Cliquez ici pour le faire si vous souhaitez personnaliser l\'entête de vos documents <a href="/gestion_activites/edition_en_ligne.php?id=' . $id_activite . '">Editer l\'entête</a>';
+                                $message = 'Il semble que vous n\'avez pas encore défini les informations à utiliser pour l\'entête de vos documents. Cliquez ici pour le faire si vous souhaitez personnaliser l\'entête de vos documents <a href="/gestion_activites/edition_en_ligne.php?id=' . chiffrer($id_activite) . '">Editer l\'entête</a>';
                                 afficherAlerte($message, 'info', false, false);
                                 ?>
                             <?php else: ?>
                                 <?php
-                                $message = 'Cliquez ici si vous souhaitez personnaliser l\'entête de vos documents <a href="/gestion_activites/edition_en_ligne.php?id=' . $id_activite . '">Editer l\'entête</a>';
+                                $message = 'Cliquez ici si vous souhaitez personnaliser l\'entête de vos documents <a href="/gestion_activites/edition_en_ligne.php?id=' . chiffrer($id_activite) . '">Editer l\'entête</a>';
                                 afficherAlerte($message, 'info');
                                 ?>
                             <?php endif; ?>
@@ -94,7 +94,11 @@ require_once('traitements/generation_documents.php');
                                     <?php if ($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST)) : ?>
                                         <p class="mt-0 mb-2"><small class="text-danger"><strong>Note</strong> : Sélectionnez des documents à générer</small></p>
                                     <?php endif; ?>
-                                    <button type="submit" class="btn btn-primary">Continuer</button>
+                                    <div class="btn-group dropup">
+                                        <button type="submit" class="btn btn-primary">Continuer</button>
+                                        <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                        <?php require_once('options_generation.php') ?>
+                                    </div>
                                     <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-secondary ml-2">Annuler</a>
                                 </form>
                             <?php else: ?>
@@ -115,18 +119,9 @@ require_once('traitements/generation_documents.php');
                                 <div class="btn-group dropup">
                                     <button class="btn btn-primary" id='generer'>Générer</button>
                                     <button type="button" class="btn btn-primary btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
-
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a href="#" class="dropdown-item custom-dropdown-item" title="Générez et téléchargez un fichier compressé (zip) contenant tous les documents sélectionnés.">Générer un fichier zip</a>
-                                        </li>
-
-                                        <li>
-                                            <a href="#" class="dropdown-item custom-dropdown-item" title="Générez et téléchargez un seul fichier contenant tous les documents sélectionnés.">Générer un seul fichier</a>
-                                        </li>
-                                    </ul>
+                                    <?php require_once('options_generation.php') ?>
                                 </div>
-                                <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-secondary ml-2">Annuler</a>
+                                <a href="/gestion_activites/generation_documents.php?id=<?= chiffrer($id_activite) ?>" class="btn btn-secondary ml-2">Revenir à la sélection</a>
                             <?php endif; ?>
 
 

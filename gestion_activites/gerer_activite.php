@@ -60,6 +60,10 @@ require_once('traitements/gerer_activite.php');
                             <?php if (isset($_SESSION['modification_reussie'])) : ?>
                                 <?php afficherAlerte('modification_reussie', 'success', true) ?>
                             <?php endif; ?>
+
+                            <?php if (isset($_SESSION['edition_entete_ok'])) : ?>
+                                <?php afficherAlerte('edition_entete_ok', 'success', true) ?>
+                            <?php endif; ?>
                             <!-- Fin Messages divers  -->
 
                             <!-- Nom -->
@@ -174,7 +178,7 @@ require_once('traitements/gerer_activite.php');
                         <div class="card-body">
                             <!-- Boutons d'action -->
                             <div>
-                                <a href="modifier_infos.php?id=<?= $activite['id'] ?>" class="btn btn-primary mr-2">Modifier les informations</a>
+                                <a href="modifier_infos.php?id=<?= chiffrer($activite['id']) ?>" class="btn btn-primary mr-2">Modifier les informations</a>
 
                                 <!-- <a href="#" class="btn btn-outline-primary mr-2">Supprimer</a> -->
 
@@ -202,7 +206,7 @@ require_once('traitements/gerer_activite.php');
                             <?php if (count($participants_associes) == 0) : ?>
                                 <div class="text-center">
                                     <p class="">Il semble que vous n'avez encore associé à votre activité aucun acteur. Pourquoi ne pas le faire dès maintenant ?</p>
-                                    <a href="/gestion_participants/liaison.php?id_activite=<?= $activite['id'] ?>" class="btn btn-outline-primary">Associer des acteurs</a>
+                                    <a href="/gestion_participants/liaison.php?id=<?= chiffrer($activite['id']) ?>&s=1" class="btn btn-outline-primary">Associer des acteurs</a>
                                 </div>
                             <?php else : ?>
                                 <?php afficherSousFormeTableau($informations, 'table-responsive text-nowrap', 'table-bordered text-center', false, true) ?>

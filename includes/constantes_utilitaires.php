@@ -594,7 +594,7 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $x = $pdf->getMargins()['left'] + $largeurBloc; // sauvegarde de la position de x à droite
 
     // Gestion du bloc de gauche du header
-    $bloc_gauche = !$entete_editee ? strtoupper("REPUBLIQUE DU BENIN\n*-*-*-*-*\nMINISTERE DE L'ENSEIGNEMENT SUPERIEUR ET SECONDAIRE\n*-*-*-*-*\nDIRECTION DES ............\n*-*-*-*-*\nSERVICE ............") : mb_strtoupper("république du bénin\n*-*-*-*-*\n" . $informations_entete['ligne1'] . "\n*-*-*-*-*\n" . $informations_entete['ligne2'] . "\n*-*-*-*-*\n" . $informations_entete['ligne3'], 'UTF-8');
+    $bloc_gauche = !$entete_editee ? strtoupper("REPUBLIQUE DU BENIN\n*-*-*-*-*\nMINISTERE DE L'ENSEIGNEMENT SUPERIEUR ET SECONDAIRE\n*-*-*-*-*\nDIRECTION DES ............\n*-*-*-*-*\nSERVICE ............") : mb_strtoupper($informations_entete['ligne1'] . "\n*-*-*-*-*\n" . $informations_entete['ligne2'] . "\n*-*-*-*-*\n" . $informations_entete['ligne3'] . "\n*-*-*-*-*\n" . $informations_entete['ligne4'], 'UTF-8');
     $pdf->setXY($pdf->getMargins()['left'], $y);
     $pdf->MultiCell($largeurBloc, 5, $bloc_gauche, 0, 'C');
 
@@ -625,7 +625,7 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $pdf->Ln(5);
 
     // Ligne 3 : Sous-titre du document
-    $ligne3 = mb_strtoupper($sous_titres[$type_document] . ' ' . $informations['titre'] . ($type_document != 'etat_paiement_3' ? '' : ', session 2020'), 'UTF-8');
+    $ligne3 = mb_strtoupper($sous_titres[$type_document] . ' ' . $informations['titre'] . ($type_document != 'etat_paiement_3' ? '' : ', ' . $informations_entete['ligne5']), 'UTF-8');
     $pdf->setFont('trebuc', '', '10');
     $pdf->setX($x);
     $pdf->MultiCell($largeurBloc, 5, $ligne3, 0, 'C');
@@ -1615,21 +1615,712 @@ line-height : 16px;
     }
 }
 
-function genererFusionPDFS($fichiers, $titre_document, $navigateur = true, $supprimerFichiers = true)
+function genererNoteAttestation($activity_id, $document, $navigateur = true)
 {
-    // Classe personnalisée avec Footer()
-    class MyPDF extends Fpdi
-    {
-        public function Footer()
+    global $bdd, $dossier_exports_temp;
+
+    // Classe personnalisée pour la numérotation des pages
+    if (!class_exists('MYPDF') & $navigateur) {
+        class MYPDF extends TCPDF
         {
-            // $this->SetY(-15);
-            $this->SetFont('trebucbd', '', 10);
-            // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, 0, 'R');
-            $this->Cell(0, 10, $this->getAliasNumPage(), 0, 0, 'R');
+            public function Footer()
+            {
+                // $this->SetY(-15);
+                $this->SetFont('trebucbd', '', 8); // Police grasse pour le pied de page
+                // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0);
+                $this->Cell(0, 10,  $this->getAliasNumPage(), 0, false, 'C', 0);
+            }
+        }
+    } elseif (!class_exists('MYPDF') && !$navigateur) {
+        class MYPDF extends TCPDF
+        {
+            public function Footer()
+            {
+                // $this->SetY(-15);
+                // $this->SetFont('trebucbd', '', 8); // Police grasse pour le pied de page
+                // // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0);
+                // $this->Cell(0, 10,  $this->getAliasNumPage(), 0, false, 'C', 0);
+            }
         }
     }
 
-    $pdf = new MyPDF();
+    ob_start();
+
+    // Requête SQL pour récupérer les informations
+    $sql = "
+    SELECT 
+        p.id_participant,
+        p.nom,
+        p.prenoms,
+        t.nom AS titre_participant,
+        ib.banque,
+        ib.numero_compte,
+        a.nom AS nom_activite,
+        a.premier_responsable,
+        a.titre_responsable,
+        a.financier,
+        a.titre_financier,
+        a.organisateur,
+        a.titre_organisateur,
+        a.timbre,
+        a.reference
+    FROM participations pa
+    INNER JOIN participants p ON pa.id_participant = p.id_participant
+    INNER JOIN activites a ON pa.id_activite = a.id
+    INNER JOIN titres t ON pa.id_titre = t.id_titre
+    INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
+    WHERE pa.id_activite = :activite_id
+    ORDER BY p.nom ASC, p.prenoms ASC
+";
+
+    $stmt = $bdd->prepare($sql);
+    $stmt->execute(['activite_id' => $activity_id]);
+    $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $titre_activite = $participants[0]['nom_activite'];
+
+    $stmt = $bdd->query('SELECT * FROM informations_entete WHERE id_activite=' . $activity_id);
+    $informations_entete = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $informations_entete = $informations_entete[0];
+
+    $formatter = new IntlDateFormatter("fr_FR", IntlDateFormatter::LONG, IntlDateFormatter::NONE, "Europe/Paris", IntlDateFormatter::GREGORIAN);
+    $dateFr = $formatter->format(new DateTime());
+    $nom_activite = isset($participants[0]["nom_activite"]) ? htmlspecialchars($participants[0]["nom_activite"]) : '';
+
+    $pdf = new MYPDF('P', 'mm', 'A4');
+    $pdf->AddFont('trebuc', '', 'trebuc.php'); // Police non-grasse
+    $pdf->AddFont('trebucbd', '', 'trebucbd.php'); // Police grasse
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(true); // Activer le pied de page pour la numérotation
+    $pdf->setMargins(15, 25, 15, true);
+    $pdf->setAutoPageBreak(true, 25); // Marge bas = 25 pour footer
+    $pdf->AddPage();
+
+    $style = '
+<style>
+    th {
+        background-color: #f2f2f2;
+        text-align: center;
+        font-weight: bold;
+        font-family: trebucbd;
+    }
+    td {
+        text-align: center;
+        line-height: 16px;
+        font-weight: normal;
+        font-family: trebuc;
+    }
+</style>';
+
+    if ($document === 'note') {
+        // *** Note de Service PDF ***
+        configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Note de service');
+
+        $information_supplementaire = ['titre' => $titre_activite];
+        genererHeader($pdf, 'note_service', $information_supplementaire, $activity_id);
+        $pdf->setFont('trebucbd', '', 10); // Gras pour les éléments hors tableau
+
+        $html = $style . '
+    <br><br><br><br><br>
+    <h4><b style="font-family: trebucbd;">N°: ' . htmlspecialchars($participants[0]['timbre']) . '</b></h4>
+    <p><b style="font-family: trebucbd; text-decoration:underline;">Réf:</b> NS N° ' . htmlspecialchars($participants[0]['reference']) . ' DU ' . htmlspecialchars($informations_entete['date2']) . '</p><br><br>
+    <table border="1" cellpadding="5" style="width: 100%; text-align:center">
+        <thead>
+            <tr>
+                <th style="width: 12%;">N°</th>
+                <th style="width: 25%;">NOM ET PRENOMS</th>
+                <th style="width: 15%;">TITRE</th>
+                <th style="width: 15%;">BANQUE</th>
+                <th style="width: 33%;">NUMERO DE COMPTE</th>
+            </tr>
+        </thead>
+        <tbody>';
+        $i = 1;
+
+        foreach ($participants as $p) {
+            $html .= '<tr>
+                    <td style="width: 12%;">' . $i++ . '</td>
+                    <td style="width: 25%;">' . htmlspecialchars($p['nom'] . ' ' . $p['prenoms'] ?? '') . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['titre_participant'] ?? '') . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['banque'] ?? '') . '</td>
+                    <td style="width: 33%;">' . htmlspecialchars($p['numero_compte'] ?? '') . '</td>
+                  </tr>';
+        }
+        $html .= '</tbody></table>';
+
+        $pdf->writeHTML($html, true, false, true, false, '');
+
+        // Premier responsable et son titre
+        $pdf->Ln(10);
+        $pdf->setFont('trebucbd', '', 10);
+        $pdf->Cell(0, 10, htmlspecialchars($participants[0]['titre_responsable'] ?? ''), 0, 1, 'C');
+        $pdf->Ln(10);
+        $pdf->setFont('trebucbd', 'U', 10);
+        $pdf->Cell(0, 10, htmlspecialchars($participants[0]['premier_responsable'] ?? ''), 0, 1, 'C');
+
+        ob_clean();
+        ob_end_clean();
+        if ($navigateur) {
+            $pdf->Output('Note de service.pdf', 'I');
+        } else {
+            $chemin_fichier = $dossier_exports_temp . '/Note de service.pdf';
+            $pdf->Output($chemin_fichier, 'F');
+            return $chemin_fichier;
+        }
+    } elseif ($document === 'attestation') {
+        configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Attestation collective');
+        $information_supplementaire = ['titre' => $titre_activite];
+        genererHeader($pdf, 'attestation_collective', $information_supplementaire, $activity_id);
+        $pdf->setFont('trebuc', '', 10);
+
+        $html = $style . '
+    <br><br><br><br><br><br><br><br>
+    <table border="1" cellpadding="5" style="width: 100%; text-align:center">
+        <thead>
+            <tr>
+                <th style="width: 12%;">N°</th>
+                <th style="width: 25%;">NOM ET PRENOMS</th>
+                <th style="width: 15%;">TITRE</th>
+                <th style="width: 15%;">BANQUE</th>
+                <th style="width: 33%;">NUMERO DE COMPTE</th>
+            </tr>
+        </thead>
+        <tbody>';
+        $i = 1;
+        foreach ($participants as $p) {
+            $html .= '<tr>
+                    <td style="width: 12%;">' . $i++ . '</td>
+                    <td style="width: 25%;">' . htmlspecialchars($p['nom'] . ' ' . $p['prenoms'] ?? '') . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['titre_participant'] ?? '') . '</td>
+                    <td style="width: 15%;">' . htmlspecialchars($p['banque'] ?? '') . '</td>
+                    <td style="width: 33%;">' . htmlspecialchars($p['numero_compte'] ?? '') . '</td>
+                  </tr>';
+        }
+        $html .= '</tbody></table>';
+
+        $pdf->writeHTML($html, true, false, true, false, '');
+
+        $premier_responsable = isset($participants[0]['premier_responsable']) ? htmlspecialchars($participants[0]['premier_responsable']) : '';
+        $titre_responsable = isset($participants[0]['titre_responsable']) ? htmlspecialchars($participants[0]['titre_responsable']) : '';
+        $financier = isset($participants[0]['financier']) ? htmlspecialchars($participants[0]['financier']) : '';
+        $titre_financier = isset($participants[0]['titre_financier']) ? htmlspecialchars($participants[0]['titre_financier']) : '';
+
+        // Ajouter les informations du premier responsable et son titre sous le tableau
+        $pdf->Ln(10);
+        $bloc_gauche = mb_strtoupper($participants[0]['titre_organisateur'] ?? '');
+        //$pdf->Ln(10);
+        $bloc_droite = mb_strtoupper($participants[0]['titre_responsable'] ?? '');
+        //$pdf->Ln(10);
+        afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 5, 'C', '', 'C', '');
+
+        $pdf->Ln(10);
+        $bloc_gauche = mb_strtoupper($participants[0]['organisateur'] ?? '');
+        $bloc_droite = mb_strtoupper($participants[0]['premier_responsable'] ?? '');
+        afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 2, 'C', 'U', 'C', 'U');
+
+        ob_clean();
+        ob_end_clean();
+        if ($navigateur) {
+            $pdf->Output('Attestation collective.pdf', 'I');
+        } else {
+            $chemin_fichier = $dossier_exports_temp . '/Attestation collective.pdf';
+            $pdf->Output($chemin_fichier, 'F');
+            return $chemin_fichier;
+        }
+    }
+}
+
+function genererEtatPaiement($id_activite, $navigateur = true)
+{
+    global $bdd, $dossier_exports_temp;
+
+    if (!function_exists('convertir_en_lettres')) {
+        function convertir_en_lettres($nombre)
+        {
+            $fmt = new NumberFormatter("fr", NumberFormatter::SPELLOUT);
+            return ucfirst($fmt->format($nombre));
+        }
+    }
+
+
+
+    $stmt = $bdd->prepare('SELECT type_activite, nom, reference FROM activites WHERE id = :id');
+    $stmt->execute(['id' => $id_activite]);
+    $resultat = $stmt->fetch(PDO::FETCH_ASSOC);
+    $id_type_activite = $resultat['type_activite'];
+    $nom_activite = htmlspecialchars($resultat['nom']);
+    $stmt->closeCursor();
+
+    // Fonction pour générer le tableau d'en-tête
+    if (!function_exists('startTable')) {
+        function startTable($type_activite)
+        {
+            switch ($type_activite) {
+                case 1:
+                    return '
+                <style>
+                    th { font-weight: bold; font-family: trebucbd; }
+                    td { font-weight: normal; font-family: trebuc; }
+                </style>
+                <table border="1" cellpadding="4" align="center">
+                    <thead>
+                        <tr style="background-color: #f2f2f2; font-size:8px;">
+                            <th width="6%">N°</th>
+                            <th width="20%">NOM ET PRENOMS</th>
+                            <th width="15%">QUALITE</th>
+                            <th width="8%">TAUX/JOUR</th>
+                            <th width="6%">NBRE JOUR</th>
+                            <th width="12%">MONTANT</th>
+                            <th width="10%">BANQUE</th>
+                            <th width="23%">RIB</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                case 2:
+                    return '
+                <style>
+                    th { font-weight: bold; font-family: trebucbd; }
+                    td { font-weight: normal; font-family: trebuc; }
+                </style>
+                <table border="1" cellpadding="4" align="center">
+                    <thead>
+                        <tr style="background-color:#f2f2f2; font-size:8px;">
+                            <th width="5%">N°</th>
+                            <th width="18%">NOM ET PRENOMS</th>
+                            <th width="11%">QUALITE</th>
+                            <th width="7%">TAUX/JOUR</th>
+                            <th width="8%">NOMBRE DE JOURS</th>
+                            <th width="12%">INDEMNITE FORFAITAIRE</th>
+                            <th width="11%">MONTANT</th>
+                            <th width="10%">BANQUE</th>
+                            <th width="18%">RIB</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                case 3:
+                    return '
+                <style>
+                    th { font-weight: bold; font-family: trebucbd; }
+                    td { font-weight: normal; font-family: trebuc; }
+                </style>
+                <table border="1" cellpadding="5" align="center">
+                    <thead>
+                        <tr style="background-color:#f2f2f2; font-size:8px;">
+                            <th width="5%">N°</th>
+                            <th width="13%">NOM ET PRENOM</th>
+                            <th width="9%">TITRE</th>
+                            <th width="6%">TAUX/TÂCHE</th>
+                            <th width="7%">NOMBRE DE TÂCHE</th>
+                            <th width="9%">FRAIS ENTRETIENS PAR JOURS</th>
+                            <th width="7%">NOMBRE DE JOURS</th>
+                            <th width="13%">INDEMNITE FORFAITAIRE</th>
+                            <th width="8%">MONTANT</th>
+                            <th width="8%">BANQUE</th>
+                            <th width="15%">RIB</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+                default:
+                    return '';
+            }
+        }
+    }
+
+
+    // Fonction pour générer une ligne de données
+    if (!function_exists('generateRow')) {
+        function generateRow($row, $type_activite, $i)
+        {
+            switch ($type_activite) {
+                case 1:
+                    return '
+            <tr>
+                <td width="6%">' . $i . '</td>
+                <td width="20%">' . htmlspecialchars($row['nom_participant'] . ' ' . $row['prenoms']) . '</td>
+                <td width="15%">' . htmlspecialchars($row['titre_participant']) . '</td>
+                <td width="8%">' . number_format($row['taux_journalier'], 0, ',', '.') . '</td>
+                <td width="6%">' . (int)$row['nombre_jours'] . '</td>
+                <td width="12%">' . number_format($row['montant'], 0, ',', '.') . '</td>
+                <td width="10%">' . htmlspecialchars($row['banque']) . '</td>
+                <td width="23%">' . htmlspecialchars($row['rib']) . '</td>
+            </tr>';
+                case 2:
+                    $indemnite = isset($row['indemnite_forfaitaire']) ? $row['indemnite_forfaitaire'] : 0;
+                    return '
+            <tr>
+                <td width="5%">' . $i . '</td>
+                <td width="18%">' . htmlspecialchars($row['nom_participant'] . ' ' . $row['prenoms']) . '</td>
+                <td width="11%">' . htmlspecialchars($row['titre_participant']) . '</td>
+                <td width="7%">' . number_format($row['taux_journalier'], 0, ',', '.') . '</td>
+                <td width="8%">' . (int)$row['nombre_jours'] . '</td>
+                <td width="12%">' . number_format($indemnite, 0, ',', '.') . '</td>
+                <td width="11%">' . number_format($row['montant'], 0, ',', '.') . '</td>
+                <td width="10%">' . htmlspecialchars($row['banque']) . '</td>
+                <td width="18%">' . htmlspecialchars($row['rib']) . '</td>
+            </tr>';
+                case 3:
+                    $indemnite = isset($row['indemnite_forfaitaire']) ? $row['indemnite_forfaitaire'] : 0;
+                    return '
+            <tr>
+                <td width="5%">' . $i . '</td>
+                <td width="13%">' . htmlspecialchars($row['nom_participant'] . ' ' . $row['prenoms']) . '</td>
+                <td width="9%">' . htmlspecialchars($row['titre_participant']) . '</td>
+                <td width="6%">' . number_format($row['taux_taches'], 0, ',', '.') . '</td>
+                <td width="7%">' . (int)$row['nombre_taches'] . '</td>
+                <td width="9%">' . number_format($row['frais_deplacement_journalier'], 0, ',', '.') . '</td>
+                <td width="7%">' . (int)$row['nombre_jours'] . '</td>
+                <td width="13%">' . number_format($indemnite, 0, ',', '.') . '</td>
+                <td width="8%">' . number_format($row['montant'], 0, ',', '.') . '</td>
+                <td width="8%">' . htmlspecialchars($row['banque']) . '</td>
+                <td width="15%">' . htmlspecialchars($row['rib']) . '</td>
+            </tr>';
+                default:
+                    return '';
+            }
+        }
+    }
+
+    // Fonction pour générer le PDF
+    if (!function_exists('generatePDF')) {
+        function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite, $reference)
+        {
+            if (!($pdf instanceof MYPDF2)) {
+                die("Erreur : \$pdf n'est pas une instance de MYPDF");
+            }
+
+            // Ajouter l'en-tête personnalisé uniquement sur la première page
+            $pdf->SetFont('trebucbd', '', 10); // Police grasse pour l'en-tête
+            $information_supplementaire = ($type_activite == 1) ? ['type' => $nom_activite] : ['titre' => $nom_activite];
+            genererHeader($pdf, 'etat_paiement_' . $type_activite, $information_supplementaire, $id_activite);
+
+            $pdf->Ln(20);
+            $reference = ($type_activite === 3)
+                ? $reference
+                : 'REF ' . $reference;
+            $html = '<p align="center"><b style="font-family: trebucbd;">' . $reference . ' PORTANT CONSTITUTION DES COMMISSIONS CHARGEES DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</b></p><br>';
+
+            // Gestion des informations d'en-tête supplémentaires pour type 2
+            if ($type_activite == 2) {
+                $stmt = $GLOBALS['bdd']->query('SELECT * FROM informations_entete WHERE id_activite=' . $id_activite);
+                if ($stmt->rowCount() != 0) {
+                    $informations_entete = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $informations_entete = $informations_entete[0];
+                    // $reference = 'NS N°' . htmlspecialchars($informations_entete['reference']) . ' DU ' . htmlspecialchars($informations_entete['date2']);
+                    // $reference = $resultat['reference'];
+                    $pdf->Ln(20);
+                } else {
+                    $reference =  htmlspecialchars($data[0]['reference'] ?? 'N/A');
+                    $pdf->Ln(20);
+                }
+                $html = '<p align="center"><b style="font-family: trebucbd;">' . $reference . ' PORTANT CONSTITUTION DES COMMISSIONS CHARGEES DE SUPERVISER LE DÉROULEMENT DES ÉPREUVES ÉCRITES DE ' . mb_strtoupper($nom_activite, 'UTF-8') . '</b></p><br>';
+                $stmt->closeCursor();
+            }
+
+            $pageTotal = 0;
+            $cumulativeTotal = 0;
+            $i = 0;
+            $linesOnPage = 0;
+            $maxLinesPerPage = ($type_activite == 3) ? 6 : 20; // 6 lignes pour type 3, 10 pour types 1 et 2
+
+            $pdf->SetFont('trebuc', '', 8); // Police non-grasse pour le tableau
+            $html .= startTable($type_activite);
+
+
+            if (empty($data)) {
+                $html .= '<tr><td colspan="' . ($type_activite == 3 ? '11' : ($type_activite == 2 ? '9' : '8')) . '" style="text-align:center;">Aucune donnée disponible</td></tr>';
+                $html .= '</tbody></table>';
+                $pdf->writeHTML($html, true, false, true, false, '');
+            } else {
+                foreach ($data as $index => $row) {
+                    $i++;
+                    $linesOnPage++;
+                    $pageTotal += $row['montant'];
+
+                    // Ajouter la ligne de données
+                    //$pdf->Ln(20);
+                    $rowHtml = generateRow($row, $type_activite, $i);
+                    $html .= $rowHtml;
+
+                    // Vérifier si un saut de page est nécessaire (basé sur le nombre de lignes)
+                    if ($linesOnPage >= $maxLinesPerPage && $index < count($data) - 1) {
+                        // Ajouter "A reporter" en bas de la page (sauf pour la dernière page)
+                        $html .= '
+                <tr style="background-color:#f2f2f2;">
+                    <td colspan="' . ($type_activite == 3 ? '8' : '5') . '" width="' . ($type_activite == 3 ? '69%' : '55%')  . '"><strong style="font-family: trebucbd;">A REPORTER :</strong></td>
+                    <td width="' . ($type_activite == 3 ? '8%' : '12%') . '"><strong style="font-family: trebucbd;">' . number_format($cumulativeTotal + $pageTotal, 0, ',', '.') . ' FCFA</strong></td>
+                    <td colspan="' . ($type_activite == 3 ? '2' : '2') . '" width="' . ($type_activite == 3 ? '23%' : '33%') . '"></td>
+                </tr>';
+                        $html .= '</tbody></table>';
+                        $pdf->writeHTML($html, true, false, true, false, '');
+                        $pdf->AddPage();
+                        $pdf->Ln(10);
+                        $cumulativeTotal += $pageTotal;
+                        $pageTotal = 0;
+                        $linesOnPage = 0;
+                        $html = startTable($type_activite);
+
+                        // Ajouter "Report" dans le tableau de la nouvelle page (sauf pour la première)
+                        if ($pdf->getPage() > 1) {
+                            $html .= '
+                    <tr style="background-color:#f2f2f2;">
+                        <td colspan="' . ($type_activite == 3 ? '8' : '5') . '" width="' . ($type_activite == 3 ? '69%' : '55%') . '"><strong style="font-family: trebucbd;">REPORT :</strong></td>
+                        <td width="' . ($type_activite == 3 ? '8%' : '12%') . '"><strong style="font-family: trebucbd;">' . number_format($cumulativeTotal, 0, ',', '.') . ' FCFA</strong></td>
+                        <td colspan="' . ($type_activite == 3 ? '2' : '2') . '" width="' . ($type_activite == 3 ? '23%' : '33%') . '"></td>
+                    </tr>';
+                            $linesOnPage++;
+                        }
+                    }
+
+                    // Ajouter "Total de cette page" à la fin de la dernière page
+                    /*
+            if ($index + 1 === count($data)) {
+                $html .= '
+                <tr style="background-color:#f2f2f2;">
+                    <td colspan="' . ($type_activite == 3 ? '8' : '5') . '" width="' . ($type_activite == 3 ? '69%' : '55%') . '"><strong style="font-family: trebucbd;">Total de cette page</strong></td>
+                    <td width="' . ($type_activite == 3 ? '8%' : '12%') . '"><strong style="font-family: trebucbd;">' . number_format($pageTotal, 0, ',', '.') . ' FCFA</strong></td>
+                    <td colspan="' . ($type_activite == 3 ? '2' : '2') . '" width="' . ($type_activite == 3 ? '23%' : '33%') . '"></td>
+                </tr>';
+            } */
+
+                    $cumulativeTotal += $pageTotal;
+                }
+                $html .= '</tbody></table>';
+            }
+
+            $total = $cumulativeTotal;
+            $html .= '<br><br>
+        <table border="1" cellpadding="4" align="center">
+            <tr style="background-color:#f2f2f2;">
+                <td colspan="' . ($type_activite == 3 ? '8' : '5') . '" width="' . ($type_activite == 3 ? '69%' : '55%') . '"><strong style="font-family: trebucbd;">Total général ( )</strong></td>
+                <td width="' . ($type_activite == 3 ? '8%' : '12%') . '"><strong style="font-family: trebucbd;">' . number_format($total, 0, ',', '.') . ' FCFA</strong></td>
+                <td colspan="' . ($type_activite == 3 ? '2' : '2') . '" width="' . ($type_activite == 3 ? '23%' : '33%') . '"></td>
+            </tr>
+        </table>';
+
+            $totalEnLettres = convertir_en_lettres($total);
+
+            $pdf->SetFont('trebucbd', '', 10);
+            $html .= '<br><p align="center"><b style="font-family: trebucbd;">Arrêté le présent état de paiement à la somme de : ' . mb_strtoupper($totalEnLettres, 'UTF-8') . ' (' . number_format($total, 0, ',', '.') . ') Francs CFA</b></p>';
+
+            $pr_nom = htmlspecialchars($data[0]['premier_responsable'] ?? '');
+            $pr_titre = htmlspecialchars($data[0]['titre_responsable'] ?? '');
+            $fin_nom = htmlspecialchars($data[0]['financier'] ?? '');
+            $fin_titre = htmlspecialchars($data[0]['titre_financier'] ?? '');
+
+            $html .= '
+        <br><br><br>
+        <table border="0" align="center">
+            <tr>
+                <td style="border:none; text-align:center;">
+                    <h4 style="margin-bottom:1em; font-family: trebucbd;">' . htmlspecialchars($fin_titre) . '</h4>
+                    <br>
+                    <h4 style="text-decoration:underline; font-family: trebucbd;">' . htmlspecialchars($fin_nom) . '</h4>
+                </td>
+                <td style="border:none; text-align:center;">
+                    <h4 style="margin-bottom:1em; font-family: trebucbd;">' . htmlspecialchars($pr_titre) . '</h4>
+                    <br>
+                    <h4 style="text-decoration:underline; font-family: trebucbd;">' . htmlspecialchars($pr_nom) . '</h4>
+                </td>
+            </tr>
+        </table>';
+
+            $pdf->writeHTML($html, true, false, true, false, '');
+            // ob_end_clean();
+        }
+    }
+
+
+    // Exécution pour les trois types d'activité
+    if (in_array($id_type_activite, [1, 2, 3])) {
+        $sql = '';
+        if ($id_type_activite == 1) {
+            $sql = "
+            SELECT 
+                p.nom AS nom_participant,
+                p.prenoms,
+                t.nom AS titre_participant,
+                a.reference,
+                a.taux_journalier,
+                pa.nombre_jours,
+                (a.taux_journalier * pa.nombre_jours) AS montant,
+                ib.banque,
+                ib.numero_compte AS rib,
+                a.premier_responsable,
+                a.titre_responsable,
+                a.financier,
+                a.titre_financier
+            FROM participants p
+            JOIN participations pa ON p.id_participant = pa.id_participant
+            JOIN activites a ON pa.id_activite = a.id
+            LEFT JOIN titres t ON pa.id_titre = t.id_titre
+            LEFT JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
+            WHERE a.type_activite = :type_activite AND a.id = :id_activite
+            ORDER BY p.nom ASC, p.prenoms ASC
+            ";
+        } elseif ($id_type_activite == 2) {
+            $sql = "
+            SELECT 
+                p.nom AS nom_participant,
+                p.prenoms,
+                t.nom AS titre_participant,
+                t.indemnite_forfaitaire,
+                a.reference,
+                a.taux_journalier,
+                pa.nombre_jours,
+                (a.taux_journalier * pa.nombre_jours + IFNULL(t.indemnite_forfaitaire, 0)) AS montant,
+                ib.banque,
+                ib.numero_compte AS rib,
+                a.premier_responsable,
+                a.titre_responsable,
+                a.financier,
+                a.titre_financier,
+                a.reference
+            FROM participants p
+            JOIN participations pa ON p.id_participant = pa.id_participant
+            JOIN activites a ON pa.id_activite = a.id
+            LEFT JOIN titres t ON pa.id_titre = t.id_titre
+            LEFT JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
+            WHERE a.type_activite = :type_activite AND a.id = :id_activite
+            ORDER BY p.nom ASC, p.prenoms ASC
+            ";
+        } elseif ($id_type_activite == 3) {
+            $sql = "
+            SELECT 
+                p.nom AS nom_participant,
+                p.prenoms,
+                t.nom AS titre_participant,
+                t.indemnite_forfaitaire,
+                a.taux_taches,
+                a.reference,
+                pa.nombre_taches,
+                a.frais_deplacement_journalier,
+                pa.nombre_jours,
+                (a.taux_taches * pa.nombre_taches + IFNULL(t.indemnite_forfaitaire, 0) + a.frais_deplacement_journalier * pa.nombre_jours) AS montant,
+                ib.banque,
+                ib.numero_compte AS rib,
+                a.premier_responsable,
+                a.titre_responsable,
+                a.financier,
+                a.titre_financier
+            FROM participants p
+            JOIN participations pa ON p.id_participant = pa.id_participant
+            JOIN activites a ON pa.id_activite = a.id
+            LEFT JOIN titres t ON pa.id_titre = t.id_titre
+            LEFT JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
+            WHERE a.type_activite = :type_activite AND a.id = :id_activite
+            ORDER BY p.nom ASC, p.prenoms ASC
+            ";
+        }
+
+        $stmt = $bdd->prepare($sql);
+        $stmt->execute([
+            'type_activite' => $id_type_activite,
+            'id_activite' => $id_activite
+        ]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Classe personnalisée pour la numérotation des pages
+        // echo 
+
+        // if (!class_exists('MYPDF') && $navigateur) {
+        //     class MYPDF extends TCPDF
+        //     {
+        //         public function Footer()
+        //         {
+        //             // $this->SetY(-15);
+        //             $this->SetFont('trebucbd', '', 9); // Police grasse pour le pied de page
+        //             // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0);
+        //             $this->Cell(0, 10,  $this->getAliasNumPage(), 0, false, 'R', 0);
+        //         }
+        //     }
+        // } elseif (!class_exists('MYPDF') && !$navigateur) {
+        //     class MYPDF extends TCPDF
+        //     {
+        //         public function Footer()
+        //         {
+        //             // $this->SetY(-15);
+        //             // $this->SetFont('trebucbd', '', 8); // Police grasse pour le pied de page
+        //             // // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, false, 'C', 0);
+        //             // $this->Cell(0, 10,  $this->getAliasNumPage(), 0, false, 'C', 0);
+        //         }
+        //     }
+        // }
+
+        // if ($navigateur) {
+        //     echo 'bonjour 2';
+        // }
+
+        if (!class_exists('MYPDF2')) {
+            class MYPDF2 extends TCPDF
+            {
+                public function Footer()
+                {
+                    // $this->SetY(-15);
+                    // $this->SetFont('trebucbd', '', 9); // Police grasse pour le pied de page
+                    // $this->Cell(0, 10,  $this->getAliasNumPage(), 0, false, 'R', 0);
+                }
+            }
+        }
+
+
+
+        // Création du PDF avec numérotation
+        $pdf = new MYPDF2($id_type_activite == 3 ? 'L' : 'P', 'mm', 'A4');
+        $pdf->AddFont('trebuc', '', 'trebuc.php'); // Police non-grasse
+        $pdf->AddFont('trebucbd', '', 'trebucbd.php'); // Police grasse
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(true);
+        $pdf->setMargins(15, 25, 15, true);
+        configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Etat de paiement');
+        $pdf->setAutoPageBreak(true, 25);
+        $pdf->AddPage();
+        $pdf->SetFont('trebucbd', '', 10);
+
+        // Appeler la fonction generatePDF
+        generatePDF($pdf, $data, $id_type_activite, $nom_activite, $id_activite, $data[0]['reference']);
+
+        // global $navigateur, $dossier_exports_temp;
+        if ($navigateur) {
+            $pdf->Output('Etat de paiement.pdf', 'I');
+            // echo 'bonjour';
+        } else {
+            $chemin_fichier = $dossier_exports_temp . '/Etat de paiement.pdf';;
+            $pdf->Output($chemin_fichier, 'F');
+            return $chemin_fichier;
+        }
+    } else {
+        redirigerVersPageErreur(404, $_SESSION['previous_url']);
+    }
+}
+
+function genererFusionPDFS($fichiers, $titre_document, $navigateur = true, $supprimerFichiers = true)
+{
+    global $dossier_exports_temp;
+    // Classe personnalisée avec Footer()
+    if ($navigateur) {
+        class PDFPerso extends Fpdi
+        {
+            public function Footer()
+            {
+                // $this->SetY(-15);
+                $this->SetFont('trebucbd', '', 10);
+                // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, 0, 'R');
+                $this->Cell(0, 10, $this->getAliasNumPage(), 0, 0, 'R');
+            }
+        }
+    } else {
+        class PDFPerso extends Fpdi
+        {
+            public function Footer()
+            {
+                // $this->SetY(-15);
+                // $this->SetFont('trebucbd', '', 10);
+                // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, 0, 'R');
+                // $this->Cell(0, 10, $this->getAliasNumPage(), 0, 0, 'R');
+            }
+        }
+    }
+
+    $pdf = new PDFPerso();
     $pdf->setMargins(15, 25, 15);
     $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
     $pdf->SetFooterMargin(25);
@@ -1649,6 +2340,10 @@ function genererFusionPDFS($fichiers, $titre_document, $navigateur = true, $supp
     // Affichage du PDF final
     if ($navigateur) {
         $pdf->Output($titre_document . '.pdf', 'I');
+    } else {
+        $chemin_fichier = $dossier_exports_temp . '/' . $titre_document . '.pdf';
+        $pdf->Output($chemin_fichier, 'F');
+        return $chemin_fichier;
     }
 
     if ($supprimerFichiers) {
@@ -1678,8 +2373,12 @@ function genererListeRIBS($id_activite, $navigateur = true)
     for ($i = 0; $i < count($chemins); $i++) {
         $chemins[$i] = $chemins[$i][0];
     }
-
-    genererFusionPDFS($chemins, 'Liste des RIBS', true, false);
+    if ($navigateur) {
+        genererFusionPDFS($chemins, 'Liste des RIBS', true, false);
+    } else {
+        $chemin_fichier = genererFusionPDFS($chemins, 'Liste des RIBS', false, false);
+        return $chemin_fichier;
+    }
 }
 
 // Fonctions de chiffrement

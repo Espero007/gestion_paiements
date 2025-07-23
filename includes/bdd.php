@@ -147,7 +147,8 @@ try {
         ligne3 VARCHAR(200) NULL,
         ville VARCHAR(200) NULL,
         date1 VARCHAR(200) NULL,
-        date2 VARCHAR(200) NULL,
+        ligne4 VARCHAR(200) NULL,
+        ligne5 VARCHAR(200) NULL,
         FOREIGN KEY (id_activite) REFERENCES activites(id) ON DELETE CASCADE
         );
 

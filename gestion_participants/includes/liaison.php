@@ -24,6 +24,25 @@ if ($sens == 0 && isset($_GET['id'])) {
     if (valider_id('get', 'id', '', 'participants')) {
         $id_participant = dechiffrer($_GET['id']);
 
+        // On récupère les informations du gars s'il en a eu entre temps
+        $stmt = $bdd->query(
+            '
+        SELECT t.nom as titre_liaison, ib.numero_compte, ib.id as compte_bancaire, p.nombre_jours as nbr_jours, p.nombre_taches as nbr_taches, p.id_participant, p.id_activite
+        FROM participations p
+        INNER JOIN titres t ON p.id_titre = t.id_titre
+        INNER JOIN informations_bancaires ib ON p.id_compte_bancaire = ib.id
+        WHERE p.id_participant=' . $id_participant .
+                ' ORDER BY p.id DESC'
+        );
+
+        if ($stmt->rowCount() != 0) {
+            $derniere_liaison = $stmt->fetch(PDO::FETCH_ASSOC);
+        } else {
+            $derniere_liaison = [];
+        }
+
+        $stmt->closeCursor();
+
         if ($etape_1 && !isset($_POST['continuer'])) {
             // Nous sommes encore à l'étape 1
             // On vérifie s'il y a des activités en bdd
@@ -67,7 +86,7 @@ if ($sens == 0 && isset($_GET['id'])) {
                             redirigerVersPageErreur(404);
                         } else {
                             // On peut à présent récupérer les informations de l'activité qui ici est supposé valide
-                            $stmt = $bdd->query('SELECT id, nom, type_activite FROM activites WHERE id=' . $id_activite);
+                            $stmt = $bdd->query('SELECT id, nom, type_activite FROM activites WHERE id=' . $id_activite . ' ORDER BY nom');
                             $resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             $activites[] = $resultat[0];
                         }
@@ -149,7 +168,7 @@ if ($sens == 1 && isset($_GET['id'])) {
                 SELECT id_participant, nom, prenoms, matricule_ifu
                 FROM participants
                 WHERE id_user =' . $_SESSION['user_id'] . '
-                AND id_participant NOT IN (SELECT id_participant FROM participations WHERE id_activite=' . $id_activite . ')');
+                AND id_participant NOT IN (SELECT id_participant FROM participations WHERE id_activite=' . $id_activite . ') ORDER BY nom');
                 $stmt->execute();
                 $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -189,9 +208,29 @@ if ($sens == 1 && isset($_GET['id'])) {
                             redirigerVersPageErreur();
                         } else {
                             // On peut à présent récupérer les informations du participant
-                            $stmt = $bdd->query('SELECT id_participant, nom, prenoms FROM participants WHERE id_participant=' . $id_participant);
+                            $stmt = $bdd->query('SELECT id_participant, nom, prenoms FROM participants WHERE id_participant=' . $id_participant . ' ORDER BY nom ASC');
                             $resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             $participants[] = $resultat[0];
+
+                            // On récupère aussi les informations de liaison s'il en a eu
+
+                            $stmt = $bdd->query(
+                                '
+                            SELECT t.nom as titre_liaison, ib.numero_compte, ib.id as compte_bancaire, p.nombre_jours as nbr_jours, p.nombre_taches as nbr_taches, p.id_participant, p.id_activite
+                            FROM participations p
+                            INNER JOIN titres t ON p.id_titre = t.id_titre
+                            INNER JOIN informations_bancaires ib ON p.id_compte_bancaire = ib.id
+                            WHERE p.id_participant=' . $id_participant .
+                                    ' ORDER BY p.id DESC'
+                            );
+
+                            if ($stmt->rowCount() != 0) {
+                                $derniere_liaison[] = $stmt->fetch(PDO::FETCH_ASSOC);
+                            } else {
+                                $derniere_liaison[] = [];
+                            }
+
+                            $stmt->closeCursor();
                         }
                     }
                 }

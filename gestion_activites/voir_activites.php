@@ -95,6 +95,10 @@ $resultat->closeCursor();
                                     ?>
                                     <?php afficherAlerte($message, 'info') ?>
                                 <?php endif; ?>
+
+                                <?php if (isset($_SESSION['edition_entete_ok'])) : ?>
+                                    <?php afficherAlerte('edition_entete_ok', 'success', true) ?>
+                                <?php endif; ?>
                                 <!-- Fin Messages divers -->
 
                                 <form action="">

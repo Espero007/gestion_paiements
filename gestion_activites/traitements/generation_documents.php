@@ -5,25 +5,6 @@ if (!valider_id('get', 'id', '', 'participations_activites')) {
     redirigerVersPageErreur(404, $_SESSION['previous_url']);
 }
 
-// if (filter_input(INPUT_GET, 'id_activite', FILTER_VALIDATE_INT)) {
-//     // On s'assure d'abord que l'activité en question a des participants associés, soit elle est présente dans la table participations
-//     $stmt = $bdd->prepare('SELECT id FROM participations WHERE id_activite=' . $_GET['id_activite']);
-//     $stmt->execute();
-//     $resultat = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-//     if (count($resultat) != 0) {
-//         if (valider_id('', '', $bdd, 'activites', $_GET['id_activite'])) {
-//             $id_activite = $_GET['id_activite'];
-//             $redirect = false;
-//         }
-//     }
-// }
-
-// if ($redirect) {
-//     header('location:' . $_SESSION['previous_url']);
-//     exit;
-// }
-
 // Arrivé ici on a une activité valide
 $id_activite = dechiffrer($_GET['id']);
 
@@ -82,5 +63,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!in_array($document, $pdfs_non_telechargeables))
                 $pdfs[] = $urls[$document];
         }
+    }
+
+    /** Ajouts Tobi */
+    // $_SESSION['documents_choisis_temp'] = $documents_choisis;
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['generer_zip'])) {
+        header('location:/gestion_activites/scripts_generation/fichier_zip.php?id=' . chiffrer($id_activite));
+        exit;
     }
 }

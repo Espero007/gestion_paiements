@@ -17,14 +17,32 @@ if ($stmt->rowCount() != 0) {
 }
 
 // Je veux le faire en deux volets, d'abord pour ajouter, ensuite pour modifier. Les deux aujourd'hui. Ok travaillons le alors
-$champs_attendus = [
+
+$bloc_gauche = [
     'ligne1' => 'Ligne 1',
     'ligne2' => 'Ligne 2',
     'ligne3' => 'Ligne 3',
-    'ville' =>  'Ville',
-    'date1' => 'Date 1',
-    'date2' => 'Date 2'
+    'ligne4' => 'Ligne 4',
 ];
+
+$bloc_droite = [
+    'ville' =>  'Ville',
+    'date1' => 'Date ',
+    'ligne5' => 'Texte'
+];
+
+// $champs_attendus = [
+//     'ligne1' => 'Ligne 1',
+//     'ligne2' => 'Ligne 2',
+//     'ligne3' => 'Ligne 3',
+//     'ville' =>  'Ville',
+//     'date1' => 'Date 1',
+//     'ligne4' => 'Ligne 4',
+//     'ligne5' => 'Texte'
+// ];
+
+$champs_attendus = array_merge($bloc_gauche, $bloc_droite);
+
 
 foreach ($champs_attendus as $key => $value) {
     $donnees[$key] = '';
@@ -51,10 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enregistrer'])) {
     if (!isset($erreurs)) {
         // On démarre les insertions
         if (!$modification) {
-            $stmt = $bdd->prepare('INSERT INTO informations_entete(id_activite, ligne1, ligne2, ligne3, ville, date1, date2) VALUES (' . $id_activite . ', :ligne1, :ligne2, :ligne3, :ville, :date1, :date2)');
+            $stmt = $bdd->prepare('INSERT INTO informations_entete(id_activite, ligne1, ligne2, ligne3, ville, date1, ligne4, ligne5) VALUES (' . $id_activite . ', :ligne1, :ligne2, :ligne3, :ville, :date1, :ligne4, :ligne5)');
         } else {
             // Une modification
-            $stmt = $bdd->prepare('UPDATE informations_entete SET ligne1=:ligne1, ligne2=:ligne2, ligne3=:ligne3, ville=:ville, date1=:date1, date2=:date2 WHERE id_activite=' . $id_activite);
+            $stmt = $bdd->prepare('UPDATE informations_entete SET ligne1=:ligne1, ligne2=:ligne2, ligne3=:ligne3, ville=:ville, date1=:date1, ligne4=:ligne4, ligne5=:ligne5 WHERE id_activite=' . $id_activite);
         }
 
         $stmt->execute([
@@ -63,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enregistrer'])) {
             'ligne3' => !empty($_POST['ligne3']) ? $_POST['ligne3'] : null,
             'ville' => !empty($_POST['ville']) ? $_POST['ville'] : null,
             'date1' => !empty($_POST['date1']) ? $_POST['date1'] : null,
-            'date2' => !empty($_POST['date2']) ? $_POST['date2'] : null
+            'ligne4' => !empty($_POST['ligne4']) ? $_POST['ligne4'] : null,
+            'ligne5' => !empty($_POST['ligne5']) ? $_POST['ligne5'] : null
         ]);
 
         $compteur = 0;
