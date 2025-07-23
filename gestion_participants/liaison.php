@@ -224,7 +224,7 @@ require_once('includes/liaison.php');
                                                 <div class="mb-4 row">
                                                     <label for="nbr_jours_<?= $i ?>" class="col-form-label col-sm-4">Nombre de jours</label>
                                                     <div class="col-sm-8">
-                                                        <input type="number" name="nbr_jours[<?= $i ?>]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours de l'acteur" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : ($modification ? $infos_liaison['nbr_jours'] : (!empty($derniere_liaison) ? $derniere_liaison['nbr_jours'] : 0)) ?>" aria-describedby="nbr_joursAide_<?= $i ?>" min="1">
+                                                        <input type="number" name="nbr_jours[<?= $i ?>]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours de l'acteur" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : ($modification ? $infos_liaison['nbr_jours'] : (!empty($derniere_liaison) && $derniere_liaison['nbr_jours'] != null ? $derniere_liaison['nbr_jours'] : 0)) ?>" aria-describedby="nbr_joursAide_<?= $i ?>" min="1">
 
                                                         <?php if (isset($erreurs['nbr_jours'][$i])) : ?>
                                                             <div class="form-text" id="nbr_joursAide_<?= $i ?>">
@@ -239,7 +239,7 @@ require_once('includes/liaison.php');
                                                     <div class="mb-2 row">
                                                         <label for="nbr_taches_<?= $i ?>" class="col-form-label col-sm-4">Nombre de tâches</label>
                                                         <div class="col-sm-8">
-                                                            <input type="number" name="nbr_taches[<?= $i ?>]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : ($modification ? $infos_liaison['nbr_taches'] : (!empty($derniere_liaison) ? $derniere_liaison['nbr_taches'] : 0)) ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>" min="1">
+                                                            <input type="number" name="nbr_taches[<?= $i ?>]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : ($modification ? $infos_liaison['nbr_taches'] : (!empty($derniere_liaison) && $derniere_liaison['nbr_taches'] != null ? $derniere_liaison['nbr_taches'] : 0)) ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>" min="1">
 
                                                             <?php if (isset($erreurs['nbr_taches'][$i])) : ?>
                                                                 <div class="form-text" id="nbr_tachesAide_<?= $i ?>">
@@ -322,7 +322,7 @@ require_once('includes/liaison.php');
                                                 <div class="mb-4 row">
                                                     <label for="nbr_jours_<?= $i ?>" class="col-form-label col-sm-4">Nombre de jours</label>
                                                     <div class="col-sm-8">
-                                                        <input type="number" name="nbr_jours[<?= $i ?>]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours de l'acteur" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : ($modification ? $infos_liaison['nbr_jours'] : (isset($derniere_liaison[$i]) && !empty($derniere_liaison[$i]) ? $derniere_liaison[$i]['nbr_jours'] : '')) ?>" aria-describedby="nbr_joursAide_<?= $i ?>" min="1">
+                                                        <input type="number" name="nbr_jours[<?= $i ?>]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours de l'acteur" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : ($modification ? $infos_liaison['nbr_jours'] : (isset($derniere_liaison[$i]) && !empty($derniere_liaison[$i]) && $derniere_liaison[$i]['nbr_jours'] != null ? $derniere_liaison[$i]['nbr_jours'] : 0)) ?>" aria-describedby="nbr_joursAide_<?= $i ?>" min="1">
 
                                                         <?php if (isset($erreurs['nbr_jours'][$i])) : ?>
                                                             <div class="form-text" id="nbr_joursAide_<?= $i ?>">
@@ -337,7 +337,7 @@ require_once('includes/liaison.php');
                                                     <div class="mb-2 row">
                                                         <label for="nbr_taches_<?= $i ?>" class="col-form-label col-sm-4">Nombre de tâches</label>
                                                         <div class="col-sm-8">
-                                                            <input type="number" name="nbr_taches[<?= $i ?>]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : ($modification ? $infos_liaison['nbr_taches'] : (isset($derniere_liaison[$i]) && !empty($derniere_liaison[$i]) ? $derniere_liaison[$i]['nbr_taches'] : '')) ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>">
+                                                            <input type="number" name="nbr_taches[<?= $i ?>]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : ($modification ? $infos_liaison['nbr_taches'] : (isset($derniere_liaison[$i]) && !empty($derniere_liaison[$i]) && $derniere_liaison[$i]['nbr_taches'] != null ? $derniere_liaison[$i]['nbr_taches'] : 0)) ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>">
 
                                                             <?php if (isset($erreurs['nbr_taches'][$i])) : ?>
                                                                 <div class="form-text" id="nbr_tachesAide_<?= $i ?>">
