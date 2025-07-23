@@ -69,10 +69,20 @@ if ($sens == 0 && isset($_GET['id'])) {
             $etape_1 = false;
             $etape_2 = true;
 
+            // On récupère les informations du participant
+
+            $stmt = $bdd->query('SELECT nom, prenoms FROM participants WHERE id_participant=' . $id_participant);
+            $participant = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
             if (!isset($_POST['activites_id'])) {
                 redirigerVersPageErreur();
             } else {
-                $activites_id = $_POST['activites_id'];
+                $activites_id = $_POST['activites_id']; // A ce stade, on dispose de la liste des ids mais ils sont chiffrés donc il faut veiller à les déchiffrer
+                foreach ($activites_id as $index => $id) {
+                    $activites_id[$index] = dechiffrer($id);
+                }
+
                 $activites = [];
 
                 foreach ($activites_id as $id) {

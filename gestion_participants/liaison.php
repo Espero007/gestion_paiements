@@ -1,5 +1,6 @@
 <?php
 // Avant toute chose je dois disposer soit de l'id du participant si on va dans le sens participant vers activités ou de l'id de l'activité si on va dans l'autre sens. Pareillement je pourrais disposer uniquement de la variable 'modifier' dans le cas d'une modification des informations donc on checke ces trois éléments et si ils sont absents on redirige purement et simplement vers la page d'erreur
+require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 
 if (!isset($_GET['s']) || (isset($_GET['s']) && !isset($_GET['id']) && !isset($_GET['modifier']))) {
     redirigerVersPageErreur();
@@ -47,11 +48,12 @@ if (isset($_GET['modifier'])) {
 //         $section = 'Activités';
 //     }
 // }
+// if (isset($redirect) && $redirect) {
+//     // Essentiellement pour le cas d'une modification de la liaison
+//     redirigerVersPageErreur(404);
+// }
+
 require_once(__DIR__ . '/../includes/header.php');
-if (isset($redirect) && $redirect) {
-    // Essentiellement pour le cas d'une modification de la liaison
-    redirigerVersPageErreur(404);
-}
 require_once('includes/liaison.php');
 
 ?>
@@ -190,9 +192,9 @@ require_once('includes/liaison.php');
                                         <?php if ($sens == 0) : ?>
                                             <?php foreach ($activites as $activite) : ?>
                                                 <?php if (!$modification) : ?>
-                                                    <input type="hidden" name="activites_id[]" value="<?= $activite['id'] ?>">
+                                                    <input type="hidden" name="activites_id[]" value="<?= chiffrer($activite['id']) ?>">
                                                     <div class="divider text-start">
-                                                        <div class="divider-text"><strong><?= htmlspecialchars($activite['nom']) ?></strong></div>
+                                                        <div class="divider-text"><strong><?= htmlspecialchars($participant['nom'] . ' ' . $participant['prenoms'] . ' & ' . $activite['nom']) ?></strong></div>
                                                     </div>
                                                 <?php endif; ?>
 
@@ -222,7 +224,7 @@ require_once('includes/liaison.php');
                                                 <div class="mb-4 row">
                                                     <label for="nbr_jours_<?= $i ?>" class="col-form-label col-sm-4">Nombre de jours</label>
                                                     <div class="col-sm-8">
-                                                        <input type="number" name="nbr_jours[<?= $i ?>]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours de l'acteur" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : ($modification ? $infos_liaison['nbr_jours'] : (!empty($derniere_liaison) ? $derniere_liaison['nbr_jours'] : '')) ?>" aria-describedby="nbr_joursAide_<?= $i ?>" min="1">
+                                                        <input type="number" name="nbr_jours[<?= $i ?>]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours de l'acteur" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : ($modification ? $infos_liaison['nbr_jours'] : (!empty($derniere_liaison) ? $derniere_liaison['nbr_jours'] : 0)) ?>" aria-describedby="nbr_joursAide_<?= $i ?>" min="1">
 
                                                         <?php if (isset($erreurs['nbr_jours'][$i])) : ?>
                                                             <div class="form-text" id="nbr_joursAide_<?= $i ?>">
@@ -237,7 +239,7 @@ require_once('includes/liaison.php');
                                                     <div class="mb-2 row">
                                                         <label for="nbr_taches_<?= $i ?>" class="col-form-label col-sm-4">Nombre de tâches</label>
                                                         <div class="col-sm-8">
-                                                            <input type="number" name="nbr_taches[<?= $i ?>]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : ($modification ? $infos_liaison['nbr_taches'] : (!empty($derniere_liaison) ? $derniere_liaison['nbr_taches'] : '')) ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>" min="1">
+                                                            <input type="number" name="nbr_taches[<?= $i ?>]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : ($modification ? $infos_liaison['nbr_taches'] : (!empty($derniere_liaison) ? $derniere_liaison['nbr_taches'] : 0)) ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>" min="1">
 
                                                             <?php if (isset($erreurs['nbr_taches'][$i])) : ?>
                                                                 <div class="form-text" id="nbr_tachesAide_<?= $i ?>">
