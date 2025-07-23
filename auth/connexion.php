@@ -140,7 +140,7 @@ require_once("submit/submit_connexion.php");
                                         <div class="text-center">
                                             <small>
                                                 <span>Nouveau sur la plateforme ?</span>
-                                                <a href="<?= generateUrl('inscription') ?>" class="is-primary">Créer un compte</a>
+                                                <a href="/auth/inscription.php" class="is-primary">Créer un compte</a>
                                             </small>
                                         </div>
                                     </div>

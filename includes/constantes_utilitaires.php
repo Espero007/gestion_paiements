@@ -1410,6 +1410,8 @@ line-height : 16px;
     $bloc_droite = mb_strtoupper($informations[0]['premier_responsable']);
     afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 5, 'C', '', 'C', '');
 
+    $pdf->Ln(15);
+
     $bloc_gauche = mb_strtoupper($informations[0]['titre_financier']);
     $bloc_droite = mb_strtoupper($informations[0]['titre_responsable']);
     afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 2, 'C', 'U', 'C', 'U');

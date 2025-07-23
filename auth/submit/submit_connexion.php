@@ -69,11 +69,20 @@ if (isset($_POST['connexion'])) {
                     // if (isset($_COOKIE['souvenir'])) {
                     //     unset($_COOKIE['souvenir']); // On shoote aussi le cookie s'il existe
                     // }
+                    $nom_cookie = chiffrer($_SESSION['user_id']);
+                    $stmt = $bdd->prepare("INSERT INTO token_souvenir(user_id,token, expire_le, nom_cookie) VALUES (?,?,?,?)");
+                    $stmt->execute([$logged_user['user_id'], hash('sha256', $token), $expire, $nom_cookie]);
+                    setcookie('souvenir_' . $nom_cookie, $token, time() + (86400 * $nbr_jours), '/', '', false, true); // expire au bout 30 jours
+                    // setcookie('souvenir_' . $nom_cookie, $token, time() + (60), '/', '', false, true); // expire au bout 30 jours
+                }
 
-                    $stmt = $bdd->prepare("INSERT INTO token_souvenir(user_id,token, expire_le) VALUES (?,?,?)");
-                    $stmt->execute([$logged_user['user_id'], hash('sha256', $token), $expire]);
-                    setcookie('souvenir', $token, time() + (86400 * $nbr_jours), '/', '', false, true); // expire au bout 30 jours
-                    // setcookie('souvenir', $token, time() + (60), '/', '', false, true); // expire au bout 30 jours
+                // On récupère le nom du cookie de l'utilisateur s'il en a
+
+                $stmt = $bdd->query('SELECT nom_cookie FROM token_souvenir WHERE user_id=' . $_SESSION['user_id']);
+                if ($stmt->rowCount() != 0) {
+                    // Il a un cookie
+                    $nom_cookie = $stmt->fetch(PDO::FETCH_NUM);
+                    $_SESSION['nom_cookie'] = $nom_cookie[0];
                 }
 
                 // Redirection vers la page d'accueil par défaut mais s'il y avait une url on la chope
@@ -81,7 +90,6 @@ if (isset($_POST['connexion'])) {
                     header('location:' . $_SESSION['previous_url']);
                     exit;
                 } else {
-                    // header('location:' . generateUrl(''));
                     header('location:/index.php');
                     exit;
                 }

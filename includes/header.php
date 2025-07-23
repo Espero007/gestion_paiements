@@ -22,8 +22,8 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
     // Le timeout est atteint mais il ne faut pas le déconnecter s'il a un cookie actif donc il faut s'assurer qu'il n'a pas de cookie
 
     $stmt = $bdd->query('SELECT * FROM token_souvenir WHERE user_id=' . $_SESSION['user_id']);
-    if ($stmt->rowCount() == 0 && !isset($_COOKIE['souvenir'])) {
-        // Il n'a pas de cookie ni dans la superglobale ni dans la bdd
+    if (!isset($_SESSION['nom_cookie'])) {
+        // Il n'a pas de cookie dans la bdd. On pose que ça veut aussi dire qu'il n'en a pas dans la superglobale, sauf si le gars a fait des manips foireuses
         $_SESSION['timeout_atteint'] = true;
         $_SESSION['previous_url'] = obtenirURLcourant();
         header('location:/auth/deconnexion.php');
@@ -58,11 +58,13 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
             // On vérifie que son cookie (s'il en a) n'est pas encore arrivé à expiration : bh en fait quand bien même il aurait un cookie, s'il arrive à expiration, il est supprimé automatiquement donc poser des conditions sur la présence du cookie après expiration n'est pas une bonne idée.
 
             $stmt = $bdd->query('SELECT * FROM token_souvenir WHERE user_id=' . $_SESSION['user_id']);
-            if ($stmt->rowCount() != 0 && !isset($_COOKIE['souvenir'])) {
-                // Il avait un cookie mais le cookie en question est arrivé à expiration donc on le déconnecte automatiquement
-                $_SESSION['cookie_expire'] = 'Veuillez vous connecter à nouveau.';
-                header('location:/auth/deconnexion.php');
-                exit;
+            if ($stmt->rowCount() != 0) {
+                if (!isset($_COOKIE['souvenir_' . $_SESSION['nom_cookie']])) {
+                    // Il avait un cookie mais le cookie en question est arrivé à expiration donc on le déconnecte automatiquement
+                    $_SESSION['cookie_expire'] = 'Veuillez vous connecter à nouveau.';
+                    header('location:/auth/deconnexion.php');
+                    exit;
+                }
             }
 
             $_SESSION['dernier_signe_activite'] = time();

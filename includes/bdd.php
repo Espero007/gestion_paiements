@@ -79,6 +79,7 @@ try {
         user_id INT NOT NULL,
         token VARCHAR(64) NOT NULL,
         expire_le DATETIME NOT NULL,
+        nom_cookie VARCHAR(200) NOT NULL,
         FOREIGN KEY (user_id) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
 

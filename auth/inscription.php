@@ -95,7 +95,7 @@
                                         <div class="text-center">
                                             <small>
                                                 <span>Déjà un compte sur la plateforme ?</span>
-                                                <a href="connexion" class="is-primary">Connectez-vous</a>
+                                                <a href="/auth/connexion.php" class="is-primary">Connectez-vous</a>
                                             </small>
                                         </div>
                                     </div>
