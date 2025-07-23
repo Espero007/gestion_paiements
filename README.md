@@ -1,6 +1,6 @@
-# GestionPaiementActeurs
+# GPaiements
 
-**GestionPaiementActeurs** est une plateforme web PHP permettant de gérer facilement les activités, les participants et les paiements associés. Elle s’adresse aux organisateurs d’événements, responsables administratifs ou toute structure ayant besoin de suivre et d’automatiser la gestion des paiements.
+**GPaiement** est une plateforme web PHP permettant de gérer facilement les activités, les acteurs et les paiements associés. Elle s’adresse aux organisateurs d’événements, responsables administratifs ou toute structure ayant besoin de suivre et d’automatiser la gestion des paiements.
 
 ---
 
@@ -9,16 +9,14 @@
 - **Création et gestion des activités** : Ajoutez, modifiez et supprimez des activités.
     * Chaque activité peut contenir des informations détaillées (nom, description, période, centre, la note génératrice , le timbre , les titres associés, les différents responsables et leur titres etc.).
     * Nous avons plusieurs types d'activités :
-      - **Activité de type 1** : En plus des informations çi dessus , elle prends en compte le taux journalier
-      - **Activité de type 2** : Ce type type d'activité contrairement au précédent , associe à chaque titre une indemnité forfaitaire.nous avons aussi la possibilité de renseigner le taux journalier
-      - **Activité de type 3** : Ce type d'activité , exclue le taux journalier , mais prends en compte le taux par tâche , les frais de déplacements journaliers et associe bien sur à chaque titre une indemnité forfaitaire.
+      - **Activité de type 1** : En plus des informations çi dessus, elle prend en compte le taux journalier.
+      - **Activité de type 2** : Ce type d'activité en plus du taux journalier, associe à chaque titre une indemnité forfaitaire.
+      - **Activité de type 3** : Ce type d'activité, exclue le taux journalier, mais prend en compte le taux par tâches, les frais de déplacements journaliers et associe à chaque titre une indemnité forfaitaire.
 
-- **Gestion des participants** : Ajoutez des participants , renseignez leurs informations et associez-les à des activités. Vous avez également la posssibilité  d'ajouter des comptes bancaires aux participants (au plus 3 comptes bancaires par participant).
-- **Saisie et suivi des paiements** : Enregistrez les paiements, visualisez l’état des paiements par activité ou participant.
-- **Historique et statistiques** : Consultez l’historique des paiements et des activités, générez des rapports.
+- **Gestion des participants** : Ajoutez des participants, renseignez leurs informations et associez-les à des activités. Vous avez également la posssibilité  d'ajouter des comptes bancaires aux participants (au plus 3 comptes bancaires par participant).
 - **Authentification sécurisée** : Accès protégé par compte utilisateur.
-- **Export des données** : Génération de documents PDF (états de paiement, ordres de virement, attestations,note de service , Liste des Ribs des participants etc.).
-- **Gestion des rôles et titres** : Attribuez des rôles/titres aux participants selon l’activité.
+- **Export des données** : Génération de documents PDF (états de paiement, ordres de virement, attestations, note de service, liste des Relevés d'Identité Bancaire(RIB) des participants etc.).
+- **Gestion des rôles et titres** : Attribuez des rôles/titres aux acteurs selon l’activité.
 
 ---
 
@@ -27,12 +25,12 @@
 - PHP 8.1 ou plus
 - MySQL / MariaDB
 - Apache ou Nginx
-- Extensions PHP : `pdo`, `mbstring`, `intl`
-- Xampp , Lammp ou tout autre serveur web compatible PHP
+- Extensions PHP : `pdo`, `mbstring`, `intl`, `zip` 
+- Xampp
 
 ---
 
-## ⚙️ Installation (Windows uniquement avec XAMPP)
+## ⚙️ Installation sous Windows
 
 ### 1. Télécharger XAMPP
 
@@ -45,6 +43,7 @@
 - Lors de l’installation, laissez les options par défaut (Apache, MySQL, PHP, phpMyAdmin, etc.).
 - Choisissez le dossier d’installation (par défaut : `C:\xampp`).
 - Terminez l’installation et lancez le panneau de contrôle XAMPP.
+- Laissez les paramètres de xampp par défaut tels quels.
 
 ### 3. Démarrer les services nécessaires
 
@@ -52,35 +51,27 @@
 - Cliquez sur “Start” pour **Apache** et **MySQL**.
 - Vérifiez que les deux services sont bien en vert.
 
-### 4. Télécharger ou cloner le projet
+### 4. Télécharger le projet
 
 - Téléchargez le projet depuis le dépôt github. Accédez au dépôt GitHub : en cliquant sur le lien suivant : [https://github.com/Espero007/gestion_paiements.git](https://github.com/Espero007/gestion_paiements.git)
   
-- Placez le dossier `gestion_paiements` dans un dossier de votre choix.
 
-
-### 5. Configurer la connexion à la base de données
-
-- Ouvrez le fichier `includes/bdd.php` dans le dossier du projet.
-- Modifiez les paramètres pour correspondre à votre base de données (nom, utilisateur, mot de passe).
-
-### 6. Lancer le serveur interne PHP
+### 5. Lancer le serveur interne PHP
 
 - Ouvrez une invite de commandes (cmd) ou PowerShell.
-- Placez-vous dans le dossier du projet :
+- Placez-vous dans le dossier dézippé du projet :
   ```bash
-  cd C:\chemin_vers_votre_dossier\gestion_paiements
+  cd C:\chemin_vers_votre_dossier\
   ```
-- Lancez le serveur interne PHP sur le port de votre choix (exemple : 8000) :
+- Lancez le serveur interne PHP sur le port de votre choix tout en veillant à ce que ce port ne soit pas occupé par une autre application (exemple : 8000)  :
   ```bash
-  php -S localhost:8000
+  php -S localhost:port
   ```
-- Assurez vous que le port choisis n'est pas occupé par une autre application
-- L’application sera accessible à l’adresse [http://localhost:8000](http://localhost:8000)
-
-### 7. Configurez votre navigateur
-- Allez dans les paramètres de votre navigateurs
-- 
+- L’application sera accessible à l’adresse [http://localhost:port](http://localhost:port)
+   - Exemple : Pour le port 8000 vous aurez accès à l'application via l'adresse  [http://localhost:8000](http://localhost:8000) 
+### 6. Configurez votre navigateur
+- 1. Allez dans les paramètres de votre navigateurs
+- 2. Allez dans 
 
 ---
 
@@ -149,7 +140,7 @@
 
 - Ifè Léonce COMLAN  — ifeleoncecomlan@email.com
 - Olowun-Tobi MONSI — olowun-tobi.monsi@email.com
-- Espéro AKANDO — espero.akando@email.com
+- Espéro AKANDO —    esperoakando@gmail.com
 - Judicael GBAGUIDI — judicael.gbaguidi@email.com
 
 *N’hésitez pas à nous contacter pour toute question ou suggestion !*
