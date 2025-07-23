@@ -32,71 +32,55 @@
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Installation (Windows uniquement avec XAMPP)
 
-### Sous Windows (XAMPP)
+### 1. Télécharger XAMPP
 
-1. **Cloner le dépôt**
-   ```bash
-   git clone https://github.com/Espero007/gestion_paiements.git
-   cd gestion_paiements
-   ```
+- Rendez-vous sur le site officiel : [https://www.apachefriends.org/fr/index.html](https://www.apachefriends.org/fr/index.html)
+- Cliquez sur “Télécharger” pour la version Windows.
+- Une fois le fichier téléchargé (`xampp-windows-x64-xx.x.x-x-installer.exe`), double-cliquez dessus pour lancer l’installation.
+
+### 2. Installer XAMPP
+
+- Lors de l’installation, laissez les options par défaut (Apache, MySQL, PHP, phpMyAdmin, etc.).
+- Choisissez le dossier d’installation (par défaut : `C:\xampp`).
+- Terminez l’installation et lancez le panneau de contrôle XAMPP.
+
+### 3. Démarrer les services nécessaires
+
+- Ouvrez le panneau de contrôle XAMPP (`xampp-control.exe`).
+- Cliquez sur “Start” pour **Apache** et **MySQL**.
+- Vérifiez que les deux services sont bien en vert.
+
+### 4. Télécharger ou cloner le projet
+
+- Téléchargez le projet depuis le dépôt github. Accédez au dépôt GitHub : en cliquant sur le lien suivant : [https://github.com/Espero007/gestion_paiements.git](https://github.com/Espero007/gestion_paiements.git)
+  
+- Placez le dossier `gestion_paiements` dans un dossier de votre choix.
 
 
-2. **Configurer le serveur web**
-   - Place le projet dans le dossier `htdocs` de XAMPP.
-   - Vérifie que `mod_rewrite` est activé dans Apache.
+### 5. Configurer la connexion à la base de données
 
-6. **Accéder à l’application**
-   - Dans votre navigateur, allez à [http://localhost/gestion_paiements/](http://localhost/gestion_paiements/).
+- Ouvrez le fichier `includes/bdd.php` dans le dossier du projet.
+- Modifiez les paramètres pour correspondre à votre base de données (nom, utilisateur, mot de passe).
 
----
+### 6. Lancer le serveur interne PHP
 
-### Sous Linux (XAMPP)
+- Ouvrez une invite de commandes (cmd) ou PowerShell.
+- Placez-vous dans le dossier du projet :
+  ```bash
+  cd C:\chemin_vers_votre_dossier\gestion_paiements
+  ```
+- Lancez le serveur interne PHP sur le port de votre choix (exemple : 8000) :
+  ```bash
+  php -S localhost:8000
+  ```
+- Assurez vous que le port choisis n'est pas occupé par une autre application
+- L’application sera accessible à l’adresse [http://localhost:8000](http://localhost:8000)
 
-1. **Installer XAMPP**  
-   Télécharger et installer XAMPP depuis [apachefriends.org](https://www.apachefriends.org/fr/index.html).
-
-2. **Cloner le dépôt**
-   ```bash
-   git clone https://github.com/Espero007/gestion_paiements.git
-   cd gestion_paiements
-   ```
-
-2. **Démarrer les services Apache et MySQL**
-   - Dans un terminal, lancez :
-     ```bash
-     sudo /opt/lampp/lampp start
-     ```
-   - Pour arrêter les services :
-     ```bash
-     sudo /opt/lampp/lampp stop
-     ```
-
-3. **Placer le projet dans le dossier web**
-   - Téléchargez ou clonez le dossier du projet `gestion_paiements`.
-
-        ```bash
-        git clone https://github.com/Espero007/gestion_paiements.git
-        cd gestion_paiements
-        ```
-
-   - Copiez ce dossier dans `gestion_paiements` `/opt/lampp/htdocs/` :
-     ```bash
-     sudo cp -r gestion_paiements /opt/lampp/htdocs/
-     ```
-
-4. **Créer la base de données via phpMyAdmin**
-   - Dans votre navigateur, allez à [http://localhost/phpmyadmin](http://localhost/phpmyadmin).
-   - Cliquez sur “Nouvelle base de données”, donnez-lui un nom (ex: `gestion_paiements`), puis validez.
-   - Si un fichier `database.sql` existe, importez-le via l’onglet “Importer”.
-
-5. **Configurer la connexion à la base de données**
-   - Ouvrez le fichier `includes/bdd.php` dans le projet.
-   - Renseignez les informations de connexion (nom de la base, utilisateur, mot de passe).
-
-6. **Accéder à l’application**
-   - Dans votre navigateur, allez à [http://localhost/gestion_paiements/](http://localhost/gestion_paiements/).
+### 7. Configurez votre navigateur
+- Allez dans les paramètres de votre navigateurs
+- 
 
 ---
 
