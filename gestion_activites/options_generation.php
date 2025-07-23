@@ -1,7 +1,13 @@
 <ul class="dropdown-menu">
     <li>
         <a href="#" class="text-decoration-none">
-            <button type="submit" name="generer_zip" title="Générez et téléchargez un fichier compressé (zip) contenant tous les documents sélectionnés." class="dropdown-item custom-dropdown-item">Générer un fichier zip</button>
+            <?php if (isset($documents_choisis)) : ?>
+                <form action="" method="post">
+                    <button type="submit" name="generer_zip" title="Générez et téléchargez un fichier compressé (zip) contenant tous les documents sélectionnés." class="dropdown-item custom-dropdown-item">Générer un fichier zip</button>
+                </form>
+            <?php else: ?>
+                <button type="submit" name="generer_zip" title="Générez et téléchargez un fichier compressé (zip) contenant tous les documents sélectionnés." class="dropdown-item custom-dropdown-item">Générer un fichier zip</button>
+            <?php endif; ?>
         </a>
     </li>
 

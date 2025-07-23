@@ -1992,7 +1992,7 @@ function genererEtatPaiement($id_activite, $navigateur = true)
 
     // Fonction pour générer le PDF
     if (!function_exists('generatePDF')) {
-        function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite, $reference)
+        function generatePDF($pdf, $data, $type_activite, $nom_activite, $id_activite, $reference, $navigateur)
         {
             if (!($pdf instanceof MYPDF2)) {
                 die("Erreur : \$pdf n'est pas une instance de MYPDF");
@@ -2135,7 +2135,9 @@ function genererEtatPaiement($id_activite, $navigateur = true)
         </table>';
 
             $pdf->writeHTML($html, true, false, true, false, '');
-            // ob_end_clean();
+            if ($navigateur) {
+                ob_end_clean();
+            }
         }
     }
 
@@ -2272,8 +2274,6 @@ function genererEtatPaiement($id_activite, $navigateur = true)
             }
         }
 
-
-
         // Création du PDF avec numérotation
         $pdf = new MYPDF2($id_type_activite == 3 ? 'L' : 'P', 'mm', 'A4');
         $pdf->AddFont('trebuc', '', 'trebuc.php'); // Police non-grasse
@@ -2287,12 +2287,11 @@ function genererEtatPaiement($id_activite, $navigateur = true)
         $pdf->SetFont('trebucbd', '', 10);
 
         // Appeler la fonction generatePDF
-        generatePDF($pdf, $data, $id_type_activite, $nom_activite, $id_activite, $data[0]['reference']);
+        generatePDF($pdf, $data, $id_type_activite, $nom_activite, $id_activite, $data[0]['reference'], $navigateur);
 
         // global $navigateur, $dossier_exports_temp;
         if ($navigateur) {
             $pdf->Output('Etat de paiement.pdf', 'I');
-            // echo 'bonjour';
         } else {
             $chemin_fichier = $dossier_exports_temp . '/Etat de paiement.pdf';;
             $pdf->Output($chemin_fichier, 'F');
