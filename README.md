@@ -111,7 +111,7 @@
 - Créez un compte si vous n’en avez pas.
 - Connectez-vous avec vos identifiants.
 
-![Connexion](assets/img/connexion.png)
+![Connexion](assets/img_readme/connexion.png)
 
 ### 2. Création d’une activité
 
@@ -119,7 +119,7 @@
 - Remplissez le formulaire (nom, description, période, centre, etc.).
 - Validez pour enregistrer l’activité.
 
-![Créer activité](assets/img/creer_activite.png)
+![Créer activité](assets/img_readme/creer_activite.png)
 
 ### 3. Ajout de participants
 
@@ -128,7 +128,7 @@
 - Remplissez les informations requises (nom, titre, coordonnées bancaires, etc.).
 - Enregistrez.
 
-![Ajouter participant](assets/img/ajouter_participant.png)
+![Ajouter participant](assets/img_readme/ajouter_participant.png)
 
 ### 4. Gestion du compte utilisateur
 
@@ -136,7 +136,7 @@
 - Vous pouvez changer votre mot de passe, mettre à jour vos informations de contact, etc.
 - Vous avez également la possibilité de désactiver votre compte.
 
-![Profil utilisateur](assets/img/profil_utilisateur.png)
+![Profil utilisateur](assets/img_readme/profil_utilisateur.png)
 
 ---
 
@@ -163,8 +163,8 @@
 
 ## 👨‍💻 Auteurs
 
-- Ifè Léonce COMLAN  — ifeleoncecomlan@email.com
-- Olowun-Tobi MONSI — olowun-tobi.monsi@email.com
+- Ifè Léonce Sokey Amour COMLAN  — ifeleoncecomlan@email.com
+- Olowun-Tobi MONSI — onellemonsiotojisca@email.com
 - Espéro AKANDO — espero.akando@email.com
 - Judicael GBAGUIDI — judicael.gbaguidi@email.com
 
