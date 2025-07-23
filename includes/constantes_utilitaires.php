@@ -489,7 +489,7 @@ function afficherAlerte($message, $type, $session = false, $dismissible = true)
 
 function traiterCheminAcces($chemin, $basename = false)
 {
-    // Cette fonction est là pour m'aider à retrouver le lien en relatif à partir du lien en absolu. Elle va donc tout simplement couper le chemin d'accès à partir de 'fichiers' et le reste me donnera le chemin d'accès en relatif
+    // Cette fonction est là pour m'aider à retrouver le lien en relatif à partir du lien en absolu. Elle va donc tout simplement couper le chemin d'accès à partir de 'fichiers' et me donner le reste du chemin d'accès en relatif
 
     if (!$basename) {
         $motCle = $GLOBALS['nom_dossier_upload'];
