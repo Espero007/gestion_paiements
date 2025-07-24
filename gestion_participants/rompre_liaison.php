@@ -14,5 +14,6 @@ $stmt = $bdd->query('DELETE FROM participations WHERE id=' . $id_participation);
 
 // Bref c'est fini
 
-header('location:' . $_SESSION['previous_url']);
+$_SESSION['liaison_rompue'] = 'La liaison a été rompue avec succès !';
+header('location:' . $_SESSION['current_url']);
 exit;

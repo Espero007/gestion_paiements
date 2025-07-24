@@ -66,6 +66,10 @@ require_once('includes/gerer_participant.php');
                                 <?php afficherAlerte('modification_reussie', 'success', true) ?>
                             <?php endif; ?>
 
+                            <?php if (isset($_SESSION['liaison_rompue'])) : ?>
+                                <?php afficherAlerte('liaison_rompue', 'success', true) ?>
+                            <?php endif; ?>
+
                             <!-- Fin Messages divers -->
 
                             <!-- Informations générales -->

@@ -64,6 +64,11 @@ require_once('traitements/gerer_activite.php');
                             <?php if (isset($_SESSION['edition_entete_ok'])) : ?>
                                 <?php afficherAlerte('edition_entete_ok', 'success', true) ?>
                             <?php endif; ?>
+
+                            <?php if (isset($_SESSION['liaison_rompue'])) : ?>
+                                <?php afficherAlerte('liaison_rompue', 'success', true) ?>
+                            <?php endif; ?>
+
                             <!-- Fin Messages divers  -->
 
                             <!-- Nom -->
@@ -209,7 +214,7 @@ require_once('traitements/gerer_activite.php');
                                     <a href="/gestion_participants/liaison.php?id=<?= chiffrer($activite['id']) ?>&s=1" class="btn btn-outline-primary">Associer des acteurs</a>
                                 </div>
                             <?php else : ?>
-                                <?php afficherSousFormeTableau($informations, 'table-responsive text-nowrap', 'table-bordered text-center', false, true) ?>
+                                <?php afficherSousFormeTableau($informations, '', 'table-bordered text-center', false, true) ?>
                             <?php endif; ?>
                         </div>
                     </div>

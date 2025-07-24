@@ -91,6 +91,9 @@ if (count($participants_associes) != 0) {
             'lien' => '#',
             'style' => 'text-danger',
             'dernier' => true,
+            'modal' => true,
+            'id_modal' => '#ruptureLiaison',
+            'id' => chiffrer($participant['id'])
         ];
         $compteur++;
     }
