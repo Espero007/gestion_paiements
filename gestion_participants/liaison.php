@@ -1,5 +1,6 @@
 <?php
 // Avant toute chose je dois disposer soit de l'id du participant si on va dans le sens participant vers activités ou de l'id de l'activité si on va dans l'autre sens. Pareillement je pourrais disposer uniquement de la variable 'modifier' dans le cas d'une modification des informations donc on checke ces trois éléments et si ils sont absents on redirige purement et simplement vers la page d'erreur
+require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 
 if (!isset($_GET['s']) || (isset($_GET['s']) && !isset($_GET['id']) && !isset($_GET['modifier']))) {
     redirigerVersPageErreur();
@@ -47,11 +48,12 @@ if (isset($_GET['modifier'])) {
 //         $section = 'Activités';
 //     }
 // }
+// if (isset($redirect) && $redirect) {
+//     // Essentiellement pour le cas d'une modification de la liaison
+//     redirigerVersPageErreur(404);
+// }
+
 require_once(__DIR__ . '/../includes/header.php');
-if (isset($redirect) && $redirect) {
-    // Essentiellement pour le cas d'une modification de la liaison
-    redirigerVersPageErreur(404);
-}
 require_once('includes/liaison.php');
 
 ?>
@@ -140,7 +142,7 @@ require_once('includes/liaison.php');
                                         ?>
 
                                         <form action="" method="post" class="pt-2">
-                                            <input type="hidden" name="id_participant" value="<?= $id_participant ?>">
+                                            <!-- <input type="hidden" name="id_participant" value="<?= chiffrer($id_participant) ?>"> -->
                                             <!-- Tableau -->
                                             <?php afficherSousFormeTableau($informations, 'table-responsive', 'table-bordered text-center', true, false, $cbxs); ?>
                                             <!-- Boutons d'actions -->
@@ -190,9 +192,9 @@ require_once('includes/liaison.php');
                                         <?php if ($sens == 0) : ?>
                                             <?php foreach ($activites as $activite) : ?>
                                                 <?php if (!$modification) : ?>
-                                                    <input type="hidden" name="activites_id[]" value="<?= $activite['id'] ?>">
+                                                    <input type="hidden" name="activites_id[]" value="<?= chiffrer($activite['id']) ?>">
                                                     <div class="divider text-start">
-                                                        <div class="divider-text"><strong><?= htmlspecialchars($activite['nom']) ?></strong></div>
+                                                        <div class="divider-text"><strong><?= htmlspecialchars($participant['nom'] . ' ' . $participant['prenoms'] . ' & ' . $activite['nom']) ?></strong></div>
                                                     </div>
                                                 <?php endif; ?>
 
@@ -214,7 +216,7 @@ require_once('includes/liaison.php');
                                                             </div>
                                                         <?php endif; ?>
 
-                                                        <small>Note : Ici vous avez la liste des titres que vous avez indiqué lors de la création de votre activité. Vous avez oublié d'enregistrer un titre ? <a href="/gestion_activites/modifier_infos.php?id=<?= $activite['id'] ?>">Cliquez ici</a> pour accéder aux informations de votre activité et modifier les titres qui lui sont associés.</small>
+                                                        <small>Note : Ici vous avez la liste des titres que vous avez indiqué lors de la création de votre activité. Vous avez oublié d'enregistrer un titre ? <a href="/gestion_activites/modifier_infos.php?id=<?= chiffrer($activite['id']) ?>">Cliquez ici</a> pour accéder aux informations de votre activité et modifier les titres qui lui sont associés.</small>
                                                     </div>
                                                 </div>
 
@@ -222,7 +224,7 @@ require_once('includes/liaison.php');
                                                 <div class="mb-4 row">
                                                     <label for="nbr_jours_<?= $i ?>" class="col-form-label col-sm-4">Nombre de jours</label>
                                                     <div class="col-sm-8">
-                                                        <input type="number" name="nbr_jours[<?= $i ?>]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours de l'acteur" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : ($modification ? $infos_liaison['nbr_jours'] : (!empty($derniere_liaison) ? $derniere_liaison['nbr_jours'] : '')) ?>" aria-describedby="nbr_joursAide_<?= $i ?>" min="1">
+                                                        <input type="number" name="nbr_jours[<?= $i ?>]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours de l'acteur" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : ($modification ? $infos_liaison['nbr_jours'] : (!empty($derniere_liaison) && $derniere_liaison['nbr_jours'] != null ? $derniere_liaison['nbr_jours'] : 0)) ?>" aria-describedby="nbr_joursAide_<?= $i ?>" min="1">
 
                                                         <?php if (isset($erreurs['nbr_jours'][$i])) : ?>
                                                             <div class="form-text" id="nbr_joursAide_<?= $i ?>">
@@ -237,7 +239,7 @@ require_once('includes/liaison.php');
                                                     <div class="mb-2 row">
                                                         <label for="nbr_taches_<?= $i ?>" class="col-form-label col-sm-4">Nombre de tâches</label>
                                                         <div class="col-sm-8">
-                                                            <input type="number" name="nbr_taches[<?= $i ?>]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : ($modification ? $infos_liaison['nbr_taches'] : (!empty($derniere_liaison) ? $derniere_liaison['nbr_taches'] : '')) ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>" min="1">
+                                                            <input type="number" name="nbr_taches[<?= $i ?>]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : ($modification ? $infos_liaison['nbr_taches'] : (!empty($derniere_liaison) && $derniere_liaison['nbr_taches'] != null ? $derniere_liaison['nbr_taches'] : 0)) ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>" min="1">
 
                                                             <?php if (isset($erreurs['nbr_taches'][$i])) : ?>
                                                                 <div class="form-text" id="nbr_tachesAide_<?= $i ?>">
@@ -260,7 +262,7 @@ require_once('includes/liaison.php');
                                                                     <div class="col mb-2">
                                                                         <?php $index++; ?>
                                                                         <div class="form-check mr-4">
-                                                                            <input name="compte_bancaire[<?= $i ?>]" class="form-check-input" type="radio" value="<?= $compte['id'] ?>" id="compte<?= $index ?>_<?= $i ?>" <?= isset($erreurs) ? isset($_POST['compte_bancaire'][$i]) && ($compte['id'] == $_POST['compte_bancaire'][$i] ? 'checked' : '') : ($modification && $compte['numero_compte'] == $infos_liaison['numero_compte'] ? 'checked' : (!empty($derniere_liaison) && $compte['numero_compte'] == $derniere_liaison['numero_compte'] ? 'checked' : '')) ?> aria-describedby="compte_bancaireAide_<?= $i ?>" <?= $index == 1 ? ' checked' : '' ?>>
+                                                                            <input name="compte_bancaire[<?= $i ?>]" class="form-check-input" type="radio" value="<?= chiffrer($compte['id']) ?>" id="compte<?= $index ?>_<?= $i ?>" <?= isset($erreurs) ? (isset($_POST['compte_bancaire'][$i]) && $compte['id'] == $_POST['compte_bancaire'][$i] ? 'checked' : '') : ($modification && $compte['numero_compte'] == $infos_liaison['numero_compte'] ? 'checked' : (!empty($derniere_liaison) && $compte['numero_compte'] == $derniere_liaison['numero_compte'] ? 'checked' : ($index == 1 ? 'checked' : ''))) ?> aria-describedby="compte_bancaireAide_<?= $i ?>">
                                                                             <label class="form-check-label" for="compte<?= $index ?>_<?= $i ?>"> <?= htmlspecialchars($compte['banque']) . ' (<i>' . htmlspecialchars($compte['numero_compte']) . '</i>)' ?></label>
                                                                         </div>
                                                                     </div>
@@ -279,7 +281,7 @@ require_once('includes/liaison.php');
                                                         <?php endif; ?>
 
                                                         <?php if (count($comptes) < NOMBRE_MAXIMAL_COMPTES) : ?>
-                                                            <small> <a href="/gestion_participants/ajouter_comptes.php?id_participant=<?= $id_participant ?>"></a> Cliquez ici si vous avez besoin d'ajouter à cet acteur des comptes bancaires.</small>
+                                                            <small> <a href="/gestion_participants/ajouter_comptes.php?id=<?= chiffrer($id_participant) ?>"></a> Cliquez ici si vous avez besoin d'ajouter à cet acteur des comptes bancaires.</small>
                                                         <?php endif; ?>
                                                     </div>
                                                 </div>
@@ -288,9 +290,9 @@ require_once('includes/liaison.php');
                                         <?php elseif ($sens == 1): ?>
                                             <?php foreach ($participants as $participant) : ?>
                                                 <?php if (!$modification) : ?>
-                                                    <input type="hidden" name="participants_id[]" value="<?= $participant['id_participant'] ?>">
+                                                    <input type="hidden" name="participants_id[]" value="<?= chiffrer($participant['id_participant']) ?>">
                                                     <div class="divider text-start">
-                                                        <div class="divider-text"><strong><?= htmlspecialchars($participant['nom'] . ' ' . $participant['prenoms']) ?></strong></div>
+                                                        <div class="divider-text"><strong><?= htmlspecialchars($activite['nom'] . ' & ' . $participant['nom'] . ' ' . $participant['prenoms']) ?></strong></div>
                                                     </div>
                                                 <?php endif; ?>
 
@@ -311,7 +313,7 @@ require_once('includes/liaison.php');
                                                             </div>
                                                         <?php endif; ?>
 
-                                                        <small>Note : Ici vous avez la liste des titres que vous avez indiqué lors de la création de votre activité. Vous avez oublié d'enregistrer un titre ? <a href="/gestion_activites/modifier_infos.php?id=<?= $id_activite ?>">Cliquez ici</a> pour accéder aux informations de votre activité et modifier les titres qui lui sont associés.</small>
+                                                        <small>Note : Ici vous avez la liste des titres que vous avez indiqué lors de la création de votre activité. Vous avez oublié d'enregistrer un titre ? <a href="/gestion_activites/modifier_infos.php?id=<?= chiffrer($id_activite) ?>">Cliquez ici</a> pour accéder aux informations de votre activité et modifier les titres qui lui sont associés.</small>
                                                     </div>
                                                 </div>
 
@@ -320,7 +322,7 @@ require_once('includes/liaison.php');
                                                 <div class="mb-4 row">
                                                     <label for="nbr_jours_<?= $i ?>" class="col-form-label col-sm-4">Nombre de jours</label>
                                                     <div class="col-sm-8">
-                                                        <input type="number" name="nbr_jours[<?= $i ?>]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours de l'acteur" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : ($modification ? $infos_liaison['nbr_jours'] : (isset($derniere_liaison[$i]) && !empty($derniere_liaison[$i]) ? $derniere_liaison[$i]['nbr_jours'] : '')) ?>" aria-describedby="nbr_joursAide_<?= $i ?>" min="1">
+                                                        <input type="number" name="nbr_jours[<?= $i ?>]" id="nbr_jours_<?= $i ?>" placeholder="Indiquez le nombre de jours de l'acteur" class="form-control <?= isset($erreurs['nbr_jours'][$i]) ? 'is-invalid' : '' ?>" value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_jours'][$i]) : ($modification ? $infos_liaison['nbr_jours'] : (isset($derniere_liaison[$i]) && !empty($derniere_liaison[$i]) && $derniere_liaison[$i]['nbr_jours'] != null ? $derniere_liaison[$i]['nbr_jours'] : 0)) ?>" aria-describedby="nbr_joursAide_<?= $i ?>" min="1">
 
                                                         <?php if (isset($erreurs['nbr_jours'][$i])) : ?>
                                                             <div class="form-text" id="nbr_joursAide_<?= $i ?>">
@@ -330,12 +332,13 @@ require_once('includes/liaison.php');
                                                     </div>
                                                 </div>
 
+
                                                 <?php if ($type_activite == 3) : ?>
-                                                    <!-- Champs additionnels -->
+                                                    <!-- Nombre de tâches -->
                                                     <div class="mb-2 row">
                                                         <label for="nbr_taches_<?= $i ?>" class="col-form-label col-sm-4">Nombre de tâches</label>
                                                         <div class="col-sm-8">
-                                                            <input type="number" name="nbr_taches[<?= $i ?>]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : ($modification ? $infos_liaison['nbr_taches'] : (isset($derniere_liaison[$i]) && !empty($derniere_liaison[$i]) ? $derniere_liaison[$i]['nbr_taches'] : '')) ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>">
+                                                            <input type="number" name="nbr_taches[<?= $i ?>]" id="nbr_taches_<?= $i ?>" class="form-control <?= isset($erreurs['nbr_taches'][$i]) ? 'is-invalid' : '' ?> " value="<?= isset($erreurs) ? htmlspecialchars($_POST['nbr_taches'][$i]) : ($modification ? $infos_liaison['nbr_taches'] : (isset($derniere_liaison[$i]) && !empty($derniere_liaison[$i]) && $derniere_liaison[$i]['nbr_taches'] != null ? $derniere_liaison[$i]['nbr_taches'] : 0)) ?>" placeholder="Indiquez le nombre de tâches réalisées" aria-describedby="nbr_tachesAide_<?= $i ?>">
 
                                                             <?php if (isset($erreurs['nbr_taches'][$i])) : ?>
                                                                 <div class="form-text" id="nbr_tachesAide_<?= $i ?>">
@@ -357,7 +360,7 @@ require_once('includes/liaison.php');
                                                             <?php foreach ($comptes[$i] as $compte) : ?>
                                                                 <?php $index++; ?>
                                                                 <div class="form-check mr-4">
-                                                                    <input name="compte_bancaire[<?= $i ?>]" class="form-check-input" type="radio" value="<?= $compte['id'] ?>" id="compte<?= $index ?>_<?= $i ?>" <?= isset($erreurs) ? ($compte['id'] == $_POST['compte_bancaire'][$i] ? 'checked' : '') : ($modification && $compte['numero_compte'] == $infos_liaison['numero_compte'] ? 'checked' : (isset($derniere_liaison[$i]) && !empty($derniere_liaison[$i]) && $compte['numero_compte'] == $derniere_liaison[$i]['numero_compte'] ? 'checked' : '')) ?> aria-describedby="compte_bancaireAide_<?= $i ?>" <?= $index == 1 ? ' checked' : '' ?>>
+                                                                    <input name="compte_bancaire[<?= $i ?>]" class="form-check-input" type="radio" value="<?= chiffrer($compte['id']) ?>" id="compte<?= $index ?>_<?= $i ?>" <?= isset($erreurs) ? ($compte['id'] == dechiffrer($_POST['compte_bancaire'][$i]) ? 'checked' : '') : ($modification && $compte['numero_compte'] == $infos_liaison['numero_compte'] ? 'checked' : (isset($derniere_liaison[$i]) && !empty($derniere_liaison[$i]) && $compte['numero_compte'] == $derniere_liaison[$i]['numero_compte'] ? 'checked' : ($index == 1 ? 'checked' : ''))) ?> aria-describedby="compte_bancaireAide_<?= $i ?>">
                                                                     <label class="form-check-label" for="compte<?= $index ?>_<?= $i ?>"> <?= htmlspecialchars($compte['banque']) . ' (<i>' . htmlspecialchars($compte['numero_compte']) . '</i>)' ?></label>
                                                                 </div>
                                                             <?php endforeach; ?>
@@ -373,7 +376,7 @@ require_once('includes/liaison.php');
                                                         <?php endif; ?>
 
                                                         <?php if (count($comptes[$index_participant]) < NOMBRE_MAXIMAL_COMPTES) : ?>
-                                                            <small> <a href="/gestion_participants/ajouter_comptes.php?id_participant=<?= $participant['id_participant'] ?>">Cliquez ici</a> si vous avez besoin d'ajouter à cet acteur des comptes bancaires.</small>
+                                                            <small> <a href="/gestion_participants/ajouter_comptes.php?id=<?= chiffrer($participant['id_participant']) ?>">Cliquez ici</a> si vous avez besoin d'ajouter à cet acteur des comptes bancaires.</small>
                                                         <?php endif; ?>
                                                     </div>
                                                 </div>

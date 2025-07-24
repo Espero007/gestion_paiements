@@ -69,10 +69,20 @@ if ($sens == 0 && isset($_GET['id'])) {
             $etape_1 = false;
             $etape_2 = true;
 
+            // On récupère les informations du participant
+
+            $stmt = $bdd->query('SELECT nom, prenoms FROM participants WHERE id_participant=' . $id_participant);
+            $participant = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
             if (!isset($_POST['activites_id'])) {
                 redirigerVersPageErreur();
             } else {
-                $activites_id = $_POST['activites_id'];
+                $activites_id = $_POST['activites_id']; // A ce stade, on dispose de la liste des ids mais ils sont chiffrés donc il faut veiller à les déchiffrer
+                foreach ($activites_id as $index => $id) {
+                    $activites_id[$index] = dechiffrer($id);
+                }
+
                 $activites = [];
 
                 foreach ($activites_id as $id) {
@@ -119,7 +129,7 @@ if ($sens == 0 && isset($_GET['id'])) {
                                 'id_participant' => $id_participant,
                                 'id_activite' => $activite['id'],
                                 'id_titre' => $id_titre,
-                                'id_compte_bancaire' => $_POST['compte_bancaire'][$i],
+                                'id_compte_bancaire' => dechiffrer($_POST['compte_bancaire'][$i]),
                                 'nbr_jours' => $_POST['nbr_jours'][$i],
                                 'nbr_taches' => $activite['type_activite'] == 3 ? $_POST['nbr_taches'][$i] : null
                             ]);
@@ -182,6 +192,12 @@ if ($sens == 1 && isset($_GET['id'])) {
             $etape_1 = false;
             $etape_2 = true;
 
+            // Je récupère quelques informations de l'activité
+
+            $stmt = $bdd->query('SELECT nom FROM activites WHERE id=' . $id_activite);
+            $activite = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
             // De suite on rentre dans notre chaîne de validation habituelle
 
             if (!isset($_POST['participants_id'])) {
@@ -189,6 +205,11 @@ if ($sens == 1 && isset($_GET['id'])) {
             } else {
                 // Le tableau contenant les id des participants sélectionnés est bien là
                 $participants_id = $_POST['participants_id'];
+
+                // On déchiffre les valeurs reçues
+                foreach ($participants_id as $index => $valeur) {
+                    $participants_id[$index] = dechiffrer($valeur);
+                }
                 $participants = []; // Un tableau qui va contenir les informations associées à chaque participant
 
                 // Bouclons donc sur les id de chaque participant pour m'assurer qu'ils sont valides
@@ -264,7 +285,7 @@ if ($sens == 1 && isset($_GET['id'])) {
 
                             $stmt->bindParam(':id_titre', $id_titre, PDO::PARAM_INT);
                             // $stmt->bindParam(':diplome', $_POST['diplome'][$i]);
-                            $stmt->bindParam(':id_compte_bancaire', $_POST['compte_bancaire'][$i], PDO::PARAM_INT);
+                            $stmt->bindParam(':id_compte_bancaire', dechiffrer($_POST['compte_bancaire'][$i]), PDO::PARAM_INT);
                             $stmt->bindParam(':nbr_jours', $_POST['nbr_jours'][$i], PDO::PARAM_INT);
 
                             if ($type_activite == 3) {
@@ -335,7 +356,7 @@ if (isset($_GET['modifier'])) {
                 }
 
                 foreach ($champs_attendus as $champ) {
-                    $valeur = $_POST[$champ][0];
+                    $valeur = $champ != 'compte_bancaire' ? $_POST[$champ][0] : dechiffrer($_POST[$champ][0]);
                     $champ = $champ == 'titre' ? 'titre_liaison' : $champ;
                     if ($valeur != $infos_liaison[$champ]) {
                         $modification_effective = true;
@@ -356,7 +377,7 @@ if (isset($_GET['modifier'])) {
                     }
 
                     $stmt->bindParam(':id_titre', $id_titre, PDO::PARAM_INT);
-                    $stmt->bindParam(':id_compte_bancaire', $_POST['compte_bancaire'][0], PDO::PARAM_INT);
+                    $stmt->bindParam(':id_compte_bancaire', dechiffrer($_POST['compte_bancaire'][0]), PDO::PARAM_INT);
                     $stmt->bindParam(':nbr_jours', $_POST['nbr_jours'][0], PDO::PARAM_INT);
 
                     if ($type_activite == 3) {
@@ -378,7 +399,7 @@ if (isset($_GET['modifier'])) {
                 }
 
                 foreach ($champs_attendus as $champ) {
-                    $valeur = $_POST[$champ][0];
+                    $valeur = $champ != 'compte_bancaire' ? $_POST[$champ][0] : dechiffrer($_POST[$champ][0]);
                     $champ = $champ == 'titre' ? 'titre_liaison' : $champ;
                     if ($valeur != $infos_liaison[$champ]) {
                         $modification_effective = true;
@@ -398,7 +419,7 @@ if (isset($_GET['modifier'])) {
 
                     $stmt->execute([
                         'id_titre' => $id_titre,
-                        'id_compte_bancaire' => $_POST['compte_bancaire'][0],
+                        'id_compte_bancaire' => dechiffrer($_POST['compte_bancaire'][0]),
                         'nbr_jours' => $_POST['nbr_jours'][0],
                         'nbr_taches' => $activites[0]['type_activite'] == 3 ? $_POST['nbr_taches'][0] : null
                     ]);
@@ -410,7 +431,4 @@ if (isset($_GET['modifier'])) {
             }
         }
     }
-
-
-    // On récupère les informations intermédiaires selon le sens
 }

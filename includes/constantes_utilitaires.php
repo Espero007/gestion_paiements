@@ -62,67 +62,67 @@ function creer_dossiers_upload()
     return $upload_mois . '/';
 }
 
-function inserer_fichier_dans_bdd($bdd, $chemin_absolu, $infos_fichier, $current_url)
-{
-    // Enregistrement des métadonnées
-    $stmt = $bdd->prepare("INSERT INTO fichiers(chemin_acces, nom_original, date_upload, type_fichier) VALUES (:val1, :val2, :val3, :val4)");
+// function inserer_fichier_dans_bdd($bdd, $chemin_absolu, $infos_fichier, $current_url)
+// {
+//     // Enregistrement des métadonnées
+//     $stmt = $bdd->prepare("INSERT INTO fichiers(chemin_acces, nom_original, date_upload, type_fichier) VALUES (:val1, :val2, :val3, :val4)");
 
-    $stmt->bindParam(':val1', $chemin_absolu);
-    $stmt->bindParam(':val2', $infos_fichier['name']); // nom original
-    $date_upload = date("Y-m-d"); //  peut être : 2001-03-10
-    $stmt->bindParam(':val3', $date_upload);
-    $extension = strtolower(pathinfo($infos_fichier['name'], PATHINFO_EXTENSION));
-    $stmt->bindParam(':val4', $extension); // extension
+//     $stmt->bindParam(':val1', $chemin_absolu);
+//     $stmt->bindParam(':val2', $infos_fichier['name']); // nom original
+//     $date_upload = date("Y-m-d"); //  peut être : 2001-03-10
+//     $stmt->bindParam(':val3', $date_upload);
+//     $extension = strtolower(pathinfo($infos_fichier['name'], PATHINFO_EXTENSION));
+//     $stmt->bindParam(':val4', $extension); // extension
 
-    if (!$stmt->execute()) {
-        redirigerVersPageErreur(500, $current_url);
-    }
-}
+//     if (!$stmt->execute()) {
+//         redirigerVersPageErreur(500, $current_url);
+//     }
+// }
 
-function inserer_metadonnees_dans_bdd($bdd, $id_participant, $banque, $numero_compte, $id_fichier, $current_url)
-{
-    $stmt = $bdd->prepare("INSERT INTO informations_bancaires(id_participant, banque, numero_compte, id_rib) VALUES (:val1, :val2, :val3, :val4)");
+// function inserer_metadonnees_dans_bdd($bdd, $id_participant, $banque, $numero_compte, $id_fichier, $current_url)
+// {
+//     $stmt = $bdd->prepare("INSERT INTO informations_bancaires(id_participant, banque, numero_compte, id_rib) VALUES (:val1, :val2, :val3, :val4)");
 
-    $stmt->bindParam(':val1', $id_participant);
-    $stmt->bindParam(':val2', $banque);
-    $stmt->bindParam(':val3', $numero_compte);
-    $stmt->bindParam(':val4', $id_fichier, PDO::PARAM_INT);
+//     $stmt->bindParam(':val1', $id_participant);
+//     $stmt->bindParam(':val2', $banque);
+//     $stmt->bindParam(':val3', $numero_compte);
+//     $stmt->bindParam(':val4', $id_fichier, PDO::PARAM_INT);
 
-    if (!$stmt->execute()) {
-        redirigerVersPageErreur(500, $current_url);
-    }
-}
+//     if (!$stmt->execute()) {
+//         redirigerVersPageErreur(500, $current_url);
+//     }
+// }
 
-function modifier_nom($fichier, $matricule_ifu)
-{
-    $nom_fichier = $fichier; // Ici je récupère "pdf_rib_$i";
-    $chiffre_fin = substr($nom_fichier, -1); // Je prends le chiffre de fin
-    $nom_fichier = substr($nom_fichier, 0, -1); // Ici je garde "pdf_rib_";
+// function modifier_nom($fichier, $matricule_ifu)
+// {
+//     $nom_fichier = $fichier; // Ici je récupère "pdf_rib_$i";
+//     $chiffre_fin = substr($nom_fichier, -1); // Je prends le chiffre de fin
+//     $nom_fichier = substr($nom_fichier, 0, -1); // Ici je garde "pdf_rib_";
 
-    return $nom_fichier . $matricule_ifu . "_" . $chiffre_fin . ".pdf"; // Je constitue le nom final et je le retourne
-}
+//     return $nom_fichier . $matricule_ifu . "_" . $chiffre_fin . ".pdf"; // Je constitue le nom final et je le retourne
+// }
 
-function valider_valeur_numerique($cle, $conteneur)
-{
-    // $val est le nom de la valeur dans $conteneur donc cette fonction se base sur le principe que le conteneur est un tableau associatif avec des couples clés/valeurs. Dans les faits elle est construite pour vérifier les différentes valeurs qui seront passées par GET mais gardons cet aspect général avec $conteneur
+// function valider_valeur_numerique($cle, $conteneur)
+// {
+//     // $val est le nom de la valeur dans $conteneur donc cette fonction se base sur le principe que le conteneur est un tableau associatif avec des couples clés/valeurs. Dans les faits elle est construite pour vérifier les différentes valeurs qui seront passées par GET mais gardons cet aspect général avec $conteneur
 
-    // 1- On s'assure que la valeur recherchée est bien dans le conteneur
+//     // 1- On s'assure que la valeur recherchée est bien dans le conteneur
 
-    if (!isset($conteneur[$cle])) {
-        return false;
-    }
+//     if (!isset($conteneur[$cle])) {
+//         return false;
+//     }
 
-    // 2 - On s'assure que la valeur si elle est là est un nombre (ici, prenons pour hypothèse que ce nombre quelqu'il soit doit être supérieur à 0)
+//     // 2 - On s'assure que la valeur si elle est là est un nombre (ici, prenons pour hypothèse que ce nombre quelqu'il soit doit être supérieur à 0)
 
-    $val = intval($conteneur[$cle]);
-    if ($val == 0) {
-        echo "Je suis ici";
-        return false; // La valeur que nous avons reçue est une chaîne de caractère
-    }
+//     $val = intval($conteneur[$cle]);
+//     if ($val == 0) {
+//         echo "Je suis ici";
+//         return false; // La valeur que nous avons reçue est une chaîne de caractère
+//     }
 
-    // Tout va bien
-    return true;
-}
+//     // Tout va bien
+//     return true;
+// }
 
 function valider_id($methode, $cle, $bdd, $table = 'participants', $valeur_id = false, $chiffre = true)
 {
@@ -268,6 +268,7 @@ function determinerPeriode($date_debut, $date_fin)
 }
 
 /** Fonction mise en place par Ifè et Tobi (on respecte les droits d'auteurs ici !) */
+
 function formaterPeriode($dateDebut, $dateFin)
 {
     $debut = new DateTime($dateDebut);
@@ -276,7 +277,7 @@ function formaterPeriode($dateDebut, $dateFin)
     $jourDebut = $debut->format('j');
     $jourFin   = $fin->format('j');
 
-    $formatterMois = new IntlDateFormatter("fr_FR", IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'MMMM');
+    $formatterMois = new IntlDateFormatter("fr_FR", IntlDateFormatter::NONE, IntlDateFormatter::NONE, 'Africa/Lagos', IntlDateFormatter::GREGORIAN, 'MMMM');
 
     $moisDebut = $formatterMois->format($debut);
     $moisFin   = $formatterMois->format($fin);
@@ -372,10 +373,10 @@ function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $a
                 <?php foreach ($body as $ligne) : ?>
                     <tr>
                         <?php if ($choix) : ?>
-                            <td><input type="checkbox" name="<?= $cbxs ? $cbxs[0] : 'bref' ?>[]" value="<?= $cbxs ? $cbxs[1][$index] : 'bref' ?>"></td>
+                            <td><input type="checkbox" id="<?= $cbxs[0] . '_' . $index + 1 ?>" name="<?= $cbxs ? $cbxs[0] : 'bref' ?>[]" value="<?= $cbxs ? chiffrer($cbxs[1][$index]) : 'bref' ?>"></td>
                         <?php endif; ?>
                         <?php foreach ($ligne as $cellule) : ?>
-                            <td><?= $cellule != null ? htmlspecialchars($cellule) : '-' ?></td>
+                            <td><?= $cellule != null ? ($choix ? '<label for="' . $cbxs[0] . '_' . $index + 1 . '">' . htmlspecialchars($cellule) . '</label>' : htmlspecialchars($cellule)) : '-' ?></td>
                         <?php endforeach; ?>
                         <?php if ($actions) : ?>
                             <td>
@@ -386,13 +387,13 @@ function afficherSousFormeTableau($elements, $style1, $style2, $choix = true, $a
                                     <ul class="dropdown-menu">
                                         <?php for ($i = 1; $i < count($actions[$index]); $i++) : ?>
                                             <?php $action = $actions[$index][$i] ?>
-                                            <?php if (isset($action['dernier']) && count($actions[$index]) > 2) : ?>
+                                            <?php if (isset($action['dernier']) && count($actions[$index]) >= 2) : ?>
                                                 <li>
                                                     <hr class="dropdown-divider">
                                                 </li>
                                             <?php endif; ?>
                                             <li>
-                                                <a href="<?= $action['lien'] ?>" class="dropdown-item custom-dropdown-item<?= isset($action['style']) ? ' ' . $action['style'] : '' ?>"><?= $action['intitule'] ?></a>
+                                                <a href="<?= $action['lien'] ?>" class="dropdown-item custom-dropdown-item<?= isset($action['style']) ? ' ' . $action['style'] : '' ?><?= isset($action['modal'])  ? ' del-btn' : '' ?>" <?= isset($action['modal']) ? 'data-toggle="modal" data-target="' . $action['id_modal'] . '" id="' . $action['id'] . '"' : '' ?>><?= $action['intitule'] ?></a>
                                             </li>
                                         <?php endfor; ?>
                                     </ul>
@@ -489,7 +490,7 @@ function afficherAlerte($message, $type, $session = false, $dismissible = true)
 
 function traiterCheminAcces($chemin, $basename = false)
 {
-    // Cette fonction est là pour m'aider à retrouver le lien en relatif à partir du lien en absolu. Elle va donc tout simplement couper le chemin d'accès à partir de 'fichiers' et le reste me donnera le chemin d'accès en relatif
+    // Cette fonction est là pour m'aider à retrouver le lien en relatif à partir du lien en absolu. Elle va donc tout simplement couper le chemin d'accès à partir de 'fichiers' et me donner le reste du chemin d'accès en relatif
 
     if (!$basename) {
         $motCle = $GLOBALS['nom_dossier_upload'];

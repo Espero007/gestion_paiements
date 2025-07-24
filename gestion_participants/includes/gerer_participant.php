@@ -88,6 +88,9 @@ if (count($activites_associees) != 0) {
             'lien' => '#',
             'style' => 'text-danger',
             'dernier' => true,
+            'modal' => true,
+            'id_modal' => '#ruptureLiaison',
+            'id' => chiffrer($activite['id'])
         ];
         $compteur++;
     }

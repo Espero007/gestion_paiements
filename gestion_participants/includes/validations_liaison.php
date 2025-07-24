@@ -28,7 +28,7 @@ if ($sens == 1) {
                         $erreurs[$champ][$i][] = "Le titre que vous avez choisi n'est pas valide";
                     }
                 } else if ($champ == 'compte_bancaire') {
-                    if (!in_array($valeur, $id_comptes[$i])) {
+                    if (!in_array(dechiffrer($valeur), $id_comptes[$i])) {
                         $erreurs[$champ][$i][] = "Le compte bancaire sélectionné n'est pas valide";
                     }
                 } else if ($champ == 'nbr_jours' || $champ == 'nbr_taches') {
@@ -39,7 +39,7 @@ if ($sens == 1) {
             }
         }
     }
-}elseif($sens == 0){
+} elseif ($sens == 0) {
     for ($i = 0; $i < count($activites); $i++) {
         $champs_attendus = ['titre', 'compte_bancaire', 'nbr_jours'];
         if ($activites[$i]['type_activite'] == 3) {
@@ -65,11 +65,10 @@ if ($sens == 1) {
                         $erreurs[$champ][$i][] = 'Le titre que vous avez choisi n\'est pas valide';
                     }
                 } elseif ($champ == 'compte_bancaire') {
-                    if (!in_array($valeur, $ids_comptes)) {
+                    if (!in_array(dechiffrer($valeur), $ids_comptes)) {
                         $erreurs[$champ][$i][] = "Le compte bancaire sélectionné n'est pas valide";
                     }
                 } elseif ($champ == 'nbr_jours' || $champ == 'nbr_taches') {
-
                     if (!filter_var($valeur, FILTER_VALIDATE_INT)) {
                         $erreurs[$champ][$i][] = "Vous devez indiquer une valeur numérique valide";
                     }

@@ -34,13 +34,16 @@
 
 ### 1. Télécharger XAMPP
 
-- Rendez-vous sur le site officiel : [https://www.apachefriends.org/fr/index.html](https://www.apachefriends.org/fr/index.html)
+- Rendez-vous sur le site officiel :
+  [https://www.apachefriends.org/fr/index.html](https://www.apachefriends.org/fr/index.html)
 - Cliquez sur “Télécharger” pour la version Windows.
-- Une fois le fichier téléchargé (`xampp-windows-x64-xx.x.x-x-installer.exe`), double-cliquez dessus pour lancer l’installation.
+- Une fois le fichier téléchargé (`xampp-windows-x64-xx.x.x-x-installer.exe`),
+  double-cliquez dessus pour lancer l’installation.
 
 ### 2. Installer XAMPP
 
-- Lors de l’installation, laissez les options par défaut (Apache, MySQL, PHP, phpMyAdmin, etc.).
+- Lors de l’installation, laissez les options par défaut (Apache, MySQL, PHP,
+  phpMyAdmin, etc.).
 - Choisissez le dossier d’installation (par défaut : `C:\xampp`).
 - Terminez l’installation et lancez le panneau de contrôle XAMPP.
 - Laissez les paramètres de XAMPP par défaut.
@@ -169,13 +172,17 @@
 
 ## 🗂️ Structure du projet
 
-- `gestion_activites/` : gestion des activités, création, édition, génération de documents.
-- `gestion_participants/` : gestion des participants, liaisons, informations bancaires.
-- `includes/` : fichiers utilitaires, connexion BDD, constantes, fonctions communes.
+- `gestion_activites/` : gestion des activités, création, édition, génération de
+  documents.
+- `gestion_participants/` : gestion des participants, liaisons, informations
+  bancaires.
+- `includes/` : fichiers utilitaires, connexion BDD, constantes, fonctions
+  communes.
 - `assets/` : ressources statiques (CSS, JS, images).
 - `auth/` : gestion de l’authentification.
 - `pdfs_temp/` : stockage temporaire des PDF générés.
-- `PHPMailer/`, `tcpdf/` : librairies tierces pour l’envoi de mails et la génération de PDF.
+- `PHPMailer/`, `tcpdf/` : librairies tierces pour l’envoi de mails et la
+  génération de PDF.
 
 ---
 
@@ -183,8 +190,10 @@
 
 - **Sauvegardez régulièrement la base de données.**
 - **Ne partagez pas vos identifiants de connexion.**
-- **Vérifiez les droits d’écriture sur les dossiers d’upload et de génération de PDF.**
-- **Pour toute question, consultez la documentation ou contactez l’administrateur.**
+- **Vérifiez les droits d’écriture sur les dossiers d’upload et de génération de
+  PDF.**
+- **Pour toute question, consultez la documentation ou contactez
+  l’administrateur.**
 
 ---
 
@@ -195,10 +204,11 @@
 - Espéro AKANDO — esperoakando@gmail.com
 - Judicael GBAGUIDI — gbaguidijudicael520@gmail.com
 
-*N’hésitez pas à nous contacter pour toute question ou suggestion !*
+_N’hésitez pas à nous contacter pour toute question ou suggestion !_
 
 ---
 
 ## 🙋‍♂️ Support
 
-Pour toute question ou suggestion, ouvrez une issue sur le dépôt GitHub ou contactez l’équipe de développement.
+Pour toute question ou suggestion, ouvrez une issue sur le dépôt GitHub ou
+contactez l’équipe de développement.

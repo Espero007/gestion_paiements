@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($stmt->rowCount() != 0) {
                             $resultat = $stmt->fetch(PDO::FETCH_ASSOC);
                             $stmt->closeCursor();
-                            $erreurs['compte_deja_utilise'] = 'Vous ne pouvez pas supprimer le compte (<strong>' . strtoupper($compte) . '</strong>) car le participant a été associé à l\'activité "<strong>' . $resultat['nom'] . '</strong>" avec ce dernier. <a href="/gestion_participants/lier_participant_activite.php?modifier=' . $resultat['id'] . '">Cliquez ici</a> pour modifier les informations de cette liaison puis revenez supprimer le compte.';
+                            $erreurs['compte_deja_utilise'] = 'Vous ne pouvez pas supprimer le compte (<strong>' . strtoupper($compte) . '</strong>) car l\'acteur a été associé à l\'activité "<strong>' . $resultat['nom'] . '</strong>" avec ce dernier. <a href="/gestion_participants/liaison.php?modifier=' . chiffrer($resultat['id']) . '&s=0">Cliquez ici</a> pour modifier les informations de cette liaison puis revenez supprimer le compte.';
                         }
                     } else {
                         redirigerVersPageErreur(404, $_SESSION['previous_url']);
