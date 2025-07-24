@@ -71,21 +71,28 @@
    - Exemple : Pour le port 8000 vous aurez accès à l'application via l'adresse  [http://localhost:8000](http://localhost:8000) 
 ### 6. Configurez votre navigateur
 - 1. Allez dans les paramètres de votre navigateurs
-- 2. Allez dans 
+- 2. Allez dans  Téléchargement
+- 3. Puis cocher l'option : `Toujours demander où enrégistrer les fichiers`
 
 ---
 
 ## 📝 Guide d’utilisation
 
-### 1. Connexion & création de compte
+### 1. Création de Compte Connexion & 
 
-- Rendez-vous sur la page de connexion.
-- Créez un compte si vous n’en avez pas.
-- Connectez-vous avec vos identifiants.
+- Une fois que vous avez accédez à a page , commencez par créer un compte en entrant vos infotmations.
+
+![Connexion](assets/img_readme/Creation_compte.png)
+
+- Ensuite , vous recevrai un email de confirmation qui rediregera directement vers le tableau de bord comme çi dessous : 
+
+![Connexion](assets/img_readme/tableau_de_bord.png)
+
+- Si vous avez déjà un compte Connectez-vous directement  avec vos identifiants de connexion (Vous pouvez cliquez surle bouton `Se souvenir de moi` pour pour ne plus à aoir à entrer vos identifiants à chaque fois).
 
 ![Connexion](assets/img_readme/connexion.png)
 
-### 2. Création d’une activité
+### 2. Création et gestion  d’une activité
 
 - Cliquez sur “Créer une activité”.
 - Remplissez le formulaire (nom, description, période, centre, etc.).
@@ -93,22 +100,74 @@
 
 ![Créer activité](assets/img_readme/creer_activite.png)
 
-### 3. Ajout de participants
+- Après avoir créer l'activité , vous pouvez voir les informations relatives à l'activité comme çi-après : 
+
+![Créer activité](assets/img_readme/gestion_activite.png)
+
+- Vous pouvez cliquez sur `Autre action` pour `Supprimer` l'activité , `Générer les documents` si des participants y sont déjà associés ou `Editer l'en tête des documents` .
+- Vous pouvez également modifier les informations d'une activité déjà créer en cliquant sur `Modifier les informations` .
+- Toutes les activités crées sont visibles en cliquant sur `Activité` puis `Vos Activités` de la barre d'outil à gauche : 
+
+![Créer activité](assets/img_readme/vos_activite.png)
+
+- Vous pouvez chercher vos activité dans la barre de recherche et cliquer sur le bouton `Gerer` pour effectuer vos actions.
+
+### 3. Création et gestion des acteurs
 
 - Accédez à l’activité créée.
 - Cliquez sur “Associer des acteurs” ou “Ajouter un participant”.
-- Remplissez les informations requises (nom, titre, coordonnées bancaires, etc.).
-- Enregistrez.
+- Sélectionnez les acteurs que vous désirer associer à l'activité. Si vous n'avez encore créer aucun acteur , cliquer sur sur le bouton `Ajouter un acteur de la page çi après` : 
 
 ![Ajouter participant](assets/img_readme/ajouter_participant.png)
 
-### 4. Gestion du compte utilisateur
+- Si vous déjà créer des acteurs , sélectionnez les acteurs sur la page qui s'affiche : 
+
+![Ajouter participant](assets/img_readme/selectionner_participant.png)
+
+- Remplissez les informations requises (nom, titre, coordonnées bancaires, etc.).
+
+![Ajouter participant](assets/img_readme/associer_participant.png)
+
+- Si vous finissez d'entrer les informations , cliquez sur le bouton `Relier la liaison` .
+
+
+- Vous pouvez voir les participants associés à une activité en dessous comme çi après : 
+
+![Ajouter participant](assets/img_readme/participant_activite.png)
+
+- Vous pour rechercher un participant en tapant son nom dans la barre de recherche en haut à droite , cliquer ensuite sur `Modifier` pour modifier les informations qui lient le participant à l'activité ou  `rompre la liaison` pour retirer le participant de l'activité.
+
+- Lorsque vous cliquer sur le bouton `Gérer le participant` , la page çi-après s'affiche : 
+
+![Ajouter participant](assets/img_readme/gerer_participant.png)
+
+- Cliquez sur `Modifier les informations` pour modifier les informations personnelles d'un partcipant ou `Autres actions` pour l'associer à une autre activité ou lui ajouter un compte bancaire.
+
+### 5. Génération des documents
+
+- Une fois que vous avez créer votre activité et ajouter des acteurs , c'est le moments de générer les différents documents.
+- Dans la barre de recherche cliquez sur `Activité` puis `Vos activité` .
+- Choisisez votre activité ou taper le nom de l'activité dans la barre de recherche pour aller vite.
+- Cliquez sur `Gérer`
+- Vous verrez en haut à droite un bouton `Générer document` .
+- Editer l'en tête de votre document sur la page çi après : 
+
+![Ajouter participant](assets/img_readme/editer_entete.png)
+
+- Ensuite choisisez les documents que vous voulez générer puis cliquez sur continuer.
+- Vous avez la possibilité de les générer en fichier zipper ou en un seul fichier non zipper.
+
+
+
+### 5. Gestion du compte utilisateur
 
 - Une fois connecté, vous pouvez modifier vos informations personnelles depuis votre espace utilisateur en accédant à paramètre dans la barre des tâches.
 - Vous pouvez changer votre mot de passe, mettre à jour vos informations de contact, etc.
 - Vous avez également la possibilité de désactiver votre compte.
 
 ![Profil utilisateur](assets/img_readme/profil_utilisateur.png)
+
+
 
 ---
 
