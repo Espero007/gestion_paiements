@@ -114,6 +114,16 @@ require_once('includes/liaison.php');
                         <?php endif; ?>
                     <?php elseif ($sens == 1): ?>
 
+                        <?php if ($aucun_participant_1) : ?>
+                            <hr>
+                            <h4 class="font-weight-bold mb-2">Aucun acteur retrouvé</h4>
+                            <p>Il semble que vous ne disposez d'aucun acteur ajouté. <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter de nouveaux acteurs que vous pourrez ensuite associer à votre activité. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                        <?php elseif ($aucun_participant_2): ?>
+                            <hr>
+                            <h4 class="font-weight-bold mb-2">Aucun acteur retrouvé</h4>
+                            <p class="">Il semble que vous avez déjà associé à cette activité tous les acteurs que vous avez ajoutés. <a href="/gestion_participants/ajouter_participant.php">Cliquez ici</a> pour ajouter un nouvel acteur. (<a href="<?= $_SESSION['previous_url'] ?>">Revenir à la page précédente</a>)</p>
+                        <?php endif; ?>
+
                     <?php endif; ?>
                     <!-- Fin Messages en cas d'erreur -->
 
