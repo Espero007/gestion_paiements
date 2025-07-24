@@ -1003,7 +1003,7 @@ function creerActivitesDemo()
     /** Création en premier lieu de 3 activités de types distincts chacun */
 
     // Requête
-    $sql = "INSERT INTO activites(type_activite, id_user, nom, description, date_debut, date_fin, centre, premier_responsable, titre_responsable, organisateur, titre_organisateur, financier, titre_financier, timbre, taux_journalier, taux_taches, frais_deplacement_journalier, reference) VALUES (:type_activite,{$_SESSION['user_id']},:nom, 'C\'est une activité de démonstration pour tester les diverses fonctionnalités de la plateforme', '2025-01-01', '2025-12-31', :centre, 'AKANDO Espéro Eléazar Ogoluwa', 'Ingénrieur Télécoms', 'COMLAN Ifè', 'Ingénieur Télécoms', 'MONSI Olowun-Tobi', 'Ingénieur Réseaux', :timbre_activite, :taux_journalier, :taux_taches, :frais_deplacement_journalier, :reference)";
+    $sql = "INSERT INTO activites(type_activite, id_user, nom, description, date_debut, date_fin, centre, premier_responsable, titre_responsable, organisateur, titre_organisateur, financier, titre_financier, timbre, taux_journalier, taux_taches, frais_deplacement_journalier, reference) VALUES (:type_activite,{$_SESSION['user_id']},:nom, 'C\'est une activité de démonstration pour tester les diverses fonctionnalités de la plateforme', '2025-01-01', '2025-12-31', :centre, 'AKANDO Espéro Eléazar Ogoluwa', 'Ingénieur Télécoms', 'COMLAN Ifè', 'Ingénieur Télécoms', 'MONSI Olowun-Tobi', 'Ingénieur Réseaux', :timbre_activite, :taux_journalier, :taux_taches, :frais_deplacement_journalier, :reference)";
     $stmt = $bdd->prepare($sql);
 
     // Activité de type 1
