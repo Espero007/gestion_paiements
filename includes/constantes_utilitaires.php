@@ -635,7 +635,7 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $pdf->Ln(5);
 
     // Ligne 3 : Sous-titre du document
-    $ligne3 = mb_strtoupper($sous_titres[$type_document] . ' ' . $informations['titre'] . ($type_document != 'etat_paiement_3' ? '' : ', ' . $informations_entete['ligne5']), 'UTF-8');
+    $ligne3 = mb_strtoupper($sous_titres[$type_document] . ' ' . $informations['titre'] . ($type_document != 'etat_paiement_3' ? '' : ', ' . ($entete_editee ? $informations_entete['ligne5'] : 'session 2020')), 'UTF-8');
     $pdf->setFont('trebuc', '', '10');
     $pdf->setX($x);
     $pdf->MultiCell($largeurBloc, 5, $ligne3, 0, 'C');
@@ -2162,12 +2162,12 @@ function genererEtatPaiement($id_activite, $navigateur = true)
                 a.titre_responsable,
                 a.financier,
                 a.titre_financier
-            FROM participants p
-            JOIN participations pa ON p.id_participant = pa.id_participant
-            JOIN activites a ON pa.id_activite = a.id
-            LEFT JOIN titres t ON pa.id_titre = t.id_titre
-            LEFT JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
-            WHERE a.type_activite = :type_activite AND a.id = :id_activite
+            FROM participations pa
+            INNER JOIN participants p ON p.id_participant = pa.id_participant
+            INNER JOIN activites a ON pa.id_activite = a.id
+            INNER JOIN titres t ON pa.id_titre = t.id_titre
+            INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
+            WHERE a.type_activite = :type_activite AND pa.id_activite = :id_activite
             ORDER BY p.nom ASC, p.prenoms ASC
             ";
         } elseif ($id_type_activite == 2) {
@@ -2188,12 +2188,12 @@ function genererEtatPaiement($id_activite, $navigateur = true)
                 a.financier,
                 a.titre_financier,
                 a.reference
-            FROM participants p
-            JOIN participations pa ON p.id_participant = pa.id_participant
-            JOIN activites a ON pa.id_activite = a.id
-            LEFT JOIN titres t ON pa.id_titre = t.id_titre
-            LEFT JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
-            WHERE a.type_activite = :type_activite AND a.id = :id_activite
+            FROM participations pa
+            INNER JOIN participants p ON p.id_participant = pa.id_participant
+            INNER JOIN activites a ON pa.id_activite = a.id
+            INNER JOIN titres t ON pa.id_titre = t.id_titre
+            INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
+            WHERE a.type_activite = :type_activite AND pa.id_activite = :id_activite
             ORDER BY p.nom ASC, p.prenoms ASC
             ";
         } elseif ($id_type_activite == 3) {
@@ -2215,12 +2215,12 @@ function genererEtatPaiement($id_activite, $navigateur = true)
                 a.titre_responsable,
                 a.financier,
                 a.titre_financier
-            FROM participants p
-            JOIN participations pa ON p.id_participant = pa.id_participant
-            JOIN activites a ON pa.id_activite = a.id
-            LEFT JOIN titres t ON pa.id_titre = t.id_titre
-            LEFT JOIN informations_bancaires ib ON p.id_participant = ib.id_participant
-            WHERE a.type_activite = :type_activite AND a.id = :id_activite
+            FROM participations pa
+            INNER JOIN participants p ON p.id_participant = pa.id_participant
+            INNER JOIN activites a ON pa.id_activite = a.id
+            INNER JOIN titres t ON pa.id_titre = t.id_titre
+            INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
+            WHERE a.type_activite = :type_activite AND pa.id_activite = :id_activite
             ORDER BY p.nom ASC, p.prenoms ASC
             ";
         }
