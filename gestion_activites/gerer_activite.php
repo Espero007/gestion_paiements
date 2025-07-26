@@ -201,7 +201,7 @@ require_once('traitements/gerer_activite.php');
 
                     <div class="card shadow mb-4">
                         <div class="card-header">
-                            <h6 class="text-primary font-weight-bold">Acteurs associés</h6>
+                            <h6 class="text-primary font-weight-bold">Participants associés</h6>
                         </div>
                         <div class="card-body">
                             <!-- Messages divers -->
