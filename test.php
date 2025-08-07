@@ -18,40 +18,21 @@ require_once('includes/bdd.php');
 
 <body>
     <style>
-        body {
-            padding: 20px;
+        div.container {
+            display: flex;
+            justify-content: space-between;
         }
 
-        td {
+        p {
             text-align: center;
-            line-height: 16px;
-            border: 1px solid #000;
-            border-top: none;
-            border-bottom: none;
-        }
-
-        tr {
-            border: 1px solid #000;
         }
     </style>
-    <table width="100%" cellpadding="5">
-        <tbody>
-            <tr>
-                <td>Bonjour</td>
-                <td>Element 2</td>
-                <td>Element 3</td>
-            </tr>
-            <tr>
-                <td>Bonjour</td>
-                <td>Element 2</td>
-                <td>Element 3</td>
-            </tr>
-            <tr>
-                <td>Bonjour</td>
-                <td>Element 2</td>
-                <td>Element 3</td>
-            </tr>
-        </tbody>
+
+    <table cellpadding="5" border="0" width="100%">
+        <tr>
+            <td width="50%" style="text-decoration: underline;"></td>
+            <td width="50%"></td>
+        </tr>
     </table>
 
 </body>

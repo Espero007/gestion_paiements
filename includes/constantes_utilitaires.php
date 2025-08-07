@@ -5,11 +5,11 @@ define('BASE_PATH', realpath(__DIR__ . '/../'));
 const NBR_ACTIVITES_A_AFFICHER = 6;
 const NOMBRE_MAXIMAL_COMPTES = 3;
 define('TIMEOUT', 1 * 86400); // 1 journée d'inactivité soit 86400
-// define('TIMEOUT', 30); // 30 secondes d'inactivité
 $nom_dossier_upload = 'fichiers';
 define('UPLOADS_BASE_DIR', BASE_PATH . '/' . $nom_dossier_upload);
 const PERMISSIONS = 0777;
 $dossier_exports_temp =  BASE_PATH . '/gestion_activites/scripts_generation/exports';
+
 if (!is_dir($dossier_exports_temp)) {
     mkdir($dossier_exports_temp, 0777, true); // crée récursivement avec droits suffisants
 }
@@ -253,12 +253,18 @@ function obtenirURLcourant($debut_url = false)
 }
 
 // Fonctions liées à la génération de pdfs
-
+/**
+ * ELle configure les éléments de base du pdf à savoir l'auteur du document, son titre, ses marges
+ */
 function configuration_pdf($pdf, $auteur, $titre)
 {
     $pdf->setCreator(PDF_CREATOR);
     $pdf->setAuthor($auteur);
     $pdf->setTitle($titre);
+
+    $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
+    $pdf->setMargins(15, 25, 15, true); // Mise en place des marges
+    $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
 }
 
 function determinerPeriode($date_debut, $date_fin)
@@ -500,28 +506,46 @@ function traiterCheminAcces($chemin, $basename = false)
     }
 }
 
-function afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, $font, $font_size, $sauts_ligne, $bloc_gauche_align = 'C', $bloc_gauche_style = '', $bloc_droite_align = 'C', $bloc_droite_style = '')
+function afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, $font, $font_size, $font_style = '', $bloc_gauche_align = 'center', $bloc_droite_align = 'center')
 {
-    // $bloc_gauche_style pour savoir si je veux le bloc souligné, en gras, ce genre de choses
-    $pdf->setFont($font, $bloc_gauche_style, $font_size);
+    $pdf->setFont($font, $font_style, $font_size);
+    $style = '
+        <style>
+            td.bloc_1{
+            text-align : ' . $bloc_gauche_align . ';
+            }
+            td.bloc_2{
+            text-align : ' . $bloc_droite_align . '
+            }
+        </style>
+        ';
 
-    $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
+    $html = $style . '
+        <table cellpadding="5" border="0" width="100%">
+        <tr>
+            <td width="50%" class="bloc_1">' . mb_strtoupper($bloc_gauche) . '</td>
+            <td width="50%" class="bloc_2">' . mb_strtoupper($bloc_droite) . '</td>
+        </tr>
+        </table>';
+    $pdf->writeHTML($html, false, false, false, false, '');
+
+    // $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
     // Largeur d'un bloc
-    $largeurBloc = $largeurPage / 2;
+    // $largeurBloc = $largeurPage / 2;
     // Sauvegarder la position Y
-    $y = $pdf->GetY();
-    // Sauvegarder la position de x à droite
-    $x_droite = $pdf->getMargins()['left'] + $largeurBloc;
-    $pdf->setXY($pdf->getMargins()['left'], $y);
-    $pdf->MultiCell($largeurBloc, 5, $bloc_gauche, 0, $bloc_gauche_align);
+    // $y = $pdf->GetY();
 
-    $pdf->setFont($font, $bloc_droite_style, $font_size);
+    // $pdf->setXY($pdf->getMargins()['left'], $y);
+    // $pdf->MultiCell($largeurBloc, 5, $bloc_gauche, 0, $bloc_gauche_align);
+
+    // $pdf->setFont($font, $bloc_droite_style, $font_size);
 
     //Bloc de droite (sur la même ligne que le bloc de gauche)
-    $pdf->setXY($pdf->getMargins()['left'] + $largeurBloc, $y);
-    $pdf->MultiCell($largeurBloc, 5, $bloc_droite, 0, $bloc_droite_align);
-
-    $pdf->Ln($sauts_ligne);
+    // $pdf->setXY($pdf->getMargins()['left'] + $largeurBloc, $y);
+    // $pdf->MultiCell($largeurBloc, 5, $bloc_droite, 0, $bloc_droite_align);
+    // if ($sauts_ligne) {
+    //     $pdf->Ln($sauts_ligne);
+    // }
 }
 
 function supprimerAccents($chaine)
@@ -577,6 +601,7 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $sous_titres = [
         'ordre_virement' => 'des indemnités et frais d\' entretien accordés aux membres de la commission chargée de',
         'note_service' => 'portant constitution des membres de la commission chargée de',
+        'attestation_collective' => 'des membres de la commission chargée de',
         'etat_paiement_1' => 'des indemnités et frais d\'entretien accordés aux membres de la commission chargée de',
         'etat_paiement_2' => 'des indemnités et frais d\'entretien accordés aux membres d\'encadrement dans le cadre',
         'etat_paiement_3' => 'indemnités et frais d\'entretien accordés aux membres de la commission chargee de la correction des examens de',
@@ -612,7 +637,7 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
     $pdf->setXY($x, $y); // Déplacement du curseur à la bonne position
 
     // Ligne 1 : date
-    $ligne1 = !$entete_editee ? strtoupper("Cotonou, le " . $formatter->format(new DateTime())) : mb_strtoupper($informations_entete['ville'] . ', le ' . $informations_entete['date1'], 'UTF-8');
+    $ligne1 = !$entete_editee ? strtoupper("Cotonou, le " . mb_strtoupper($formatter->format(new DateTime()))) : mb_strtoupper($informations_entete['ville'] . ', le ' . $informations_entete['date1'], 'UTF-8');
     $pdf->Cell(0, 5, $ligne1, 0, 1, 'C');
     $pdf->Ln(5);
 
@@ -666,6 +691,278 @@ function genererHeader($pdf, $type_document, $informations, $id_activite)
         $pdf->setFont('trebucbd', '', '10');
         $pdf->Write(0, ' : ' . mb_strtoupper($centre, 'UTF-8'));
     }
+}
+
+function GenererFooterDocuments($pdf, $id_activite, $type_document, $infos_supplementaires = '')
+{
+    global $bdd;
+
+    // Fonction pour Ecire le footer des documents selon le type du document
+
+    if ($type_document == 'ordre_virement' || str_contains($type_document, 'etat_paiement')) {
+        // Ici on a besoin du montant total associé à la banque donc on devra le retrouver dans $infos_supplementaires
+        // La phrase en dessous du tableau
+        $formatter = new NumberFormatter('fr_FR', NumberFormatter::SPELLOUT);
+        $pdf->MultiCell(0, 10, "Arrêté le présent " . ($type_document == 'ordre_virement' ? 'ordre de virement' : (str_contains($type_document, 'etat_paiement') ? 'état de paiement' : '')) . " à la somme de " . mb_strtoupper($formatter->format($infos_supplementaires['total']), 'UTF-8') . " (" . number_format($infos_supplementaires['total'], 0, ',', '.') . ") Francs CFA", 0, 'C');
+        $pdf->Ln(8);
+
+        // Récupération des informations de l'activité dont on a besoin
+        $stmt = $bdd->query('SELECT financier, titre_financier, premier_responsable, titre_responsable FROM activites WHERE id=' . $id_activite);
+        $infos_activite = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+
+        // Bloc du bas avec le financier et le premier responsable
+        $bloc_gauche = mb_strtoupper($infos_activite['titre_financier']);
+        $bloc_droite = mb_strtoupper($infos_activite['titre_responsable']);
+        afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10);
+        $pdf->Ln(25);
+
+        $bloc_gauche = mb_strtoupper($infos_activite['financier']);
+        $bloc_droite = mb_strtoupper($infos_activite['premier_responsable']);
+        afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 'U');
+    } elseif ($type_document == 'attestation_collective') {
+
+        $stmt = $bdd->query('SELECT organisateur, titre_organisateur, premier_responsable, titre_responsable FROM activites WHERE id=' . $id_activite);
+        $infos_activite = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+
+        afficherTexteDansDeuxBlocs($pdf, mb_strtoupper($infos_activite['titre_organisateur']), mb_strtoupper($infos_activite['titre_responsable']), 'trebucbd', 10);
+
+        $pdf->Ln(25);
+
+        afficherTexteDansDeuxBlocs($pdf, mb_strtoupper($infos_activite['organisateur']), mb_strtoupper($infos_activite['premier_responsable']), 'trebucbd', 10, 'U');
+    } elseif ($type_document == 'note_service') {
+        $stmt = $bdd->query('SELECT premier_responsable, titre_responsable FROM activites WHERE id=' . $id_activite);
+        $infos_activite = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+
+        $pdf->SetFont('trebucbd', '', 10);
+
+        $style = '
+        <style>
+            td{
+            text-align : center;
+            }
+        </style>
+        ';
+
+        $html = $style . '
+        <table cellpadding="5" border="0" width="100%">
+        <tr>
+            <td width="100%">' . mb_strtoupper($infos_activite['titre_responsable']) . '</td>
+        </tr>
+        </table>';
+        $pdf->writeHTML($html, false, false, false, false, '');
+
+        $pdf->Ln(25);
+
+        $html = $style . '
+        <table cellpadding="5" border="0" width="100%">
+        <tr>
+            <td width="100%" style="text-decoration: underline;">' . mb_strtoupper($infos_activite['premier_responsable']) . '</td>
+        </tr>
+        </table>';
+        $pdf->writeHTML($html, false, false, false, false, '');
+    }
+}
+
+/**
+ * Cette fonction est celle qui a été mise en place pour concevoir les tableaux qui devront rester dans les documents à générer. Elle inclut le système de report demandé et centralise le code associé à la conception de ces tableaux. De fait, elle est ou doit être utilisée pour générer les tableaux de tous les documents. Ajoutons que c'est par elle que les éléments à afficher après les tableaux sont affichés aussi quoique ce soit une autre fonction qui gère l'écriture du footer associé à chaque document
+ * @param mixed $pdf Il s'agit de l'objet TCPDF en cours d'instance.
+ * @param array{ type_document : string, id_activite : int, entete : array, contenu_tableau : array{lignes_simples : array}, largeurs_colonnes : array{lignes_simples : array, ligne_report : array}} $informations C'est un tableau associatif qui contient l'ensemble des informations à afficher dans le tableau.
+ * @return mixed L'objet TCPDF qui a été utilisé est renvoyé pour qu'il puisse être exploité à nouveau dans le script appelant.
+ */
+function GenererCorpsDocuments($pdf, $informations, $systeme_report = true)
+{
+    // Quelques fonctions utilitaires qui seront nécessaires dans la suite
+
+    function EcrireLigne2($pdf, $informations_ligne, $largeurs_colonnes, $ligne_simple = true, $entete = false, $ligneAReporter = false, $remplissage = false, $ligneReport = false, $ligneTotal = false)
+    {
+        $style = '
+        <style>
+        td{
+        text-align : center;
+        line-height : 16px;
+        border : 0.2mm solid #000;' .
+            ($remplissage || $entete ? 'background-color : #f2f2f2;' : '') . '
+        }
+        </style>';
+
+        $html = $style . '
+        <table cellpadding="5" width="100%">
+        <tbody>
+        <tr>';
+
+        for ($j = 0; $j < count($largeurs_colonnes); $j++) {
+            $html .= '<td width="' . $largeurs_colonnes[$j] . '%">' . (!$entete ? (!intval($informations_ligne[$j]) ? $informations_ligne[$j] : number_format($informations_ligne[$j], 0, ',', '.')) : mb_strtoupper($informations_ligne[$j])) . '</td>';
+        }
+        $html .= '
+        </tr>
+        </tbody>
+        </table>';
+
+        if ($ligne_simple) {
+            $pdf->setFont('trebuc', '', 10);
+        } else {
+            // Ligne de report ou entête et etc
+            $pdf->setFont('trebucbd', '', 10);
+        }
+
+        $pdf->writeHTML($html, false, false, false, false, '');
+
+        if ($ligneAReporter) {
+            $pdf->AddPage();
+        }
+    }
+
+    function SystemeReport($pdf, $largeurs_colonnes, $elements_entete, $total)
+    {
+        // EcrireLigne2($pdf, ['A REPORTER', $total, '', ''], $largeurs_colonnes['ligne_report'], false, false, true, true); // Ligne "A reporter" avec remplissage
+        EcrireLigne2($pdf, ['A REPORTER', $total, '', ''], $largeurs_colonnes['ligne_report'], false, false, true); // Ligne "A reporter" sans remplissage
+        EcrireLigne2($pdf, $elements_entete, $largeurs_colonnes['lignes_simples'], false, true); // Entête
+        // EcrireLigne2($pdf, ['REPORT', $total, '', ''], $largeurs_colonnes['ligne_report'], false, false, false, true); // Ligne 'Report' avec remplissage
+        EcrireLigne2($pdf, ['REPORT', $total, '', ''], $largeurs_colonnes['ligne_report'], false); // Ligne 'Report' sans remplissage
+    }
+
+    // Quelques valeurs par défaut qui seront utilisées pour la suite
+    $total = 0;
+    $elements_entete = $informations['entete'];
+    $largeurs_colonnes = $informations['largeurs_colonnes'];
+    // Ecriture de l'entete
+    EcrireLigne2($pdf, $elements_entete, $largeurs_colonnes['lignes_simples'], false, true);
+    // Ecriture des lignes du tableau
+    $lignes_tableau = $informations['contenu_tableau']['lignes_simples'];
+    $nbr_lignes_tableau = count($lignes_tableau);
+    for ($i = 0; $i < $nbr_lignes_tableau; $i++) {
+        $ligne_courante = $lignes_tableau[$i];
+
+        if ($informations['type_document'] == 'ordre_virement') {
+            $montant = $ligne_courante[3];
+        } elseif ($informations['type_document'] == 'etat_paiement') {
+            $type_etat = $informations['type_etat'];
+            if ($type_etat == 1) {
+                $montant = $ligne_courante[5];
+            } elseif ($type_etat == 2) {
+                $montant = $ligne_courante[6];
+            } elseif ($type_etat == 3) {
+                $montant = $ligne_courante[8];
+            }
+        }
+
+        if ($systeme_report) {
+            // Nous travaillons certainement avec l'ordre de virement ou les états de paiement car ce sont les seuls qui nécessitent le système de report
+            /**
+             * La logique ici est celle-ci : on écrit la ligne actuelle et la ligne qui suit s'il y en a une. Si l'écriture de ces deux lignes cause un changement de page, c'est que l'écriture de la seconde ligne a nécessité la création automatique d'une page. Alors on revient en arrière puis on écrit à nouveau la ligne actuelle et la ligne de report. Si l'écriture de ces deux cause encore un changement de page, c'est que la ligne de report n'a pas assez de place pour rester sur la page actuelle. Ainsi, plutôt que d'écrire la ligne actuelle, on écrit celle de report, on change de page puis on écrit la ligne actuelle.
+             */
+
+            $page_before = $pdf->PageNo(); // On enregistre le numéro de la page actuelle
+
+            if ($i != $nbr_lignes_tableau - 1) {
+                $ligne_suivante = $lignes_tableau[$i + 1];
+                // Nous ne sommes pas sur la dernière ligne du tableau
+                $pdf->startTransaction(); // Sauvegarder l'état du pdf à cet instant
+                // On écrit une ligne et sa suivante
+                EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+                EcrireLigne2($pdf, $ligne_suivante, $largeurs_colonnes['lignes_simples']);
+                $page_after = $pdf->PageNo();
+
+                if ($page_after > $page_before) {
+                    // Un saut a été causé donc la deuxième ligne est passée sur une autre page
+                    // On revient à l'état initial
+                    $pdf = $pdf->rollbackTransaction();
+                    // On écrit la ligne actuelle et celle 'A reporter'
+                    $pdf->startTransaction();
+                    EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+                    EcrireLigne2($pdf, ['A REPORTER', $total, '', ''], $largeurs_colonnes['ligne_report'], false);
+                    $page_after = $pdf->PageNo();
+
+                    if ($page_after > $page_before) {
+                        // L'écriture de la ligne actuelle et de la ligne de report ne peut pas se faire sur la même page donc on écrit la ligne 'à reporter', la ligne report précédée de l'entête du tableau et la ligne actuelle
+                        $pdf = $pdf->rollbackTransaction();
+                        SystemeReport($pdf, $largeurs_colonnes, $elements_entete, $total);
+                        EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']); // Ligne courante
+                    } else {
+                        // L'écriture des deux (la ligne courante et celle 'A reporter') se fait sur la même page alors on peut écrire la ligne actuelle et celles associées au système de report 
+                        $pdf = $pdf->rollbackTransaction();
+                        EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+                        SystemeReport($pdf, $largeurs_colonnes, $elements_entete, $total);
+                    }
+                } else {
+                    // Pas de sauts, les deux lignes sont restées sur la même page donc on ne fait rien, on écrit la ligne tout simplement
+                    $pdf = $pdf->rollbackTransaction();
+                    EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+                }
+            } else {
+                // Dernière ligne
+
+                /**Voici la logique qui tient :
+                 * Après écriture de la dernière ligne du tableau on récupère le numéro de la page et on écrit les derniers éléments du document (pour ne pas dire son footer). Si l'écriture de ces derniers éléments peut se faire sur la même page que celle de la dernière ligne, pas de problèmes mais si un saut de page est nécessaire, il faut alors s'assurer que le total et les derniers éléments du document soient sur la même page donc si l'écriture de ces derniers éléments n'est pas sur la même page que celle de la dernière ligne, on établit le report et écrit les derniers éléments sur la nouvelle page avec le total reporté
+                 */
+
+                $pdf->startTransaction();
+                EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+                $page_before = $pdf->PageNo();
+                EcrireLigne2($pdf, ['TOTAL ()', $total, '', ''], $largeurs_colonnes['ligne_report'], false, false, false, true); // Ligne de total
+                $pdf->Ln(5);
+                GenererFooterDocuments($pdf, $informations['id_activite'], $informations['type_document'], ['total' => $total]);
+                $page_after = $pdf->PageNo();
+
+                if ($page_after > $page_before) {
+                    // Les éléments ne tiennent pas sur la même page donc il faut mettre en place le système de report après la ligne du dernier acteur tout en gardant à l'esprit que cette dernière ligne et celle du 'A reporter' pourraient ne pas tenir ensemble sur la même page.  Du coup on teste d'abord : on écrit la ligne du dernier acteur et celle du 'A reporter' pour agir selon le cas
+
+                    $pdf = $pdf->rollbackTransaction();
+                    $pdf->startTransaction();
+                    EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+                    EcrireLigne2($pdf, ['A REPORTER', $total, '', ''], $largeurs_colonnes['ligne_report'], false);
+                    $page_after = $pdf->PageNo();
+
+                    if ($page_after > $page_before) {
+                        // La dernière ligne du tableau (la ligne du dernier acteur, pas celle du total) et celle de report ne peuvent pas rester sur la même page donc plutôt que d'écrire la dernière ligne puis celle de report, on fait l'inverse : on met en place le système de report puis on écrit ensuite la dernière ligne du tableau
+                        $pdf = $pdf->rollbackTransaction();
+                        SystemeReport($pdf, $largeurs_colonnes, $elements_entete, $total);
+                        // Ligne courante
+                        EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+                    } else {
+                        // Les deux restent sur la même page donc on peut écrire la ligne assez normalement et mettre en place le système de report
+                        $pdf = $pdf->rollbackTransaction();
+                        // Ligne courante
+                        EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+                        // Système de report
+                        SystemeReport($pdf, $largeurs_colonnes, $elements_entete, $total);
+                    }
+                } else {
+                    // Les éléments tiennent sur la même page donc on les écrit en bonne et due forme
+                    $pdf = $pdf->rollbackTransaction();
+                    EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+                }
+                EcrireLigne2($pdf, ['TOTAL ()', $total, '', ''], $largeurs_colonnes['ligne_report'], false, false, false, true);
+                $pdf->Ln(5);
+                GenererFooterDocuments($pdf, $informations['id_activite'], $informations['type_document'], ['total' => $total]);
+            }
+            $total += $montant;
+        } else {
+            // Les autres documents lambdas comme l'attestation collective et la note de service
+            $page_before = $pdf->PageNo();
+            $pdf->startTransaction();
+            EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+            $page_after = $pdf->PageNo();
+            if ($page_after > $page_before) {
+                // Un saut de page causé par la ligne
+                $pdf = $pdf->rollbackTransaction();
+                $pdf->AddPage();
+                EcrireLigne2($pdf, $elements_entete, $largeurs_colonnes['lignes_simples'], false, true);
+            } else {
+                $pdf = $pdf->rollbackTransaction();
+            }
+            EcrireLigne2($pdf, $ligne_courante, $largeurs_colonnes['lignes_simples']);
+
+            if ($i == $nbr_lignes_tableau - 1) {
+                $pdf->Ln(15);
+                GenererFooterDocuments($pdf, $informations['id_activite'], $informations['type_document']);
+            }
+        }
+    }
+    return $pdf;
 }
 
 function listeBanques($id_activite)
@@ -1245,7 +1542,6 @@ function ConfigurerInformationsDemo()
     ]);
 
     // C'est tout
-
     return true;
 }
 
@@ -1257,9 +1553,20 @@ function verifierDemoActive()
     return $stmt->rowCount() == 1 ? true : false;
 }
 
+function NumerosPages($pdf)
+{
+    // Affiche le numéro de pages si le nombre de pages excède 1
+    // if ($pdf->getNumPages() > 1) {
+    $pdf->SetY(-18);
+    $pdf->SetFont('trebuc', '', 9);
+    // $pdf->Cell(0, 10, 'Page ' . $pdf->getAliasNumPage() . ' / ' . $pdf->getAliasNbPages(), 0, 0, 'R');
+    $pdf->Cell(0, 10, $pdf->getAliasNumPage(), 0, 0, 'R');
+    // }
+}
+
 // Fonctions pour la génération des documents dans un seul fichier
 
-function genererOrdreVirement($id_activite, $banque, $navigateur = true, $zip = false)
+function genererOrdreVirement($id_activite, $banque, $navigateur = true)
 {
     global $dossier_exports_temp, $bdd;
 
@@ -1279,11 +1586,7 @@ function genererOrdreVirement($id_activite, $banque, $navigateur = true, $zip = 
     a.frais_deplacement_journalier as fdj,
     pa.nombre_jours,
     pa.nombre_taches,
-    a.nom as titre_activite,
-    a.titre_financier,
-    a.financier,
-    a.premier_responsable,
-    a.titre_responsable
+    a.nom as titre_activite
     FROM participations pa
     INNER JOIN participants p ON pa.id_participant=p.id_participant
     INNER JOIN titres t ON pa.id_titre = t.id_titre
@@ -1297,299 +1600,271 @@ function genererOrdreVirement($id_activite, $banque, $navigateur = true, $zip = 
     $stmt->execute();
     $informations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    if (!class_exists('MYPDF')) {
+        class MYPDF extends TCPDF
+        {
+            public function Footer()
+            {
+                NumerosPages($this);
+            }
+        }
+    }
+
     // Configuration du document
-    $pdf = new TCPDF('P', 'mm', 'A4');
+    $pdf = new MYPDF('P', 'mm', 'A4');
     $pdf->AddFont('trebucbd', '', 'trebucbd.php');
-    $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
-    $pdf->setMargins(15, 25, 15, true);
     configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Ordre de virement ' . $banque);
-    $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
     $pdf->AddPage();
 
     // Header
     $informations_necessaires = ['titre' => $informations[0]['titre_activite'], 'banque' => $banque];
-    // $informations_necessaires = ['titre' => $resultats[0]['titre_activite']];
     genererHeader($pdf, 'ordre_virement', $informations_necessaires, $id_activite);
-    // genererHeader($pdf, 'etat_paiement_1', $informations_necessaires, $id_activite);
-
     $pdf->Ln(20);
 
-    $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
-    $tailles_colonnes = [0.05, 0.22, 0.15, 0.15, 0.15, 0.28]; // à multiplier par 100 pour avoir les pourcentages
-
-    foreach ($tailles_colonnes as $taille) {
-        $tailles_CELL[] = $taille * $largeurPage;
-        $tailles_HTML[] = $taille * 100;
-        // $tailles_colonnes[$index] = $taille / $largeurPage * 100;
-    }
-
-    $autres_tailles = [
-        'report' => $tailles_CELL[0] + $tailles_CELL[1] + $tailles_CELL[2],
-        'total' => $tailles_CELL[0] + $tailles_CELL[1] + $tailles_CELL[2],
+    // Corps du document
+    $largeurs_colonnes = [5, 22, 15, 15, 15, 28]; // En pourcentage
+    $informations_test = [
+        'type_document' => 'ordre_virement',
+        'id_activite' => $id_activite,
+        'entete' => ['N°', 'Nom et prenoms', 'Qualite', 'Montant', 'Banque', 'Rib'],
+        'contenu_tableau' => [
+            'lignes_simples' => []
+        ],
+        'largeurs_colonnes' => [
+            'lignes_simples' => $largeurs_colonnes,
+            'ligne_report' => [$largeurs_colonnes[0] + $largeurs_colonnes[1] + $largeurs_colonnes[2], $largeurs_colonnes[3], $largeurs_colonnes[4], $largeurs_colonnes[5]]
+        ]
     ];
-    $hauteur = 8;
 
-    function EcrireEntete($pdf, $hauteur, $tailles_CELL)
-    {
-        $pdf->setFont('trebucbd', '', 10);
-        $pdf->setFillColor(242, 242, 242); // #f2f2f2
-        $pdf->Cell($tailles_CELL[0], $hauteur, 'N°', 1, 0, 'C', true); // 5%
-        $pdf->Cell($tailles_CELL[1], $hauteur, strtoupper('Nom et prenoms'), 1, 0, 'C', true);
-        $pdf->Cell($tailles_CELL[2], $hauteur, strtoupper('Qualite'), 1, 0, 'C', true);
-        $pdf->Cell($tailles_CELL[3], $hauteur, strtoupper('Montant'), 1, 0, 'C', true);
-        $pdf->Cell($tailles_CELL[4], $hauteur, strtoupper('Banque'), 1, 0, 'C', true);
-        $pdf->Cell($tailles_CELL[5], $hauteur, strtoupper('Rib'), 1, 0, 'C', true);
-        $pdf->Ln();
+    // Lignes simples
+    for ($i = 0; $i < count($informations); $i++) {
+        $informations_test['contenu_tableau']['lignes_simples'][] = [
+            $i + 1, // Numéro de la ligne
+            $informations[$i]['nom'] . ' ' . $informations[$i]['prenoms'], // Nom et prénoms de l'acteur
+            $informations[$i]['qualite'], // Titre de l'acteur
+            montantParticipant($informations[$i]['id_participant'], $id_activite), // Le montant associé à l'acteur
+            $banque, // La banque d'intérêt
+            $informations[$i]['rib'] // Le rib de l'acteur
+        ];
     }
 
-    function EcrireLigne($pdf, $informations, $tailles_HTML)
-    {
-        $pdf->setFont('trebuc', '', 10);
-        $html = '
-        <style>
-        td{
-        text-align : center;
-        line-height : 16px;
-        border : 0.2mm solid #000;
-        }
-        </style>
-        <table cellpadding="5" width="100%">
-        <tbody>
-        <tr>';
+    $pdf = GenererCorpsDocuments($pdf, $informations_test);
 
-        $html .= '<td width="' . $tailles_HTML[0] . '%">' . ($informations['N°']) . '</td>'; // N°
-        $html .= '<td width="' . $tailles_HTML[1] . '%">' . $informations['nom'] . ' ' . $informations['prenoms'] . '</td>'; // Nom et prénoms
-        $html .= '<td width="' . $tailles_HTML[2] . '%">' . $informations['qualite'] . '</td>'; // Qualité
-        $html .= '<td width="' . $tailles_HTML[3] . '%">' . number_format($informations['montant'], 0, ',', '.') . '</td>'; // Montant
-        $html .= '<td width="' . $tailles_HTML[4] . '%">' . $informations['banque'] . '</td>'; // Banque
-        $html .= '<td width="' . $tailles_HTML[5] . '%">' . $informations['rib'] . '</td>'; // Rib
-        $html .= '
-        </tr>
-        </tbody>
-        </table>';
-        $pdf->writeHTML($html, false, false, false, false, '');
-    }
 
-    function EcrireLigneAReporter($pdf, $hauteur, $largeurReport, $tailles_CELL, $total)
-    {
-        $pdf->setFont('trebucbd', '', 10);
-        $pdf->Cell($largeurReport, $hauteur, 'A REPORTER', 1, 0, 'C', true);
-        $pdf->Cell($tailles_CELL[3], $hauteur, number_format($total, 0, ',', '.'), 1, 0, 'C', true); // Montant
-        $pdf->Cell($tailles_CELL[4], $hauteur, '', 1, 0, 'C', true);
-        $pdf->Cell($tailles_CELL[5], $hauteur, '', 1, 0, 'C', true);
-        $pdf->Ln();
-        $pdf->AddPage();
-    }
+    // GenererTableauDocuments($pdf, $informations_test);
 
-    function EcrireLigneReport($pdf, $hauteur, $largeurPremiereColonne, $tailles_CELL, $total)
-    {
-        // Réécriture de l'entête
-        EcrireEntete($pdf, $hauteur, $tailles_CELL);
-        // REPORT
-        $pdf->Cell($largeurPremiereColonne, $hauteur, 'REPORT', 1, 0, 'C', true);
-        $pdf->Cell($tailles_CELL[3], $hauteur, number_format($total, 0, ',', '.'), 1, 0, 'C', true); // Montant
-        $pdf->Cell($tailles_CELL[4], $hauteur, '', 1, 0, 'C', true);
-        $pdf->Cell($tailles_CELL[5], $hauteur, '', 1, 0, 'C', true);
-        $pdf->Ln();
-    }
+    // $largeurPage = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'];
+    // $tailles_colonnes = [0.05, 0.22, 0.15, 0.15, 0.15, 0.28]; // à multiplier par 100 pour avoir les pourcentages
+
+    // foreach ($tailles_colonnes as $taille) {
+    //     $tailles_CELL[] = $taille * $largeurPage;
+    //     $tailles_HTML[] = $taille * 100;
+    //     // $tailles_colonnes[$index] = $taille / $largeurPage * 100;
+    // }
+
+    // $autres_tailles = [
+    //     'report' => $tailles_CELL[0] + $tailles_CELL[1] + $tailles_CELL[2],
+    //     'total' => $tailles_CELL[0] + $tailles_CELL[1] + $tailles_CELL[2],
+    // ];
+    // $hauteur = 8;
+
+    // function EcrireEntete($pdf, $hauteur, $tailles_CELL)
+    // {
+    //     $pdf->setFont('trebucbd', '', 10);
+    //     $pdf->setFillColor(242, 242, 242); // #f2f2f2
+    //     $pdf->Cell($tailles_CELL[0], $hauteur, 'N°', 1, 0, 'C', true); // 5%
+    //     $pdf->Cell($tailles_CELL[1], $hauteur, strtoupper('Nom et prenoms'), 1, 0, 'C', true);
+    //     $pdf->Cell($tailles_CELL[2], $hauteur, strtoupper('Qualite'), 1, 0, 'C', true);
+    //     $pdf->Cell($tailles_CELL[3], $hauteur, strtoupper('Montant'), 1, 0, 'C', true);
+    //     $pdf->Cell($tailles_CELL[4], $hauteur, strtoupper('Banque'), 1, 0, 'C', true);
+    //     $pdf->Cell($tailles_CELL[5], $hauteur, strtoupper('Rib'), 1, 0, 'C', true);
+    //     $pdf->Ln();
+    // }
+
+    // function EcrireLigne($pdf, $informations, $tailles_HTML)
+    // {
+    //     $pdf->setFont('trebuc', '', 10);
+    //     $html = '
+    //     <style>
+    //     td{
+    //     text-align : center;
+    //     line-height : 16px;
+    //     border : 0.2mm solid #000;
+    //     }
+    //     </style>
+    //     <table cellpadding="5" width="100%">
+    //     <tbody>
+    //     <tr>';
+
+    //     $html .= '<td width="' . $tailles_HTML[0] . '%">' . ($informations['N°']) . '</td>'; // N°
+    //     $html .= '<td width="' . $tailles_HTML[1] . '%">' . $informations['nom'] . ' ' . $informations['prenoms'] . '</td>'; // Nom et prénoms
+    //     $html .= '<td width="' . $tailles_HTML[2] . '%">' . $informations['qualite'] . '</td>'; // Qualité
+    //     $html .= '<td width="' . $tailles_HTML[3] . '%">' . number_format($informations['montant'], 0, ',', '.') . '</td>'; // Montant
+    //     $html .= '<td width="' . $tailles_HTML[4] . '%">' . $informations['banque'] . '</td>'; // Banque
+    //     $html .= '<td width="' . $tailles_HTML[5] . '%">' . $informations['rib'] . '</td>'; // Rib
+    //     $html .= '
+    //     </tr>
+    //     </tbody>
+    //     </table>';
+    //     $pdf->writeHTML($html, false, false, false, false, '');
+    // }
+
+    // function EcrireLigneAReporter($pdf, $hauteur, $largeurReport, $tailles_CELL, $total)
+    // {
+    //     $pdf->setFont('trebucbd', '', 10);
+    //     $pdf->Cell($largeurReport, $hauteur, 'A REPORTER', 1, 0, 'C', true);
+    //     $pdf->Cell($tailles_CELL[3], $hauteur, number_format($total, 0, ',', '.'), 1, 0, 'C', true); // Montant
+    //     $pdf->Cell($tailles_CELL[4], $hauteur, '', 1, 0, 'C', true);
+    //     $pdf->Cell($tailles_CELL[5], $hauteur, '', 1, 0, 'C', true);
+    //     $pdf->Ln();
+    //     $pdf->AddPage();
+    // }
+
+    // function EcrireLigneReport($pdf, $hauteur, $largeurPremiereColonne, $tailles_CELL, $total)
+    // {
+    //     // Réécriture de l'entête
+    //     EcrireEntete($pdf, $hauteur, $tailles_CELL);
+    //     // REPORT
+    //     $pdf->Cell($largeurPremiereColonne, $hauteur, 'REPORT', 1, 0, 'C', true);
+    //     $pdf->Cell($tailles_CELL[3], $hauteur, number_format($total, 0, ',', '.'), 1, 0, 'C', true); // Montant
+    //     $pdf->Cell($tailles_CELL[4], $hauteur, '', 1, 0, 'C', true);
+    //     $pdf->Cell($tailles_CELL[5], $hauteur, '', 1, 0, 'C', true);
+    //     $pdf->Ln();
+    // }
 
     // Dernière ligne du tableau pour le total
 
-    function EcrireLigneTotal($pdf, $hauteur, $largeurPremiereColonne, $tailles_CELL, $total)
-    {
-        $pdf->setFont('trebucbd', '', 10);
-        $pdf->setFillColor(242, 242, 242); // #f2f2f2
-        $pdf->Cell($largeurPremiereColonne, $hauteur, strtoupper('Total ( )'), 1, 0, 'C', true); // Total ( )
-        $pdf->Cell($tailles_CELL[3], $hauteur, number_format($total, 0, ',', '.'), 1, 0, 'C', true); // Montant
-        $pdf->Cell($tailles_CELL[4], $hauteur, '', 1, 0, 'C', true); // Banque
-        $pdf->Cell($tailles_CELL[5], $hauteur, '', 1, 0, 'C', true); // Rib
-        $pdf->Ln(15);
-    }
+    // function EcrireLigneTotal($pdf, $hauteur, $largeurPremiereColonne, $tailles_CELL, $total)
+    // {
+    //     $pdf->setFont('trebucbd', '', 10);
+    //     $pdf->setFillColor(242, 242, 242); // #f2f2f2
+    //     $pdf->Cell($largeurPremiereColonne, $hauteur, strtoupper('Total ( )'), 1, 0, 'C', true); // Total ( )
+    //     $pdf->Cell($tailles_CELL[3], $hauteur, number_format($total, 0, ',', '.'), 1, 0, 'C', true); // Montant
+    //     $pdf->Cell($tailles_CELL[4], $hauteur, '', 1, 0, 'C', true); // Banque
+    //     $pdf->Cell($tailles_CELL[5], $hauteur, '', 1, 0, 'C', true); // Rib
+    //     $pdf->Ln(15);
+    // }
 
-    function EcrireFooter($pdf, $total, $informations)
-    {
-        // On s'attaque à la phrase en dessous du tableau
-        $formatter = new NumberFormatter('fr_FR', NumberFormatter::SPELLOUT);
-        $pdf->MultiCell(0, 10, "Arrêté le présent ordre de virement à la somme de " . mb_strtoupper($formatter->format($total), 'UTF-8') . " (" . number_format($total, 0, ',', '.') . ") Francs CFA", 0, 'C');
-        $pdf->Ln(8);
+    // function EcrireFooter($pdf, $total, $informations)
+    // {
+    //     // On s'attaque à la phrase en dessous du tableau
+    //     $formatter = new NumberFormatter('fr_FR', NumberFormatter::SPELLOUT);
+    //     $pdf->MultiCell(0, 10, "Arrêté le présent ordre de virement à la somme de " . mb_strtoupper($formatter->format($total), 'UTF-8') . " (" . number_format($total, 0, ',', '.') . ") Francs CFA", 0, 'C');
+    //     $pdf->Ln(8);
 
-        // Bloc du bas avec le financier et le premier responsable
-        $bloc_gauche = mb_strtoupper($informations['financier']);
-        $bloc_droite = mb_strtoupper($informations['premier_responsable']);
-        afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 5, 'C', '', 'C', '');
-        $pdf->Ln(15);
+    //     // Bloc du bas avec le financier et le premier responsable
+    //     $bloc_gauche = mb_strtoupper($informations['financier']);
+    //     $bloc_droite = mb_strtoupper($informations['premier_responsable']);
+    //     afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 5, 'C', '', 'C', '');
+    //     $pdf->Ln(15);
 
-        $bloc_gauche = mb_strtoupper($informations['titre_financier']);
-        $bloc_droite = mb_strtoupper($informations['titre_responsable']);
-        afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 2, 'C', 'U', 'C', 'U');
-    }
+    //     $bloc_gauche = mb_strtoupper($informations['titre_financier']);
+    //     $bloc_droite = mb_strtoupper($informations['titre_responsable']);
+    //     afficherTexteDansDeuxBlocs($pdf, $bloc_gauche, $bloc_droite, 'trebucbd', 10, 2, 'C', 'U', 'C', 'U');
+    // }
 
     // On écrit l'entête pour la première fois
-    EcrireEntete($pdf, $hauteur, $tailles_CELL);
+    // EcrireEntete($pdf, $hauteur, $tailles_CELL);
     // $pdf->SetLineWidth(0.2); // 0.2 mm ~ HTML border=1
 
-    $total = 0;
+    // $total = 0;
 
-    foreach ($informations as $index => $information) {
-        $informations[$index]['montant'] = montantParticipant($information['id_participant'], $id_activite);
-        $informations[$index]['banque'] = $banque;
-        $informations[$index]['N°'] = $index + 1;
-    }
+    // foreach ($informations as $index => $information) {
+    //     $informations[$index]['montant'] = montantParticipant($information['id_participant'], $id_activite);
+    //     $informations[$index]['banque'] = $banque;
+    //     $informations[$index]['N°'] = $index + 1;
+    // }
 
-    for ($i = 0; $i < count($informations); $i++) {
-        $ligne = $informations[$i];
-        $montant = montantParticipant($ligne['id_participant'], $id_activite);
-        // $ligne['montant'] = $montant;
-        // $ligne['banque'] = $banque;
+    // for ($i = 0; $i < count($informations); $i++) {
+    //     $ligne = $informations[$i];
+    //     $montant = montantParticipant($ligne['id_participant'], $id_activite);
 
-        // Avant la ligne, si on est sur une nouvelle page
+    //     /** La logique à mettre en place : on écrit la ligne actuelle et la ligne qui suit s'il y en a une. Si l'écriture de ces deux lignes cause un changement de page, c'est que la deuxième ligne est celle qui à causer le changement de page. Alors on revient en arrière, on écrit à nouveau la ligne actuelle et la ligne de report. Si l'écriture de ces deux cause encore un changement de page, c'est que la ligne de report n'a pas assez de place pour rester sur la page actuelle. Ainsi, plutôt que d'écrire la ligne actuelle, on écrit celle de report, on change de page puis on écrit la ligne actuelle.
+    //      * 
+    //      * Si par contre nous sommes à la dernière ligne du tableau, nous n'allons pas la gérer ici mais après l'écriture de tout le tableau
+    //      */
+    //     $page_before = $pdf->PageNo(); // On enregistre la page actuelle
 
-        // La logique désormais est qu'on écrit et affichedes tableaux constitués d'une ligne chacune avec la donnée voulue 
-        // Une ligne
-        // $html = $style . '
-        // <table cellpadding="5" width="100%">
-        // <tbody>
-        // <tr>';
-        // // $html .= '<tr>';
+    //     if ($i != count($informations) - 1) {
+    //         // Nous ne sommes pas sur la dernière ligne du tableau
+    //         $pdf->startTransaction(); // Sauvegarder l'état
 
-        // // $pdf->setFillColor(255, 255, 255); // #fff
-        // $html .= '<td width="' . $tailles_HTML[0] . '%">' . ($i + 1) . '</td>'; // N°
-        // $html .= '<td width="' . $tailles_HTML[1] . '%">' . $ligne['nom'] . ' ' . $ligne['prenoms'] . '</td>'; // Nom et prénoms
-        // $html .= '<td width="' . $tailles_HTML[2] . '%">' . $ligne['qualite'] . '</td>'; // Qualité
-        // $html .= '<td width="' . $tailles_HTML[3] . '%">' . number_format($montant, 0, ',', '.') . '</td>'; // Montant
-        // $html .= '<td width="' . $tailles_HTML[4] . '%">' . $banque . '</td>'; // Banque
-        // $html .= '<td width="' . $tailles_HTML[5] . '%">' . $ligne['rib'] . '</td>'; // Rib
-        // $html .= '
-        // </tr>
-        // </tbody>
-        // </table>';
+    //         // On écrit ensuite une ligne et sa suivante
+    //         EcrireLigne($pdf, $ligne, $tailles_HTML);
+    //         EcrireLigne($pdf, $informations[$i + 1], $tailles_HTML);
+    //         $page_after = $pdf->PageNo();
 
-        /** La logique à mettre en place : on écrit la ligne actuelle et la ligne qui suit s'il y en a. Si l'écriture de ces deux lignes cause un changement de page, c'est que la deuxième ligne est à causé le changement de page. ALors on ecrit ensuite la ligne actuelle et la ligne de report. Si l'écriture de ces deux cause encore un changement de page, c'est que la ligne de report n'avait pas assez de place. Dans ce cas alors, plutôt que d'écrire la ligne actuelle, on écrit celle de report, on change de page puis on écrit la ligne actuelle naturellement.
-         * Si par contre nous sommes à la dernière ligne du tableau, nous n'allons pas la gérer ici mais après l'écriture de tout le tableau
-         */
-        $page_before = $pdf->PageNo(); // On enregistre la page actuelle
+    //         if ($page_after > $page_before) {
+    //             // Un saut a été causé donc la deuxième ligne est passée sur une autre page
+    //             // On revient à l'état initial et on écrit la ligne et le système de report
+    //             $pdf = $pdf->rollbackTransaction();
+    //             $pdf->startTransaction();
+    //             EcrireLigne($pdf, $ligne, $tailles_HTML);
+    //             EcrireLigneAReporter($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
+    //             $page_after = $pdf->PageNo();
 
-        if ($i != count($informations) - 1) {
-            // Nous ne sommes pas sur la dernière ligne du tableau
-            $pdf->startTransaction(); // Sauvegarder l'état
+    //             if ($page_after > $page_before) {
+    //                 // L'écriture de la ligne actuelle et de la ligne de report ne peuvent pas se faire sur la même page donc on écrit la ligne de à reporter, la ligne report et la ligne actuelle
+    //                 $pdf = $pdf->rollbackTransaction();
+    //                 EcrireLigneAReporter($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
+    //                 EcrireLigneReport($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
+    //                 EcrireLigne($pdf, $ligne, $tailles_HTML);
+    //             } else {
+    //                 // L'écriture des deux se fait sur la même page alors j'écris la ligne et je met en place les lignes du système de report
+    //                 $pdf = $pdf->rollbackTransaction();
 
-            // On écrit ensuite une ligne et sa suivante
-            EcrireLigne($pdf, $ligne, $tailles_HTML);
-            EcrireLigne($pdf, $informations[$i + 1], $tailles_HTML);
-            $page_after = $pdf->PageNo();
+    //                 EcrireLigne($pdf, $ligne, $tailles_HTML);
+    //                 EcrireLigneAReporter($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
+    //                 EcrireLigneReport($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
+    //             }
+    //         } else {
+    //             // Pas de sauts, les deux lignes sont restées sur la même page donc on ne fait rien, on écrit la ligne tout simplement
+    //             $pdf = $pdf->rollbackTransaction();
+    //             EcrireLigne($pdf, $ligne, $tailles_HTML);
+    //         }
+    //     } else {
+    //         // Nous sommes avec la dernière ligne
+    //         /**Voici la logique qui tient :
+    //          * Après écriture de la dernière ligne du tableau on récupère le numéro de la page et on écrit les derniers éléments du document (pour ne pas dire son footer). Si l'écriture de ces derniers éléments n'est pas sur la même page que celle de la dernière ligne, on établit le report et écrit les derniers éléments sur la nouvelle page avec le total reporté
+    //          */
+    //         $pdf->startTransaction();
+    //         EcrireLigne($pdf, $ligne, $tailles_HTML);
+    //         $page_before = $pdf->PageNo();
+    //         EcrireLigneTotal($pdf, $hauteur, $autres_tailles['total'], $tailles_CELL, $total);
+    //         // EcrireFooter($pdf, $total, $informations[0]);
+    //         GenererFooterDocuments($pdf, $id_activite, 'ordre_virement', ['total' => $total]);
 
-            if ($page_after > $page_before) {
-                // Un saut a été causé donc la deuxième ligne est passée sur une autre page
-                // On revient à l'état initial et on écrit la ligne et le système de report
-                $pdf = $pdf->rollbackTransaction();
-                $pdf->startTransaction();
-                EcrireLigne($pdf, $ligne, $tailles_HTML);
-                EcrireLigneAReporter($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
-                $page_after = $pdf->PageNo();
+    //         $page_after = $pdf->PageNo();
 
-                if ($page_after > $page_before) {
-                    // L'écriture de la ligne actuelle et de la ligne de report ne peuvent pas se faire sur la même page donc on écrit la ligne de à reporter, la ligne report et la ligne actuelle
-                    $pdf = $pdf->rollbackTransaction();
-                    EcrireLigneAReporter($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
-                    EcrireLigneReport($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
-                    EcrireLigne($pdf, $ligne, $tailles_HTML);
-                } else {
-                    // L'écriture des deux se fait sur la même page alors j'écris la ligne et je met en place les lignes du système de report
-                    $pdf = $pdf->rollbackTransaction();
+    //         if ($page_after > $page_before) {
+    //             // Les éléments ne tiennent pas sur la même page donc il faut écrire la ligne de report et tout mais gardant à l'esprit que la ligne de report pourrait ne pas tenir sur la même page donc c'est le même schéma que tout à l'heure
+    //             $pdf = $pdf->rollbackTransaction();
+    //             $pdf->startTransaction();
+    //             EcrireLigne($pdf, $ligne, $tailles_HTML);
+    //             $page_before = $pdf->PageNo();
+    //             EcrireLigneAReporter($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
+    //             $page_after = $pdf->PageNo();
+    //             if ($page_after > $page_before) {
+    //                 // La dernière ligne du tableau et celle de report ne peuvent pas rester sur la même page donc plutôt que d'écrire la dernière ligne puis celle de report, on fait l'inverse : on met en place le système de report puis on écrit ensuite la dernière ligne du tableau
+    //                 $pdf = $pdf->rollbackTransaction();
+    //                 EcrireLigneAReporter($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
+    //             } else {
+    //                 // Les deux restent sur la même page donc j'écris la ligne de report puis la ligne en question
+    //                 $pdf = $pdf->rollbackTransaction();
+    //             }
+    //             EcrireLigneReport($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
+    //             EcrireLigne($pdf, $ligne, $tailles_HTML);
+    //         } else {
+    //             // Les éléments tiennent sur la même page donc on écrit les derniers éléments
+    //             $pdf = $pdf->rollbackTransaction();
+    //         }
+    //         $total += $montant;
+    //         EcrireLigneTotal($pdf, $hauteur, $autres_tailles['total'], $tailles_CELL, $total);
+    //         GenererFooterDocuments($pdf, $id_activite, 'ordre_virement', ['total' => $total]);
+    //     }
 
-                    EcrireLigne($pdf, $ligne, $tailles_HTML);
-                    EcrireLigneAReporter($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
-                    EcrireLigneReport($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
-                }
-            } else {
-                // Pas de sauts, les deux lignes sont restées sur la même page donc on ne fait rien, on écrit la ligne tout simplement
-                $pdf = $pdf->rollbackTransaction();
-                EcrireLigne($pdf, $ligne, $tailles_HTML);
-            }
-        } else {
-            // Nous sommes avec la dernière ligne
-            /**Voici la logique qui tient ici :
-             * Après écriture de la dernière ligne du tableau on récupère le numéro de la page et on écrit les derniers éléments du document. Si l'écriture de ces derniers éléments n'est pas sur la même page que celle de la dernière ligne, on établit le report et écrit les derniers éléments sur la nouvelle page avec le total reporté
-             */
-            $pdf->startTransaction();
-            EcrireLigne($pdf, $ligne, $tailles_HTML);
-            $page_before = $pdf->PageNo();
-            EcrireLigneTotal($pdf, $hauteur, $autres_tailles['total'], $tailles_CELL, $total);
-            EcrireFooter($pdf, $total, $informations[0]);
-
-            $page_after = $pdf->PageNo();
-
-            if ($page_after > $page_before) {
-                // Les éléments ne tiennent pas sur la même page donc il faut écrire la ligne de report et tout mais gardant à l'esprit que la ligne de report pourrait ne pas tenir sur la même page donc c'est le même schéma que tout à l'heure
-                $pdf = $pdf->rollbackTransaction();
-                $pdf->startTransaction();
-                EcrireLigne($pdf, $ligne, $tailles_HTML);
-                $page_before = $pdf->PageNo();
-                EcrireLigneAReporter($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
-                $page_after = $pdf->PageNo();
-                if ($page_after > $page_before) {
-                    // La dernière ligne du tableau et celle de report ne restent sur la même page
-                    $pdf = $pdf->rollbackTransaction();
-                    EcrireLigneAReporter($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
-                } else {
-                    // Les deux restent sur la même page donc j'écris la ligne de report puis la ligne en question
-                    $pdf = $pdf->rollbackTransaction();
-                }
-                EcrireLigneReport($pdf, $hauteur, $autres_tailles['report'], $tailles_CELL, $total);
-                EcrireLigne($pdf, $ligne, $tailles_HTML);
-            } else {
-                // Les éléments tiennent sur la même page donc on écrit les derniers éléments
-                $pdf = $pdf->rollbackTransaction();
-            }
-            $total += $montant;
-            EcrireLigneTotal($pdf, $hauteur, $autres_tailles['total'], $tailles_CELL, $total);
-            EcrireFooter($pdf, $total, $informations[0]);
-        }
-
-        // EcrireLigne($pdf, $ligne, $tailles_HTML, $style);
-
-        // $page_before = $pdf->PageNo(); // On enregistre la page actuelle
-        // $pdf->startTransaction(); // Sauvegarder l'état
-
-        // // On simule l'écriture de la ligne
-        // // EcrireLigne($pdf, $informations[])
-
-
-
-        // $page_after = $pdf->PageNo(); // Enregistrer le numéro de page après l'écriture de la ligne
-
-        // // a position après
-        // // $pdf->writeHTML($html, false, false, false, false, ''); // Simuler l'écriture HTML
-
-        // $pdf = $pdf->rollbackTransaction(); //Annuler l'écriture
-
-        // // Si un saut aurait été causé
-
-        // if ($page_after > $page_before) {
-        //     $pdf->setFont('trebucbd', '', 10);
-        //     // L'écriture de la dernière ligne aurait causé un saut de page donc on met le système de report là sur la page, on ajoute une page puis on y remet l'entête et le système de report
-        //     // A REPORTER
-        //     $pdf->Cell($autres_tailles['report'], $hauteur, 'A REPORTER', 1, 0, 'C', true);
-        //     $pdf->Cell($tailles_CELL[3], $hauteur, number_format($total, 0, ',', '.'), 1, 0, 'C', true); // Montant
-        //     $pdf->Cell($tailles_CELL[4], $hauteur, '', 1, 0, 'C', true);
-        //     $pdf->Cell($tailles_CELL[5], $hauteur, '', 1, 0, 'C', true);
-        //     $pdf->Ln();
-        //     $pdf->AddPage();
-        //     // Réécriture de l'entête
-        //     EcrireEntete($pdf, $hauteur, $tailles_CELL);
-        //     // REPORT
-        //     $pdf->Cell($autres_tailles['report'], $hauteur, 'REPORT', 1, 0, 'C', true);
-        //     $pdf->Cell($tailles_CELL[3], $hauteur, number_format($total, 0, ',', '.'), 1, 0, 'C', true); // Montant
-        //     $pdf->Cell($tailles_CELL[4], $hauteur, '', 1, 0, 'C', true);
-        //     $pdf->Cell($tailles_CELL[5], $hauteur, '', 1, 0, 'C', true);
-        //     $pdf->Ln();
-        //     $pdf->setFont('trebuc', '', 10);
-        // }
-
-        // $pdf->writeHTML($html, false, false, false, false, '');
-        $total += $montant;
-        // $html .= '</tr>';
-    }
+    //     $total += $montant;
+    // }
 
     /** Trois cas à prendre en compte :
      * 1- Le tableau se termine sur le première page et les informations en bas sont déléguées sur une autre page
@@ -1599,13 +1874,12 @@ function genererOrdreVirement($id_activite, $banque, $navigateur = true, $zip = 
 
     // On va commencer par le dernier cas : le tableau s'étend sur plus d'une page. Il faut pouvoir remettre l'entête et le système de report en plac
 
+    //Sortie du pdf
 
-
-    // //Sortie du pdf
     if ($navigateur) {
         $pdf->Output('Ordre de virement ' . $banque . '.pdf', 'I');
     } else {
-        // On ne veut pas le document pour une sortie en navigateur
+        // On ne veut pas le document pour une sortie en navigateur mais pour une sortie directement en local
         $chemin_fichier = $dossier_exports_temp . '/Ordre de virement ' . $banque . '.pdf';
         $pdf->Output($chemin_fichier, 'F');
         return $chemin_fichier;
@@ -1626,8 +1900,18 @@ function genererSyntheseOrdres($id_activite, $navigateur = true)
     $titre_activite = $titre_activite[0];
     $stmt->closeCursor();
 
+    if (!class_exists('MYPDF')) {
+        class MYPDF extends TCPDF
+        {
+            public function Footer()
+            {
+                NumerosPages($this);
+            }
+        }
+    }
+
     // Configuration du document
-    $pdf = new TCPDF('P', 'mm', 'A4');
+    $pdf = new MYPDF('P', 'mm', 'A4');
     $pdf->AddFont('trebucbd', '', 'trebucbd.php');
     $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
     configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Tableau récapitulatif');
@@ -2016,6 +2300,387 @@ function genererNoteAttestation($activity_id, $document, $navigateur = true)
     }
 }
 
+function genererAttestation($id_activite, $navigateur = true)
+{
+    global $bdd, $dossier_exports_temp;
+
+    // Récupération des informations nécessaires
+    $stmt = "
+    SELECT 
+        p.id_participant,
+        p.nom,
+        p.prenoms,
+        t.nom AS titre_participant,
+        ib.banque,
+        ib.numero_compte,
+        a.id as id_activite,
+        a.nom as titre_activite
+    FROM participations pa
+    INNER JOIN participants p ON pa.id_participant = p.id_participant
+    INNER JOIN activites a ON pa.id_activite = a.id
+    INNER JOIN titres t ON pa.id_titre = t.id_titre
+    INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
+    WHERE pa.id_activite = :activite_id
+    ORDER BY p.nom ASC, p.prenoms ASC
+";
+    $stmt = $bdd->prepare($stmt);
+    $stmt->execute(['activite_id' => $id_activite]);
+    $informations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (!class_exists('MYPDF')) {
+        class MYPDF extends TCPDF
+        {
+            public function Footer()
+            {
+                NumerosPages($this);
+            }
+        }
+    }
+
+    // Configuration du document
+    $pdf = new MYPDF('P', 'mm', 'A4');
+    configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Attestation collective');
+    $pdf->AddPage();
+
+    // Header
+    genererHeader($pdf, 'attestation_collective', ['titre' => $informations[0]['titre_activite']], $id_activite);
+    $pdf->Ln(20);
+
+    // Corps du document
+    $largeurs_colonnes = [12, 25, 15, 15, 33];
+    $autres_informations = [
+        'type_document' => 'attestation_collective',
+        'id_activite' => $id_activite,
+        'entete' => ['N°', 'Nom et prenoms', 'Titre', 'Banque', 'Numero de compte'],
+        'contenu_tableau' => [
+            'lignes_simples' => [],
+        ],
+        'largeurs_colonnes' => [
+            'lignes_simples' => $largeurs_colonnes,
+        ]
+    ];
+
+    // Lignes simples du tableau
+    for ($i = 0; $i < count($informations); $i++) {
+        $autres_informations['contenu_tableau']['lignes_simples'][] = [
+            $i + 1, // Numéro de la ligne
+            $informations[$i]['nom'] . ' ' . $informations[$i]['prenoms'],
+            $informations[$i]['titre_participant'],
+            $informations[$i]['banque'],
+            $informations[$i]['numero_compte']
+        ];
+    }
+
+    $pdf = GenererCorpsDocuments($pdf, $autres_informations, false);
+
+    // Sortie du pdf
+    if ($navigateur) {
+        $pdf->Output('Attestation collective.pdf', 'I');
+    } else {
+        $chemin_fichier = $dossier_exports_temp . '/Attestation collective.pdf';
+        $pdf->Output($chemin_fichier, 'F');
+        return $chemin_fichier;
+    }
+}
+
+function genererNoteService($id_activite, $navigateur = true)
+{
+    global $bdd, $dossier_exports_temp;
+
+    $stmt = "
+     SELECT 
+        p.id_participant,
+        p.nom,
+        p.prenoms,
+        t.nom AS titre_participant,
+        ib.banque,
+        ib.numero_compte,
+        a.id as id_activite,
+        a.nom as titre_activite,
+        a.timbre,
+        a.reference
+    FROM participations pa
+    INNER JOIN participants p ON pa.id_participant = p.id_participant
+    INNER JOIN activites a ON pa.id_activite = a.id
+    INNER JOIN titres t ON pa.id_titre = t.id_titre
+    INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
+    WHERE pa.id_activite = :activite_id
+    ORDER BY p.nom ASC, p.prenoms ASC
+    ";
+
+    $stmt = $bdd->prepare($stmt);
+    $stmt->execute(['activite_id' => $id_activite]);
+    $informations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (!class_exists('MYPDF')) {
+        class MYPDF extends TCPDF
+        {
+            public function Footer()
+            {
+                NumerosPages($this);
+            }
+        }
+    }
+
+
+    // Configuration du document
+    $pdf = new MYPDF('P', 'mm', 'A4');
+    configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Note de service');
+    $pdf->AddPage();
+
+    genererHeader($pdf, 'note_service', ['titre' => $informations[0]['titre_activite']], $id_activite);
+    $pdf->Ln(20);
+
+    // Timbre
+    $pdf->setFont('trebucbd', '', 10);
+    function nombreEspace($valeur)
+    {
+        $str = '';
+        for ($i = 0; $i < $valeur; $i++) {
+            $str .= '&nbsp;';
+        }
+        return $str;
+    }
+    $html = '
+    <p>N°' . nombreEspace(25) . '' . $informations[0]['timbre'] . '</p>
+    ';
+    $pdf->writeHTML($html, false, false, false, false, '');
+    $pdf->Ln(5);
+
+    // Référence
+    $pdf->setFont('trebuc', '', 10);
+    $html = '
+    <p><span style="text-decoration: underline;">REF</span> : ' . $informations[0]['reference'] . '</p>
+    ';
+    $pdf->writeHTML($html, false, false, false, false, '');
+    $pdf->Ln(8);
+
+    // Corps du document
+
+    $largeurs_colonnes = [12, 25, 15, 15, 33];
+    $autres_informations = [
+        'type_document' => 'note_service',
+        'id_activite' => $id_activite,
+        'entete' => ['N°', 'Nom et prenoms', 'Titre', 'Banque', 'Numero de compte'],
+        'contenu_tableau' => [
+            'lignes_simples' => [],
+        ],
+        'largeurs_colonnes' => [
+            'lignes_simples' => $largeurs_colonnes,
+        ]
+    ];
+
+    // Lignes simples du tableau
+    for ($i = 0; $i < count($informations); $i++) {
+        $autres_informations['contenu_tableau']['lignes_simples'][] = [
+            $i + 1, // Numéro de la ligne
+            $informations[$i]['nom'] . ' ' . $informations[$i]['prenoms'],
+            $informations[$i]['titre_participant'],
+            $informations[$i]['banque'],
+            $informations[$i]['numero_compte']
+        ];
+    }
+
+    $pdf = GenererCorpsDocuments($pdf, $autres_informations, false);
+
+    // Sortie du pdf
+    if ($navigateur) {
+        $pdf->Output('Note de service.pdf', 'I');
+    } else {
+        $chemin_fichier = $dossier_exports_temp . '/Note de service.pdf';
+        $pdf->Output($chemin_fichier, 'F');
+        return $chemin_fichier;
+    }
+}
+
+function genererEtatPaiement2($id_activite, $navigateur = true)
+{
+    global $bdd, $dossier_exports_temp;
+
+    // Récupération des informations
+
+    $stmt = $bdd->prepare('SELECT type_activite, nom, reference FROM activites WHERE id = :id');
+    $stmt->execute(['id' => $id_activite]);
+    $resultat = $stmt->fetch(PDO::FETCH_ASSOC);
+    $type_activite = $resultat['type_activite'];
+    $stmt->closeCursor();
+
+    $stmt = "
+    SELECT 
+        p.nom AS nom_participant,
+        p.prenoms,
+        t.nom AS titre_participant,
+        " . (in_array($type_activite, [2, 3]) ? 't.indemnite_forfaitaire,' : '') . "
+        a.reference,
+        " . ($type_activite != 3 ? 'a.taux_journalier' : 'a.taux_taches') . ",
+        " . ($type_activite == 3 ? 'pa.nombre_taches, a.frais_deplacement_journalier,' : '') . "
+        pa.nombre_jours,
+        " . ($type_activite == 1 ? '(a.taux_journalier * pa.nombre_jours)' : ($type_activite == 2 ? ' (a.taux_journalier * pa.nombre_jours + IFNULL(t.indemnite_forfaitaire, 0))' : '(a.taux_taches * pa.nombre_taches + IFNULL(t.indemnite_forfaitaire, 0) + a.frais_deplacement_journalier * pa.nombre_jours)')) . " AS montant,
+        ib.banque,
+        ib.numero_compte AS rib
+    FROM participations pa
+    INNER JOIN participants p ON p.id_participant = pa.id_participant
+    INNER JOIN activites a ON pa.id_activite = a.id
+    INNER JOIN titres t ON pa.id_titre = t.id_titre
+    INNER JOIN informations_bancaires ib ON pa.id_compte_bancaire = ib.id
+    WHERE a.type_activite = :type_activite AND pa.id_activite = :id_activite
+    ORDER BY p.nom ASC, p.prenoms ASC
+    ";
+
+    $stmt = $bdd->prepare($stmt);
+    $stmt->execute([
+        'type_activite' => $type_activite,
+        'id_activite' => $id_activite
+    ]);
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (!class_exists('MYPDF')) {
+        class MYPDF extends TCPDF
+        {
+            public function Footer()
+            {
+                NumerosPages($this);
+            }
+        }
+    }
+    // Configuration du document
+    $pdf = new MYPDF('L', 'mm', 'A4');
+    $pdf->AddFont('trebucbd', '', 'trebucbd.php');
+    configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Etat de paiement');
+    $pdf->AddPage();
+
+    // Header
+    genererHeader($pdf, 'etat_paiement_' . $type_activite, ['titre' => $resultat['nom']], $id_activite);
+    $pdf->Ln(20);
+
+    // Référence
+    $pdf->setFont('trebucbd', '', 10);
+    $html = '
+    <p>REF : ' . $resultat['reference'] . '</p>
+    ';
+    $pdf->writeHTML($html, false, false, false, false, '');
+    $pdf->Ln(10);
+
+    function largeurPremiereColonne($entete, $largeurs_colonnes)
+    {
+        $val = 0;
+        $val2 = 0;
+        for ($i = 0; $i < count($entete); $i++) {
+            if ($entete[$i] == 'montant') {
+                $val = $i;
+                break;
+            }
+        }
+        for ($i = 0; $i < $val; $i++) {
+            $val2 += $largeurs_colonnes[$i];
+        }
+        return [$val, $val2];
+    }
+
+    // Corps du document
+
+    $entete =
+        $type_activite == 1 ? [
+            'N°',
+            'Nom et prenoms',
+            'qualite',
+            'taux / jours',
+            'nombre de jours',
+            'montant',
+            'banque',
+            'rib'
+        ] : ($type_activite == 2 ?
+            [
+                'N°',
+                'nom et prenoms',
+                'qualite',
+                'taux / jours',
+                'nombre de jours',
+                'indemnite forfaitaire',
+                'montant',
+                'banque',
+                'rib'
+            ] :
+            [
+                'N°',
+                'nom et prenoms',
+                'qualite',
+                'taux / tâche',
+                'nombre de tâches',
+                'frais d\'entretien et de déplacement / jour',
+                'nombre de jours',
+                'indemnites forfaitaires',
+                'montant',
+                'banque',
+                'rib'
+            ]
+        );
+
+    $largeurs_colonnes = $type_activite == 1 ? [5, 20, 15, 10, 8, 12, 10, 20] : ($type_activite == 2 ? [5, 18, 11, 7, 8, 12, 11, 10, 18] : ($type_activite == 3 ? [5, 13, 9, 6, 7, 9, 7, 13, 8, 8, 15] : []));
+
+    $valeurs = largeurPremiereColonne($entete, $largeurs_colonnes);
+
+    $ligne_report = [$valeurs[1]];
+    for ($i = $valeurs[0]; $i < count($largeurs_colonnes); $i++) {
+        $ligne_report[] = $largeurs_colonnes[$i];
+    }
+
+    // Lignes simples
+
+    for ($i = 0; $i < count($data); $i++) {
+        $ligne = [
+            $i + 1,
+            $data[$i]['nom_participant'] . ' ' . $data[$i]['prenoms'],
+            $data[$i]['titre_participant'],
+            ($type_activite != 3 ? $data[$i]['taux_journalier'] : $data[$i]['taux_taches']),
+            (int) $data[$i]['nombre_jours'],
+            $data[$i]['montant'],
+            $data[$i]['banque'],
+            $data[$i]['rib']
+        ];
+
+        if ($type_activite == 2) {
+            array_splice($ligne, 5, 0, array($data[$i]['indemnite_forfaitaire'])); // Insertion des indemnités forfaitaires
+        } elseif ($type_activite == 3) {
+            // Insertion du nombre de tâches, des frais d'entretien journalier et des indemnités forfaitaires
+            $ligne[3] = $data[$i]['taux_taches'];
+            array_splice($ligne, 4, 0, array($data[$i]['nombre_taches']));
+            array_splice($ligne, 5, 0, array($data[$i]['frais_deplacement_journalier']));
+            array_splice($ligne, 7, 0, array($data[$i]['indemnite_forfaitaire']));
+        } elseif ($type_activite != 1) {
+            echo 'type non valide';
+        }
+        $lignes_simples[] = $ligne;
+    }
+
+    $informations_affichage = [
+        'type_document' => 'etat_paiement',
+        'id_activite' => $id_activite,
+        'type_etat' => $type_activite,
+        'entete' => $entete,
+        'contenu_tableau' => [
+            'lignes_simples' => $lignes_simples
+        ],
+        'largeurs_colonnes' => [
+            'lignes_simples' => $largeurs_colonnes,
+            'ligne_report' => $ligne_report
+        ]
+    ];
+
+    $pdf = GenererCorpsDocuments($pdf, $informations_affichage);
+
+    // Sortie du pdf
+
+    if ($navigateur) {
+        $pdf->Output('Etat de paiement.pdf', 'I');
+    } else {
+        // On ne veut pas le document pour une sortie en navigateur mais pour une sortie directement en local
+        $chemin_fichier = $dossier_exports_temp . '/Etat de paiement.pdf';
+        $pdf->Output($chemin_fichier, 'F');
+        return $chemin_fichier;
+    }
+}
+
 function genererEtatPaiement($id_activite, $navigateur = true)
 {
     global $bdd, $dossier_exports_temp;
@@ -2027,8 +2692,6 @@ function genererEtatPaiement($id_activite, $navigateur = true)
             return ucfirst($fmt->format($nombre));
         }
     }
-
-
 
     $stmt = $bdd->prepare('SELECT type_activite, nom, reference FROM activites WHERE id = :id');
     $stmt->execute(['id' => $id_activite]);
@@ -2441,9 +3104,9 @@ function genererEtatPaiement($id_activite, $navigateur = true)
             {
                 public function Footer()
                 {
-                    // $this->SetY(-15);
-                    // $this->SetFont('trebucbd', '', 9); // Police grasse pour le pied de page
-                    // $this->Cell(0, 10,  $this->getAliasNumPage(), 0, false, 'R', 0);
+                    $this->SetY(-15);
+                    $this->SetFont('trebucbd', '', 9); // Police grasse pour le pied de page
+                    $this->Cell(0, 10,  $this->getAliasNumPage(), 0, false, 'R', 0);
                 }
             }
         }
@@ -2498,8 +3161,8 @@ function genererFusionPDFS($fichiers, $titre_document, $navigateur = true, $supp
             {
                 // $this->SetY(-15);
                 // $this->SetFont('trebucbd', '', 10);
-                // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, 0, 'R');
-                // $this->Cell(0, 10, $this->getAliasNumPage(), 0, 0, 'R');
+                $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, 0, 'R');
+                $this->Cell(0, 10, $this->getAliasNumPage(), 0, 0, 'R');
             }
         }
     }

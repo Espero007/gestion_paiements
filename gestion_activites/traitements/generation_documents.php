@@ -41,8 +41,8 @@ $documents['liste_rib'] = 'Liste des RIBs';
 // Mise en place des urls de téléchargement
 
 $urls = [
-    'note_service' => '/gestion_activites/scripts_generation/note_attestation.php?document=note&id=' . chiffrer($id_activite),
-    'attestation_collective' => '/gestion_activites/scripts_generation/note_attestation.php?document=attestation&id=' . chiffrer($id_activite),
+    'note_service' => '/gestion_activites/scripts_generation/note_service.php?id=' . chiffrer($id_activite),
+    'attestation_collective' => '/gestion_activites/scripts_generation/attestation.php?id=' . chiffrer($id_activite),
     'etat_paiement' => '/gestion_activites/scripts_generation/etat_paiement.php?id=' . chiffrer($id_activite)
 ];
 

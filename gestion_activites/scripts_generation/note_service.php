@@ -1,4 +1,6 @@
 <?php
+
+// Inclusions
 session_start();
 require_once(__DIR__ . '/../../includes/bdd.php');
 require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
@@ -9,5 +11,4 @@ if (!valider_id('get', 'id', '', 'participations_activites')) {
 
 $id_activite = dechiffrer($_GET['id']);
 
-genererEtatPaiement2($id_activite);
-// genererEtatPaiement($id_activite);
+genererNoteService($id_activite);
