@@ -1393,7 +1393,7 @@ function ConfigurerInformationsDemo()
 
     // 1 ère étape : Génération des données associées aux 150 participants dans un fichier csv
     $chemin_csv = __DIR__ . '/../parametres/donnees.csv';
-    $nbr_acteurs = 240; // C'est la valeur maximale utilisable. Au delà, le temps d'exécution va au delà des 30 secondes par défaut, le script est interrompu et il s'en suit une suite d'incohérences qu'on ne peut régler qu'en visant la base de données
+    $nbr_acteurs = 150; // C'est la valeur maximale utilisable. Au delà, le temps d'exécution va au delà des 30 secondes par défaut, le script est interrompu et il s'en suit une suite d'incohérences qu'on ne peut régler qu'en visant la base de données
     genererCSVDemo($chemin_csv, $nbr_acteurs);
 
     // 2ème étape : je crée trois (03) activités l'un de type 1, le second de type 2 et le dernier de type 3

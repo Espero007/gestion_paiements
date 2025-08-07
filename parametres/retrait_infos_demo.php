@@ -1,11 +1,13 @@
 <?php
-
+$titre_page = "Retrait des informations de démo";
 require_once(__DIR__ . '/../includes/header.php');
 
 $stmt = $bdd->query('SELECT * FROM connexion WHERE user_id=' . $_SESSION['user_id'] . ' AND demo=1');
 if ($stmt->rowCount() == 1) {
     // L'utilisateur a déjà généré des informations de démo et voudrait les retirer
-    unlink(__DIR__ . '/donnees.csv');
+    if (file_exists(__DIR__ . '/donnees.csv')) {
+        unlink(__DIR__ . '/donnees.csv');
+    }
     // Le travail se fera avec les tables activites, participants, fichiers et informations_demo
 
     // 1ère étape : Récupérer les ids des activités et les supprimer
@@ -26,16 +28,14 @@ if ($stmt->rowCount() == 1) {
     foreach ($ids_acteurs as $id) {
         // 2ème étape : Supprimer les fichiers
         // D'abord on récupère les chemins des fichiers rib pour les supprimer
-
-        $stmt = $bdd->query('
-        SELECT chemin_acces
+        $stmt = 'SELECT chemin_acces
         FROM fichiers
         WHERE id_fichier IN 
         (SELECT id_fichier
         FROM fichiers f
         INNER JOIN informations_bancaires ib ON ib.id_rib = f.id_fichier
-        WHERE ib.id_participant=' . $id . '
-        )');
+        WHERE ib.id_participant=' . $id . ')';
+        $stmt = $bdd->query($stmt);
         $chemins = $stmt->fetchAll(PDO::FETCH_NUM);
         foreach ($chemins as $chemin) {
             $path = $chemin[0];
