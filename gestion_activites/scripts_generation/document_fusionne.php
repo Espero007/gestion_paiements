@@ -3,6 +3,8 @@ session_start();
 require_once(__DIR__ . '/../../includes/bdd.php');
 require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
+use setasign\Fpdi\Tcpdf\Fpdi;
+
 /** Générations des fichiers à inclure dans le document fusionné */
 
 if (!valider_id('get', 'id', '', 'participations_activites')) {
@@ -21,18 +23,19 @@ $nbr_etats_paiement = 3;
 /** Note de service */
 
 for ($i = 0; $i < $nbr_note_service; $i++) {
-    $fichiers[] = genererNoteAttestation($id_activite, 'note', false);
+    // $fichiers[] = genererNoteAttestation($id_activite, 'note', false);
+    $fichiers[] = genererNoteService($id_activite, false);
 }
 
 /** Attestation collective */
 for ($i = 0; $i < $nbr_attestation; $i++) {
-    $fichiers[] = genererNoteAttestation($id_activite, 'attestation', false);
+    $fichiers[] = genererAttestation($id_activite, false);
 }
 
 /**Etat de paiement */
 
 for ($i = 0; $i < $nbr_etats_paiement; $i++) {
-    $fichiers[] = genererEtatPaiement($id_activite, false);
+    $fichiers[] = genererEtatPaiement2($id_activite, false);
 }
 
 /** Ordres de virement */
@@ -44,8 +47,9 @@ foreach ($banques as $banque) {
         $chemin_fichier = genererOrdreVirement($id_activite, $banque, false);
         $fichiers[] = $chemin_fichier;
     }
-    // $chemins[] = $chemin_fichier;
 }
+
+// $chemins[] = $chemin_fichier;
 
 // for ($i = 0; $i < $nbr_ordre_virement; $i++) {
 //     for ($j = 0; $j < count($chemins); $j++) {
@@ -65,25 +69,24 @@ for ($i = 0; $i < $nbr_liste_ribs; $i++) {
     $fichiers[] = genererListeRIBS($id_activite, false);
 }
 
-
-use setasign\Fpdi\Tcpdf\Fpdi;
 // Classe personnalisée avec Footer()
-class PDFFusion extends Fpdi
-{
-    public function Footer()
-    {
-        // $this->SetY(-15);
-        $this->SetFont('trebucbd', '', 10);
-        // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, 0, 'R');
-        $this->Cell(0, 10, $this->getAliasNumPage(), 0, 0, 'R');
-    }
-}
+// class PDFFusion extends Fpdi
+// {
+//     // public function Footer()
+//     // {
+//     //     // $this->SetY(-15);
+//     //     $this->SetFont('trebucbd', '', 10);
+//     //     // $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, 0, 'R');
+//     //     $this->Cell(0, 10, $this->getAliasNumPage(), 0, 0, 'R');
+//     // }
+// }
 
-$pdf = new PDFFusion();
+$pdf = new Fpdi();
 $pdf->setMargins(15, 25, 15);
 $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
 $pdf->SetFooterMargin(25);
 $pdf->setPrintHeader(false);
+$pdf->setPrintFooter(false);
 configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Fusion des documents');
 
 foreach ($fichiers as $fichier) {

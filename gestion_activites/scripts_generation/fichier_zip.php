@@ -11,13 +11,13 @@ if (!valider_id('get', 'id', '', 'participations_activites')) {
 $id_activite = dechiffrer($_GET['id']);
 
 /** Note de service */
-$fichiers[] = genererNoteAttestation($id_activite, 'note', false);
+$fichiers[] = genererNoteService($id_activite, false);
 
 // /** Attestation collective */
-$fichiers[] = genererNoteAttestation($id_activite, 'attestation', false);
+$fichiers[] = genererAttestation($id_activite, false);
 
 // /**Etat de paiement */
-$fichiers[] = genererEtatPaiement($id_activite, false);
+$fichiers[] = genererEtatPaiement2($id_activite, false);
 
 // /** Ordres de virement */
 $banques = listeBanques($id_activite);
@@ -38,7 +38,7 @@ $repertoire_pdfs = $dossier_exports_temp;
 $dossier_archives = __DIR__ . '/';
 
 // // Création du nom unique pour l'archive ZIP
-$nom_zip = 'documents_pdfs.zip';
+$nom_zip = 'Les documents.zip';
 $chemin_zip = $dossier_archives . $nom_zip;
 
 // Création de l'objet Zip
