@@ -71,7 +71,7 @@ $stmt->closeCursor();
 
                         <?php if ($demo_active) : ?>
                             <!-- Les informations de demo n'ont pas encore été générées -->
-                            <p class="mt-3 text-center">(<a href="/parametres/generation_demo.php" title="Cette option vous permet de générer des informations aléatoires qui vous permettront de simuler le fonctionnement de la plateforme (notez qu'il est à usage unique). Reférez-vous à la documentation pour plus d'informations">Générer des informations pour une démonstration</a>)</p>
+                            <p class="mt-3 text-center">(<a href="/parametres/generation_demo.php" title="Cette option vous permet de générer des informations aléatoires qui vous permettront de simuler le fonctionnement de la plateforme (notez qu'il est à usage unique). Reférez-vous à la documentation pour plus d'informations">Générer les informations pour une démonstration</a>)</p>
                         <?php else : ?>
                             <!-- Elles ont été générées -->
                             <p class="mt-3 text-center">(<a href="/parametres/retrait_infos_demo.php" title="Cette option vous permet de supprimer toutes les informations de démonstration qui avaient été générées, vous permettant ainsi de ne garder que vos informations. Reférez-vous à la documentation pour plus d'informations.">Retirer les informations de démonstration</a>)</p>

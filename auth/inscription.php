@@ -46,7 +46,7 @@
 
                                         <div class="text-center">
                                             <h1 class="h4 text-gray-900 mb-4">Bienvenu(e) parmi nous !</h1>
-                                            <p>Faîtes de la gestion des paiements de vos participants un jeu avec nous.</h2>
+                                            <p>Faîtes de la gestion des paiements de vos acteurs un jeu avec nous.</h2>
                                         </div>
 
                                         <form action="" method="post" class="user">
