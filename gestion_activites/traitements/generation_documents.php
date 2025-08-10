@@ -35,6 +35,7 @@ foreach ($banques as $banque) {
 }
 $documents['synthese_ordres_virements'] = 'Synthèse des ordres de virements';
 $documents['liste_rib'] = 'Liste des RIBs';
+$documents['documents_fusiones'] = 'Document rassemblant tous les autres';
 
 // Gestion des documents sélectionnés
 
@@ -52,6 +53,7 @@ foreach ($banques as $banque) {
 }
 $urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id=' . chiffrer($id_activite);
 $urls['liste_rib'] = '/gestion_activites/scripts_generation/liste_des_RIB.php?id=' . chiffrer($id_activite);
+$urls['documents_fusiones'] = '/gestion_activites/scripts_generation/document_fusionne.php?id=' . chiffrer($id_activite);
 
 $pdfs = [];
 $pdfs_non_telechargeables = [];
@@ -64,9 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $pdfs[] = $urls[$document];
         }
     }
-
-    /** Ajouts Tobi */
-    // $_SESSION['documents_choisis_temp'] = $documents_choisis;
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

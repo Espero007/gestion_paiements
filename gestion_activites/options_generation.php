@@ -11,7 +11,7 @@
         </a>
     </li>
 
-    <li>
+    <!-- <li>
         <a href="/gestion_activites/scripts_generation/document_fusionne.php?id=<?= chiffrer($id_activite) ?>" class="dropdown-item custom-dropdown-item" title="Générez et téléchargez un seul fichier contenant tous les documents sélectionnés." target="_blank">Générer un seul fichier</a>
-    </li>
+    </li> -->
 </ul>

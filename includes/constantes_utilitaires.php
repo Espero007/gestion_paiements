@@ -101,18 +101,6 @@ date_default_timezone_set('Africa/Lagos');
 //     return "Du " . $fmt->format(new DateTime($date_debut)) . " au " . $fmt->format(new DateTime($date_fin));
 // }
 // 
-/**
- * ELle permet de remplacer les caractères accentués dans une chaine de caractères par leurs équivalents non accentués
- */
-// function supprimerAccents($chaine)
-// {
-//     if (class_exists('Transliterator')) {
-//         $transliterator = Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC');
-//         return $transliterator->transliterate($chaine);
-//     } else {
-//         return $chaine;
-//     }
-// }
 // fonction pour génerer les urls
 // 
 // function generateUrl(string $path, array $params = []): string
@@ -860,10 +848,6 @@ function creer_dossiers_upload()
     return $upload_mois . '/';
 }
 
-
-
-// Fonctions utilitaires
-
 /**
  * Elle s'assure de la validité de l'id qu'on lui passe en paramètre et c'est par elle que quasiment toutes les validations d'ids sont réalisées sur la plateforme. C'est aussi elle qui s'assure que l'utilisateur connecté ne puisse pas accéder à des ressources qui ne lui appartiennent pas, essentiellement en tout cas.
  */
@@ -1249,6 +1233,19 @@ function quotaComptesAtteint($id)
     global $bdd;
     $stmt = $bdd->query("SELECT id FROM informations_bancaires WHERE id_participant =" . $id);
     return ((NOMBRE_MAXIMAL_COMPTES - $stmt->rowCount()) == 0 ? true : false);
+}
+
+/**
+ * ELle permet de remplacer les caractères accentués dans une chaine de caractères par leurs équivalents non accentués
+ */
+function supprimerAccents($chaine)
+{
+    if (class_exists('Transliterator')) {
+        $transliterator = Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC');
+        return $transliterator->transliterate($chaine);
+    } else {
+        return $chaine;
+    }
 }
 
 
