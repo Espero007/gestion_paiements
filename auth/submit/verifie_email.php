@@ -26,16 +26,33 @@ if ($utilisateur) {
     $stmt = $bdd->prepare("UPDATE connexion SET est_verifie = 1, token_verification = NULL WHERE email = ?");
     $stmt->execute([$email]);
 
-    // On connecte automatiquement l'utilisateur
+    // // On connecte automatiquement l'utilisateur
+    // $_SESSION['user_id'] = $utilisateur['user_id'];
+    // $_SESSION['nom'] = $utilisateur['nom'];
+    // $_SESSION['prenoms'] = $utilisateur['prenoms'];
+    // $_SESSION['photo_profil'] = $utilisateur['photo_profil'];
+    // $_SESSION['dernier_signe_activite'] = time();
 
-    $_SESSION['user_id'] = $utilisateur['user_id'];
-    $_SESSION['nom'] = $utilisateur['nom'];
-    $_SESSION['prenoms'] = $utilisateur['prenoms'];
-    $_SESSION['photo_profil'] = $utilisateur['photo_profil'];
-    $_SESSION['dernier_signe_activite'] = time();
+    // // On le redirige vers la page d'accueil
+    // header('location:/index.php');
+    // exit;
 
-    header('location:/index.php');
-    exit;
+    if (isset($_GET['mdp_oublie'])) {
+        if ($_GET['mdp_oublie'] == 1) {
+            // L'email est valide mais c'est dans le cadre d'une réinitialisation du mot de passe donc on le redirige vers cette page plutôt que celle de connexion
+            $_SESSION['email_confirme'] = 'Votre email a été confirmé avec succès !';
+            $_SESSION['email_utilisateur'] = $email;
+            header('location:/auth/mdp_oublie.php');
+            exit;
+        } else {
+            redirigerVersPageErreur();
+        }
+    } else {
+        // L'email est validé donc on redirige vers la page de connexion pour qu'il se connecte
+        $_SESSION['email_confirme'] = 'Votre email a été confirmé avec succès ! Votre compte est désormais actif, entrez vos identifiants pour vous connecter.';
+        header('location:/auth/connexion.php');
+        exit;
+    }
 } elseif (isset($modification_email) && $modification_email == 1) {
 
     if (isset($_SESSION['modification_email'])) {
@@ -75,6 +92,15 @@ if ($utilisateur) {
     } else {
         $_SESSION['erreur_avec_verification_email'] = "Une erreur s'est produite lors de la vérification de l'email";
     }
-    header('location:../connexion.php');
-    exit;
+    if (isset($_GET['mdp_oublie'])) {
+        if ($_GET['mdp_oublie']) {
+            header('location:../mdp_oublie.php');
+            exit;
+        } else {
+            redirigerVersPageErreur();
+        }
+    } else {
+        header('location:../connexion.php');
+        exit;
+    }
 }

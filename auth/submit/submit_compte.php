@@ -29,7 +29,7 @@ if (isset($_POST['inscription'])) {
             } else {
                 // Pas de problèmes avec le mot de passe
                 if ($_POST[$champ] != $_POST['password_confirmation']) {
-                    $erreurs['password_confirmation'] = "Vous devez indiquer exactement le même mot de passe";
+                    $erreurs['password_confirmation'] = "Vous devez indiquer exactement le même mot de passe ici";
                 }
             }
         } elseif ($champ == 'email') {
@@ -48,7 +48,7 @@ if (isset($_POST['inscription'])) {
     if (!isset($erreurs)) {
         // Pas d'erreurs
         $token = bin2hex(random_bytes(16)); // token de vérification
-        $lien_verif = obtenirURLcourant(true) . '/auth/submit/verifie_email.php?email=' . urldecode($_POST['email']) . '&token=' . $token;
+        $lien_verif = obtenirURLcourant(true) . '/auth/submit/verifie_email.php?email=' . urlencode($_POST['email']) . '&token=' . $token;
 
         if (envoyerLienValidationEmail($lien_verif, $_POST['email'], $_POST['nom'], $_POST['prenoms'], 0)) {
             $_SESSION["email_envoye"] = 'Un lien de vérification a été envoyé au mail : <span class="text-primary">' . htmlspecialchars($_POST['email']) . '</span>. Cliquez dessus pour confirmer votre email et accéder à votre compte.';

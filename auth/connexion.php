@@ -37,6 +37,7 @@ require_once("submit/submit_connexion.php");
                                 <div class="col-12">
                                     <div class="p-5">
                                         <!-- Messages divers -->
+
                                         <?php if (isset($echec_connexion)) : ?>
                                             <?php afficherAlerte('Les identifiants de connexion que vous avez indiqués sont invalides', 'danger') ?>
                                         <?php endif; ?>
@@ -93,6 +94,15 @@ require_once("submit/submit_connexion.php");
                                         <?php if (isset($_SESSION['lien_invalide'])) : ?>
                                             <?php afficherAlerte('lien_invalide', 'info', true); ?>
                                         <?php endif; ?>
+
+                                        <?php if (isset($_SESSION['email_confirme'])) : ?>
+                                            <?php afficherAlerte('email_confirme', 'success', true); ?>
+                                        <?php endif; ?>
+
+                                        <?php if (isset($_SESSION['mdp_reinitialise'])) : ?>
+                                            <?php afficherAlerte('mdp_reinitialise', 'success', true) ?>
+                                        <?php endif; ?>
+                                        <!-- Finn Messages divers -->
 
                                         <div class="text-center">
                                             <h1 class="h4 text-gray-900 mb-4">Contents de vous revoir !</h1>
