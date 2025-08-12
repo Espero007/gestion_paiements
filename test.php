@@ -17,23 +17,12 @@ require_once('includes/bdd.php');
 </head>
 
 <body>
-    <style>
-        div.container {
-            display: flex;
-            justify-content: space-between;
-        }
+    <?php
+    $chiffrement = chiffrer('etat_paiement');
+    echo $chiffrement . '<br>';
+    echo dechiffrer($chiffrement);
+    ?>
 
-        p {
-            text-align: center;
-        }
-    </style>
-
-    <table cellpadding="5" border="0" width="100%">
-        <tr>
-            <td width="50%" style="text-decoration: underline;"></td>
-            <td width="50%"></td>
-        </tr>
-    </table>
 
 </body>
 

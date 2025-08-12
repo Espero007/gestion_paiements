@@ -85,7 +85,6 @@ require_once('traitements/generation_documents.php');
                                         </div>
                                     </div>
 
-
                                     <div class="divider text-start">
                                         <div class="divider-text"><strong>Actions</strong></div>
                                     </div>
@@ -102,7 +101,6 @@ require_once('traitements/generation_documents.php');
                                     <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-secondary ml-2">Annuler</a>
                                 </form>
                             <?php else: ?>
-
                                 <div class="col-lg-6 mb-4 mb-xl-0">
                                     <div class="mt-3">
                                         <ol class="list-group list-group-numbered">

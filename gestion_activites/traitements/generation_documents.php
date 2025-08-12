@@ -35,7 +35,7 @@ foreach ($banques as $banque) {
 }
 $documents['synthese_ordres_virements'] = 'Synthèse des ordres de virements';
 $documents['liste_rib'] = 'Liste des RIBs';
-$documents['documents_fusiones'] = 'Document rassemblant tous les autres';
+$documents['documents_fusionnes'] = 'Document rassemblant tous les autres';
 
 // Gestion des documents sélectionnés
 
@@ -53,7 +53,7 @@ foreach ($banques as $banque) {
 }
 $urls['synthese_ordres_virements'] = '/gestion_activites/scripts_generation/synthese_ordres_virements.php?id=' . chiffrer($id_activite);
 $urls['liste_rib'] = '/gestion_activites/scripts_generation/liste_des_RIB.php?id=' . chiffrer($id_activite);
-$urls['documents_fusiones'] = '/gestion_activites/scripts_generation/document_fusionne.php?id=' . chiffrer($id_activite);
+$urls['documents_fusionnes'] = '/gestion_activites/scripts_generation/document_fusionne.php?id=' . chiffrer($id_activite);
 
 $pdfs = [];
 $pdfs_non_telechargeables = [];
@@ -62,15 +62,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($documents as $document => $label) {
         if (in_array($document, $_POST)) {
             $documents_choisis[] = $document;
-            if (!in_array($document, $pdfs_non_telechargeables))
+            if (!in_array($document, $pdfs_non_telechargeables)) {
                 $pdfs[] = $urls[$document];
+            }
         }
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['generer_zip'])) {
-        header('location:/gestion_activites/scripts_generation/fichier_zip.php?id=' . chiffrer($id_activite));
-        exit;
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['generer_zip_selection']) || isset($_POST['generer_zip_tous']))) {
+
+    if (isset($_POST['documents']) && isset($_POST['generer_zip_selection'])) {
+        $documents_a_zipper = $_POST['documents'];
+        foreach ($documents_a_zipper as $document) {
+            $_SESSION['documents'][] = $document;
+        }
+        header('location:/gestion_activites/scripts_generation/fichier_zip.php?id=' . chiffrer($id_activite) . '&param=s'); // s pour sélection
+    } elseif (isset($_POST['generer_zip_tous'])) {
+        header('location:/gestion_activites/scripts_generation/fichier_zip.php?id=' . chiffrer($id_activite) . '&param=t'); // t pour tous
     }
+    exit;
 }
