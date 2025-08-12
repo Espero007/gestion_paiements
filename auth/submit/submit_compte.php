@@ -14,7 +14,7 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
 
 if (isset($_POST['inscription'])) {
 
-    $champs_attendus = ['nom', 'prenoms', 'email', 'password'];
+    $champs_attendus = ['nom', 'prenoms', 'email', 'password', 'password_confirmation'];
 
     foreach ($champs_attendus as $champ) {
         if (!isset($_POST[$champ])) {
@@ -26,6 +26,11 @@ if (isset($_POST['inscription'])) {
         } elseif ($champ == 'password') {
             if (strlen($_POST["password"]) < 6 || !preg_match('/^[A-Z]/', $_POST["password"]) || !preg_match('/\d/', $_POST["password"])) {
                 $erreurs[$champ] = "Le mot de passe doit contenir au moins 06 caractères; commencer par une lettre majuscule et contenir au moins un chiffre";
+            } else {
+                // Pas de problèmes avec le mot de passe
+                if ($_POST[$champ] != $_POST['password_confirmation']) {
+                    $erreurs['password_confirmation'] = "Vous devez indiquer exactement le même mot de passe";
+                }
             }
         } elseif ($champ == 'email') {
             $check_email = $bdd->prepare("SELECT user_id FROM connexion WHERE email = :email");

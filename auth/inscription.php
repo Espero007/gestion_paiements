@@ -77,6 +77,8 @@
                                                 <?php endif; ?>
                                             </div>
 
+                                            <!-- Mot de passe -->
+
                                             <div class="form-group">
                                                 <label for="password" class="col-form-label form-label">Mot de passe</label>
 
@@ -84,6 +86,18 @@
 
                                                 <?php if (isset($erreurs['password'])) : ?>
                                                     <div id="passwordHelp" class="form-text"><?php echo $erreurs["password"] ?></div>
+                                                <?php endif; ?>
+                                            </div>
+
+                                            <!-- Confirmation du mot de passe -->
+
+                                            <div class="form-group">
+                                                <label for="password_confirmation" class="col-form-label form-label">Confirmation du mot de passe</label>
+
+                                                <input type="text" class="form-control form-control-user<?= isset($erreurs['password_confirmation']) ? ' is-invalid' : '' ?>" id="password_confirmation" name="password_confirmation" placeholder="Entrez à nouveau votre mot de passe" aria-describedby="passwordConfirmationHelp">
+
+                                                <?php if (isset($erreurs['password_confirmation'])) : ?>
+                                                    <div id="passwordConfirmationHelp" class="form-text"><?php echo $erreurs["password_confirmation"] ?></div>
                                                 <?php endif; ?>
                                             </div>
 
