@@ -59,6 +59,8 @@ require_once("submit/submit_connexion.php");
                                             } elseif (isset($_SESSION['cookie_expire'])) {
                                                 // déconnexion due au fait que le cookie de l'utilisateur est expiré
                                                 afficherAlerte('cookie_expire', 'info', true);
+                                            } elseif (isset($_SESSION['mdp_reinitialise'])) {
+                                                // déconnexion due à la réinitialisation du mot de passe donc on ne fait rien puisque le message a déjà été affiché
                                             } else {
                                                 // bh c'est une simple déconnexion
                                                 afficherAlerte('Vous êtes à présent déconnecté(e) !', 'info');

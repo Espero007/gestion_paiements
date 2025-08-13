@@ -174,11 +174,13 @@ require_once('traitements/actualiser_mdp.php');
                         </div>
 
                         <!-- Actualisation du mot de passe -->
+
                         <div class="card mb-4">
                             <h5 class="card-header h6">Actualisation du mot de passe</h5>
                             <div class="card-body">
                                 <form action="" method="post">
                                     <div class="row">
+                                        <!-- Ancien Mot de passe -->
                                         <div class="mb-3 col-md-6 form-group form-password-toggle">
                                             <label for="password" class="col-form-label">Mot de passe actuel</label>
                                             <div class="input-group input-group-merge">
@@ -187,6 +189,7 @@ require_once('traitements/actualiser_mdp.php');
                                             </div>
                                             <?php echo isset($error['mdp_actuel']) ? '<p class="m-0"><small class="text-danger">' . htmlspecialchars($error['mdp_actuel']) . '</small></p>' : '' ?>
                                         </div>
+                                        <!-- Nouveau Mot de passe -->
                                         <div class="mb-3 col-md-6">
                                             <label for="nouveau_mdp" class="col-form-label">Nouveau mot de passe</label>
                                             <input type="text" class="form-control" id="nouveau_mdp" name="nouveau_mdp" value=''>
@@ -199,6 +202,11 @@ require_once('traitements/actualiser_mdp.php');
                                         <button type="reset" class="btn btn-outline-secondary">Annuler</button>
                                     </div>
                                 </form>
+                                <div class="my-2">
+                                    <small>
+                                        <a href="/auth/mdp_oublie.php">Mot de passe oublié ? Cliquez ici pour le réinitialiser</a>
+                                    </small>
+                                </div>
                             </div>
                         </div>
                         <!-- Fin Actualisation du mot de passe -->

@@ -3,12 +3,19 @@ session_start();
 require_once(__DIR__ . '/../includes/bdd.php');
 require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 
-// Redirection vers la page d'accueil si l'utilisateur est déjà connecté
+// On prend l'url précédent si l'utilisateur est déjà connecté
+//
+//Redirection vers la page d'accueil si l'utilisateur est déjà connecté
 
 if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
     // L'utilisateur est connecté
-    header('location:/index.php');
-    exit;
+    $utilisateur_connecte = true;
+    // $url_precedent = $_SESSION['previous_url'];
+    // header('location:/index.php');
+    // exit;
+} else {
+    // $url_precedent = '/auth/connexion.php';
+    $utilisateur_connecte = false;
 }
 
 $anomalie = false;
@@ -104,15 +111,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reinitialiser'])) {
                 }
             }
 
-
             if (!isset($erreurs)) {
                 $stmt = $bdd->prepare('UPDATE connexion SET password=:mdp WHERE email=:email');
 
                 if ($stmt->execute(['mdp' => password_hash($_POST['mdp'], PASSWORD_DEFAULT), 'email' => $email])) {
                     $_SESSION["mdp_reinitialise"] = 'Votre mot de passe a été réinitialisé avec succès !';
                     unset($_SESSION['email_utilisateur']);
-                    // On redirige vers la page de connexion
-                    header('location:connexion.php');
+                    // Si l'utilisateur est connecté, on le déconnecte puis on le renvoie vers la page de connexion
+                    if ($utilisateur_connecte) {
+                        header('location:deconnexion.php');
+                    } else {
+                        header('location:connexion.php');
+                    }
                     exit;
                 } else {
                     die('Une erreur s\'est produite. Veuillez réessayer plus tard');
@@ -227,19 +237,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reinitialiser'])) {
                                                     <button class="btn btn-primary w-100 btn-user" type="submit" name="reinitialiser">Réinitialiser le mot de passe</button>
                                                 </div>
                                             <?php endif; ?>
+                                            <?php if ($utilisateur_connecte) : ?>
+                                                <div class="mb-3">
+                                                    <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-outline-secondary w-100 btn-user">Annuler</a>
+                                                </div>
+
+                                            <?php endif; ?>
                                         </form>
-                                        <hr>
-                                        <div class="text-center">
-                                            <small>
-                                                <a href="/auth/inscription.php" class="is-primary">Créer un compte</a>
-                                            </small>
-                                        </div>
-                                        <div class="text-center">
-                                            <small>
-                                                <span>Déjà un compte ?</span>
-                                                <a href="/auth/connexion.php" class="is-primary">Se connecter</a>
-                                            </small>
-                                        </div>
+                                        <?php if (!$utilisateur_connecte) : ?>
+                                            <hr>
+                                            <div class="text-center">
+                                                <small>
+                                                    <a href="/auth/inscription.php" class="is-primary">Créer un compte</a>
+                                                </small>
+                                            </div>
+                                            <div class="text-center">
+                                                <small>
+                                                    <span>Déjà un compte ?</span>
+                                                    <a href="/auth/connexion.php" class="is-primary">Se connecter</a>
+                                                </small>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
