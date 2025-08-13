@@ -21,6 +21,14 @@ if (isset($_POST['desactiver'])) {
             $bdd->query('DELETE FROM fichiers WHERE id_fichier=' . $fichier['id_fichier']);
         }
 
+        // Toujours dans le volet suppression de fichiers, on supprime aussi les photos de profil s'il y en a
+        $stmt = $bdd->query('SELECT photo_profil FROM connexion WHERE user_id=' . $user_id);
+        $chemin = $stmt->fetch(PDO::FETCH_NUM)[0];
+        $stmt->closeCursor();
+        if ($chemin && file_exists($chemin)) {
+            unlink($chemin);
+        }
+
         // 3- Supprimer les participants
         $stmt = $bdd->query('DELETE FROM participants WHERE id_user=' . $user_id);
 

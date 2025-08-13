@@ -18,9 +18,11 @@ require_once('includes/bdd.php');
 
 <body>
     <?php
-    $chiffrement = chiffrer('etat_paiement');
-    echo $chiffrement . '<br>';
-    echo dechiffrer($chiffrement);
+    $stmt = $bdd->query('SELECT photo_profil FROM connexion WHERE user_id=4');
+    $chemin = BASE_PATH . '/photos_profil/' . $stmt->fetch(PDO::FETCH_NUM)[0];
+    $stmt->closeCursor();
+
+    var_dump($chemin);
     ?>
 
 

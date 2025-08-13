@@ -100,7 +100,7 @@ require_once('traitements/actualiser_mdp.php');
                                     <?php endif; ?>
 
                                     <div class="d-flex align-items-start align-items-sm-center gap-4">
-                                        <img src=" <?= (!empty($utilisateur['photo_profil'])) ? '/photos_profil/' . $utilisateur['photo_profil'] : '/assets/img/undraw_profile.svg' ?>" alt="photo-profil" class="d-block rounded" height="100" width="100" style="aspect-ratio: 1;">
+                                        <img src=" <?= (!empty($_SESSION['photo_profil'])) ? '/photos_profil/' . $_SESSION['photo_profil'] : '/assets/img/undraw_profile.svg' ?>" alt="photo-profil" class="d-block rounded" height="100" width="100" style="aspect-ratio: 1;">
                                         <div class="button-wrapper">
                                             <div class="mb-4">
                                                 <div>
