@@ -8,7 +8,11 @@ require_once(__DIR__ . '/../includes/constantes_utilitaires.php');
 //Redirection vers la page d'accueil si l'utilisateur est déjà connecté
 
 if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
-    // L'utilisateur est connecté
+    // L'utilisateur est connecté donc on met en place le système de liens et on garde une variable pouvant nous l'indiquer
+    if (isset($_SESSION['current_url']) && $_SESSION['current_url'] != obtenirURLcourant()) {
+        $_SESSION['previous_url'] = $_SESSION['current_url'];
+    }
+    $_SESSION['current_url'] = obtenirURLcourant();
     $utilisateur_connecte = true;
     // $url_precedent = $_SESSION['previous_url'];
     // header('location:/index.php');
