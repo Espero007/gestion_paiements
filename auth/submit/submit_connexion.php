@@ -14,7 +14,6 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['deconnexion'])) {
     exit;
 }
 
-
 if (isset($_POST['connexion'])) {
 
     if (!isset($_POST['email']) || !isset($_POST['password'])) {

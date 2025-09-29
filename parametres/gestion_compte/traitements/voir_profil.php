@@ -5,6 +5,9 @@ $stmt = $bdd->query('SELECT nom, prenoms, email, photo_profil FROM connexion WHE
 $utilisateur = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $utilisateur = $utilisateur[0];
 
+// Des variables initialisées
+$photo_modifie = false;
+
 $taille_image = 2e6; // 2Mo
 $extensions_autorisees = ['jpg', 'jpeg', 'png'];
 $erreursUploadFichier = array(
