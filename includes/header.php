@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 require_once('bdd.php');
 require_once('constantes_utilitaires.php');
@@ -66,7 +65,6 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
                     exit;
                 }
             }
-
             $_SESSION['dernier_signe_activite'] = time();
             $_SESSION['current_url'] = obtenirURLcourant();
             if (!isset($_SESSION['cle_chiffrement'])) {

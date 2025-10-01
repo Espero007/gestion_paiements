@@ -10,7 +10,7 @@ require_once('traitements/submit_creer_activite.php');
         a:hover.no-decoration {
             text-decoration: none;
         }
-    </style>
+    </style>-
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -146,7 +146,8 @@ require_once('traitements/submit_creer_activite.php');
                                                         </div>
                                                         <small class="text-danger"><?= $errors['timbre'] ?? '' ?></small>
                                                         <?= isset($errors['timbre']) ? '<br>' : '' ?>
-                                                        <small> Note : Il doit être de la forme <strong>N°<hr class="m-0 d-inline-block" style="width : 40px;"> /DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD
+                                                        <small> Note : Il doit être de la forme <strong>N°
+                                                                <hr class="m-0 d-inline-block" style="width : 40px;"> /DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD
                                                             </strong></small>
                                                     </div>
                                                 </div>

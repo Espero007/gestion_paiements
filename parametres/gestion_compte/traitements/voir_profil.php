@@ -1,12 +1,11 @@
 <?php
+session_start();
+require_once(__DIR__ . '/../../../includes/bdd.php');
+require_once(__DIR__ . '/../../../includes/constantes_utilitaires.php');
 
-// Récupération des informations de l'utilisateur
 $stmt = $bdd->query('SELECT nom, prenoms, email, photo_profil FROM connexion WHERE user_id=' . $_SESSION['user_id']);
 $utilisateur = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $utilisateur = $utilisateur[0];
-
-// Des variables initialisées
-$photo_modifie = false;
 
 $taille_image = 2e6; // 2Mo
 $extensions_autorisees = ['jpg', 'jpeg', 'png'];
@@ -21,12 +20,10 @@ $erreursUploadFichier = array(
     8 => "Une extension PHP a empêché le téléversement du fichier"
 );
 
-if (isset($_POST['choisir_photo'])) {
-    $fichier = 'photo';
+if (isset($_POST['changer_photo'])) {
     // L'utilisateur veut changer sa photo de profil
-
+    $fichier = 'photo';
     // Validations
-
     if (!array_key_exists($fichier, $_FILES)) {
         $erreurs[$fichier][] = 'Une erreur s\'est produite';
     } else {
@@ -50,6 +47,10 @@ if (isset($_POST['choisir_photo'])) {
         }
     }
 
+    if (isset($erreurs)) {
+        $_SESSION['erreurs'] = $erreurs;
+    }
+
     // Mise à jour de la photo de profil
 
     if (!isset($erreurs)) {
@@ -63,6 +64,7 @@ if (isset($_POST['choisir_photo'])) {
         // N'oublions pas de supprimer le fichier associé à son ancienne photo de profil s'il en avait un
         $stmt = $bdd->query('SELECT photo_profil FROM connexion WHERE user_id=' . $_SESSION['user_id']);
         $chemin = $stmt->fetch(PDO::FETCH_NUM)[0];
+        $chemin = $upload_path . $chemin;
         $stmt->closeCursor();
         if ($chemin && file_exists($chemin)) {
             unlink($chemin);
@@ -70,12 +72,15 @@ if (isset($_POST['choisir_photo'])) {
 
         if (move_uploaded_file($infos_fichier['tmp_name'], $chemin_absolu)) {
             $stmt = $bdd->prepare('UPDATE connexion SET photo_profil=:photo WHERE user_id=' . $_SESSION['user_id']);
-            $stmt->execute(['photo' => $chemin_absolu]);
+            $stmt->execute(['photo' => $nom_fichier]);
             $_SESSION['photo_profil'] = $nom_fichier;
-            $photo_modifie = true;
-            $_POST = [];
+            $_SESSION['photo_modifiee'] = 'Votre photo a été modifiée avec succès !';
+            // unset($_POST['changer_photo']);
+            // header('location:' . $_SERVER['PHP_SELF']); // On redirige vers la même page pour réactualiser la page. Cela a été fait pour qu'une fois la photo changée, le formulaire ne soit pas rémanent
         }
     }
+    // On redirige vers la page de base
+    header('location:../voir_profil.php');
 }
 
 if (isset($_POST['modifier_infos'])) {
@@ -116,28 +121,44 @@ if (isset($_POST['modifier_infos'])) {
 
             $stmt = $bdd->prepare("UPDATE connexion SET nom = ?, prenoms = ? WHERE user_id = ?");
             $stmt->execute([$_POST['nom'], $_POST['prenoms'], $_SESSION['user_id']]);
-
-            $infos_modifiees = true;
+            $_SESSION['infos_modifiees'] = 'Vos informations ont été modifiées avec succès !';
+            // $infos_modifiees = true;
         }
 
         // Il faut que j'envoie un mail de confirmation à son email avant de l'actualiser. Donc comment je fais ça ?
         // Je vais sauvegarder l'email dans la session ainsi que le token qui sera généré puis sur la page de vérification je vais me servir de ces informations, vérifier l'email et peut être mettre un timer pour que le lien expire
 
         if ($_POST['email'] != $utilisateur['email']) {
-            // $modifier_email = true;
+            // On vérifie aussi si l'email indiqué n'est pas déjà utilisé par un autre utilisateur car c'est important, un email ne doit identifier qu'un seul utilisateur, même si ce même utilisateur a deux mails
 
-            $token = bin2hex(random_bytes(16));
-            $lien_verif = $lien_verif = obtenirURLcourant(true) . '/auth/submit/verifie_email.php?email=' . urldecode($_POST['email']) . '&token=' . $token . '&modification_email=1';
+            $stmt = $bdd->prepare('SELECT email FROM connexion WHERE email = :email');
+            $stmt->execute(['email' => $_POST['email']]);
+            $resultat = $stmt->fetchAll(PDO::FETCH_NUM);
 
-            if (envoyerLienValidationEmail($lien_verif, $_POST['email'], $_SESSION['nom'], $_SESSION['prenoms'], 1)) {
-                $_SESSION['modification_email'] = true;
-                $_SESSION['email_a_verifie'] = $_POST['email'];
-                $_SESSION['token'] = $token;
-                $email_envoye = true;
-            } else {
-                $email_envoye = false;
+            if(count($resultat) == 0){
+                // L'email indiqué est safe
+
+                $token = bin2hex(random_bytes(16));
+                $lien_verif = $lien_verif = obtenirURLcourant(true) . '/auth/submit/verifie_email.php?email=' . urldecode($_POST['email']) . '&token=' . $token . '&modification_email=1';
+
+                if (envoyerLienValidationEmail($lien_verif, $_POST['email'], $_SESSION['nom'], $_SESSION['prenoms'], 1)) {
+                    $_SESSION['modification_email'] = true;
+                    $_SESSION['email_a_verifie'] = $_POST['email'];
+                    $_SESSION['token'] = $token;
+                    $email_envoye = true;
+                } else {
+                    $email_envoye = false;
+                }
+                $_SESSION['email_envoye'] = $email_envoye;
+            }else{
+                // L'email indiqué est déjà associé à un autre utilisateur de la plateforme
+                $_SESSION['email_deja_pris'] = 'L\'email que vous avez indiqué semble déjà avoir été associé à un autre utilisateur de la plateforme. Utilisez-en un autre.';
             }
-            $_POST = [];
+            // $modifier_email = true;
         }
+    } else {
+        $_SESSION['erreurs'] = $erreurs;
     }
+
+    header('location:../voir_profil.php');
 }

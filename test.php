@@ -1,9 +1,3 @@
-<?php
-session_start();
-require_once('includes/constantes_utilitaires.php');
-require_once('includes/bdd.php');
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,18 +6,22 @@ require_once('includes/bdd.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/assets/bootstrap-5.3.5-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/sb-admin-2.min.css">
 </head>
 
 <body>
-    <?php
-    $stmt = $bdd->query('SELECT photo_profil FROM connexion WHERE user_id=4');
-    $chemin = BASE_PATH . '/photos_profil/' . $stmt->fetch(PDO::FETCH_NUM)[0];
-    $stmt->closeCursor();
 
-    var_dump($chemin);
-    ?>
+    <p>
+        Cette page ne contient que du HTML.<br />
+        Veuillez taper votre prénom :
+    </p>
+    <form action="test_2.php" method="post">
+        <p>
+            <input type="text" name="prenom" />
+            <!-- <input type="submit" value="Valider" /> -->
+            <button type="submit">Envoyer</button>
+        </p>
+    </form>
+
 
 
 </body>

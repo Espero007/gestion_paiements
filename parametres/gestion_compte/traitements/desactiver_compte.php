@@ -1,11 +1,12 @@
 <?php
-
+session_start();
 require_once(__DIR__ . '/../../../includes/bdd.php');
 $confirmation = true;
 
-if (isset($_POST['desactiver'])) {
+if (isset($_POST['supprimerCompte'])) {
     if (!isset($_POST['suppressionCompte'])) {
-        $confirmation = false;
+        // $confirmation = false;
+        $erreurs['suppression_non_confirmee'] = true;
     } else {
         $user_id = $_SESSION['user_id'];
         // 1- Supprimer de la bdd les activités de l'utilisateur
@@ -47,4 +48,7 @@ if (isset($_POST['desactiver'])) {
             exit();
         }
     }
+
+    $_SESSION['erreurs'] = $erreurs;
+    header('location:../voir_profil.php');
 }
