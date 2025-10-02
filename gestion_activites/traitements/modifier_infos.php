@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once(__DIR__ . '/../../includes/bdd.php');
+require_once(__DIR__ . '/../../includes/constantes_utilitaires.php');
 
 $errors = [];
 $success = false;
@@ -266,7 +267,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
 
             if ($sql->rowCount() != 0) {
                 $_SESSION['erreur_modifier_infos'] = 'Il semble que vous avez déjà créé une activité avec les mêmes informations.';
-                header('Location: ../gerer_activite.php?id=' . $activity_id);
+                header('Location: ../gerer_activite.php?id=' . chiffrer($activity_id));
                 exit;
             } else {
                 try {
@@ -448,7 +449,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
 
                     if ($success) {
                         $_SESSION['success'] = 'Vos modifications ont été enregistrées avec succès !';
-                        header('Location: ../gerer_activite.php?id=' . $activity_id);
+                        header('Location: ../gerer_activite.php?id=' . chiffrer($activity_id));
                         exit;
                     }
                 } catch (PDOException $e) {
@@ -462,7 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
     if (!empty($errors)) {
         $_SESSION['form_data'] = $data;
         $_SESSION['form_errors'] = $errors;
-        header('Location: ../modifier_infos.php?id=' . urlencode($activity_id));
+        header('Location: ../modifier_infos.php?id=' . chiffrer($activity_id));
         exit;
         //var_dump($errors); 
 
