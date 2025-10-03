@@ -13,7 +13,7 @@
 <ul class="dropdown-menu">
     <?php if ($titre_page == 'Liste des activités') : ?>
         <li>
-            <a href="modifier_infos.php?id=<?= $activite['id'] ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
+            <a href="modifier_infos.php?id=<?= chiffrer($activite['id']) ?>" class="dropdown-item custom-dropdown-item">Modifier les informations</a>
         </li>
     <?php endif; ?>
 
