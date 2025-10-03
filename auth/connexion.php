@@ -121,7 +121,7 @@ require_once("submit/submit_connexion.php");
                                             <div class="form-group form-password-toggle">
                                                 <label for="password" class="col-form-label form-label">Mot de passe</label>
                                                 <div class="input-group input-group-merge">
-                                                    <input type="password" class="form-control form-control-user<?= isset($erreurs['password']) ? ' is-invalid' : '' ?>" id="password" name="password" placeholder="························" aria-describedby="passwordHelp">
+                                                    <input type="password" class="form-control form-control-user<?= isset($erreurs['password']) ? ' is-invalid' : '' ?>" id="password" name="password" placeholder="························" aria-describedby="passwordHelp" autocomplete="off">
                                                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                                                 </div>
 
