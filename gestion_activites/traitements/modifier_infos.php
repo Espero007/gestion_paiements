@@ -50,7 +50,7 @@ try {
 $data = [
     'nom' => '',
     'timbre' => '',
-    'reference' => '',
+    'reference' =>'',
     'description' => '',
     'centre' => '',
     'premier_responsable' => '',
@@ -322,111 +322,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                         'noms' => $diplomes_str
                     ]);*/
 
-                    // Gestion des titres
-                    $sql_update_titre = 'UPDATE titres SET nom = :nom, indemnite_forfaitaire = :indemnite_forfaitaire WHERE id_activite = :id_activite AND id_titre = :id_titre';
-                    $sql_insert_titre = 'INSERT INTO titres (id_activite, nom, indemnite_forfaitaire) VALUES (:id_activite, :nom, :indemnite_forfaitaire)';
-                    $sql_delete_titre = 'DELETE FROM titres WHERE id_activite = :id_activite AND id_titre = :id_titre';
+                    // Gestion robuste des titres
+                    try {
+                        $bdd->beginTransaction();
 
-                    $stmt_update_titre = $bdd->prepare($sql_update_titre);
-                    $stmt_insert_titre = $bdd->prepare($sql_insert_titre);
-                    $stmt_delete_titre = $bdd->prepare($sql_delete_titre);
+                        // Récupérer les titres existants
+                        $stmt = $bdd->prepare('SELECT id_titre, nom FROM titres WHERE id_activite = :id_activite ORDER BY id_titre ASC');
+                        $stmt->execute(['id_activite' => $activity_id]);
+                        $anciens_titres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    // Comparer les tailles des tableaux
-                    $nb_titres = count($titres);
-                    $nb_anciens_titres = count($anciens_titres);
+                        // On va traiter les titres par position
+                        $nb_anciens = count($anciens_titres);
+                        $nb_nouveaux = count($titres);
 
-                    echo "Bonjour , Début des modifications dans la table titre";
-                    if ($type_activite === 1) {
-                        echo "Mise à jour des titres pour l'activité de type 1";
+                        // Mise à jour des titres existants (par position)
+                        for ($i = 0; $i < min($nb_anciens, $nb_nouveaux); $i++) {
+                            $ancien_nom = $anciens_titres[$i]['nom'];
+                            $nouveau_nom = $titres[$i];
+                            $id_titre = $anciens_titres[$i]['id_titre'];
+                            $indemnite = (in_array($type_activite, ['2', '3'])) ? $forfaires[$i] ?? null : null;
 
-                        // Mettre à jour les titres existants (jusqu'à la taille minimale)
-                        for ($i = 0; $i < min($nb_titres, $nb_anciens_titres); $i++) {
-                            try {
-                                $stmt_update_titre->execute([
-                                    'id_activite' => $activity_id,
-                                    'id_titre' => $anciens_titres[$i]['id_titre'],
-                                    'nom' => $titres[$i],
-                                    'indemnite_forfaitaire' => null
+                            // Si le nom ou l'indemnité a changé, on met à jour
+                            if ($ancien_nom !== $nouveau_nom || $indemnite !== null) {
+                                $stmt_update = $bdd->prepare('UPDATE titres SET nom = :nom, indemnite_forfaitaire = :indemnite WHERE id_titre = :id_titre AND id_activite = :id_activite');
+                                $stmt_update->execute([
+                                    'nom' => $nouveau_nom,
+                                    'indemnite' => $indemnite,
+                                    'id_titre' => $id_titre,
+                                    'id_activite' => $activity_id
                                 ]);
-                            } catch (PDOException $e) {
-                                $errors['titres_associes'] = "Erreur lors de la mise à jour du titre : " . $e->getMessage();
-                            }
-                        }
-                        
-                        // Insérer les titres supplémentaires
-                        if ($nb_titres > $nb_anciens_titres) {
-                            for ($i = $nb_anciens_titres; $i < $nb_titres; $i++) {
-                                try {
-                                    $stmt_insert_titre->execute([
-                                        'id_activite' => $activity_id,
-                                        'nom' => $titres[$i],
-                                        'indemnite_forfaitaire' => null
-                                    ]);
-                                } catch (PDOException $e) {
-                                    $errors['titres_associes'] = "Erreur lors de l'insertion du titre : " . $e->getMessage();
-                                }
                             }
                         }
 
-                        // Supprimer les titres excédentaires
-                        if ($nb_titres < $nb_anciens_titres) {
-                            for ($i = $nb_titres; $i < $nb_anciens_titres; $i++) {
-                                try {
-                                    $stmt_delete_titre->execute([
-                                        'id_activite' => $activity_id,
-                                        'id_titre' => $anciens_titres[$i]['id_titre']
-                                    ]);
-                                } catch (PDOException $e) {
-                                    $errors['titres_associes'] = "Erreur lors de la suppression du titre : " . $e->getMessage();
-                                }
-                            }
-                        }
-                    } elseif (in_array($type_activite, ['2', '3'])) {
-                        echo "Mise à jour des titres pour l'activité de type 2 ou 3";
-                        $tableau = array_combine($titres, $forfaires);
-
-                        // Mettre à jour les titres existants (jusqu'à la taille minimale)
-                        for ($i = 0; $i < min($nb_titres, $nb_anciens_titres); $i++) {
-                            try {
-                                $stmt_update_titre->execute([
-                                    'id_activite' => $activity_id,
-                                    'id_titre' => $anciens_titres[$i]['id_titre'],
-                                    'nom' => $titres[$i],
-                                    'indemnite_forfaitaire' => $forfaires[$i]
+                        // Supprimer les titres excédentaires (si moins de titres dans le formulaire)
+                        if ($nb_nouveaux < $nb_anciens) {
+                            for ($i = $nb_nouveaux; $i < $nb_anciens; $i++) {
+                                $id_titre = $anciens_titres[$i]['id_titre'];
+                                $stmt_delete = $bdd->prepare('DELETE FROM titres WHERE id_titre = :id_titre AND id_activite = :id_activite');
+                                $stmt_delete->execute([
+                                    'id_titre' => $id_titre,
+                                    'id_activite' => $activity_id
                                 ]);
-                            } catch (PDOException $e) {
-                                $errors['titres_associes'] = "Erreur lors de la mise à jour du titre : " . $e->getMessage();
+                            }
+                            // Message d'alerte si suppression
+                            $_SESSION['liaison_impactee'] = [
+                                'message' => "La liaison de certains acteurs à votre activité a été rompue. Si vous voulez leur associer de nouveaux titres <a href='/gestion_participants/liaison.php?s=1&id=" . chiffrer($activity_id) . "' class='alert-link'>cliquez ici</a>. Si vous ne faites rien, la liaison avec ces acteurs restera rompue.",
+                                'id_activite' => $activity_id
+                            ];
+                        }
+
+                        // Ajouter les nouveaux titres (si plus de titres dans le formulaire)
+                        if ($nb_nouveaux > $nb_anciens) {
+                            for ($i = $nb_anciens; $i < $nb_nouveaux; $i++) {
+                                $nom = $titres[$i];
+                                $indemnite = (in_array($type_activite, ['2', '3'])) ? $forfaires[$i] ?? null : null;
+                                $stmt_insert = $bdd->prepare('INSERT INTO titres (id_activite, nom, indemnite_forfaitaire) VALUES (:id_activite, :nom, :indemnite)');
+                                $stmt_insert->execute([
+                                    'id_activite' => $activity_id,
+                                    'nom' => $nom,
+                                    'indemnite' => $indemnite
+                                ]);
                             }
                         }
 
-                        // Insérer les titres supplémentaires
-                        if ($nb_titres > $nb_anciens_titres) {
-                            for ($i = $nb_anciens_titres; $i < $nb_titres; $i++) {
-                                try {
-                                    $stmt_insert_titre->execute([
-                                        'id_activite' => $activity_id,
-                                        'nom' => $titres[$i],
-                                        'indemnite_forfaitaire' => $forfaires[$i]
-                                    ]);
-                                } catch (PDOException $e) {
-                                    $errors['titres_associes'] = "Erreur lors de l'insertion du titre : " . $e->getMessage();
-                                }
-                            }
-                        }
-
-                        // Supprimer les titres excédentaires
-                        if ($nb_titres < $nb_anciens_titres) {
-                            for ($i = $nb_titres; $i < $nb_anciens_titres; $i++) {
-                                try {
-                                    $stmt_delete_titre->execute([
-                                        'id_activite' => $activity_id,
-                                        'id_titre' => $anciens_titres[$i]['id_titre']
-                                    ]);
-                                } catch (PDOException $e) {
-                                    $errors['titres_associes'] = "Erreur lors de la suppression du titre : " . $e->getMessage();
-                                }
-                            }
-                        }
+                        $bdd->commit();
+                    } catch (PDOException $e) {
+                        $bdd->rollBack();
+                        $errors['titres_associes'] = "Erreur lors de la synchronisation des titres : " . $e->getMessage();
                     }
 
                     // Afficher les titres après mise à jour pour débogage
