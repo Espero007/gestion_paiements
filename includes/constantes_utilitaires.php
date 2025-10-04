@@ -1248,6 +1248,18 @@ function supprimerAccents($chaine)
     }
 }
 
+/**
+ * Elle permet de générer un nombre aléatoire avec une taille correspondant au nombre de chiffres qu'on lui passe en paramètre
+ */
+function genererNombreAleatoire($nbr_chiffres)
+{
+    $nombre = rand(1, 9);
+    for ($i = 0; $i < $nbr_chiffres - 1; $i++) {
+        $nombre .= rand(1, 9);
+    }
+    return $nombre;
+}
+
 
 // Fonctions développées dans le cadre de la suppression du ou de plusieurs compte(s) bancaire(s) associés à un acteur
 
@@ -1445,7 +1457,7 @@ function genererCSVDemo($chemin_csv, $nbr_acteurs)
 
     // Générer identités
     $csvFile = fopen($chemin_csv, "w");
-    fputcsv($csvFile, ["Nom", "Prénoms", "Date de Naissance", "Lieu de Naissance", "IFU", "Diplôme"]);
+    fputcsv($csvFile, ["Nom", "Prénoms", "Date de Naissance", "Lieu de Naissance", "IFU", "Diplôme", "Référence"]);
 
     for ($i = 0; $i < $nbr_acteurs; $i++) {
         $sexe = rand(0, 1) ? 'M' : 'F';
@@ -1460,8 +1472,9 @@ function genererCSVDemo($chemin_csv, $nbr_acteurs)
         $lieuNaissance = $lieux[array_rand($lieux)];
         $ifu = genererIFU();
         $diplome = $diplomes[array_rand($diplomes)];
+        $reference = genererNombreAleatoire(10);
 
-        fputcsv($csvFile, [$nom, $prenoms, $dateNaissance, $lieuNaissance, $ifu, $diplome]);
+        fputcsv($csvFile, [$nom, $prenoms, $dateNaissance, $lieuNaissance, $ifu, $diplome, $reference]);
     }
     fclose($csvFile);
 }
@@ -1596,7 +1609,7 @@ function ConfigurerInformationsDemo()
         $acteur = array_combine($entetes, $ligne);
 
         // Primo j'insère dans la table participants : j'ai tout ce qu'il faut comme information
-        $stmt = "INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome_le_plus_eleve) VALUES ({$_SESSION['user_id']}, :nom, :prenoms, :matricule_ifu, :date_naissance, :lieu_naissance, :diplome_le_plus_eleve)";
+        $stmt = "INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome_le_plus_eleve, reference_carte_identite) VALUES ({$_SESSION['user_id']}, :nom, :prenoms, :matricule_ifu, :date_naissance, :lieu_naissance, :diplome_le_plus_eleve, :reference)";
         $stmt = $bdd->prepare($stmt);
 
         $stmt->execute([
@@ -1605,7 +1618,8 @@ function ConfigurerInformationsDemo()
             'matricule_ifu' => $acteur['IFU'],
             'date_naissance' => $acteur['Date de Naissance'],
             'lieu_naissance' => $acteur['Lieu de Naissance'],
-            'diplome_le_plus_eleve' => $acteur['Diplôme']
+            'diplome_le_plus_eleve' => $acteur['Diplôme'],
+            'reference' => $acteur['Référence']
         ]);
 
         $id_acteur = $bdd->lastInsertId();

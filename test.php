@@ -1,3 +1,5 @@
+<?php
+require_once(__DIR__ . '/includes/bdd.php') ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,17 +12,15 @@
 
 <body>
 
-    <p>
-        Cette page ne contient que du HTML.<br />
-        Veuillez taper votre prénom :
-    </p>
-    <form action="test_2.php" method="post">
-        <p>
-            <input type="text" name="prenom" />
-            <!-- <input type="submit" value="Valider" /> -->
-            <button type="submit">Envoyer</button>
-        </p>
-    </form>
+    <?php
+    $id_participant = 3433;
+    $stmt = $bdd->prepare('SELECT reference_carte_identite FROM participants WHERE id_participant=' . $id_participant);
+    $stmt->execute();
+    $reference_acteur = $stmt->fetch(PDO::FETCH_NUM)[0];
+    var_dump($reference_acteur);
+
+
+    ?>
 
 
 

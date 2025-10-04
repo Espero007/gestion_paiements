@@ -35,13 +35,15 @@ if (isset($_POST['modifier_infos'])) {
 
         // Table Participants
 
-        $stmt = $bdd->prepare('UPDATE participants SET nom=:val1, prenoms=:val2, matricule_ifu=:val3, date_naissance=:val4, lieu_naissance=:val5 WHERE id_participant=' . $id_participant);
+        $stmt = $bdd->prepare('UPDATE participants SET nom=:val1, prenoms=:val2, matricule_ifu=:val3, date_naissance=:val4, lieu_naissance=:val5, diplome_le_plus_eleve = :val6, reference_carte_identite = :val7 WHERE id_participant=' . $id_participant);
 
         $stmt->bindParam(':val1', $_POST['nom']);
         $stmt->bindParam(':val2', $_POST['prenoms']);
         $stmt->bindParam(':val3', $_POST['matricule_ifu']);
         $stmt->bindParam(':val4', $_POST['date_naissance']);
         $stmt->bindParam(':val5', $_POST['lieu_naissance']);
+        $stmt->bindParam(':val6', $_POST['diplome_le_plus_eleve']);
+        $stmt->bindParam(':val7', $_POST['reference_carte_identite']);
 
         $resultat = $stmt->execute();
 

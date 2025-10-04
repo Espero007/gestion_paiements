@@ -37,28 +37,18 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                     if (preg_match('/[^a-zA-Z0-9-]/', $valeur_champ)) {
                         $erreurs[$champ][] = "Ce champ doit contenir uniquement des lettres, des chiffres et des tirets";
                     } else {
-                        $message = "La valeur indiquée existe déjà. Le matricule/IFU est supposé unique par acteur !";
                         // La valeur semble valide mais vérifions si elle se retrouve ou non dans la base de données
 
                         $stmt = $bdd->prepare("SELECT matricule_ifu FROM participants WHERE matricule_ifu = :val");
                         $stmt->bindParam('val', $valeur_champ);
                         $stmt->execute();
                         $ligne = $stmt->fetch(PDO::FETCH_NUM);
+                        $matricule_retrouve = $ligne[0];
 
-                        if ($ligne) {
-                            // Une ligne a été retrouvée
-                            $matricule_retrouve = $ligne[0];
-
-                            if (!isset($page_modification)) {
-                                // On est pas sur la page de modification
-                                if($valeur_champ == $matricule_retrouve){
-                                    // Le matricule existe déjà en bdd
-                                    $erreurs[$champ][] = $message;
-                                }
-                            } elseif ($matricule_retrouve != $matricule_ifu) {
-                                // On est sur la page de modification et le matricule retrouvé n'est pas celui de l'utilisateur dont on veut modifier les informations
-                                $erreurs[$champ][] = $message;
-                            }
+                        if (($ligne && !isset($page_modification)) || ($ligne && isset($page_modification) && $matricule_retrouve != $matricule_ifu)) {
+                            // 1er cas de figure : Une ligne a été retrouvée dans la bdd et nous sommes supposés être sur la page d'ajout d'un acteur donc le matricule a déjà été associé à un autre utilisateur et on ne peut permettre qu'il soit réassigné
+                            // 2ème cas de figure : Nous sommes sur la page de modification mais le matricule reçu correspond à celui d'un acteur qui n'est pas celui dont on modifie les informations donc c'est off
+                            $erreurs[$champ][] = "La valeur indiquée existe déjà. Le matricule/IFU est supposé unique par acteur !";
                         }
                     }
                 } else if ($champ == "date_naissance") {
@@ -83,6 +73,29 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                                 $erreurs[$champ][] = "L'acteur que vous souhaitez enregistrer semble avoir moins de 18 ans !";
                             }
                         }
+                    }
+                } elseif ($champ == 'reference_carte_identite') {
+                    // La référence de la carte d'identité est une simple suite de chiffres donc il faut que la valeur reçue y corresponde
+                    if (preg_match('/[^0-9]/', $valeur_champ)) {
+                        $erreurs[$champ][] = "Ce champ ne peut prendre qu'une succession de chiffres";
+                    }
+
+                    if(isset($page_modification)){
+                        // Récupérons la référence de l'acteur dont on veut modifier les informations
+                        $stmt = $bdd->prepare('SELECT reference_carte_identite FROM participants WHERE id_participant=' . $id_participant);
+                        $stmt->execute();
+                        $reference_acteur = $stmt->fetch(PDO::FETCH_NUM)[0];
+                    }
+
+                    // On vérifie à présent si cette référence n'existait pas déjà en bdd
+                    $stmt = $bdd->prepare('SELECT reference_carte_identite FROM participants WHERE reference_carte_identite =:val');
+                    $stmt->execute(['val' => $valeur_champ]);
+                    $ligne = $stmt->fetch(PDO::FETCH_NUM)[0];
+                    $message = "La référence que vous avez indiquée a déjà été attribuée à un autre acteur";
+
+                    if (($ligne && !isset($page_modification)) || ($ligne && isset($page_modification) && $ligne != $reference_acteur)) {
+                        // Quelque chose de similaire a été fait avec le matricule, relis l'explication là-bas pour capter le process ici
+                        $erreurs[$champ][] = 'La référence que vous avez indiquée a déjà été attribuée à un autre acteur'; 
                     }
                 }
             }
@@ -167,7 +180,7 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
                         SELECT numero_compte 
                         FROM informations_bancaires ib
                         INNER JOIN participants p ON p.id_participant=ib.id_participant
-                        WHERE numero_compte = :val AND p.id_user=".$_SESSION['user_id']."
+                        WHERE numero_compte = :val AND p.id_user=" . $_SESSION['user_id'] . "
                         ");
                         $stmt->bindParam('val', $valeur_champ);
                         $stmt->execute();
@@ -231,5 +244,35 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
                 }
             }
         }
+    }
+}
+
+// Bon, vérifions à présent si les informations dont nous disposons, supposées valides existent déjà ou pas
+if (!isset($erreurs)) {
+    // On vérifie si un participant relativement identique n'est pas déjà présent en bdd
+
+    $stmt = $bdd->prepare('
+        SELECT id_participant
+        FROM participants
+        WHERE
+        nom=:nom AND
+        prenoms=:prenoms AND
+        date_naissance=:date_naissance AND
+        lieu_naissance=:lieu_naissance AND
+        diplome_le_plus_eleve=:diplome_le_plus_eleve AND
+        reference_carte_identite=:reference
+        ');
+
+    $stmt->execute([
+        'nom' => $_POST['nom'],
+        'prenoms' => $_POST['prenoms'],
+        'date_naissance' => $_POST['date_naissance'],
+        'lieu_naissance' => $_POST['lieu_naissance'],
+        'diplome_le_plus_eleve' => $_POST['diplome_le_plus_eleve'],
+        'reference' => $_POST['reference_carte_identite']
+    ]);
+
+    if ($stmt->rowCount() != 0) {
+        $erreurs['doublon'] = 'Il semble que vous avez déjà enregistré un acteur avec des informations très similaires';
     }
 }

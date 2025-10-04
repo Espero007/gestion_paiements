@@ -15,6 +15,7 @@ $infos = [
     'nom' => "Nom",
     "prenoms" => "Prénom(s)",
     "matricule_ifu" => "Matricule IFU",
+    "reference_carte_identite" => "Référence (Pièce d'Identité)",
     "date_naissance" => "Date de naissance",
     "lieu_naissance" => "Lieu de naissance",
     "diplome_le_plus_eleve" => "Diplôme le plus élevé"

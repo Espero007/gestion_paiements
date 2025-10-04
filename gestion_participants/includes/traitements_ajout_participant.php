@@ -17,70 +17,45 @@ if (isset($_POST['ajouter_participant'])) {
     /** Préparatifs pour l'enregistrement des données */
 
     if (!isset($erreurs)) {
+        // S'il n'y a aucune erreur tout va bien je présume
+        $matricule_ifu = $_POST['matricule_ifu'];
 
-        // On vérifie si un participant relativement identique n'est pas déjà présent en bdd
-        $doublon = false;
+        // Enregistrement des données textuelles
+        // Participants
 
-        $stmt = $bdd->prepare('
-        SELECT id_participant
-        FROM participants
-        WHERE
-        nom=:nom AND
-        prenoms=:prenoms AND
-        date_naissance=:date_naissance AND
-        lieu_naissance=:lieu_naissance AND
-        diplome_le_plus_eleve=:diplome_le_plus_eleve
-        ');
+        $stmt = $bdd->prepare("INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome_le_plus_eleve, reference_carte_identite) VALUES (:val1, :val2, :val3, :val4, :val5, :val6, :val7, :val8)");
 
-        $stmt->execute([
-            'nom' => $_POST['nom'],
-            'prenoms' => $_POST['prenoms'],
-            'date_naissance' => $_POST['date_naissance'],
-            'lieu_naissance' => $_POST['lieu_naissance'],
-            'diplome_le_plus_eleve' => $_POST['diplome_le_plus_eleve']
-        ]);
+        $stmt->bindParam(':val1', $_SESSION['user_id']);
+        $stmt->bindParam(':val2', $_POST['nom']);
+        $stmt->bindParam(':val3', $_POST['prenoms']);
+        $stmt->bindParam(':val4', $_POST['matricule_ifu']);
+        $stmt->bindParam(':val5', $_POST['date_naissance']);
+        $stmt->bindParam(':val6', $_POST['lieu_naissance']);
+        $stmt->bindParam(':val7', $_POST['diplome_le_plus_eleve']);
+        $stmt->bindParam(':val8', $_POST['reference_carte_identite']);
 
-        if ($stmt->rowCount() != 0) {
-            $doublon = true;
-            $erreurs = [];
-        } else {
-            // S'il n'y a aucune erreur tout va bien je présume
-            $matricule_ifu = $_POST['matricule_ifu'];
+        $resultat = $stmt->execute();
 
-            // Enregistrement des données textuelles
-            // Participants
-
-            $stmt = $bdd->prepare("INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome_le_plus_eleve) VALUES (:val1, :val2, :val3, :val4, :val5, :val6, :val7)");
-
-            $stmt->bindParam(':val1', $_SESSION['user_id']);
-            $stmt->bindParam(':val2', $_POST['nom']);
-            $stmt->bindParam(':val3', $_POST['prenoms']);
-            $stmt->bindParam(':val4', $_POST['matricule_ifu']);
-            $stmt->bindParam(':val5', $_POST['date_naissance']);
-            $stmt->bindParam(':val6', $_POST['lieu_naissance']);
-            $stmt->bindParam(':val7', $_POST['diplome_le_plus_eleve']);
-
-            $resultat = $stmt->execute();
-
-            if (!$resultat) {
-                // Une erreur s'est produite lors de l'enregistrement des informations
-                redirigerVersPageErreur(500, obtenirURLcourant());
-            }
-            // Le premier enregistrement a été effectué
-
-            // Pour la suite j'ai besoin de l'id du participant donc je le récupère
-            $id_participant = $bdd->lastInsertId();
-
-            // Table fichiers
-
-            // 1- Je définis le nom qui va s'appliquer à ce fichier
-            // 2- J'enregistre le fichier
-            // 3- Je sauvegarde son id
-            // 4- J'enregistre en même temps les informations dans la table informations_bancaires
-
-            require_once('enregistrement_fichiers.php');
+        if (!$resultat) {
+            // Une erreur s'est produite lors de l'enregistrement des informations
+            redirigerVersPageErreur(500, obtenirURLcourant());
         }
+        // Le premier enregistrement a été effectué
+
+        // Pour la suite j'ai besoin de l'id du participant donc je le récupère
+        $id_participant = $bdd->lastInsertId();
+
+        // Table fichiers
+
+        // 1- Je définis le nom qui va s'appliquer à ce fichier
+        // 2- J'enregistre le fichier
+        // 3- Je sauvegarde son id
+        // 4- J'enregistre en même temps les informations dans la table informations_bancaires
+
+        require_once('enregistrement_fichiers.php');
     }
+
+    
 }
 
 if (isset($traitement_fichiers_ok) && $traitement_fichiers_ok) {

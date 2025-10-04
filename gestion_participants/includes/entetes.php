@@ -9,9 +9,10 @@ if (in_array('infos_generales', $elements_a_inclure)) {
         "nom" => ["Nom", "Entrez le nom"],
         "prenoms" => ["Prénom(s)", "Entrez le(s) prénom(s)"],
         "matricule_ifu" => ["Matricule IFU", "Entrez le matricule IFU"],
+        "reference_carte_identite" => ['Référence', 'Indiquez la référence de votre carte d\'identité'],
         "date_naissance" => ["Date de naissance", ""],
         "lieu_naissance" => ["Lieu de naissance", "Entrez le lieu de naissance"],
-        "diplome_le_plus_eleve" => ["Diplôme", "Indiquez le diplôme le plus élevé de l'acteur"]
+        "diplome_le_plus_eleve" => ["Diplôme", "Indiquez le diplôme le plus élevé de l'acteur"],
     ];
 }
 
