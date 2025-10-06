@@ -4,7 +4,7 @@
 
 if (in_array('infos_generales', $elements_a_inclure)) {
 
-    /** Traitement du ou des fichier(s) */
+    /** Traitement des informations textuelles */
 
     if (isset($page_modification) && $page_modification) {
         $matricule_ifu = $infos_participant['matricule_ifu'];
@@ -15,7 +15,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
 
         if (!array_key_exists($champ, $_POST)) {
             // Si un champ est manquant, on dirige vers la page 404 tout simplement
-            redirigerVersPageErreur(404, $current_url);
+            // redirigerVersPageErreur(404, $current_url);
         } else {
             // Le champ ne manque pas à l'appel
             // 2- S'assurer à présent qu'il n'est pas vide
@@ -43,12 +43,14 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                         $stmt->bindParam('val', $valeur_champ);
                         $stmt->execute();
                         $ligne = $stmt->fetch(PDO::FETCH_NUM);
-                        $matricule_retrouve = $ligne[0];
 
-                        if (($ligne && !isset($page_modification)) || ($ligne && isset($page_modification) && $matricule_retrouve != $matricule_ifu)) {
-                            // 1er cas de figure : Une ligne a été retrouvée dans la bdd et nous sommes supposés être sur la page d'ajout d'un acteur donc le matricule a déjà été associé à un autre utilisateur et on ne peut permettre qu'il soit réassigné
-                            // 2ème cas de figure : Nous sommes sur la page de modification mais le matricule reçu correspond à celui d'un acteur qui n'est pas celui dont on modifie les informations donc c'est off
-                            $erreurs[$champ][] = "La valeur indiquée existe déjà. Le matricule/IFU est supposé unique par acteur !";
+                        if ($ligne) {
+                            $matricule_retrouve = $ligne[0];
+                            if (!isset($page_modification) || (isset($page_modification) && $matricule_ifu != $matricule_retrouve)) {
+                                // 1er cas de figure : Une ligne a été retrouvée dans la bdd et nous sommes supposés être sur la page d'ajout d'un acteur donc le matricule a déjà été associé à un autre utilisateur et on ne peut permettre qu'il soit réassigné
+                                // 2ème cas de figure : Nous sommes sur la page de modification mais le matricule reçu correspond à celui d'un acteur qui n'est pas celui dont on modifie les informations donc c'est off
+                                $erreurs[$champ][] = "La valeur indiquée existe déjà. Le matricule/IFU est supposé unique par acteur !";
+                            }
                         }
                     }
                 } else if ($champ == "date_naissance") {
@@ -80,7 +82,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                         $erreurs[$champ][] = "Ce champ ne peut prendre qu'une succession de chiffres";
                     }
 
-                    if(isset($page_modification)){
+                    if (isset($page_modification)) {
                         // Récupérons la référence de l'acteur dont on veut modifier les informations
                         $stmt = $bdd->prepare('SELECT reference_carte_identite FROM participants WHERE id_participant=' . $id_participant);
                         $stmt->execute();
@@ -90,12 +92,13 @@ if (in_array('infos_generales', $elements_a_inclure)) {
                     // On vérifie à présent si cette référence n'existait pas déjà en bdd
                     $stmt = $bdd->prepare('SELECT reference_carte_identite FROM participants WHERE reference_carte_identite =:val');
                     $stmt->execute(['val' => $valeur_champ]);
-                    $ligne = $stmt->fetch(PDO::FETCH_NUM)[0];
-                    $message = "La référence que vous avez indiquée a déjà été attribuée à un autre acteur";
-
-                    if (($ligne && !isset($page_modification)) || ($ligne && isset($page_modification) && $ligne != $reference_acteur)) {
-                        // Quelque chose de similaire a été fait avec le matricule, relis l'explication là-bas pour capter le process ici
-                        $erreurs[$champ][] = 'La référence que vous avez indiquée a déjà été attribuée à un autre acteur'; 
+                    $ligne = $stmt->fetch(PDO::FETCH_NUM);
+                    if ($ligne) {
+                        $reference_retrouvee = $ligne[0];
+                        if (!isset($page_modification) || (isset($page_modification) && $reference_retrouvee != $reference_acteur)) {
+                            // Quelque chose de similaire a été fait avec le matricule, relis l'explication là-bas pour capter le process ici
+                            $erreurs[$champ][] = 'La référence que vous avez indiquée a déjà été attribuée à un autre acteur';
+                        }
                     }
                 }
             }
@@ -107,7 +110,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
 
 if (in_array('infos_bancaires', $elements_a_inclure)) {
 
-    /** Traitement des informations textuelles */
+    /** Traitement des informations bancaires et des fichiers */
 
     if (isset($page_modification) && $page_modification) {
         foreach ($infos_participant as $cle => $valeur) {
@@ -119,7 +122,7 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
 
     foreach ($informations_bancaires as $champ => $intitule_champ) {
         if (!array_key_exists($champ, $_POST)) {
-            // Le champ attendu est manquant
+            // Le champ attendu est manquant. D'une certaine manière on rattrape cette anomalie avec le empty() en dessous donc on peut laisser en commentaires
             // redirigerVersPageErreur(404, $current_url);
         } else {
             // Le champ est bien là
@@ -215,7 +218,6 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
     /** Traitement des fichiers */
 
     foreach ($fichiers_attendus as $fichier) {
-
         // 1- Vérifier tout d'abord la présence du fichier en cours d'analyse
         if (!array_key_exists($fichier, $_FILES)) {
             // Le fichier est absent
@@ -242,6 +244,24 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
                     // Le fichier n'a pas la bonne extension
                     $erreurs[$fichier][] = "Le fichier attendu est de type PDF";
                 }
+            }
+        }
+    }
+
+    // Bien, nous allons ajouter une clause pour rendre le remplissage des informations bancaires facultatif sur la page d'ajout de l'acteur
+    if (isset($page_ajout_participant) && $page_ajout_participant) {
+        // Nous sommes sur la bonne page. Nous allons procéder de façon inverse. On ne touche rien à la logique précédemment mise en place donc si les informations bancaires ne sont pas remplies, le script attribuera à chacun de ces champs un message d'erreur. Ici donc nous allons travailler en fonction de ce message d'erreur et partir du principe que si ce message d'erreur existe, c'est que le champ en particulier est vide. Aussi, nous n'avons que trois champs donc on pourra poser les conditions sur chacune d'elle sans trop de peine.
+        $message_erreur = "Veuillez remplir ce champ";
+        $message_erreur_2 = "Aucun fichier sélectionné";
+        if ((isset($erreurs['banque_1']) && $erreurs['banque_1'][0] == $message_erreur) && (isset($erreurs['numero_compte_1']) && $erreurs['numero_compte_1'][0] == $message_erreur) && (isset($erreurs['pdf_rib_1']) && $erreurs['pdf_rib_1'][0] == $message_erreur_2)) {
+            // Cela veut dire qu'aucun des trois champs n'a été rempli et dans ce contexte, on peut skipper les erreurs et permettre l'ajout de l'acteur
+            unset($erreurs['banque_1']);
+            unset($erreurs['numero_compte_1']);
+            unset($erreurs['pdf_rib_1']);
+
+            if (empty($erreurs)) {
+                // Bh il semble qu'il n'y avait que ces erreurs dans le tableau erreurs donc autant delete $erreurs
+                unset($erreurs);
             }
         }
     }

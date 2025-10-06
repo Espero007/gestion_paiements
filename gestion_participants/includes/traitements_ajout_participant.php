@@ -3,6 +3,18 @@
 $elements_a_inclure = ['infos_generales', 'infos_bancaires'];
 $page_ajout_participant = true;
 
+// Une fonction utilitaire qui renseigne par un booléen sur le fait que les informations bancaires aient été remplies ou pas
+function informations_bancaires_skippees()
+{
+    if (isset($_POST['ajouter_participant'])) {
+        if (empty($_POST['banque_1']) && empty($_POST['numero_compte_1']) && $_FILES['pdf_rib_1']['error'] == 4) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
 // Inclusion des entêtes
 require_once('entetes.php');
 
@@ -13,6 +25,7 @@ if (isset($_POST['ajouter_participant'])) {
     /** Traitement des informations */
 
     require_once('validations.php');
+    // var_dump(informations_bancaires_skippees());
 
     /** Préparatifs pour l'enregistrement des données */
 
@@ -54,11 +67,9 @@ if (isset($_POST['ajouter_participant'])) {
 
         require_once('enregistrement_fichiers.php');
     }
-
-    
 }
 
-if (isset($traitement_fichiers_ok) && $traitement_fichiers_ok) {
+if ((isset($traitement_fichiers_ok) && $traitement_fichiers_ok)) {
     $id_participant = chiffrer($id_participant);
     $_SESSION['participant_ajoute'] = "
          <div>

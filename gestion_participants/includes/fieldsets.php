@@ -64,15 +64,21 @@ if (in_array('infos_generales', $elements_a_inclure)) {
 if (in_array('infos_bancaires', $elements_a_inclure)) {
 ?>
     <!-- Fieldset : Informations bancaires début -->
-    <fieldset class="
-    <?php if (isset($page_ajout_participant)) {
-        echo "mt-4";
-    } ?>">
+    <fieldset class="<?= isset($page_ajout_participant) ? 'mt-4' : '' ?>">
         <legend class="h6">
             <div class="divider text-start mt-0">
                 <div class="divider-text"><strong>Informations bancaires</strong></div>
             </div>
         </legend>
+
+        <?php if (isset($page_ajout_participant)) : ?>
+            <?php
+            // Nous sommes sur la page d'ajout de l'acteur. Je veux y afficher un message expliquant que l'utilisateur peut ne pas remplir les informations bancaires si l'acteur n'en dispose pas 
+            ?>
+            <!-- Note informative -->
+
+            <small class="mb-4 d-block"><strong>Note : </strong> Si l'acteur que vous ajoutez ne dispose pas d'informations bancaires, vous pouvez ne pas remplir cette section.</small>
+        <?php endif; ?>
 
         <?php
         $counter = 0; // Compteur 
