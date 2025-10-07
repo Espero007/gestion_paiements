@@ -37,6 +37,10 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
         }
+
+        button.disabled {
+            cursor: not-allowed !important;
+        }
     </style>
 
     <!-- Page Wrapper -->
@@ -115,18 +119,18 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
                                     <!-- Fin Messages divers -->
 
                                     <!-- Changement de la photo de profil -->
-                                    <div class="d-flex align-items-start align-items-sm-center gap-4">
+                                    <div class="d-flex align-items-start gap-4">
                                         <img src="<?= (!empty($_SESSION['photo_profil'])) ? '/photos_profil/' . $_SESSION['photo_profil'] : '/assets/img/undraw_profile.svg' ?>" alt="photo-profil" class="d-block rounded" height="100" width="100" style="aspect-ratio: 1;">
                                         <div class="button-wrapper">
-                                            <div class="mb-4">
+                                            <div class="mb-2">
                                                 <div>
                                                     <form action="./traitements/voir_profil.php" method="post" enctype="multipart/form-data">
-                                                        <label for="upload" class="btn btn-primary mr-2 mb-0" tabindex="0">
-                                                            <span class="d-none d-sm-block">Choisir une nouvelle photo</span>
+                                                        <label for="upload" class="btn btn-primary mr-2 mb-0" tabindex="0" id="statusCont">
+                                                            <span class="d-none d-sm-block" id="status">Choisir une nouvelle photo</span>
                                                             <i class="bi bi-cloud-upload d-block d-sm-none"></i>
                                                             <input type="file" name="photo" id="upload" class="account-file-input" hidden accept='image/png, image/jpeg, image/jpg'>
                                                         </label>
-                                                        <button type="submit" class="btn btn-outline-secondary account-image-reset" name='changer_photo'>
+                                                        <button type="submit" class="btn btn-secondary account-image-reset disabled" name='changer_photo' id="submitBtn">
                                                             <i class="bx bx-reset d-block d-sm-none"></i>
                                                             <span class="d-none d-sm-block">Changer</span>
                                                         </button>
@@ -136,7 +140,7 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
                                                     <p class="text-danger"><small><?= $erreurs['photo'][0] ?></small></p>
                                                 <?php endif; ?>
                                             </div>
-                                            <p class="text-muted mb-0">JPG, JPEG ou PNG autorisés (Taille maximale de 2Mo) </p>
+                                            <small class=" mb-0">JPG, JPEG ou PNG autorisés (Taille maximale de 2Mo) </small>
                                             <input type="hidden" name="MAX_FILE_SIZE" value="<?= $taille_image; ?>">
                                         </div>
                                     </div>
@@ -286,6 +290,42 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
             // Toggle Password Visibility
             window.Helpers.initPasswordToggle();
         })();
+
+        // Actualisation des boutons associés au changement de la photo de profil
+        const input = document.getElementById('upload');
+        const status = document.getElementById('status');
+        const statusCont = document.getElementById('statusCont');
+        const submitBtn = document.getElementById('submitBtn');
+
+        input.addEventListener('change', () => {
+            const file = input.files[0];
+            if (!file) return;
+
+            status.textContent = "Chargement de l'image";
+            statusCont.classList.remove('btn-primary');
+
+            const reader = new FileReader();
+
+            reader.onloadstart = () => {
+                status.textContent = "Lecture...";
+            }
+
+            // Fin de la lecture
+            reader.onload = () => {
+                statusCont.classList.add('btn-outline-primary');
+                setTimeout(() => {
+                    status.textContent = "Chargement terminé !";
+                    submitBtn.classList.remove('disabled');
+                }, 1000);
+            }
+
+            // Erreur éventuelle
+            reader.onerror = () => {
+                status.textContent = "Erreur lors du chargement de l'image";
+            }
+
+            reader.readAsDataURL(file);
+        })
     </script>
 </body>
 
