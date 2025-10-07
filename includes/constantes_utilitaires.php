@@ -87,7 +87,7 @@ date_default_timezone_set('Africa/Lagos');
 
 //     $val = intval($conteneur[$cle]);
 //     if ($val == 0) {
-//         echo "Je suis ici";
+        // echo "Je suis ici";
 //         return false; // La valeur que nous avons reçue est une chaîne de caractère
 //     }
 
@@ -2378,13 +2378,13 @@ function genererOrdreVirement($id_activite, $banque, $navigateur = true)
     $pdf->AddPage();
 
     // Header
-    $informations_necessaires = ['titre' => $informations[0]['titre_activite'], 'banque' => $banque];
-    genererHeader($pdf, 'ordre_virement', $informations_necessaires, $id_activite);
+    $informations_header = ['titre' => $informations[0]['titre_activite'], 'banque' => $banque];
+    genererHeader($pdf, 'ordre_virement', $informations_header, $id_activite);
     $pdf->Ln(20);
 
     // Corps du document
     $largeurs_colonnes = [5, 22, 15, 15, 15, 28]; // En pourcentage
-    $informations_test = [
+    $informations_restantes = [
         'type_document' => 'ordre_virement',
         'id_activite' => $id_activite,
         'entete' => ['N°', 'Nom et prenoms', 'Qualite', 'Montant', 'Banque', 'Rib'],
@@ -2409,7 +2409,7 @@ function genererOrdreVirement($id_activite, $banque, $navigateur = true)
         ];
     }
 
-    $pdf = GenererCorpsDocuments($pdf, $informations_test);
+    $pdf = GenererCorpsDocuments($pdf, $informations_restantes);
 
     //Sortie du pdf
 
