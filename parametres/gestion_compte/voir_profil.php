@@ -120,7 +120,7 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
 
                                     <!-- Changement de la photo de profil -->
                                     <div class="d-flex align-items-start gap-4">
-                                        <img src="<?= (!empty($_SESSION['photo_profil'])) ? '/photos_profil/' . $_SESSION['photo_profil'] : '/assets/img/undraw_profile.svg' ?>" alt="photo-profil" class="d-block rounded" height="100" width="100" style="aspect-ratio: 1;">
+                                        <img src="<?= (!empty($_SESSION['photo_profil'])) ? '/photos_profil/' . $_SESSION['photo_profil'] : '/assets/img/undraw_profile.svg' ?>" alt="photo-profil" class="d-block rounded border" height="100" width="100" style="aspect-ratio: 1; border-width : 2px!important">
                                         <div class="button-wrapper">
                                             <div class="mb-2">
                                                 <div>
@@ -303,6 +303,7 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
 
             status.textContent = "Chargement de l'image";
             statusCont.classList.remove('btn-primary');
+            if (!statusCont.classList.contains('disabled')) submitBtn.classList.add('disabled');
 
             const reader = new FileReader();
 
@@ -314,7 +315,7 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
             reader.onload = () => {
                 statusCont.classList.add('btn-outline-primary');
                 setTimeout(() => {
-                    status.textContent = "Chargement terminé !";
+                    status.textContent = "Chargement terminé";
                     submitBtn.classList.remove('disabled');
                 }, 1000);
             }
