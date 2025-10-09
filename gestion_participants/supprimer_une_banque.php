@@ -33,7 +33,7 @@ require_once('includes/suppression_banque.php');
                         <div class="card-header">
                             <h6 class="text-primary font-weight-bold">Comptes</h6>
                         </div>
-                        <div class="card-body pt-0">
+                        <div class="card-body">
                             <!-- Messages divers -->
                             <?php if (isset($erreurs['pas_de_choix'])) : ?>
                                 <?php afficherAlerte('Sélectionnez un compte bancaire à supprimer', 'danger') ?>
@@ -46,7 +46,7 @@ require_once('includes/suppression_banque.php');
                             <?php endif; ?>
                             <!-- Fin messages divers -->
 
-                            <div class="divider text-start">
+                            <div class="divider text-start" id="repere">
                                 <div class="divider-text"><strong>Faîtes un choix</strong></div>
                             </div>
 
@@ -71,7 +71,7 @@ require_once('includes/suppression_banque.php');
                                 </div>
 
                                 <!-- Boutons d'action -->
-                                <div class="mt-3">
+                                <div class="mt-4">
                                     <button type="submit" class="btn btn-danger">Supprimer</button>
                                     <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-secondary ml-2">Annuler</a>
                                 </div>
@@ -103,6 +103,29 @@ require_once('includes/suppression_banque.php');
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
+
+    <script>
+        // Bien, on va ajouter une façon de détecter la sélection de tous les comptes bancaires afin d'afficher un message approprié
+        const checkboxs = document.querySelectorAll('input[type=checkbox]');
+        const repere = document.getElementById('repere');
+
+        checkboxs.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                let compteur = 0;
+                const alerte = document.getElementById('alerte_a_retirer');
+
+                checkboxs.forEach(checkbox => {
+                    if (checkbox.checked) compteur++;
+                })
+
+                if (compteur == <?= NOMBRE_MAXIMAL_COMPTES ?> && alerte == null) {
+                    repere.insertAdjacentHTML('beforebegin', `<?= afficherAlerte('Vous êtes sur le point de supprimer tous les comptes bancaires de l\'acteur.', 'info', false, true, 'alerte_a_retirer') ?>`);
+                } else if (alerte != null) {
+                    alerte.remove();
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>

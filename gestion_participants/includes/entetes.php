@@ -19,6 +19,7 @@ if (in_array('infos_generales', $elements_a_inclure)) {
 // On inclut les entêtes liées aux comptes bancaires
 
 if (in_array('infos_bancaires', $elements_a_inclure)) {
+    
     $taille_admissible_fichiers_pdf = 2e6; // (2Mo)
     $extensions_autorisees = array('pdf');
     $erreursUploadFichier = array(

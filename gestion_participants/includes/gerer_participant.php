@@ -23,6 +23,7 @@ $infos = [
 
 
 // Informations bancaires
+
 $stmt = $bdd->prepare("
 SELECT ib.banque, ib.numero_compte, f.chemin_acces 
 FROM informations_bancaires ib 
@@ -57,6 +58,7 @@ WHERE p1.id_participant=' . $id_participant);
 $activites_associees = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $compteur = 0;
 $type_3 = false;
+
 foreach ($activites_associees as $activite) {
     if ($activite['type_activite'] == 3) {
         $type_3 = true;

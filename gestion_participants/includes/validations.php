@@ -269,9 +269,20 @@ if (in_array('infos_bancaires', $elements_a_inclure)) {
 
 // Bon, vérifions à présent si les informations dont nous disposons, supposées valides existent déjà ou pas
 if (!isset($erreurs)) {
-    // On vérifie si un participant relativement identique n'est pas déjà présent en bdd
+    // On vérifie si un participant relativement identique n'est pas déjà présent en bdd. Mais là il faut tenir compte de deux cas : le cas de la page d'ajout où cette vérification est tout à fait légitime et le cas de la page de modification où si aucune modification n'est effectuée, la requête nous donnera une positivité sans qu'elle ne soit pour autant pertinente puisque c'est l'acteur dont on modifie les modifications qui aura été détecté par la requête donc il faut trouver le moyen de ne pas exécuter la requête si aucune modification n'est effectuée. Mais comment ?
+    // En principe sur la page de modification des informations, nous disposons d'une variable $infos_participant qui contient les informations de base de l'acteur dont on veut modifier les informations. De là, il suffira de comparer les informations présentes dans la POST et celles présentes dans cette variable. Puis nous compterons le nombre de comparaisons positives retrouvées. Si le compte final correspond à la taille de la variable $informations_generales (autrement dit, toutes les informations générales sont restées identiques), alors il n'y a pas eu de modifications et nous pouvons ensuite définir une variable nous renseignant sur la chose. Si par-contre le compte est différent (et nécessairement inférieur) alors il y a eu une ou des modification(s) et dans ce cas la requête pourra être exécutée sans problèmes apparents.
 
-    $stmt = $bdd->prepare('
+    if (isset($page_modification)) {
+        $compteur = 0;
+        foreach ($_POST as $cle => $valeur) {
+            if (isset($infos_participant[$cle]) && ($_POST[$cle] == $infos_participant[$cle])) $compteur++;
+        }
+        if ($compteur == count($informations_generales)) $pas_de_modifications = true;
+        else $pas_de_modifications = false;
+    }
+
+    if (isset($page_ajout_participant) || (isset($page_modification) && !$pas_de_modifications)) {
+        $stmt = $bdd->prepare('
         SELECT id_participant
         FROM participants
         WHERE
@@ -283,16 +294,17 @@ if (!isset($erreurs)) {
         reference_carte_identite=:reference
         ');
 
-    $stmt->execute([
-        'nom' => $_POST['nom'],
-        'prenoms' => $_POST['prenoms'],
-        'date_naissance' => $_POST['date_naissance'],
-        'lieu_naissance' => $_POST['lieu_naissance'],
-        'diplome_le_plus_eleve' => $_POST['diplome_le_plus_eleve'],
-        'reference' => $_POST['reference_carte_identite']
-    ]);
+        $stmt->execute([
+            'nom' => $_POST['nom'],
+            'prenoms' => $_POST['prenoms'],
+            'date_naissance' => $_POST['date_naissance'],
+            'lieu_naissance' => $_POST['lieu_naissance'],
+            'diplome_le_plus_eleve' => $_POST['diplome_le_plus_eleve'],
+            'reference' => $_POST['reference_carte_identite']
+        ]);
 
-    if ($stmt->rowCount() != 0) {
-        $erreurs['doublon'] = 'Il semble que vous avez déjà enregistré un acteur avec des informations très similaires';
+        if ($stmt->rowCount() != 0) {
+            $erreurs['doublon'] = 'Il semble que vous avez déjà enregistré un acteur avec des informations très similaires';
+        }
     }
 }

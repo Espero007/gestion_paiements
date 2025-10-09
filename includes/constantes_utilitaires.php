@@ -87,7 +87,7 @@ date_default_timezone_set('Africa/Lagos');
 
 //     $val = intval($conteneur[$cle]);
 //     if ($val == 0) {
-        // echo "Je suis ici";
+// echo "Je suis ici";
 //         return false; // La valeur que nous avons reçue est une chaîne de caractère
 //     }
 
@@ -95,11 +95,11 @@ date_default_timezone_set('Africa/Lagos');
 //     return true;
 // }
 // 
-// function determinerPeriode($date_debut, $date_fin)
-// {
-//     $fmt = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE, 'Africa/Lagos', IntlDateFormatter::GREGORIAN);
-//     return "Du " . $fmt->format(new DateTime($date_debut)) . " au " . $fmt->format(new DateTime($date_fin));
-// }
+function determinerPeriode($date_debut, $date_fin)
+{
+    $fmt = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE, 'Africa/Lagos', IntlDateFormatter::GREGORIAN);
+    return "Du " . $fmt->format(new DateTime($date_debut)) . " au " . $fmt->format(new DateTime($date_fin));
+}
 // 
 // fonction pour génerer les urls
 // 
@@ -1191,14 +1191,14 @@ function envoyerLienValidationEmail($lien_verif, $email, $nom, $prenom, $type_ma
 /**
  * Autre élément présent quasiment sur toutes les pages de la plateforme : les alertes. Alertes de succès, d'erreur, d'information...cette fonction permet d'en afficher de toutes sortes à partir des paramètres qu'on lui passe.
  */
-function afficherAlerte($message, $type, $session = false, $dismissible = true)
+function afficherAlerte($message, $type, $session = false, $dismissible = true, $id = '')
 {
     //  $type fait allusion au fait que le message soit un message de succès ou d'erreur
     // $message est tout simplement le message
     // $session est pour savoir si la variable contenant le message est dans la session ou pas
 
 ?>
-    <div class="alert alert-<?= $type ?><?= $dismissible ? ' alert-dismissible' : '' ?> text-center">
+    <div class="alert alert-<?= $type ?><?= $dismissible ? ' alert-dismissible' : '' ?> text-center" id="<?= $id != '' ? $id : '' ?>">
         <?php if (!$session) : ?>
             <?= $message ?>
         <?php else: ?>
