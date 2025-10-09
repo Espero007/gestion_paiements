@@ -27,8 +27,13 @@ if (in_array('infos_generales', $elements_a_inclure)) {
             } else {
                 // Le champ en cours n'est pas vide
                 if ($champ == "nom" || $champ == "prenoms" || $champ == "lieu_naissance" || $champ == "diplome") {
-                    if (preg_match('/[^\p{L} -]/u', $valeur_champ)) {
-                        $erreurs[$champ][] = "Ce champ doit être une chaîne de caractères alphabétiques !";
+                    // if (preg_match('/[^\p{L} -]/u', $valeur_champ)) {
+                    //     $erreurs[$champ][] = "Ce champ doit être une chaîne de caractères alphabétiques !";
+                    // } elseif (strlen($valeur_champ) > 100) {
+                    //     $erreurs[$champ][] = "La valeur de ce champ ne doit pas excéder 100 caractères";
+                    // }
+                    if (preg_match('/[0-9]/', $valeur_champ)) {
+                        $erreurs[$champ][] = "Ce champ ne peut contenir que des lettres alphabétiques !";
                     } elseif (strlen($valeur_champ) > 100) {
                         $erreurs[$champ][] = "La valeur de ce champ ne doit pas excéder 100 caractères";
                     }
