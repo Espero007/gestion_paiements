@@ -44,18 +44,18 @@ require_once('includes/traitements_ajout_participant.php');
                                 </div>
                                 <div class="card-body">
                                     <!-- Messages divers -->
-                                    <?php if (isset($doublon) && $doublon) : ?>
-                                        <?php afficherAlerte('Il semble que vous ayiez déjà enregistré un acteur avec des informations très similaires', 'danger') ?>
+                                    <?php if (isset($erreurs['doublon']) && $erreurs['doublon']) : ?>
+                                        <?php afficherAlerte('Il semble que vous avez déjà enregistré un acteur avec des informations très similaires', 'danger') ?>
                                     <?php endif; ?>
                                     <!-- Fin Messages divers -->
 
                                     <!-- Formulaire : Début -->
-
                                     <form action="" method="post" enctype="multipart/form-data">
+
                                         <?php require_once('includes/fieldsets.php') ?>
+
                                         <div class="mt-4">
                                             <button type="submit" name="ajouter_participant" class="btn btn-primary mr-2">Ajouter le participant</button>
-                                            <!-- <a href="<?= generateUrl('participants') ?>" class="btn btn-outline-primary">Annuler</a> -->
 
                                             <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-outline-primary">Annuler</a>
                                         </div>

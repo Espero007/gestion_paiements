@@ -82,7 +82,7 @@ $resultat->closeCursor();
                                         L'acteur a été supprimé avec succès !
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                                     </div>
-                                    <?php unset($_SESSION['suppression_ok']); ?>
+                                    <?php unset($_SESSION['suppression_acteur_ok']); ?>
                                 <?php endif; ?>
 
                                 <?php if (isset($_SESSION['comptes_supprimes'])) : ?>

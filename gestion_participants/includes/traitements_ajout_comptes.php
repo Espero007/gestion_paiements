@@ -74,6 +74,6 @@ if ($nombre_comptes_bancaires_permis == 0) {
 }
 
 if (isset($traitement_fichiers_ok) && $traitement_fichiers_ok) {
-    $_SESSION['comptes_ajoutes'] = $nombre_comptes_bancaires > 1 ? 'Les comptes bancaires ont été ajoutés avec succès' : 'Le compte bancaire a été ajouté avec succès';
+    $_SESSION['comptes_ajoutes'] = ($nombre_comptes_bancaires > 1 ? 'Les comptes bancaires ont été ajoutés avec succès.' : 'Le compte bancaire a été ajouté avec succès.') . ($nombre_comptes_existants + $nombre_comptes_bancaires != NOMBRE_MAXIMAL_COMPTES ? ' <a href="ajouter_comptes.php?id=' . chiffrer($id_participant) . '">Cliquez ici</a> si vous souhaitez lui en ajouter d\'autres.' : '');
     header('location:gerer_participant.php?id=' . chiffrer($id_participant));
 }

@@ -102,6 +102,7 @@ try {
         date_naissance DATE NOT NULL,
         lieu_naissance VARCHAR(100) NOT NULL,
         diplome_le_plus_eleve VARCHAR(100) NOT NULL,
+        reference_carte_identite VARCHAR(100) UNIQUE NOT NULL,
         FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
 

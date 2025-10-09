@@ -48,8 +48,10 @@ $aucun_participant_1 = false; // pas de participants en bdd
 $aucun_participant_2 = false; // pas de participants non associés à l'activité
 
 if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
-    // Activité vers participant
+    // Activité vers participants (on vient de la page de gestion d'une activité en particulier et on doit choisir les participants qui devront être associés à l'activité en question)
     $sens = 1;
+
+    // La procédure se scinde en deux étapes : la première (étape 1) on choisit les acteurs et la seconde consiste à spécifier les informations de liaison entre ces acteurs et l'activité. J'ai préféré faire les deux sur la même page en changeant le contenu par du code PHP et ça fonctionne pour l'instant donc on va garder cette logique
     $etape_1 = true;
     $etape_2 = false;
     if (valider_id('get', 'id_activite', $bdd, 'activites')) {
@@ -63,7 +65,7 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                 // Pas de participants en bdd
                 $aucun_participant_1 = true;
             } else {
-                // Il y a des participants dans la base de données maid j'ai besoin des participants qui ne sont pas encore associés à l'activité
+                // Il y a des participants dans la base de données mais j'ai besoin des participants qui ne sont pas encore associés à l'activité
                 $stmt = $bdd->prepare('
                 SELECT id_participant, nom, prenoms, matricule_ifu
                 FROM participants
@@ -73,7 +75,7 @@ if (isset($_GET['id_activite']) && !isset($_GET['id_participant'])) {
                 $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 if (count($participants) == 0) {
-                    // Pas de participants qui ne soit pas encore associé à l'utilisateur
+                    // Pas de participants qui ne soit pas encore associé à l'activité
                     $aucun_participant_2 = true;
                 }
             }

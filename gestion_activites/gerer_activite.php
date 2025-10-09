@@ -36,7 +36,7 @@ require_once('traitements/gerer_activite.php');
                         <?php endif; ?>
                     </div>
 
-                    <p class="mt-2">Gérez ici votre activité</p>
+                    <p class="mt-2">Gérez ici votre activité.</p>
 
                     <!-- Fiche informative -->
                     <div class="card shadow mb-4">
@@ -148,7 +148,7 @@ require_once('traitements/gerer_activite.php');
 
                                 <!-- Indemnités forfaitaires avec les titres associés -->
                                 <p class="my-3">
-                                    <span class="font-weight-bold">Indemnités forfaitaires : </span>
+                                    <span class="font-weight-bold">Titres (Indemnités forfaitaires) : </span>
                                     <span><?= $indemnite_str ?></span>
                                 </p>
                                 <!-- <div class="col-lg-6 mb-4 mb-xl-0">

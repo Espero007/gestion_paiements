@@ -87,7 +87,7 @@ date_default_timezone_set('Africa/Lagos');
 
 //     $val = intval($conteneur[$cle]);
 //     if ($val == 0) {
-//         echo "Je suis ici";
+// echo "Je suis ici";
 //         return false; // La valeur que nous avons reçue est une chaîne de caractère
 //     }
 
@@ -95,11 +95,11 @@ date_default_timezone_set('Africa/Lagos');
 //     return true;
 // }
 // 
-// function determinerPeriode($date_debut, $date_fin)
-// {
-//     $fmt = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE, 'Africa/Lagos', IntlDateFormatter::GREGORIAN);
-//     return "Du " . $fmt->format(new DateTime($date_debut)) . " au " . $fmt->format(new DateTime($date_fin));
-// }
+function determinerPeriode($date_debut, $date_fin)
+{
+    $fmt = new IntlDateFormatter('fr_FR', IntlDateFormatter::LONG, IntlDateFormatter::NONE, 'Africa/Lagos', IntlDateFormatter::GREGORIAN);
+    return "Du " . $fmt->format(new DateTime($date_debut)) . " au " . $fmt->format(new DateTime($date_fin));
+}
 // 
 // fonction pour génerer les urls
 // 
@@ -1191,14 +1191,14 @@ function envoyerLienValidationEmail($lien_verif, $email, $nom, $prenom, $type_ma
 /**
  * Autre élément présent quasiment sur toutes les pages de la plateforme : les alertes. Alertes de succès, d'erreur, d'information...cette fonction permet d'en afficher de toutes sortes à partir des paramètres qu'on lui passe.
  */
-function afficherAlerte($message, $type, $session = false, $dismissible = true)
+function afficherAlerte($message, $type, $session = false, $dismissible = true, $id = '')
 {
     //  $type fait allusion au fait que le message soit un message de succès ou d'erreur
     // $message est tout simplement le message
     // $session est pour savoir si la variable contenant le message est dans la session ou pas
 
 ?>
-    <div class="alert alert-<?= $type ?><?= $dismissible ? ' alert-dismissible' : '' ?> text-center">
+    <div class="alert alert-<?= $type ?><?= $dismissible ? ' alert-dismissible' : '' ?> text-center" id="<?= $id != '' ? $id : '' ?>">
         <?php if (!$session) : ?>
             <?= $message ?>
         <?php else: ?>
@@ -1248,6 +1248,18 @@ function supprimerAccents($chaine)
     }
 }
 
+/**
+ * Elle permet de générer un nombre aléatoire avec une taille correspondant au nombre de chiffres qu'on lui passe en paramètre
+ */
+function genererNombreAleatoire($nbr_chiffres)
+{
+    $nombre = rand(1, 9);
+    for ($i = 0; $i < $nbr_chiffres - 1; $i++) {
+        $nombre .= rand(1, 9);
+    }
+    return $nombre;
+}
+
 
 // Fonctions développées dans le cadre de la suppression du ou de plusieurs compte(s) bancaire(s) associés à un acteur
 
@@ -1291,37 +1303,40 @@ function arrangerRibs($id_participant)
 
     $donnees = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($donnees as $index => $donnee) {
-        $donnees[$index]['suffixe'] = extraireSuffixe(basename($donnee['chemin_acces']));
-        $donnees[$index]['prefixe'] = extrairePrefixe(basename($donnee['chemin_acces']));
-        $chiffres[] = $donnees[$index]['suffixe'];
-    }
+    if (!empty($donnees)) {
+        // Tous les comptes bancaires de l'utilisateur n'ont pas été supprimés
+        foreach ($donnees as $index => $donnee) {
+            $donnees[$index]['suffixe'] = extraireSuffixe(basename($donnee['chemin_acces']));
+            $donnees[$index]['prefixe'] = extrairePrefixe(basename($donnee['chemin_acces']));
+            $chiffres[] = $donnees[$index]['suffixe'];
+        }
 
-    $nbr_valeurs = count($chiffres);
+        $nbr_valeurs = count($chiffres);
 
-    for ($i = 1; $i <= $nbr_valeurs; $i++) {
-        $chiffre_min = min($chiffres);
-        foreach ($donnees as $donnee) {
-            $suffixe = $donnee['suffixe'];
-            if ($chiffre_min == $suffixe) {
-                // On modifie le nom du fichier et on actualise la bdd
-                $nouveauNom = dirname($donnee['chemin_acces']) . '/' . $donnee['prefixe'] . $i . '.pdf';
-                if (rename($donnee['chemin_acces'], $nouveauNom)) {
+        for ($i = 1; $i <= $nbr_valeurs; $i++) {
+            $chiffre_min = min($chiffres);
+            foreach ($donnees as $donnee) {
+                $suffixe = $donnee['suffixe'];
+                if ($chiffre_min == $suffixe) {
+                    // On modifie le nom du fichier et on actualise la bdd
+                    $nouveauNom = dirname($donnee['chemin_acces']) . '/' . $donnee['prefixe'] . $i . '.pdf';
+                    if (rename($donnee['chemin_acces'], $nouveauNom)) {
 
-                    $stmt = $bdd->prepare('UPDATE fichiers SET chemin_acces=:chemin WHERE id_fichier=' . $donnee['id_fichier']);
-                    $stmt->execute(['chemin' => $nouveauNom]);
+                        $stmt = $bdd->prepare('UPDATE fichiers SET chemin_acces=:chemin WHERE id_fichier=' . $donnee['id_fichier']);
+                        $stmt->execute(['chemin' => $nouveauNom]);
 
-                    // Recherche l'index du minimum trouvé et le retire
-                    $index = array_search($chiffre_min, $chiffres);
-                    if ($index !== false) {
-                        unset($chiffres[$index]);
+                        // Recherche l'index du minimum trouvé et le retire
+                        $index = array_search($chiffre_min, $chiffres);
+                        if ($index !== false) {
+                            unset($chiffres[$index]);
+                        }
+                        // Réindexer le tableau
+                        $chiffres = array_values($chiffres);
                     }
-                    // Réindexer le tableau
-                    $chiffres = array_values($chiffres);
                 }
             }
         }
-    }
+    } else return;
 }
 
 // Fonctions pour la génération des participants de façon aléatoire
@@ -1445,7 +1460,7 @@ function genererCSVDemo($chemin_csv, $nbr_acteurs)
 
     // Générer identités
     $csvFile = fopen($chemin_csv, "w");
-    fputcsv($csvFile, ["Nom", "Prénoms", "Date de Naissance", "Lieu de Naissance", "IFU", "Diplôme"]);
+    fputcsv($csvFile, ["Nom", "Prénoms", "Date de Naissance", "Lieu de Naissance", "IFU", "Diplôme", "Référence"]);
 
     for ($i = 0; $i < $nbr_acteurs; $i++) {
         $sexe = rand(0, 1) ? 'M' : 'F';
@@ -1460,8 +1475,9 @@ function genererCSVDemo($chemin_csv, $nbr_acteurs)
         $lieuNaissance = $lieux[array_rand($lieux)];
         $ifu = genererIFU();
         $diplome = $diplomes[array_rand($diplomes)];
+        $reference = genererNombreAleatoire(10);
 
-        fputcsv($csvFile, [$nom, $prenoms, $dateNaissance, $lieuNaissance, $ifu, $diplome]);
+        fputcsv($csvFile, [$nom, $prenoms, $dateNaissance, $lieuNaissance, $ifu, $diplome, $reference]);
     }
     fclose($csvFile);
 }
@@ -1596,7 +1612,7 @@ function ConfigurerInformationsDemo()
         $acteur = array_combine($entetes, $ligne);
 
         // Primo j'insère dans la table participants : j'ai tout ce qu'il faut comme information
-        $stmt = "INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome_le_plus_eleve) VALUES ({$_SESSION['user_id']}, :nom, :prenoms, :matricule_ifu, :date_naissance, :lieu_naissance, :diplome_le_plus_eleve)";
+        $stmt = "INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome_le_plus_eleve, reference_carte_identite) VALUES ({$_SESSION['user_id']}, :nom, :prenoms, :matricule_ifu, :date_naissance, :lieu_naissance, :diplome_le_plus_eleve, :reference)";
         $stmt = $bdd->prepare($stmt);
 
         $stmt->execute([
@@ -1605,7 +1621,8 @@ function ConfigurerInformationsDemo()
             'matricule_ifu' => $acteur['IFU'],
             'date_naissance' => $acteur['Date de Naissance'],
             'lieu_naissance' => $acteur['Lieu de Naissance'],
-            'diplome_le_plus_eleve' => $acteur['Diplôme']
+            'diplome_le_plus_eleve' => $acteur['Diplôme'],
+            'reference' => $acteur['Référence']
         ]);
 
         $id_acteur = $bdd->lastInsertId();
@@ -2364,13 +2381,13 @@ function genererOrdreVirement($id_activite, $banque, $navigateur = true)
     $pdf->AddPage();
 
     // Header
-    $informations_necessaires = ['titre' => $informations[0]['titre_activite'], 'banque' => $banque];
-    genererHeader($pdf, 'ordre_virement', $informations_necessaires, $id_activite);
+    $informations_header = ['titre' => $informations[0]['titre_activite'], 'banque' => $banque];
+    genererHeader($pdf, 'ordre_virement', $informations_header, $id_activite);
     $pdf->Ln(20);
 
     // Corps du document
     $largeurs_colonnes = [5, 22, 15, 15, 15, 28]; // En pourcentage
-    $informations_test = [
+    $informations_restantes = [
         'type_document' => 'ordre_virement',
         'id_activite' => $id_activite,
         'entete' => ['N°', 'Nom et prenoms', 'Qualite', 'Montant', 'Banque', 'Rib'],
@@ -2395,7 +2412,7 @@ function genererOrdreVirement($id_activite, $banque, $navigateur = true)
         ];
     }
 
-    $pdf = GenererCorpsDocuments($pdf, $informations_test);
+    $pdf = GenererCorpsDocuments($pdf, $informations_restantes);
 
     //Sortie du pdf
 
