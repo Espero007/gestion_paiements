@@ -10,7 +10,7 @@ require_once('traitements/submit_creer_activite.php');
         a:hover.no-decoration {
             text-decoration: none;
         }
-    </style>-
+    </style>
 
     <!-- Page Wrapper -->
     <div id="wrapper">

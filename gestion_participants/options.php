@@ -27,13 +27,13 @@
          <li><a href="ajouter_comptes.php?id=<?= chiffrer($participant['id_participant']) ?>" class="dropdown-item custom-dropdown-item">Ajouter un compte bancaire</a></li>
      <?php endif; ?>
      <?php if ($titre_page == 'Liste des acteurs') : ?>
-         <?php if ($participant['banque_count'] > 1): ?>
+         <?php if ($participant['banque_count'] > 0): ?>
              <li>
                  <a href="/gestion_participants/supprimer_une_banque.php?id=<?= chiffrer($participant['id_participant']) ?>" class="dropdown-item custom-dropdown-item">Supprimer un compte bancaire</a>
              </li>
          <?php endif; ?>
      <?php elseif ($titre_page == 'Gestion de l\'acteur'): ?>
-         <?php if (count($comptes) > 1): ?>
+         <?php if (count($comptes) > 0): ?>
              <li>
                  <a href="supprimer_une_banque.php?id=<?= chiffrer($participant['id_participant']) ?>" class="dropdown-item custom-dropdown-item">Supprimer un compte bancaire</a>
              </li>

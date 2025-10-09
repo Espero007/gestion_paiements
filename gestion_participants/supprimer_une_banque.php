@@ -141,7 +141,7 @@ require_once('includes/suppression_banque.php');
                     if (checkbox.checked) compteur++;
                 })
 
-                if (compteur == <?= NOMBRE_MAXIMAL_COMPTES ?> && alerte == null) {
+                if (compteur == <?= $totalBanques ?> && alerte == null) {
                     repere.insertAdjacentHTML('beforebegin', `<?= afficherAlerte($message_alerte, 'info', false, true, 'alerte_a_retirer') ?>`);
                 } else if (alerte != null) {
                     alerte.remove();

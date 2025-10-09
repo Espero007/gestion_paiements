@@ -2402,7 +2402,7 @@ function genererOrdreVirement($id_activite, $banque, $navigateur = true)
 
     // Lignes simples
     for ($i = 0; $i < count($informations); $i++) {
-        $informations_test['contenu_tableau']['lignes_simples'][] = [
+        $informations_restantes['contenu_tableau']['lignes_simples'][] = [
             $i + 1, // Numéro de la ligne
             $informations[$i]['nom'] . ' ' . $informations[$i]['prenoms'], // Nom et prénoms de l'acteur
             $informations[$i]['qualite'], // Titre de l'acteur
