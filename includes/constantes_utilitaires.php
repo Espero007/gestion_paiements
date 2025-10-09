@@ -1303,37 +1303,40 @@ function arrangerRibs($id_participant)
 
     $donnees = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($donnees as $index => $donnee) {
-        $donnees[$index]['suffixe'] = extraireSuffixe(basename($donnee['chemin_acces']));
-        $donnees[$index]['prefixe'] = extrairePrefixe(basename($donnee['chemin_acces']));
-        $chiffres[] = $donnees[$index]['suffixe'];
-    }
+    if (!empty($donnees)) {
+        // Tous les comptes bancaires de l'utilisateur n'ont pas été supprimés
+        foreach ($donnees as $index => $donnee) {
+            $donnees[$index]['suffixe'] = extraireSuffixe(basename($donnee['chemin_acces']));
+            $donnees[$index]['prefixe'] = extrairePrefixe(basename($donnee['chemin_acces']));
+            $chiffres[] = $donnees[$index]['suffixe'];
+        }
 
-    $nbr_valeurs = count($chiffres);
+        $nbr_valeurs = count($chiffres);
 
-    for ($i = 1; $i <= $nbr_valeurs; $i++) {
-        $chiffre_min = min($chiffres);
-        foreach ($donnees as $donnee) {
-            $suffixe = $donnee['suffixe'];
-            if ($chiffre_min == $suffixe) {
-                // On modifie le nom du fichier et on actualise la bdd
-                $nouveauNom = dirname($donnee['chemin_acces']) . '/' . $donnee['prefixe'] . $i . '.pdf';
-                if (rename($donnee['chemin_acces'], $nouveauNom)) {
+        for ($i = 1; $i <= $nbr_valeurs; $i++) {
+            $chiffre_min = min($chiffres);
+            foreach ($donnees as $donnee) {
+                $suffixe = $donnee['suffixe'];
+                if ($chiffre_min == $suffixe) {
+                    // On modifie le nom du fichier et on actualise la bdd
+                    $nouveauNom = dirname($donnee['chemin_acces']) . '/' . $donnee['prefixe'] . $i . '.pdf';
+                    if (rename($donnee['chemin_acces'], $nouveauNom)) {
 
-                    $stmt = $bdd->prepare('UPDATE fichiers SET chemin_acces=:chemin WHERE id_fichier=' . $donnee['id_fichier']);
-                    $stmt->execute(['chemin' => $nouveauNom]);
+                        $stmt = $bdd->prepare('UPDATE fichiers SET chemin_acces=:chemin WHERE id_fichier=' . $donnee['id_fichier']);
+                        $stmt->execute(['chemin' => $nouveauNom]);
 
-                    // Recherche l'index du minimum trouvé et le retire
-                    $index = array_search($chiffre_min, $chiffres);
-                    if ($index !== false) {
-                        unset($chiffres[$index]);
+                        // Recherche l'index du minimum trouvé et le retire
+                        $index = array_search($chiffre_min, $chiffres);
+                        if ($index !== false) {
+                            unset($chiffres[$index]);
+                        }
+                        // Réindexer le tableau
+                        $chiffres = array_values($chiffres);
                     }
-                    // Réindexer le tableau
-                    $chiffres = array_values($chiffres);
                 }
             }
         }
-    }
+    } else return;
 }
 
 // Fonctions pour la génération des participants de façon aléatoire

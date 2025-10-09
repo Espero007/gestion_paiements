@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . '/includes/constantes_utilitaires.php');
 require_once(__DIR__ . '/includes/bdd.php') ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,11 +14,8 @@ require_once(__DIR__ . '/includes/bdd.php') ?>
 <body>
 
     <?php
-    $id_participant = 3433;
-    $stmt = $bdd->prepare('SELECT reference_carte_identite FROM participants WHERE id_participant=' . $id_participant);
-    $stmt->execute();
-    $reference_acteur = $stmt->fetch(PDO::FETCH_NUM)[0];
-    var_dump($reference_acteur);
+    $id_acteur = 3732;
+    arrangerRibs($id_acteur);
 
 
     ?>
