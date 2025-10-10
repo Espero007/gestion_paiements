@@ -14,8 +14,7 @@ require_once(__DIR__ . '/includes/bdd.php') ?>
 <body>
 
     <?php
-    $id_acteur = 3732;
-    arrangerRibs($id_acteur);
+   
 
 
     ?>

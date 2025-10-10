@@ -162,6 +162,13 @@ try {
         ids_participants VARCHAR(1000) NOT NULL,
         FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
+
+        CREATE TABLE IF NOT EXISTS migrations
+        (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nom_fichier VARCHAR(255),
+        execute_le DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
     ";
 
     $bdd->exec($sqlTables);
@@ -173,3 +180,34 @@ try {
 }
 
 $GLOBALS['bdd'] = $bdd;
+
+// Fonction pour effectuer les migrations/mises à jour s'il y en a
+
+function effectuerMigration()
+{
+    global $bdd;
+    // Tout d'abord on récupère toutes les migrations déjà effectuées et présentes dans la bdd
+    $migrations = $bdd->query('SELECT nom_fichier FROM migrations')->fetchAll(PDO::FETCH_COLUMN);
+
+    // On récupère ensuite les fichiers de migrations présents dans le dossier de migrations
+    $fichiers = glob(__DIR__ . '/../migrations/*.sql');
+    ?>
+        <pre><?php var_dump($migrations);?></pre>
+        <pre><?php var_dump($fichiers);?></pre>
+    <?php
+
+
+    // Maintenant on fait une comparaison
+    foreach ($fichiers as $fichier) {
+        $filename = basename($fichier);
+        if (!in_array($filename, $migrations)) {
+            $sql = file_get_contents($fichier);
+            $bdd->exec($sql);
+            $stmt = $bdd->prepare('INSERT INTO migrations (nom_fichier) VALUES (?)');
+            $stmt->execute([$filename]);
+        }
+    }
+}
+
+// On effectue la migration
+effectuerMigration();
