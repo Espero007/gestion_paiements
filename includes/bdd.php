@@ -165,7 +165,7 @@ try {
 
         CREATE TABLE IF NOT EXISTS migrations
         (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         nom_fichier VARCHAR(255),
         execute_le DATETIME DEFAULT CURRENT_TIMESTAMP
         );
