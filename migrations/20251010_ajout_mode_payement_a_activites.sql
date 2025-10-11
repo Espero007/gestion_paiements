@@ -1,2 +1,2 @@
--- Ajout du mode de payement à la table 'activités'. On le définit à 1 par défaut : 1 pour le nouveau mode de payement
+-- Ajout du mode de payement à la table 'activités'. On le définit à 1 par défaut : 1 pour le nouveau mode de payement, 0 pour l'ancien mode de payement
 ALTER TABLE activites ADD `mode_payement` INT NOT NULL DEFAULT '1' AFTER `reference`;
