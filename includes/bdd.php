@@ -191,11 +191,6 @@ function effectuerMigration()
 
     // On récupère ensuite les fichiers de migrations présents dans le dossier de migrations
     $fichiers = glob(__DIR__ . '/../migrations/*.sql');
-    ?>
-        <pre><?php var_dump($migrations);?></pre>
-        <pre><?php var_dump($fichiers);?></pre>
-    <?php
-
 
     // Maintenant on fait une comparaison
     foreach ($fichiers as $fichier) {
