@@ -60,9 +60,7 @@ $data = [
     'financier' => '',
     'titre_financier' => '',
     'note_generatrice' => '',
-    'titres_associes' => '',
     'taux_journalier' => '',
-    'indemnite_forfaitaire' => '',
     'taux_taches' => '',
     'frais_deplacement_journalier' => '',
     'date_debut' => '',
@@ -89,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
     } else {
         ### Validations communes
         $champs_texts = ['nom', 'timbre', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'reference'];
-        $common_fields = ['nom', 'description', 'centre', 'premier_responsable', 'organisateur', 'financier', 'titres_associes', 'date_debut', 'date_fin', 'timbre', 'reference', 'titre_responsable', 'titre_organisateur', 'titre_financier'];
+        $common_fields = ['nom', 'description', 'centre', 'premier_responsable', 'organisateur', 'financier', 'date_debut', 'date_fin', 'timbre', 'reference', 'titre_responsable', 'titre_organisateur', 'titre_financier'];
         foreach ($common_fields as $field) {
             if (empty($data[$field])) {
                 $errors[$field] = 'Veuillez remplir ce champ';
@@ -99,13 +97,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
         // Validations sur les valeurs textuelles
         foreach ($champs_texts as $champ) {
             if ($champ != 'timbre' && $champ != 'reference' && $champ != 'description') {
-                if (!preg_match('/^[\p{L}\p{N} \-\']+$/u', $data[$champ])) {
+                if (!preg_match('/^[\p{L}\p{N} \-\'\/]+$/u', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "Ce champ contient des caractères non valides !";
                     }
                 }
             } elseif ($champ == 'timbre') {
-                if (!preg_match('/^\/[A-Za-z0-9]+(\/[A-Za-z0-9]+)+$/', $data[$champ])) {
+                if (!preg_match('/^\/[A-Za-z0-9-]+(\/[A-Za-z0-9-]+)+$/', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "La valeur que vous avez indiquée ne respecte pas le format attendu";
                     }
@@ -124,7 +122,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
             $errors['date_fin'] = "La date de fin doit être égale ou postérieure à la date de début.";
         }
 
-        // Validation des titres associés
+        // Récupération du titre et de l'indemnité forfaitaire
+        $titres = $_POST['titres'] ?? [];
+        $forfaires = $_POST['indemnites'] ?? [];
+
+
+        // Validation des titres associés et des indemnités forfaitaires
+         $validTitre = false;
+
+        foreach ($titres as $i => $titre) {
+            $titre_val = trim($titre);
+            $indem_val = isset($forfaires[$i]) ? trim($forfaires[$i]) : '';
+        
+            if ($titre_val !== '' || $indem_val !== '') {
+                $validTitre = true;
+                break;
+            }
+        }
+
+        if (!$validTitre) {
+            $errors['titres_associes'] = "Veuillez entrer au moins un titre ou une indemnité.";
+        }
+
+
+
+        /*
         if ($data['titres_associes'] !== '' && strpos($data['titres_associes'], ',,') !== false) {
             $errors['titres_associes'] = "Les titres contiennent des virgules consécutives non valides.";
         } elseif ($data['titres_associes'] !== '' && !preg_match('/^[^,]+(,[^,]+)*$/', $data['titres_associes'])) {
@@ -139,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                     break;
                 }
             }
-        }
+        }*/
 
         /*
         // Validation des diplômes
@@ -168,6 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
             }
         }
 
+        /*
         if (in_array($type_activite, ['2', '3'])) {
             if (empty($data['indemnite_forfaitaire'])) {
                 $errors['indemnite_forfaitaire'] = "L'indemnité forfaitaire est requise.";
@@ -187,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                     $errors['titres_associes'] = $errors['indemnite_forfaitaire'] = "Le nombre d'indemnités doit être égal au nombre de titres.";
                 }
             }
-        }
+        }*/
 
         if ($type_activite === '3') {
             if (empty($data['taux_taches'])) {
