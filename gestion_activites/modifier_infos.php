@@ -71,16 +71,20 @@ $data = [
     'frais_deplacement_journalier' => $activity['frais_deplacement_journalier'] ?? '',
     'date_debut' => $activity['date_debut'],
     'date_fin' => $activity['date_fin'],
+    'mode_payement' => $activity['mode_payement'],
 ];
+
+// Sauvegarde du mode de payement présent en bdd pour l'activité
+$mode = (string)$activity['mode_payement'];
 
 // Champs à afficher dans le message de succès par type
 $fields_to_display = [
-    '1' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'taux_journalier', 'date_debut', 'date_fin', 'timbre', 'reference'],
-    '2' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin', 'timbre', 'reference'],
-    '3' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin', 'timbre', 'reference']
+    '1' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'taux_journalier', 'date_debut', 'date_fin', 'timbre', 'reference','mode_payement'],
+    '2' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin', 'timbre', 'reference','mode_payement'],
+    '3' => ['nom', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin', 'timbre', 'reference','mode_payement'],
 ];
 
-// Récupérer les données et erreurs de la session si présentes
+// Récupérer les données et erreurs de la session si présentes 
 $errors = $_SESSION['form_errors'] ?? [];
 $data = $_SESSION['form_data'] ?? $data;
 
@@ -207,6 +211,27 @@ unset($_SESSION['success_data']);
                                                     <small> Note : Elle doit être de la forme <strong>0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA</strong></small>
                                                 </div>
                                             </div>
+
+                                             <!-- Mode de Paiyement -->
+                                                <div class="mb-4 row">
+                                                    <label for="mode_payement" class="col-sm-3 col-form-label">Mode de payement</label>
+                                                    <div class="col-sm-9">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="mode_payement" id="mode_payement_nouveau" value="1"
+                                                                <?= ($success ? '' : ($mode === '1' ? 'checked' : '')) ?>>
+                                                            <label class="form-check-label" for="mode_payement_nouveau">Nouveau</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="mode_payement" id="mode_payement_ancien" value="0"
+                                                                <?= ($success ? '' : ($mode === '0' ? 'checked' : '')) ?>>
+                                                            <label class="form-check-label" for="mode_payement_ancien">Ancien</label>
+                                                        </div>
+                                                        <small class="text-danger"><?= $errors['mode_payement'] ?? '' ?></small>
+                                                        <small><br> Sélectionnez <strong>Nouveau</strong> si les informations financières de l'utilisateur sont liés à sont compte bancaire. Sinon sélectionnez <strong>Ancien</strong>.</small>
+
+                                                    </div>
+                                                </div>
+
 
                                             <!-- Premier responsable -->
                                             <div class="mb-2 row">

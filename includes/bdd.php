@@ -70,6 +70,7 @@ try {
         taux_taches DECIMAL(50) NULL,
         frais_deplacement_journalier DECIMAL(50) NULL,
         reference VARCHAR(300) NOT NULL,
+        mode_payement INT NOT NULL,
         FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
 
