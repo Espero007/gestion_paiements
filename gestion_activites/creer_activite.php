@@ -37,13 +37,13 @@ require_once('traitements/submit_creer_activite.php');
                         <h1 class="h4 mb-4 text-gray-800"> Activités /
                             <strong>Création d'une activité <?= isset($type_activite) ? 'de type ' . $type_activite : '' ?></strong>
                         </h1>
-                        <p class="mt-2">Vous êtes sur le point de créer une activité. Nous allons vous guider tout au long du processus.</p>
+                        <p class="mt-2 mb-1">Vous êtes sur le point de créer une activité. Nous allons vous guider tout au long du processus.</p>
                         <!-- <hr> -->
                     </div>
 
                     <?php if (isset($recuperation_type_activite) && !$recuperation_type_activite) : ?>
                         <!-- Le type de l'activité n'a pas encore été choisi -->
-                        <p class="mt-2">Commencez par nous dire quel type d'activité vous aimeriez créer. Nous disposons de trois types qui ont chacun leurs particularités.</p>
+                        <p class="mt-0">Commencez par nous dire quel type d'activité vous aimeriez créer. Nous disposons de trois types qui ont chacun leurs particularités.</p>
 
                         <!-- Content Row -->
                         <div class="row mb-5">
@@ -79,7 +79,7 @@ require_once('traitements/submit_creer_activite.php');
                         </div>
                     <?php elseif (isset($recuperation_type_activite) && $recuperation_type_activite): ?>
                         <!-- Le type de l'activité a été récupéré et est valide -->
-                        <p class="mt-2">Dîtes-nous en plus sur votre activité en renseignant le formulaire ci-dessous</p>
+                        <p class="mt-0">Dîtes-nous en plus sur votre activité en renseignant le formulaire ci-dessous</p>
 
                         <div class="row">
                             <div class="col-12">
