@@ -38,8 +38,9 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
             border-bottom-left-radius: 0;
         }
 
-        button.disabled {
+        .disabled {
             cursor: not-allowed !important;
+            pointer-events: none;
         }
     </style>
 
@@ -124,9 +125,9 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
                                         <div class="button-wrapper">
                                             <div class="mb-2">
                                                 <div>
-                                                    <form action="./traitements/voir_profil.php" method="post" enctype="multipart/form-data">
-                                                        <label for="upload" class="btn btn-primary mr-2 mb-0" tabindex="0" id="statusCont">
-                                                            <span class="d-none d-sm-block" id="status">Choisir une nouvelle photo</span>
+                                                    <form action="./traitements/voir_profil.php" method="post" enctype="multipart/form-data" class="mb-0">
+                                                        <label for="upload" class="btn btn-primary mr-2 mb-0" tabindex="0" id="uploadBtnCont">
+                                                            <span class="d-none d-sm-block">Choisir une nouvelle photo</span>
                                                             <i class="bi bi-cloud-upload d-block d-sm-none"></i>
                                                             <input type="file" name="photo" id="upload" class="account-file-input" hidden accept='image/png, image/jpeg, image/jpg'>
                                                         </label>
@@ -140,7 +141,9 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
                                                     <p class="text-danger"><small><?= $erreurs['photo'][0] ?></small></p>
                                                 <?php endif; ?>
                                             </div>
-                                            <small class=" mb-0">JPG, JPEG ou PNG autorisés (Taille maximale de 2Mo) </small>
+                                            <small class="mb-2 d-none" id="status">Chargement...</small>
+                                            <br id="spacer" class="d-none">
+                                            <small class="mb-0">JPG, JPEG ou PNG autorisés (Taille maximale de 2Mo) </small>
                                             <input type="hidden" name="MAX_FILE_SIZE" value="<?= $taille_image; ?>">
                                         </div>
                                     </div>
@@ -294,16 +297,21 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
         // Actualisation des boutons associés au changement de la photo de profil
         const input = document.getElementById('upload');
         const status = document.getElementById('status');
-        const statusCont = document.getElementById('statusCont');
+        const uploadBtnCont = document.getElementById('uploadBtnCont');
+        const spacer = document.getElementById('spacer');
+        // const statusCont = document.getElementById('statusCont');
         const submitBtn = document.getElementById('submitBtn');
 
         input.addEventListener('change', () => {
             const file = input.files[0];
             if (!file) return;
 
-            status.textContent = "Chargement de l'image";
-            statusCont.classList.remove('btn-primary');
-            if (!statusCont.classList.contains('disabled')) submitBtn.classList.add('disabled');
+            // On affiche le message
+            status.classList.remove('d-none');
+            status.classList.add('d-inline-block');
+            spacer.classList.remove('d-none');
+            status.textContent = "Chargement de l'image...";
+            submitBtn.classList.add('disabled');
 
             const reader = new FileReader();
 
@@ -313,9 +321,9 @@ if (isset($_SESSION['erreurs']) && !empty($_SESSION['erreurs'])) {
 
             // Fin de la lecture
             reader.onload = () => {
-                statusCont.classList.add('btn-outline-primary');
+                // uploadBtnCont.classList.add('disabled');
                 setTimeout(() => {
-                    status.textContent = "Chargement terminé";
+                    status.textContent = "Chargement terminé !";
                     submitBtn.classList.remove('disabled');
                 }, 1000);
             }
