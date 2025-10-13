@@ -40,8 +40,9 @@ try {
     $stmt = $bdd->prepare($sql);
     $stmt->execute(['id' => $activity_id]);
     $titres_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $titres_associes = implode(',', array_column($titres_data, 'nom'));
-    $indemnite_forfaitaire = implode(',', array_filter(array_column($titres_data, 'indemnite_forfaitaire')));
+    //$titres_associes = implode(',', array_column($titres_data, 'nom'));
+    //$indemnite_forfaitaire = implode(',', array_filter(array_column($titres_data, 'indemnite_forfaitaire')));
+    $titres = $titres_data;
 } catch (PDOException $e) {
     $_SESSION['form_errors'] = ['database' => "Erreur lors de la récupération des données. Veuillez réessayer." . $e->getMessage()];
     die("Erreur : " . $e->getMessage());
@@ -64,9 +65,7 @@ $data = [
     'titre_organisateur' => $activity['titre_organisateur'] ?? '',
     'financier' => $activity['financier'],
     'titre_financier' => $activity['titre_financier'] ?? '',
-    'titres_associes' => $titres_associes,
     'taux_journalier' => $activity['taux_journalier'] ?? '',
-    'indemnite_forfaitaire' => $indemnite_forfaitaire,
     'taux_taches' => $activity['taux_taches'] ?? '',
     'frais_deplacement_journalier' => $activity['frais_deplacement_journalier'] ?? '',
     'date_debut' => $activity['date_debut'],
@@ -287,23 +286,61 @@ unset($_SESSION['success_data']);
                                                 </div>
                                             </div>
 
-                                            <!-- Titres associés -->
-                                            <div class="mb-4 row">
-                                                <label for="titres_associes" class="col-sm-3 col-form-label">Titres associés</label>
-                                                <div class="col-sm-9">
-                                                    <input id="titres_associes" type="text" name="titres_associes" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['titres_associes']) ?>">
-                                                    <small class="text-danger"><?= $errors['titres_associes'] ?? '' ?></small>
-                                                    <?php if (isset($errors['titres_associes'])) : ?>
-                                                        <br>
-                                                    <?php endif; ?>
-                                                    <small> Note : séparés par des virgules, lettres uniquement, ex. : R/DEC,Superviseur (il s'agit des titres que les participants de l'activité auront. Tout comme dans le cas des diplômes, les indiquer ici vous facilitera le travail quand vous devrez lier des participants à votre activité)</small>
-                                                    <!-- Avertissement -->
-                                                    <small class="text-danger">
-                                                        Avertissement : Si vous modifiez un titre pour lequel un ou des participants ont déjà été associés à votre activité, cette modification sera prise en compte dans les informations de la liaison avec ce ou ces participants.
-                                                        Par-contre, si vous supprimez un titre pour lequel un ou des participants ont été associés à votre activité, la liaison avec ce ou ces participants sera rompue.
-                                                    </small>
-                                                </div>
+                                             <!-- SECTION TITRES / INDEMNITES -->
+                                        <div class="form-group">
+                                            <label for="titres">Titres associés</label>
+                                            <div id="titres-container">
+                                                <?php 
+                                                // Si des titres existent déjà pour cette activité
+                                                if (!empty($titres)) {
+                                                    foreach ($titres as $index => $titre): 
+                                                     ?>
+                                                        <div class="titre-item mb-2 d-flex gap-2 align-items-center">
+                                                            <input type="text" name="titres[]" 
+                                                                class="form-control titre-input" 
+                                                                placeholder="Titre" 
+                                                                value="<?= htmlspecialchars($titre['nom']) ?>">
+                                                            <?php if (in_array($type_activite, ['2','3'])): ?>
+                                                            <input type="number" 
+                                                                step="0.01" 
+                                                                name="indemnites[]" 
+                                                                class="form-control indem-input" 
+                                                                value="<?= $titre['indemnite_forfaitaire'] ?>" 
+                                                                placeholder="Indemnité">
+                                                            <?php endif; ?>
+
+                                                            <button type="button" class="btn btn-outline-danger remove-titre">Supprimer</button>
+                                                        </div>
+                                                <?php 
+                                                    endforeach;
+                                                } else { 
+                                                    // S’il n’y a pas encore de titre
+                                                ?>
+                                                    <div class="titre-item mb-2 d-flex gap-2 align-items-center">
+                                                        <input type="text" name="titres[]" class="form-control titre-input" placeholder="Titre">
+                                                        <input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" placeholder="Indemnité">
+                                                        <button type="button" class="btn btn-outline-danger remove-titre">Supprimer</button>
+                                                    </div>
+                                                <?php } ?>
                                             </div>
+
+                                            <!-- Bouton pour ajouter dynamiquement un nouveau titre -->
+                                            <button type="button" id="add-titre" class="btn btn-outline-primary mt-2">
+                                                Ajouter un titre
+                                            </button>
+
+                                            <!-- Champs cachés pour envoyer les données groupées -->
+                                            <input type="hidden" name="titres_associes" id="titres_associes" value="">
+                                            <input type="hidden" name="indemnite_forfaitaire" id="indemnite_forfaitaire" value="">
+                                         </div>
+
+
+                                        <!-- Champs cachés pour envoyer les données au serveur -->
+                                        <input type="hidden" name="titres_associes" id="titres_associes" value="<?= htmlspecialchars($data['titres_associes'] ?? '') ?>">
+                                            <?php if(in_array($type_activite, ['2', '3'])): ?>
+                                        <input type="hidden" name="indemnite_forfaitaire" id="indemnite_forfaitaire" value="<?= htmlspecialchars($data['indemnite_forfaitaire'] ?? '') ?>">
+                                            <?php endif; ?>
+
                                         </fieldset>
 
                                         <!-- Informations financières -->
@@ -323,19 +360,6 @@ unset($_SESSION['success_data']);
                                                 </div>
                                             <?php endif; ?>
 
-                                            <!-- Champs spécifiques aux types 2 et 3 -->
-                                            <?php if (in_array($type_activite, [2, 3])) : ?>
-                                                <!-- Indemnité(s) forfaitaire(s) -->
-                                                <div class="mb-2 row">
-                                                    <label for="indemnite_forfaitaire" class="col-sm-3 col-form-label">Indemnité(s) forfaitaire(s) (FCFA)</label>
-                                                    <div class="col-sm-9">
-                                                        <input id="indemnite_forfaitaire" type="text" name="indemnite_forfaitaire" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['indemnite_forfaitaire']) ?>">
-                                                        <small class="text-danger"><?= $errors['indemnite_forfaitaire'] ?? '' ?></small>
-                                                        <?= isset($errors['indemnite_forfaitaire']) ? '<br>' : '' ?>
-                                                        <small class="text-muted">Note : séparés par des virgules, elles doivent être du même nombre que les titres, ex. : 100.50,200.75 (Chaque montant sera associé au titre en respectant l'ordre de saisie), renseignez 0 si un titre n'a pas d'indemnité</small>
-                                                    </div>
-                                                </div>
-                                            <?php endif; ?>
 
                                             <!-- Champ spécifique au type 3 -->
                                             <?php if ($type_activite == 3) : ?>
@@ -395,6 +419,73 @@ unset($_SESSION['success_data']);
                                             <button class="btn btn-primary mr-3" id="submitButton" name="form_submitted" type="submit">Enregistrer les modifications</button>
                                             <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-outline-primary">Annuler</a>
                                         </div>
+                                        <script>
+                                              document.addEventListener('DOMContentLoaded', function() {
+                                                            const typeActivite = '<?= $type_activite ?>';
+                                                            const container = document.getElementById('titres-container');
+                                                            const addBtn = document.getElementById('add-titre');
+                                                            const hiddenTitres = document.getElementById('titres_associes');
+                                                            const hiddenIndems = document.getElementById('indemnite_forfaitaire');
+
+                                                            function getValues() {
+                                                                const titres = Array.from(container.querySelectorAll('.titre-input')).map(i => i.value.trim());
+                                                                const indems = Array.from(container.querySelectorAll('.indem-input')).map(i => i.value.trim());
+                                                                return { titres, indems };
+                                                            }
+
+                                                            function syncHidden() {
+                                                                const { titres, indems } = getValues();
+                                                                hiddenTitres.value = titres.filter(t => t !== '').join(',');
+                                                                if (hiddenIndems) hiddenIndems.value = indems.join(',');
+                                                            }
+
+                                                            // Ajouter dynamiquement un titre
+                                                            addBtn.addEventListener('click', () => {
+                                                                const div = document.createElement('div');
+                                                                div.className = 'titre-item mb-2 d-flex gap-2 align-items-center';
+                                                                div.innerHTML = `
+                                                                    <input type="text" name="titres[]" class="form-control titre-input" placeholder="Titre">
+                                                                    ${(typeActivite === '2' || typeActivite === '3') 
+                                                                        ? '<input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" placeholder="Indemnité">' 
+                                                                        : ''}
+                                                                    <button type="button" class="btn btn-outline-danger remove-titre">Supprimer</button>
+                                                                `;
+                                                                container.appendChild(div);
+                                                            });
+
+                                                            // Supprimer un titre
+                                                            container.addEventListener('click', function(e) {
+                                                                if (e.target.classList.contains('remove-titre')) {
+                                                                    e.target.closest('.titre-item').remove();
+                                                                    syncHidden();
+                                                                }
+                                                            });
+
+                                                            // Synchroniser à chaque saisie
+                                                            container.addEventListener('input', syncHidden);
+
+                                                            // Vérification avant envoi
+                                                            const form = document.querySelector('#activityForm');
+                                                            form.addEventListener('submit', function(e) {
+                                                                syncHidden();
+                                                                const { titres, indems } = getValues();
+                                                                const hasTitre = titres.some(t => t !== '');
+                                                                const hasIndem = (typeActivite === '2' || typeActivite === '3')
+                                                                    ? indems.some(i => i !== '')
+                                                                    : true;
+
+                                                                if (!hasTitre || !hasIndem) {
+                                                                    e.preventDefault();
+                                                                    alert('Veuillez saisir au moins un titre (et une indemnité si nécessaire).');
+                                                                }
+                                                            });
+
+                                                            //  Initial sync
+                                                            syncHidden();
+                                                        });
+
+                                            </script>
+
                                     </form>
                                 </div>
                             </div>

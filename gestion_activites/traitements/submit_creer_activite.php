@@ -51,9 +51,7 @@ if ($recuperation_type_activite) {
         'titre_organisateur' => '',
         'financier' => '',
         'titre_financier' => '',
-        'titres_associes' => '',
         'taux_journalier' => '',
-        'indemnite_forfaitaire' => '',
         'taux_taches' => '',
         'frais_deplacement_journalier' => '',
         'date_debut' => '',
@@ -75,11 +73,16 @@ if ($recuperation_type_activite) {
             }
         }
 
+        // Récupération du titre et de l'indemnité forfaitaire
+        $titres = $_POST['titres'] ?? [];
+        $forfaits = $_POST['indemnites'] ?? [];
+
+
         ### Validations communes
 
         // Champs à valider
         $champs_texts = ['nom', 'timbre', 'description', 'centre', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'reference'];
-        $common_fields = array_merge($champs_texts, ['titres_associes', 'date_debut', 'date_fin']);
+        $common_fields = array_merge($champs_texts, ['date_debut', 'date_fin']);
 
         foreach ($common_fields as $field) {
             if (empty($data[$field])) {
@@ -182,6 +185,9 @@ if ($recuperation_type_activite) {
         }
 
         // Validation des titres associés
+
+
+        /*
         if ($data['titres_associes'] !== '' && strpos($data['titres_associes'], ',,') !== false) {
             $errors['titres_associes'] = "Les titres contiennent des virgules consécutives non valides.";
         } elseif ($data['titres_associes'] !== '' && !preg_match('/^[^,]+(,[^,]+)*$/', $data['titres_associes'])) {
@@ -196,7 +202,24 @@ if ($recuperation_type_activite) {
                     break;
                 }
             }
+        }*/
+
+    $validTitre = false;
+
+    foreach ($titres as $i => $titre) {
+        $titre_val = trim($titre);
+        $indem_val = isset($forfaits[$i]) ? trim($forfaits[$i]) : '';
+        
+        if ($titre_val !== '' || $indem_val !== '') {
+            $validTitre = true;
+            break;
         }
+    }
+
+    if (!$validTitre) {
+        $errors['titres_associes'] = "Veuillez entrer au moins un titre ou une indemnité.";
+    }
+
 
         
 
@@ -226,6 +249,7 @@ if ($recuperation_type_activite) {
             }
         }
 
+        /*
         if (in_array($type_activite, [2, 3])) {
             if (empty($data['indemnite_forfaitaire'])) {
                 $errors['indemnite_forfaitaire'] = "L'indemnité forfaitaire est requise.";
@@ -245,7 +269,7 @@ if ($recuperation_type_activite) {
                     $errors['titres_associes'] = $errors['indemnite_forfaitaire'] = "Le nombre d'indemnités doit être égal au nombre de titres.";
                 }
             }
-        }
+        } */
 
         if ($type_activite === 3) {
             if (empty($data['taux_taches'])) {

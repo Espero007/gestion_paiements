@@ -111,6 +111,10 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
     <!-- Style loader -->
     <link rel="stylesheet" href="/assets/css/loader.css">
 
+    <!-- Style pour la section des titres dans les formulaire de création et de modification d'une activité -->
+    <link rel="stylesheet" href="/assets/css/titres.css">
+
+
 </head>
 
 <!-- Loader -->

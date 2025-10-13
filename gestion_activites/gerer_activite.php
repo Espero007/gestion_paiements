@@ -69,6 +69,15 @@ require_once('traitements/gerer_activite.php');
                                 <?php afficherAlerte('liaison_rompue', 'success', true) ?>
                             <?php endif; ?>
 
+                            <?php if (isset($_SESSION['liaison_impactee']) && $_SESSION['liaison_impactee']['id_activite'] == $activite['id']) : ?>
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <?= $_SESSION['liaison_impactee']['message'] ?>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="this.parentElement.style.display='none';">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <?php unset($_SESSION['liaison_impactee']); ?>
+                            <?php endif; ?>
                             <!-- Fin Messages divers  -->
 
                             <!-- Nom -->

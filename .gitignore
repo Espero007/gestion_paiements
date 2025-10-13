@@ -5,4 +5,4 @@ autres/bs-config.js
 autres/*.png
 autres/*.jpg
 test.php
-parametres/donnees.csv
+parametres/*.csv
