@@ -498,16 +498,19 @@ unset($_SESSION['success_data']);
                     document.querySelectorAll('div').forEach(div => {
                         if (div.classList.contains('appear')) div.classList.remove('appear');
                     });
-                }, 200);
+                }, 400);
             });
 
             // Supprimer un titre
             container.addEventListener('click', function(e) {
                 if (e.target.classList.contains('remove-titre')) {
-                    e.target.closest('.titre-item').classList.add('desappear');
+                    const element = e.target.closest('.titre-item');
+                    element.classList.add('desappear');
+                    
                     setTimeout(() => {
-                        e.target.closest('.titre-item').remove();
-                    }, 200);
+                        element.remove();
+                    }, 400);
+                    
                     syncHidden();
                 }
             });

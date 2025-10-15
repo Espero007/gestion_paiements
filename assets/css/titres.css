@@ -35,6 +35,10 @@ a:hover.no-decoration {
     /* Espace entre les blocs */
 }
 
+#titres-container:has(.titre-item.desappear){
+    position: relative;
+}
+
 .titre-item {
     display: flex;
     align-items: center;
@@ -58,7 +62,7 @@ a:hover.no-decoration {
 }
 
 .desappear {
-    animation: desappear 0.2s ease-in-out forwards;
+    animation: desappear 0.3s ease-in-out forwards;
 }
 
 @keyframes appear {
@@ -74,8 +78,13 @@ a:hover.no-decoration {
 }
 
 @keyframes desappear {
-    to {
-        transform: translateY(-2px);
+    90% {
+        transform: translateY(-10px);
         opacity: 0;
+    }
+
+    to{
+        position: absolute;
+        z-index: -10000;
     }
 }
