@@ -14,7 +14,7 @@ require_once(__DIR__ . '/includes/bdd.php') ?>
 <body>
 
     <?php
-   
+   var_dump("Activité de démo 1 et blabla bla bla bla bonjour toi comment tu vas je mets ces trucs pour tester si");
 
 
     ?>
