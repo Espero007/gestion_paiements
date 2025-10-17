@@ -120,7 +120,7 @@ require_once('traitements/submit_creer_activite.php');
                                                             <input id="<?= $key ?>" type="text" name="<?= $key ?>" class="form-control" value="<?= $success ? '' : htmlspecialchars($data[$key]) ?>">
                                                             <small class="text-danger"><?= $errors[$key] ?? '' ?></small>
                                                         </div>
-                                                    </div>
+                                                    </div>                                               
                                                 <?php endforeach; ?>
 
                                                 <!-- =================== TITRES DYNAMIQUES =================== -->
@@ -189,6 +189,25 @@ require_once('traitements/submit_creer_activite.php');
                                                         </div>
                                                     </div>
                                                 <?php endif; ?>
+
+                                                 <!-- Mode de Paiyement -->
+                                            <div class="mb-4 row">
+                                                <label for="mode_payement" class="col-sm-3 col-form-label">Mode de payement</label>
+                                                <div class="col-sm-9">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="mode_payement" id="mode_payement_nouveau" value="1">
+                                                        <label class="form-check-label" for="mode_payement_nouveau">Nouveau</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="mode_payement" id="mode_payement_ancien" value="0">
+                                                        <label class="form-check-label" for="mode_payement_ancien">Ancien</label>
+                                                    </div>
+                                                    <small class="text-danger"><?= $errors['mode_payement'] ?? '' ?></small>
+                                                    <small><br> Sélectionnez <strong>Nouveau</strong> si les informations financières de l'utilisateur sont liés à sont compte bancaire. Sinon sélectionnez <strong>Ancien</strong>.</small>
+
+                                                </div>
+                                            </div>
+
                                             </fieldset>
 
                                             <!-- ================= AUTRES INFORMATIONS ================= -->
