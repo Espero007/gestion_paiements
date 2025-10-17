@@ -124,7 +124,7 @@ if ($recuperation_type_activite) {
              */
 
             if ($champ != 'timbre' && $champ != 'description') {
-                if (!preg_match('/^[\p{L}\p{N} \-\'\°\/]+$/u', $data[$champ])) {
+                if (!preg_match('/^[\p{L}\p{N} \-\'\°\/\(\)\,]+$/u', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "Ce champ contient des caractères non valides !";
                     }

@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
         // Validations sur les valeurs textuelles
         foreach ($champs_texts as $champ) {
             if ($champ != 'timbre' && $champ != 'reference' && $champ != 'description') {
-                if (!preg_match('/^[\p{L}\p{N} \-\'\/]+$/u', $data[$champ])) {
+                if (!preg_match('/^[\p{L}\p{N} \-\'\°\/\(\)\,]+$/u', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "Ce champ contient des caractères non valides !";
                     }
