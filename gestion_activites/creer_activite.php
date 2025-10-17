@@ -6,15 +6,6 @@ require_once('traitements/submit_creer_activite.php');
 ?>
 
 <body id="page-top">
-<<<<<<< HEAD
-
-=======
-    <style>
-        a:hover.no-decoration {
-            text-decoration: none;
-        }
-    </style>
->>>>>>> origin/master
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -41,12 +32,16 @@ require_once('traitements/submit_creer_activite.php');
                         <h1 class="h4 mb-4 text-gray-800"> Activités /
                             <strong>Création d'une activité <?= isset($type_activite) ? 'de type ' . $type_activite : '' ?></strong>
                         </h1>
-                        <p class="mt-2">Vous êtes sur le point de créer une activité. Nous allons vous guider tout au long du processus.</p>
+                        <p class="mt-2 mb-1">Vous êtes sur le point de créer une activité. Nous allons vous guider tout au long du processus.</p>
+                        <!-- <hr> -->
                     </div>
 
                     <?php if (isset($recuperation_type_activite) && !$recuperation_type_activite) : ?>
-                        <!-- Sélection du type d'activité -->
-                        <p class="mt-2">Commencez par nous dire quel type d'activité vous aimeriez créer.</p>
+                        <!-- Le type de l'activité n'a pas encore été choisi -->
+                        <p class="mt-0">Commencez par nous dire quel type d'activité vous aimeriez créer. Nous disposons de trois types qui ont chacun leurs particularités.</p>
+
+                        <!-- Content Row -->
+
                         <div class="row mb-5">
                             <?php for ($i = 1; $i <= 3; $i++): ?>
                                 <div class="col-md-6 col-lg-4">
@@ -68,9 +63,8 @@ require_once('traitements/submit_creer_activite.php');
                         </div>
 
                     <?php elseif (isset($recuperation_type_activite) && $recuperation_type_activite): ?>
-                        <!-- Formulaire de création -->
-                        <p class="mt-2">Dîtes-nous en plus sur votre activité en renseignant le formulaire ci-dessous</p>
-
+                        <!-- Le type de l'activité a été récupéré et est valide -->
+                        <p class="mt-0">Dîtes-nous en plus sur votre activité en renseignant le formulaire ci-dessous</p>
                         <div class="row">
                             <div class="col-12">
                                 <div class="card shadow mb-4">
@@ -115,13 +109,13 @@ require_once('traitements/submit_creer_activite.php');
                                                 ];
                                                 foreach ($champs as $key => $label):
                                                 ?>
-                                                <div class="mb-2 row">
-                                                    <label for="<?= $key ?>" class="col-sm-3 col-form-label"><?= $label ?></label>
-                                                    <div class="col-sm-9">
-                                                        <input id="<?= $key ?>" type="text" name="<?= $key ?>" class="form-control" value="<?= $success ? '' : htmlspecialchars($data[$key]) ?>">
-                                                        <small class="text-danger"><?= $errors[$key] ?? '' ?></small>
+                                                    <div class="mb-2 row">
+                                                        <label for="<?= $key ?>" class="col-sm-3 col-form-label"><?= $label ?></label>
+                                                        <div class="col-sm-9">
+                                                            <input id="<?= $key ?>" type="text" name="<?= $key ?>" class="form-control" value="<?= $success ? '' : htmlspecialchars($data[$key]) ?>">
+                                                            <small class="text-danger"><?= $errors[$key] ?? '' ?></small>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <?php endforeach; ?>
 
                                                 <!-- =================== TITRES DYNAMIQUES =================== -->
@@ -133,11 +127,11 @@ require_once('traitements/submit_creer_activite.php');
                                                             if (!empty($titres_apres)) {
                                                                 foreach ($titres_apres as $index => $t) {
                                                                     $titre_val = htmlspecialchars($t['nom']);
-                                                                    $indem_val = in_array($type_activite, ['2','3']) ? htmlspecialchars($t['indemnite_forfaitaire']) : '';
+                                                                    $indem_val = in_array($type_activite, ['2', '3']) ? htmlspecialchars($t['indemnite_forfaitaire']) : '';
                                                                     echo '<div class="titre-item">';
-                                                                    echo '<input type="text" name="titres[]" class="form-control titre-input" value="'.$titre_val.'" placeholder="Titre">';
-                                                                    if (in_array($type_activite, ['2','3'])) {
-                                                                        echo '<input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" value="'.$indem_val.'" placeholder="Indemnité">';
+                                                                    echo '<input type="text" name="titres[]" class="form-control titre-input" value="' . $titre_val . '" placeholder="Titre">';
+                                                                    if (in_array($type_activite, ['2', '3'])) {
+                                                                        echo '<input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" value="' . $indem_val . '" placeholder="Indemnité">';
                                                                     }
                                                                     echo '<button type="button" class="btn btn-outline-primary remove-titre">Supprimer</button>';
                                                                     echo '</div>';
@@ -148,12 +142,13 @@ require_once('traitements/submit_creer_activite.php');
 
                                                         <button type="button" id="add-titre" class="btn btn-primary mr-3 mt-2">Ajouter un titre</button>
                                                         
+
                                                     </div>
                                                 </div>
 
                                                 <input type="hidden" name="titres_associes" id="titres_associes" value="<?= htmlspecialchars($data['titres_associes'] ?? '') ?>">
-                                                <?php if(in_array($type_activite, ['2', '3'])): ?>
-                                                <input type="hidden" name="indemnite_forfaitaire" id="indemnite_forfaitaire" value="<?= htmlspecialchars($data['indemnite_forfaitaire'] ?? '') ?>">
+                                                <?php if (in_array($type_activite, ['2', '3'])): ?>
+                                                    <input type="hidden" name="indemnite_forfaitaire" id="indemnite_forfaitaire" value="<?= htmlspecialchars($data['indemnite_forfaitaire'] ?? '') ?>">
                                                 <?php endif; ?>
                                             </fieldset>
 
@@ -166,30 +161,30 @@ require_once('traitements/submit_creer_activite.php');
                                                 </legend>
 
                                                 <?php if (in_array($type_activite, [1, 2])): ?>
-                                                <div class="mb-2 row">
-                                                    <label for="taux_journalier" class="col-sm-3 col-form-label">Taux journalier (FCFA)</label>
-                                                    <div class="col-sm-9">
-                                                        <input id="taux_journalier" type="text" name="taux_journalier" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['taux_journalier']) ?>">
-                                                        <small class="text-danger"><?= $errors['taux_journalier'] ?? '' ?></small>
+                                                    <div class="mb-2 row">
+                                                        <label for="taux_journalier" class="col-sm-3 col-form-label">Taux journalier (FCFA)</label>
+                                                        <div class="col-sm-9">
+                                                            <input id="taux_journalier" type="text" name="taux_journalier" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['taux_journalier']) ?>">
+                                                            <small class="text-danger"><?= $errors['taux_journalier'] ?? '' ?></small>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <?php endif; ?>
 
                                                 <?php if ($type_activite == 3): ?>
-                                                <div class="mb-2 row">
-                                                    <label for="taux_taches" class="col-sm-3 col-form-label">Taux par tâche (FCFA)</label>
-                                                    <div class="col-sm-9">
-                                                        <input id="taux_taches" type="text" name="taux_taches" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['taux_taches']) ?>">
-                                                        <small class="text-danger"><?= $errors['taux_taches'] ?? '' ?></small>
+                                                    <div class="mb-2 row">
+                                                        <label for="taux_taches" class="col-sm-3 col-form-label">Taux par tâche (FCFA)</label>
+                                                        <div class="col-sm-9">
+                                                            <input id="taux_taches" type="text" name="taux_taches" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['taux_taches']) ?>">
+                                                            <small class="text-danger"><?= $errors['taux_taches'] ?? '' ?></small>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="mb-2 row">
-                                                    <label for="frais_deplacement_journalier" class="col-sm-3 col-form-label">Frais de déplacement journaliers (FCFA)</label>
-                                                    <div class="col-sm-9">
-                                                        <input id="frais_deplacement_journalier" type="text" name="frais_deplacement_journalier" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['frais_deplacement_journalier']) ?>">
-                                                        <small class="text-danger"><?= $errors['frais_deplacement_journalier'] ?? '' ?></small>
+                                                    <div class="mb-2 row">
+                                                        <label for="frais_deplacement_journalier" class="col-sm-3 col-form-label">Frais de déplacement journaliers (FCFA)</label>
+                                                        <div class="col-sm-9">
+                                                            <input id="frais_deplacement_journalier" type="text" name="frais_deplacement_journalier" class="form-control" value="<?= $success ? '' : htmlspecialchars($data['frais_deplacement_journalier']) ?>">
+                                                            <small class="text-danger"><?= $errors['frais_deplacement_journalier'] ?? '' ?></small>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <?php endif; ?>
                                             </fieldset>
 
@@ -223,73 +218,6 @@ require_once('traitements/submit_creer_activite.php');
                                                 <button class="btn btn-primary mr-3" id="submitButton" type="submit" name="form_submitted">Créer l'activité</button>
                                                 <a href="creer_activite.php" class="btn btn-outline-primary">Annuler</a>
                                             </div>
-
-                                            <!-- ================= JS DYNAMIQUE TITRES ================= -->
-                                            <script>
-                                                const container = document.querySelector('.titres-container');
-                                                const addBtn = document.getElementById('add-titre');
-                                                const typeActivite = <?= json_encode($type_activite); ?>;
-
-                                                function createTitre(titre = '', indem = '') {
-                                                    const div = document.createElement('div');
-                                                    div.classList.add('titre-item');
-
-                                                    const titreInput = document.createElement('input');
-                                                    titreInput.type = 'text';
-                                                    titreInput.name = 'titres[]';
-                                                    titreInput.classList.add('form-control', 'titre-input');
-                                                    titreInput.placeholder = 'Titre';
-                                                    titreInput.value = titre;
-                                                    div.appendChild(titreInput);
-
-                                                    if (typeActivite === '2' || typeActivite === '3') {
-                                                        const indemInput = document.createElement('input');
-                                                        indemInput.type = 'number';
-                                                        indemInput.step = '0.01';
-                                                        indemInput.name = 'indemnites[]';
-                                                        indemInput.classList.add('form-control', 'indem-input');
-                                                        indemInput.placeholder = 'Indemnité';
-                                                        indemInput.value = indem;
-                                                        div.appendChild(indemInput);
-                                                    }
-
-                                                    const removeBtn = document.createElement('button');
-                                                    removeBtn.type = 'button';
-                                                    removeBtn.classList.add('btn', 'btn-outline-primary');
-                                                    removeBtn.textContent = 'Supprimer';
-                                                    removeBtn.addEventListener('click', () => div.remove());
-                                                    div.appendChild(removeBtn);
-
-                                                    return div;
-                                                }
-
-                                                addBtn.addEventListener('click', () => {
-                                                    container.appendChild(createTitre());
-                                                });
-
-                                                const form = document.querySelector('form');
-                                                form.addEventListener('submit', e => {
-                                                    const titres = document.querySelectorAll('.titre-input');
-                                                    const indemnites = document.querySelectorAll('.indem-input');
-
-                                                    let valid = false;
-                                                    titres.forEach((t, i) => {
-                                                        if (t.value.trim() !== '' || (indemnites[i] && indemnites[i].value.trim() !== '')) {
-                                                            valid = true;
-                                                        }
-                                                    });
-
-                                                    if (!valid) {
-                                                        e.preventDefault();
-                                                        alert('Veuillez entrer au moins un titre et/ou une indemnité.');
-                                                    }
-                                                });
-
-                                                if (container.children.length === 0) {
-                                                    container.appendChild(createTitre());
-                                                }
-                                            </script>
-
                                         </form>
                                     </div>
                                 </div>
@@ -321,6 +249,73 @@ require_once('traitements/submit_creer_activite.php');
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
+    
+    <!-- ================= JS DYNAMIQUE TITRES ================= -->
+    <script>
+        const container = document.querySelector('.titres-container');
+        const addBtn = document.getElementById('add-titre');
+        const typeActivite = <?= json_encode($type_activite); ?>;
+
+        function createTitre(titre = '', indem = '') {
+            const div = document.createElement('div');
+            div.classList.add('titre-item');
+
+            const titreInput = document.createElement('input');
+            titreInput.type = 'text';
+            titreInput.name = 'titres[]';
+            titreInput.classList.add('form-control', 'titre-input');
+            titreInput.placeholder = 'Titre';
+            titreInput.value = titre;
+            div.appendChild(titreInput);
+
+            if (typeActivite === '2' || typeActivite === '3') {
+                const indemInput = document.createElement('input');
+                indemInput.type = 'number';
+                indemInput.step = '0.01';
+                indemInput.name = 'indemnites[]';
+                indemInput.classList.add('form-control', 'indem-input');
+                indemInput.placeholder = 'Indemnité';
+                indemInput.value = indem;
+                div.appendChild(indemInput);
+            }
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.classList.add('btn', 'btn-outline-primary');
+            removeBtn.textContent = 'Supprimer';
+            removeBtn.addEventListener('click', () => div.remove());
+            div.appendChild(removeBtn);
+
+            return div;
+        }
+
+        addBtn.addEventListener('click', () => {
+            container.appendChild(createTitre());
+        });
+
+        const form = document.querySelector('form');
+        form.addEventListener('submit', e => {
+            const titres = document.querySelectorAll('.titre-input');
+            const indemnites = document.querySelectorAll('.indem-input');
+
+            let valid = false;
+            titres.forEach((t, i) => {
+                if (t.value.trim() !== '' || (indemnites[i] && indemnites[i].value.trim() !== '')) {
+                    valid = true;
+                }
+            });
+
+            if (!valid) {
+                e.preventDefault();
+                alert('Veuillez entrer au moins un titre et/ou une indemnité.');
+            }
+        });
+
+        if (container.children.length === 0) {
+            container.appendChild(createTitre());
+        }
+    </script>
 
 </body>
+
 </html>
