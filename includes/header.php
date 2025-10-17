@@ -114,6 +114,10 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
     <!-- Style pour la section des titres dans les formulaire de création et de modification d'une activité -->
     <link rel="stylesheet" href="/assets/css/titres.css">
 
+    <!-- Script JS pour l'ajout dynamique des titres et des indemnités forfaitaires pour la création et la modification d'une activité -->
+     
+    <script src = "/assets/js/titre_indem.js" defer> </script>
+
 </head>
 
 <!-- Loader -->
