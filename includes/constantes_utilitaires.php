@@ -229,7 +229,7 @@ const DONNEES_BASE_ACTIVITES = [
             "Formatrice",
             "Cheffe de Service",
             "Responsable Logistique",
-            "Contrôleure Financier",
+            "Contrôleuse Financière",
             "Inspectrice",
             "Planificatrice",
             "Responsable RH",
@@ -1735,7 +1735,7 @@ function genererCSVActeurs()
 
     for ($i = 0; $i < NOMBRE_ACTEURS_DEFAUT; $i++) {
         $sexe = rand(0, 1) ? 'M' : 'F';
-        $nom = $noms[array_rand($noms)];
+        $nom = mb_strtoupper($noms[array_rand($noms)]);
         $sourcePrenoms = $sexe === 'M' ? $prenoms_masculins : $prenoms_feminins;
 
         // Choisir 1 ou 2 prénoms aléatoirement sans doublons
