@@ -31,7 +31,7 @@ addBtn.addEventListener('click', () => {
     div.innerHTML = `
     <input type="text" name="titres[]" class="form-control titre-input" placeholder="Titre">
     ${(typeActivite === '2' || typeActivite === '3') 
-        ? '<input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" placeholder="Indemnité"><span class="input-group-text">FCFA</span>' 
+        ? ' <div class = "input-group" ><input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" placeholder="Indemnité"><span class="input-group-text">FCFA</span> </div>' 
         : ''}
     <button type="button" class="btn btn-outline-danger remove-titre">Supprimer</button>
 `;

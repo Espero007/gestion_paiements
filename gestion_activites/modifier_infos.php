@@ -464,8 +464,9 @@ unset($_SESSION['success_data']);
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
-    <div id="activityForm" data-type="<?= $type_activite ?>"></div>
-
+    
+    <input type="hidden" id="type_activite" value="<?= htmlspecialchars($type_activite, ENT_QUOTES, 'UTF-8') ?>">
+    <script src="/js/monScript.js" defer></script>
 </body>
 
 </html>
