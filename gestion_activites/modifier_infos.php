@@ -278,7 +278,7 @@ unset($_SESSION['success_data']);
                                                         if (!empty($titres)) {
                                                             foreach ($titres as $index => $titre):
                                                         ?>
-                                                                <div class="titre-item mb-2 d-flex gap-2 align-items-center">
+                                                                <div class="titre-item mb-2 d-flex gap-2 align-items-center">  
                                                                     <input type="text" name="titres[]"
                                                                         class="form-control titre-input"
                                                                         placeholder="Titre"
@@ -292,7 +292,7 @@ unset($_SESSION['success_data']);
                                                                                 class="form-control indem-input"
                                                                                 value="<?= $titre['indemnite_forfaitaire'] ?>"
                                                                                 placeholder="Indemnité">
-                                                                            <span class="input-group-text">FCFA</span>
+                                                                                <span class="input-group-text">FCFA</span>
 
                                                                         </div>
 
@@ -305,7 +305,7 @@ unset($_SESSION['success_data']);
                                                         } else {
                                                             // S’il n’y a pas encore de titre
                                                             ?>
-                                                            <div class="titre-item mb-2 d-flex gap-2 align-items-center">
+                                                            <div class="titre-item mb-2 d-flex gap-2 align-items-center">  
                                                                 <input type="text" name="titres[]" class="form-control titre-input" placeholder="Titre">
                                                                 <input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" placeholder="Indemnité">
                                                                 <button type="button" class="btn btn-outline-danger remove-titre">Supprimer</button>
@@ -318,6 +318,11 @@ unset($_SESSION['success_data']);
                                                             Ajouter un titre
                                                         </button>
                                                     </div>
+
+                                                    <div>
+                                                        <small class="text-danger"><?= $errors['titres_associes'] ?? '' ?></small>
+                                                    </div>
+
                                                 </div>
 
                                                 <!-- Champs cachés pour envoyer les données groupées -->
@@ -492,7 +497,7 @@ unset($_SESSION['success_data']);
                 div.innerHTML = `
                 <input type="text" name="titres[]" class="form-control titre-input" placeholder="Titre">
                 ${(typeActivite === '2' || typeActivite === '3') 
-                    ? '<input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" placeholder="Indemnité">' 
+                    ? '<input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" placeholder="Indemnité"><span class="input-group-text">FCFA</span>' 
                     : ''}
                 <button type="button" class="btn btn-outline-danger remove-titre">Supprimer</button>
             `;

@@ -8,7 +8,7 @@ $success = false;
 $id_user = $_SESSION['user_id'];
 $diplomes = [];
 $titres = [];
-$forfaires = [];
+$forfaits = [];
 
 // Vérifier si l'ID de l'activité est fourni
 if (!isset($_POST['id']) || !filter_var($_POST['id'], FILTER_VALIDATE_INT)) {
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
         // Validations sur les valeurs textuelles
         foreach ($champs_texts as $champ) {
             if ($champ != 'timbre' && $champ != 'reference' && $champ != 'description') {
-                if (!preg_match('/^[\p{L}\p{N} \-\'\°\/\(\)\,]+$/u', $data[$champ])) {
+                if (!preg_match('/^[\p{L}\p{N} \-\'\°\/\(\)\,ç]+$/u', $data[$champ])) {
                     if (!isset($errors[$champ])) {
                         $errors[$champ] = "Ce champ contient des caractères non valides !";
                     }
@@ -132,25 +132,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
 
         // Récupération du titre et de l'indemnité forfaitaire
         $titres = $_POST['titres'] ?? [];
-        $forfaires = $_POST['indemnites'] ?? [];
+        $forfaits = $_POST['indemnites'] ?? [];
 
 
-        // Validation des titres associés et des indemnités forfaitaires
-         $validTitre = false;
+    // Validation des titres associés et des indemnités forfaitaires
+    $validTitre = false;
 
-        foreach ($titres as $i => $titre) {
-            $titre_val = trim($titre);
-            $indem_val = isset($forfaires[$i]) ? trim($forfaires[$i]) : '';
+    foreach ($titres as $i => $titre) {
+        $titre_val = trim($titre);
+        $indem_val = isset($forfaits[$i]) ? trim($forfaits[$i]) : '';
+        //$indem_val = trim($forfaits[$i]);
         
-            if ($titre_val !== '' || $indem_val !== '') {
-                $validTitre = true;
-                break;
-            }
+        if(empty($titre_val) || empty($indem_val)) {
+            $errors['titres_associes'] = "Assurez d'avoir bien renseigner les titres et ou les indemnités correspondantes. merdes";
+            //$validTitre = true;
+            break;
         }
 
-        if (!$validTitre) {
-            $errors['titres_associes'] = "Veuillez entrer au moins un titre ou une indemnité.";
-        }
+        /*
+        if ($titre_val === '' || $indem_val === '') {
+            $validTitre = true;
+            break;
+        } */
+    }
+
+    /*
+    if ($validTitre) {
+        $errors['titres_associes'] = "Assurez d'avoir bien renseigner les titres et ou les indemnités correspondantes merde.";
+    } */
+
 
 
 

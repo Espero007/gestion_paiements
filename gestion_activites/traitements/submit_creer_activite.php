@@ -14,7 +14,7 @@ if (isset($_GET['type_activite'])) {
         // Les deux premiers points sont ok, on vérifie alors le troisième point
         if ($_GET['type_activite'] == 1 || $_GET['type_activite'] == 2 || $_GET['type_activite'] == 3) {
             // Le type est valide
-            $type_activite = $_GET['type_activite'];
+            $type_activite = (int)$_GET['type_activite'];
             $recuperation_type_activite = true;
             $redirect = false;
         }
@@ -77,6 +77,7 @@ if ($recuperation_type_activite) {
         $titres = $_POST['titres'] ?? [];
         $forfaits = $_POST['indemnites'] ?? [];
 
+        
 
         ### Validations communes
 
@@ -210,15 +211,23 @@ if ($recuperation_type_activite) {
         $titre_val = trim($titre);
         $indem_val = isset($forfaits[$i]) ? trim($forfaits[$i]) : '';
         
+        if(empty($titre_val) || empty($indem_val)) {
+            $errors['titres_associes'] = "Assurez vous d'avoir bien renseigner les titres et ou les indemnités correspondantes.";
+            //$validTitre = true;
+            break;
+        }
+
+        /*
         if ($titre_val !== '' || $indem_val !== '') {
             $validTitre = true;
             break;
-        }
-    }
+        }*/
+    } 
 
-    if (!$validTitre) {
-        $errors['titres_associes'] = "Veuillez entrer au moins un titre ou une indemnité.";
-    }
+    /*
+    if ($validTitre) {
+        $errors['titres_associes'] = "Assurez d'avoir bien renseigner les titres et ou les indemnités correspondantes.";
+    } */
 
 
         

@@ -124,27 +124,39 @@ require_once('traitements/submit_creer_activite.php');
                                                 <?php endforeach; ?>
 
                                                 <!-- =================== TITRES DYNAMIQUES =================== -->
-                                                <div class="mb-2 row">
-                                                    <div class="form-group col-12">
-                                                        <label for="titres">Titres associés</label>
-                                                        <div class="titres-container">
+                                                <div class="row">
+                                                        <label for="titres"  class="col-sm-3 col-form-label">Titres associés</label>
+                                                        <div class="col-sm-9">
+                                                        <div id="titres-container">
                                                             <?php
                                                             if (!empty($titres_apres)) {
                                                                 foreach ($titres_apres as $index => $t) {
                                                                     $titre_val = htmlspecialchars($t['nom']);
                                                                     $indem_val = in_array($type_activite, ['2', '3']) ? htmlspecialchars($t['indemnite_forfaitaire']) : '';
-                                                                    echo '<div class="titre-item">';
+                                                                    echo '<div class="titre-item mb-2 d-flex gap-2 align-items-center">';
                                                                     echo '<input type="text" name="titres[]" class="form-control titre-input" value="' . $titre_val . '" placeholder="Titre">';
                                                                     if (in_array($type_activite, ['2', '3'])) {
+                                                                        echo '<div class="input-group">';
                                                                         echo '<input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" value="' . $indem_val . '" placeholder="Indemnité">';
+                                                                        echo '<span class="input-group-text">FCFA</span>';
+                                                                        echo '</div>';
                                                                     }
-                                                                    echo '<button type="button" class="btn btn-outline-primary remove-titre">Supprimer</button>';
+                                                                    echo '<button type="button" class="btn btn-outline-danger remove-titre">Supprimer</button>';
                                                                     echo '</div>';
                                                                 }
                                                             }
                                                             ?>
                                                         </div>
-                                                        <button type="button" id="add-titre" class="btn btn-primary mr-3 mt-2">Ajouter un titre</button>
+                                                    <!-- Bouton pour ajouter dynamiquement un nouveau titre -->
+                                                    <div class="d-flex justify-content-center">
+                                                        <button type="button" id="add-titre" class="btn btn-outline-primary mt-2">
+                                                            Ajouter un titre
+                                                        </button>
+                                                    </div>
+
+                                                    <div>
+                                                        <small class="text-danger"><?= $errors['titres_associes'] ?? '' ?></small>
+                                                    </div>
 
                                                     </div>
                                                 </div>
@@ -273,71 +285,97 @@ require_once('traitements/submit_creer_activite.php');
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
     
     <!-- ================= JS DYNAMIQUE TITRES ================= -->
+    
     <script>
-        const container = document.querySelector('.titres-container');
-        const addBtn = document.getElementById('add-titre');
-        const typeActivite = <?= json_encode($type_activite); ?>;
+        document.addEventListener('DOMContentLoaded', function() {
+            const typeActivite = '<?= $type_activite ?>';
+            const container = document.getElementById('titres-container');
+            const addBtn = document.getElementById('add-titre');
+            const hiddenTitres = document.getElementById('titres_associes');
+            const hiddenIndems = document.getElementById('indemnite_forfaitaire');
 
-        function createTitre(titre = '', indem = '') {
-            const div = document.createElement('div');
-            div.classList.add('titre-item');
-
-            const titreInput = document.createElement('input');
-            titreInput.type = 'text';
-            titreInput.name = 'titres[]';
-            titreInput.classList.add('form-control', 'titre-input');
-            titreInput.placeholder = 'Titre';
-            titreInput.value = titre;
-            div.appendChild(titreInput);
-
-            if (typeActivite === '2' || typeActivite === '3') {
-                const indemInput = document.createElement('input');
-                indemInput.type = 'number';
-                indemInput.step = '0.01';
-                indemInput.name = 'indemnites[]';
-                indemInput.classList.add('form-control', 'indem-input');
-                indemInput.placeholder = 'Indemnité';
-                indemInput.value = indem;
-                div.appendChild(indemInput);
+            function getValues() {
+                const titres = Array.from(container.querySelectorAll('.titre-input')).map(i => i.value.trim());
+                const indems = Array.from(container.querySelectorAll('.indem-input')).map(i => i.value.trim());
+                return {
+                    titres,
+                    indems
+                };
             }
 
-            const removeBtn = document.createElement('button');
-            removeBtn.type = 'button';
-            removeBtn.classList.add('btn', 'btn-outline-primary');
-            removeBtn.textContent = 'Supprimer';
-            removeBtn.addEventListener('click', () => div.remove());
-            div.appendChild(removeBtn);
+            function syncHidden() {
+                const {
+                    titres,
+                    indems
+                } = getValues();
+                hiddenTitres.value = titres.filter(t => t !== '').join(',');
+                if (hiddenIndems) hiddenIndems.value = indems.join(',');
+            }
 
-            return div;
-        }
+            // Ajouter dynamiquement un titre
+            addBtn.addEventListener('click', () => {
+                const div = document.createElement('div');
+                div.className = 'titre-item mb-2 d-flex gap-2 align-items-center appear';
+                div.innerHTML = `
+                <input type="text" name="titres[]" class="form-control titre-input" placeholder="Titre">
+                ${(typeActivite === '2' || typeActivite === '3') 
+                    ? '<input type="number" step="0.01" name="indemnites[]" class="form-control indem-input" placeholder="Indemnité"><span class="input-group-text">FCFA</span>' 
+                    : ''}
+                <button type="button" class="btn btn-outline-danger remove-titre">Supprimer</button>
+            `;
 
-        addBtn.addEventListener('click', () => {
-            container.appendChild(createTitre());
-        });
+                // On ajoute l'élément
+                container.appendChild(div);
 
-        const form = document.querySelector('form');
-        form.addEventListener('submit', e => {
-            const titres = document.querySelectorAll('.titre-input');
-            const indemnites = document.querySelectorAll('.indem-input');
+                // On retire la classe d'animation
+                setTimeout(() => {
+                    document.querySelectorAll('div').forEach(div => {
+                        if (div.classList.contains('appear')) div.classList.remove('appear');
+                    });
+                }, 400);
+            });
 
-            let valid = false;
-            titres.forEach((t, i) => {
-                if (t.value.trim() !== '' || (indemnites[i] && indemnites[i].value.trim() !== '')) {
-                    valid = true;
+            // Supprimer un titre
+            container.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-titre')) {
+                    const element = e.target.closest('.titre-item');
+                    element.classList.add('desappear');
+
+                    setTimeout(() => {
+                        element.remove();
+                    }, 400);
+
+                    syncHidden();
                 }
             });
 
-            if (!valid) {
-                e.preventDefault();
-                alert('Veuillez entrer au moins un titre et/ou une indemnité.');
-            }
+            // Synchroniser à chaque saisie
+            container.addEventListener('input', syncHidden);
+
+            // Vérification avant envoi
+            const form = document.querySelector('#activityForm');
+            form.addEventListener('submit', function(e) {
+                syncHidden();
+                const {
+                    titres,
+                    indems
+                } = getValues();
+                const hasTitre = titres.some(t => t !== '');
+                const hasIndem = (typeActivite === '2' || typeActivite === '3') ?
+                    indems.some(i => i !== '') :
+                    true;
+
+                    /*
+                if (!hasTitre || !hasIndem) {
+                    e.preventDefault();
+                    alert('Veuillez saisir au moins un titre (et une indemnité si nécessaire).');
+                } */
+            });
+
+            //  Initial sync
+            syncHidden();
         });
-
-        if (container.children.length === 0) {
-            container.appendChild(createTitre());
-        }
     </script>
-
 </body>
 
 </html>
