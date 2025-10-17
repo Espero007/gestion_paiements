@@ -56,7 +56,7 @@ $stmt->closeCursor();
                 <div class="container-fluid">
                     <!-- Messages divers -->
                     <?php if (isset($_SESSION['infos_demo_ok'])) : ?>
-                        <?php afficherAlerte('infos_demo_ok', 'success', true) ?>
+                        <?php afficherAlerte('infos_demo_ok', 'info', true) ?>
                     <?php endif; ?>
                     <!-- Fin Messages divers -->
 

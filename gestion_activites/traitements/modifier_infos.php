@@ -65,13 +65,14 @@ $data = [
     'frais_deplacement_journalier' => '',
     'date_debut' => '',
     'date_fin' => '',
+    'mode_payement' => '',
 ];
 
 // Champs à afficher dans le message de succès par type
 $fields_to_display = [
-    '1' => ['nom', 'description', 'centre', 'timbre', 'reference', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'taux_journalier', 'date_debut', 'date_fin'],
-    '2' => ['nom', 'description', 'centre', 'timbre', 'reference', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin'],
-    '3' => ['nom', 'description', 'centre', 'timbre', 'reference', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin']
+    '1' => ['nom', 'description', 'centre', 'timbre', 'reference', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'taux_journalier', 'date_debut', 'date_fin','mode_payement'],
+    '2' => ['nom', 'description', 'centre', 'timbre', 'reference', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier',  'titres_associes', 'taux_journalier', 'indemnite_forfaitaire', 'date_debut', 'date_fin','mode_payement'],
+    '3' => ['nom', 'description', 'centre', 'timbre', 'reference', 'premier_responsable', 'titre_responsable', 'organisateur', 'titre_organisateur', 'financier', 'titre_financier', 'titres_associes', 'indemnite_forfaitaire', 'taux_taches', 'frais_deplacement_journalier', 'date_debut', 'date_fin','mode_payement']
 ];
 
 // Vérifier si le formulaire a été soumis
@@ -92,6 +93,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
             if (empty($data[$field])) {
                 $errors[$field] = 'Veuillez remplir ce champ';
             }
+        }
+
+        // Validation du mode de payement (champ radio, doit être 0 ou 1)
+        if ($data['mode_payement'] === '') {
+            $errors['mode_payement'] = "Veuillez sélectionner le mode de payement.";
+        } elseif (!in_array($data['mode_payement'], ['0', '1'], true)) {
+            $errors['mode_payement'] = "Le mode de payement sélectionné n'est pas valide.";
         }
 
         // Validations sur les valeurs textuelles
@@ -245,7 +253,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                 AND financier = :val12 
                 AND titre_financier = :val13 
                 AND timbre = :val14 
-                AND reference = :reference ';
+                AND reference = :reference 
+                AND mode_payement = :mode_payement ';
             
             if (in_array($type_activite, ['1', '2'])) {
                 $stmt .= 'AND taux_journalier = :val15 ';
@@ -278,6 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
             $sql->bindParam('val14', $data['timbre']);
             $sql->bindParam('reference', $data['reference']);
             $sql->bindParam('id_activite', $activity_id, PDO::PARAM_INT);
+            $sql->bindParam('mode_payement', $data['mode_payement'], PDO::PARAM_INT);
 
             if (in_array($type_activite, ['1', '2'])) {
                 $sql->bindParam('val15', $data['taux_journalier']);
@@ -311,7 +321,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                         titre_financier = :titre_financier, 
                         taux_journalier = :taux_journalier, 
                         taux_taches = :taux_taches, 
-                        frais_deplacement_journalier = :frais_deplacement_journalier 
+                        frais_deplacement_journalier = :frais_deplacement_journalier,
+                        mode_payement = :mode_payement
                         WHERE id = :id AND id_user = :id_user';
                     $stmt = $bdd->prepare($sql);
                     $stmt->execute([
@@ -331,6 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_submitted'])) {
                         'taux_journalier' => in_array($type_activite, ['1', '2']) ? $data['taux_journalier'] : null,
                         'taux_taches' => $type_activite === 3 ? $data['taux_taches'] : null,
                         'frais_deplacement_journalier' => $type_activite === 3 ? $data['frais_deplacement_journalier'] : null,
+                        'mode_payement' => $data['mode_payement'],
                         'id' => $activity_id,
                         'id_user' => $id_user
                     ]);

@@ -33,30 +33,40 @@ require_once('includes/suppression_banque.php');
                         <div class="card-header">
                             <h6 class="text-primary font-weight-bold">Comptes</h6>
                         </div>
-                        <div class="card-body pt-0">
-                            <!-- Messages divers -->
+                        <div class="card-body">
+                            <?php //Messages divers 
+                            ?>
+
                             <?php if (isset($erreurs['pas_de_choix'])) : ?>
                                 <?php afficherAlerte('Sélectionnez un compte bancaire à supprimer', 'danger') ?>
                             <?php endif; ?>
-                            <?php if (isset($erreurs['trop_de_comptes'])) : ?>
-                                <?php afficherAlerte('Vous ne pouvez pas supprimer tous les comptes du participant', 'danger') ?>
-                            <?php endif; ?>
+                            <?php //if (isset($erreurs['trop_de_comptes'])) : 
+                            ?>
+                            <?php //afficherAlerte('Vous ne pouvez pas supprimer tous les comptes du participant', 'danger') 
+                            ?>
+                            <?php //endif; 
+                            ?>
                             <?php if (isset($erreurs['compte_deja_utilise'])) : ?>
                                 <?php afficherAlerte($erreurs['compte_deja_utilise'], 'info') ?>
                             <?php endif; ?>
-                            <!-- Fin messages divers -->
 
-                            <div class="divider text-start">
+                            <?php // Fin messages divers 
+                            ?>
+
+                            <div class="divider text-start" id="repere">
                                 <div class="divider-text"><strong>Faîtes un choix</strong></div>
                             </div>
 
                             <form action="" method="post">
-                                <?php foreach ($banques as $banque) : ?>
-                                    <div class="form-check mt-3">
-                                        <input type="checkbox" name="banque[]" id="<?= $banque['numero_compte'] ?>" value="<?= $banque['numero_compte'] ?>" class="form-check-input" <?= isset($erreurs) ? (isset($_POST['banque']) && in_array($banque['numero_compte'], $_POST['banque']) ? 'checked' : '') : '' ?>>
-                                        <label for="<?= $banque['numero_compte'] ?>" class="form-check-label"><?= htmlspecialchars($banque['banque'] . ' (' . strtoupper($banque['numero_compte'])) . ')' ?></label>
-                                    </div>
-                                <?php endforeach; ?>
+                                <div class="ml-4">
+                                    <?php foreach ($banques as $banque) : ?>
+                                        <div class="form-check mt-3">
+                                            <input type="checkbox" name="banque[]" id="<?= $banque['numero_compte'] ?>" value="<?= $banque['numero_compte'] ?>" class="form-check-input" <?= isset($erreurs) ? (isset($_POST['banque']) && in_array($banque['numero_compte'], $_POST['banque']) ? 'checked' : '') : '' ?>>
+                                            <label for="<?= $banque['numero_compte'] ?>" class="form-check-label"><?= htmlspecialchars($banque['banque'] . ' (' . strtoupper($banque['numero_compte'])) . ')' ?></label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+
 
                                 <div class="divider text-start">
                                     <div class="divider-text"><strong>Action</strong></div>
@@ -71,7 +81,7 @@ require_once('includes/suppression_banque.php');
                                 </div>
 
                                 <!-- Boutons d'action -->
-                                <div class="mt-3">
+                                <div class="mt-4">
                                     <button type="submit" class="btn btn-danger">Supprimer</button>
                                     <a href="<?= $_SESSION['previous_url'] ?>" class="btn btn-secondary ml-2">Annuler</a>
                                 </div>
@@ -103,6 +113,42 @@ require_once('includes/suppression_banque.php');
     <!-- Logout Modal-->
     <?php require_once(__DIR__ . '/../includes/logoutModal.php') ?>
     <?php require_once(__DIR__ . '/../includes/scripts.php') ?>
+
+    <script>
+        // Bien, on va ajouter une façon de détecter la sélection de tous les comptes bancaires afin d'afficher un message approprié
+        const checkboxs = document.querySelectorAll('input[type=checkbox]:not(#suppressionBanque)');
+        const repere = document.getElementById('repere');
+        <?php $message_alerte = 'Vous êtes sur le point de supprimer tous les comptes bancaires de ' . $acteur . '.'; ?>
+
+        // Comportement à la venue sur la page : on insère l'alerte par défaut puis on vérifie s'il y a une checkbox qui n'est pas coché. Si on en trouve on retire l'alerte puis on laisse le code suivre son cours normal
+
+        repere.insertAdjacentHTML('beforebegin', `<?= afficherAlerte($message_alerte, 'info', false, true, 'alerte_a_retirer') ?>`);
+        const alerte = document.getElementById('alerte_a_retirer');
+
+        for (let index = 0; index < checkboxs.length; index++) {
+            const element = checkboxs[index];
+            if (!element.checked) alerte.remove();
+        }
+
+        // Comportement une fois que la page est apparue
+
+        checkboxs.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                let compteur = 0;
+                const alerte = document.getElementById('alerte_a_retirer');
+
+                checkboxs.forEach(checkbox => {
+                    if (checkbox.checked) compteur++;
+                })
+
+                if (compteur == <?= $totalBanques ?> && alerte == null) {
+                    repere.insertAdjacentHTML('beforebegin', `<?= afficherAlerte($message_alerte, 'info', false, true, 'alerte_a_retirer') ?>`);
+                } else if (alerte != null) {
+                    alerte.remove();
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>

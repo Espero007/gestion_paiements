@@ -43,6 +43,7 @@ if ($recuperation_type_activite) {
         'timbre' => '',
         'reference' => '',
         'description' => '',
+        'mode_payement' => '',
         'centre' => '',
         'premier_responsable' => '',
         'titre_responsable' => '',
@@ -87,6 +88,12 @@ if ($recuperation_type_activite) {
             if (empty($data[$field])) {
                 $errors[$field] = 'Veuillez remplir ce champ';
             }
+        }
+        // Validation du mode de payement (champ radio, doit être 0 ou 1)
+        if ($data['mode_payement'] === '') {
+            $errors['mode_payement'] = "Veuillez sélectionner le mode de payement.";
+        } elseif (!in_array($data['mode_payement'], ['0', '1'], true)) {
+            $errors['mode_payement'] = "Le mode de payement sélectionné n'est pas valide.";
         }
 
         // Validations sur les valeurs textuelles
@@ -214,6 +221,8 @@ if ($recuperation_type_activite) {
     }
 
 
+        
+
         // Validation des diplômes
         // if ($data['niveaux_diplome'] !== '' && strpos($data['niveaux_diplome'], ',,') !== false) {
         //     $errors['niveaux_diplome'] = "Les niveaux contiennent des virgules consécutives non valides.";
@@ -303,7 +312,8 @@ if ($recuperation_type_activite) {
             AND financier=:val12 
             AND titre_financier=:val13 
             AND timbre=:val14 
-            AND reference=:reference ';
+            AND reference=:reference 
+            AND mode_payement=:mode_payement';
 
             if (in_array($type_activite, [1, 2])) {
                 $stmt .= ' AND taux_journalier=:val15 ';
@@ -333,6 +343,7 @@ if ($recuperation_type_activite) {
             $sql->bindParam('val13', $data['titre_financier']);
             $sql->bindParam('val14', $data['timbre']);
             $sql->bindParam('reference', $data['reference']);
+            $sql->bindParam('mode_payement', $data['mode_payement'], PDO::PARAM_INT);
             // Taux journalier
             if (in_array($type_activite, [1, 2])) {
                 $sql->bindParam('val15', $data['taux_journalier'], PDO::PARAM_INT);
@@ -350,8 +361,8 @@ if ($recuperation_type_activite) {
                 try {
                     // Insérer l'activité
                     $sql = '
-                        INSERT INTO activites(type_activite, id_user, nom, description, date_debut, date_fin, centre, premier_responsable, titre_responsable, organisateur, titre_organisateur, financier, titre_financier, timbre, taux_journalier, taux_taches, frais_deplacement_journalier, reference)
-                        VALUES (:type_activite, :id_user, :nom, :description, :periode_debut, :periode_fin, :centre, :premier_responsable, :titre_responsable, :organisateur, :titre_organisateur, :financier, :titre_financier, :timbre, :taux_journalier, :taux_taches, :frais_deplacement_journalier, :reference)';
+                        INSERT INTO activites(type_activite, id_user, nom, description, date_debut, date_fin, centre, premier_responsable, titre_responsable, organisateur, titre_organisateur, financier, titre_financier, timbre, taux_journalier, taux_taches, frais_deplacement_journalier, reference, mode_payement)
+                        VALUES (:type_activite, :id_user, :nom, :description, :periode_debut, :periode_fin, :centre, :premier_responsable, :titre_responsable, :organisateur, :titre_organisateur, :financier, :titre_financier, :timbre, :taux_journalier, :taux_taches, :frais_deplacement_journalier, :reference, :mode_payement)';
 
                     $stmt = $bdd->prepare($sql);
                     $stmt->execute([
@@ -372,7 +383,8 @@ if ($recuperation_type_activite) {
                         'taux_journalier' => in_array($type_activite, ['1', '2']) ? $data['taux_journalier'] : null,
                         'taux_taches' => $type_activite == 3 ? $data['taux_taches'] : null,
                         'frais_deplacement_journalier' => $type_activite == 3 ? $data['frais_deplacement_journalier'] : null,
-                        'reference' => $data['reference']
+                        'reference' => $data['reference'],
+                        'mode_payement' => $data['mode_payement']
                     ]);
 
                     $id_activite = $bdd->lastInsertId();

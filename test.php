@@ -1,3 +1,6 @@
+<?php
+require_once(__DIR__ . '/includes/constantes_utilitaires.php');
+require_once(__DIR__ . '/includes/bdd.php') ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,17 +13,11 @@
 
 <body>
 
-    <p>
-        Cette page ne contient que du HTML.<br />
-        Veuillez taper votre prénom :
-    </p>
-    <form action="test_2.php" method="post">
-        <p>
-            <input type="text" name="prenom" />
-            <!-- <input type="submit" value="Valider" /> -->
-            <button type="submit">Envoyer</button>
-        </p>
-    </form>
+    <?php
+   
+
+
+    ?>
 
 
 

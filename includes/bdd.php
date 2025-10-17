@@ -70,6 +70,7 @@ try {
         taux_taches DECIMAL(50) NULL,
         frais_deplacement_journalier DECIMAL(50) NULL,
         reference VARCHAR(300) NOT NULL,
+        mode_payement INT NOT NULL,
         FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
 
@@ -102,6 +103,7 @@ try {
         date_naissance DATE NOT NULL,
         lieu_naissance VARCHAR(100) NOT NULL,
         diplome_le_plus_eleve VARCHAR(100) NOT NULL,
+        reference_carte_identite VARCHAR(100) UNIQUE NOT NULL,
         FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
 
@@ -161,6 +163,13 @@ try {
         ids_participants VARCHAR(1000) NOT NULL,
         FOREIGN KEY (id_user) REFERENCES connexion(user_id) ON DELETE CASCADE
         );
+
+        CREATE TABLE IF NOT EXISTS migrations
+        (
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        nom_fichier VARCHAR(255),
+        execute_le DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
     ";
 
     $bdd->exec($sqlTables);
@@ -172,3 +181,29 @@ try {
 }
 
 $GLOBALS['bdd'] = $bdd;
+
+// Fonction pour effectuer les migrations/mises à jour s'il y en a
+
+function effectuerMigration()
+{
+    global $bdd;
+    // Tout d'abord on récupère toutes les migrations déjà effectuées et présentes dans la bdd
+    $migrations = $bdd->query('SELECT nom_fichier FROM migrations')->fetchAll(PDO::FETCH_COLUMN);
+
+    // On récupère ensuite les fichiers de migrations présents dans le dossier de migrations
+    $fichiers = glob(__DIR__ . '/../migrations/*.sql');
+
+    // Maintenant on fait une comparaison
+    foreach ($fichiers as $fichier) {
+        $filename = basename($fichier);
+        if (!in_array($filename, $migrations)) {
+            $sql = file_get_contents($fichier);
+            $bdd->exec($sql);
+            $stmt = $bdd->prepare('INSERT INTO migrations (nom_fichier) VALUES (?)');
+            $stmt->execute([$filename]);
+        }
+    }
+}
+
+// On effectue la migration
+effectuerMigration();

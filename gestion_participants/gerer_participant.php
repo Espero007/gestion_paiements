@@ -45,8 +45,7 @@ require_once('includes/gerer_participant.php');
                             <?php endif; ?>
 
                             <?php if (isset($_SESSION['modification_ok'])) : ?>
-                                <?php afficherAlerte('Les informations du participant ont été modifiées avec succès !', 'success') ?>
-                                <?php unset($_SESSION['modification_ok']) ?>
+                                <?php afficherAlerte('modification_ok', 'success', true) ?>
                             <?php endif; ?>
 
                             <?php if (isset($_SESSION['participant_ajoute'])) : ?>
@@ -75,21 +74,22 @@ require_once('includes/gerer_participant.php');
                             <!-- Informations générales -->
 
                             <?php foreach ($infos as $info => $valeur) : ?>
-                                <p class="mb-3">
+                                <p class="<?= $info == 'diplome_le_plus_eleve' && count($comptes) == 0 ? 'mb-0' : 'mb-3' ?>">
                                     <span class="font-weight-bold"><?= $valeur ?> : </span>
                                     <span><?= $info != 'date_naissance' ? htmlspecialchars($participant[$info]) : htmlspecialchars(date('d/m/Y', strtotime($participant[$info]))) ?></span>
                                 </p>
                             <?php endforeach; ?>
 
-                            <!-- Informations bancaires -->
-
-                            <p class="mb-0">
-                                <span class='font-weight-bold'> Banque<?= count($comptes) > 1 ? 's' : '' ?> (RIB<?= count($comptes) > 1 ? 's' : '' ?>) :
-                                </span>
-                                <?= $comptes_str ?>
-                                <br>
-                                <small><strong>Note</strong> : Cliquez sur un compte bancaire si vous souhaitez visualiser la copie PDF de son RIB</small>
-                            </p>
+                            <?php if (!empty($comptes)) : ?>
+                                <!-- Informations bancaires -->
+                                <p class="mb-0">
+                                    <span class='font-weight-bold'> Banque<?= count($comptes) > 1 ? 's' : '' ?> (RIB<?= count($comptes) > 1 ? 's' : '' ?>) :
+                                    </span>
+                                    <?= $comptes_str ?>
+                                    <br>
+                                    <small><strong>Note</strong> : Cliquez sur un compte bancaire si vous souhaitez visualiser la copie PDF de son RIB</small>
+                                </p>
+                            <?php endif; ?>
                         </div>
                         <hr class="m-0">
                         <div class="card-body">

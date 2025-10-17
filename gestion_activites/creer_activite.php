@@ -6,7 +6,15 @@ require_once('traitements/submit_creer_activite.php');
 ?>
 
 <body id="page-top">
+<<<<<<< HEAD
 
+=======
+    <style>
+        a:hover.no-decoration {
+            text-decoration: none;
+        }
+    </style>
+>>>>>>> origin/master
 
     <!-- Page Wrapper -->
     <div id="wrapper">

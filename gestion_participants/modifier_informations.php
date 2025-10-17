@@ -39,18 +39,28 @@ require_once('includes/traitements_modifier_infos.php');
                                     <h6 class="m-0 font-weight-bold text-primary">Formulaire de modification</h6>
                                 </div>
                                 <div class="card-body">
+                                    <?php if (isset($erreurs['doublon'])) : ?>
+                                        <?php afficherAlerte($erreurs['doublon'], 'info') ?>
+                                    <?php endif; ?>
 
                                     <!-- Formulaire : Début -->
                                     <form action="" method="post" enctype="multipart/form-data">
                                         <!-- Fieldsets -->
                                         <?php require_once('includes/fieldsets.php') ?>
 
-                                        <!-- Boutons d'action -->
-                                         <div class="mt-4">
+                                        <?php if (!$comptes) : ?>
+                                            <?php // Pas de comptes bancaires 
+                                            ?>
+                                            <hr>
+                                            <small>Il semble que cet acteur ne dispose pas d'informations bancaires. <a href=<?= "ajouter_comptes.php?id=" . chiffrer($id_participant) ?>>Cliquez-ici</a> si vous souhaitez lui en ajouter.</small>
+                                        <?php endif; ?>
 
-                                             <button type="submit" name="modifier_infos" class="btn btn-primary mr-2">Enregistrer les modifications</button>
-                                             <a href="gerer_participant.php?id=<?= $id_participant ?>" class="btn btn-outline-primary">Annuler</a>
-                                         </div>
+                                        <!-- Boutons d'action -->
+                                        <div class="mt-4">
+
+                                            <button type="submit" name="modifier_infos" class="btn btn-primary mr-2">Enregistrer les modifications</button>
+                                            <a href="gerer_participant.php?id=<?= $id_participant ?>" class="btn btn-outline-primary">Annuler</a>
+                                        </div>
 
                                     </form>
                                     <!-- Formulaire : Fin -->
