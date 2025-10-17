@@ -121,5 +121,5 @@ if (!(isset($_SESSION['user_id']) && isset($_SESSION['nom']) && isset($_SESSION[
 
 <div id="loader">
     <div class="spinner"></div>
-    <p class="mt-2">Chargement...</p>
+    <p class="mt-2"><?= isset($msg_loader) ? $msg_loader : 'Chargement...' ?></p>
 </div>
