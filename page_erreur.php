@@ -77,11 +77,7 @@ if ($code_erreur == 403) {
                     <div class="text-center">
                         <div class="error mx-auto" data-text="<?php echo $code_erreur; ?>"><?php echo $code_erreur; ?></div>
                         <p class="lead text-gray-800 mb-2"><?php echo $titre_erreur; ?></p>
-                        <p class="text-gray-500 mb-0"><?php echo $intitule_erreur; ?></p>
-                        <?php if (isset($_SESSION['previous_url'])) : ?>
-                            <a href="<?php echo $_SESSION['previous_url']; ?>">Revenir à la page précédente</a>
-                            <span> | </span>
-                        <?php endif; ?>
+                        <p class="text-gray-500 mb-2"><?php echo $intitule_erreur; ?></p>
                         <a href="index.php">Revenir au tableau de bord</a>
                     </div>
 
