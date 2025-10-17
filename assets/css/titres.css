@@ -1,22 +1,15 @@
 #titres-list {
     display: flex;
-<<<<<<< HEAD
     flex-wrap: wrap;
     /* Permet aux items de passer à la ligne si pas assez d’espace */
     justify-content: center;
     /* Centre les items horizontalement */
     gap: 10px;
     /* Espacement horizontal et vertical entre les items */
-=======
-    flex-wrap: wrap;       /* Permet aux items de passer à la ligne si pas assez d’espace */
-    justify-content: center; /* Centre les items horizontalement */
-    gap: 10px;             /* Espacement horizontal et vertical entre les items */
->>>>>>> integration-ancien-mode-payement
     margin-top: 40px;
     padding-left: 300px;
 }
 
-<<<<<<< HEAD
 .titre-input,
 .indem-input {
     padding: 5px;
@@ -28,24 +21,12 @@ a:hover.no-decoration {
     text-decoration: none;
 }
 
-=======
-.titre-input, .indem-input {
-    padding: 5px;
-    /* width: 150px;          Largeur fixe pour uniformité */
-}
-
- a:hover.no-decoration {
-            text-decoration: none;
-        }
-        
->>>>>>> integration-ancien-mode-payement
 .remove-titre {
     padding: 5px 10px;
 }
 
 .titres-container {
     display: flex;
-<<<<<<< HEAD
     flex-wrap: wrap;
     /* Permet aux blocs de passer à la ligne */
     justify-content: center;
@@ -56,17 +37,11 @@ a:hover.no-decoration {
 
 #titres-container:has(.titre-item.desappear){
     position: relative;
-=======
-    flex-wrap: wrap;      /* Permet aux blocs de passer à la ligne */
-    justify-content: center; /* Centre horizontalement */
-    gap: 10px;            /* Espace entre les blocs */
->>>>>>> integration-ancien-mode-payement
 }
 
 .titre-item {
     display: flex;
     align-items: center;
-<<<<<<< HEAD
     gap: 5px;
     /* Espace entre titre, indemnité et bouton */
     flex-wrap: nowrap;
@@ -113,14 +88,7 @@ a:hover.no-decoration {
         z-index: -10000;
     }
 }
-=======
-    gap: 5px;             /* Espace entre titre, indemnité et bouton */
-    /* flex-wrap: nowrap;    Les éléments restent sur la même ligne */
-    flex: 1 1 auto;       /* Permet au bloc de s’adapter à la largeur */
-    min-width: 250px;     /* Largeur minimale pour chaque bloc */
-}
-.titre-item input {
-    flex: 1;              /* Les inputs prennent tout l’espace disponible */
-}
 
->>>>>>> integration-ancien-mode-payement
+.input-group{
+    width: auto;
+}

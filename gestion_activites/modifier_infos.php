@@ -303,12 +303,17 @@ unset($_SESSION['success_data']);
                                                                         value="<?= htmlspecialchars($titre['nom']) ?>"
                                                                         <?= $index == 0 ? 'id="titre"' : '' ?>>
                                                                     <?php if (in_array($type_activite, ['2', '3'])): ?>
-                                                                        <input type="number"
-                                                                            step="0.01"
-                                                                            name="indemnites[]"
-                                                                            class="form-control indem-input"
-                                                                            value="<?= $titre['indemnite_forfaitaire'] ?>"
-                                                                            placeholder="Indemnité">
+                                                                        <div class="input-group">
+                                                                            <input type="number"
+                                                                                step="0.01"
+                                                                                name="indemnites[]"
+                                                                                class="form-control indem-input"
+                                                                                value="<?= $titre['indemnite_forfaitaire'] ?>"
+                                                                                placeholder="Indemnité">
+                                                                            <span class="input-group-text">FCFA</span>
+
+                                                                        </div>
+
                                                                     <?php endif; ?>
 
                                                                     <button type="button" class="btn btn-outline-danger remove-titre">Supprimer</button>
@@ -506,11 +511,11 @@ unset($_SESSION['success_data']);
                 if (e.target.classList.contains('remove-titre')) {
                     const element = e.target.closest('.titre-item');
                     element.classList.add('desappear');
-                    
+
                     setTimeout(() => {
                         element.remove();
                     }, 400);
-                    
+
                     syncHidden();
                 }
             });
