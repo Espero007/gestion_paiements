@@ -29,6 +29,367 @@ if (!is_dir($dossier_exports_temp)) {
 // Gestion du timezone pour qu'il s'adapte au Bénin
 date_default_timezone_set('Africa/Lagos');
 
+// Quelques paths
+const DONNEES_BASE_ACTEURS = [
+    'noms' => [
+        "Ahouansou",
+        "Kouassi",
+        "Soglo",
+        "Zinsou",
+        "Agbangla",
+        "Chabi",
+        "Gnonlonfoun",
+        "Azon",
+        "Dossou",
+        "Houngbédji",
+        "Agbo",
+        "Kakaï",
+        "Yabi",
+        "Toko",
+        "Lawani",
+        "Boko",
+        "Allagbé",
+        "Assogba",
+        "Bio",
+        "Codjia"
+    ],
+    'prenoms_masculins' => [
+        "Sébastien",
+        "Yves",
+        "Romuald",
+        "Blaise",
+        "Barnabé",
+        "Marcel",
+        "Ignace",
+        "Ulrich",
+        "Dona",
+        "Pascal",
+        "Andréas",
+        "Komi",
+        "Sylvestre",
+        "Ismaël",
+        "Ghislain"
+    ],
+    'prenoms_feminins' => [
+        "Afi",
+        "Adjovi",
+        "Sophie",
+        "Clarisse",
+        "Edith",
+        "Brigitte",
+        "Reine",
+        "Arlette",
+        "Chantal",
+        "Séraphine",
+        "Tatiana",
+        "Nadine",
+        "Solange",
+        "Prisca",
+        "Eliane"
+    ],
+    'lieux' => [
+        "Cotonou",
+        "Porto-Novo",
+        "Parakou",
+        "Abomey",
+        "Bohicon",
+        "Natitingou",
+        "Djougou",
+        "Ouidah",
+        "Lokossa",
+        "Kandi",
+        "Malanville",
+        "Savalou",
+        "Covè",
+        "Comè",
+        "Sakété"
+    ],
+    'diplomes' => [
+        "CEP",
+        "BEPC",
+        "BAC",
+        "Licence en Informatique",
+        "Licence en Droit",
+        "Licence en Économie",
+        "Master en Finance",
+        "Master en Agronomie",
+        "Doctorat en Médecine",
+        "DUT en Génie Civil",
+        "BTS en Gestion Commerciale",
+        "Certificat en Programmation",
+        "Diplôme en Marketing Digital",
+        "Licence en Mathématiques",
+        "Master en Relations Internationales"
+    ]
+];
+const CSVActeurs = __DIR__ . '/../parametres/donneesActeurs.csv';
+const NOMBRE_ACTEURS_DEFAUT = 140; // C'est la valeur maximale utilisable. Au delà, le temps d'exécution va au delà des 30 secondes par défaut, le script est interrompu et il s'en suit une suite d'incohérences qu'on ne peut régler pas régler pour l'instant donc on garde les choses ainsi pour le moment
+
+const DONNEES_BASE_ACTIVITES = [
+    'activites' => [
+        [
+            "nom" => "Atelier de formation en leadership",
+            "desc" => "Une session interactive destinée à renforcer les compétences en leadership et en gestion d’équipe des participants, à travers des études de cas et des mises en situation pratiques."
+        ],
+        [
+            "nom" => "Séminaire sur la cybersécurité et la protection des données",
+            "desc" => "Un séminaire technique axé sur la prévention des cyberattaques, la gestion des incidents de sécurité et la conformité aux normes de protection des données."
+        ],
+        [
+            "nom" => "Atelier de conception graphique avec Photoshop",
+            "desc" => "Une formation pratique sur la création de visuels professionnels à l’aide d’Adobe Photoshop, destinée aux débutants comme aux utilisateurs intermédiaires."
+        ],
+        [
+            "nom" => "Campagne de sensibilisation sur la santé communautaire",
+            "desc" => "Une campagne de proximité visant à promouvoir l’hygiène, la vaccination et la prévention des maladies transmissibles dans les communautés locales."
+        ],
+        [
+            "nom" => "Rencontre inter-départements sur la coordination des projets",
+            "desc" => "Une réunion stratégique entre les responsables de projets pour améliorer la collaboration, la planification et le suivi des activités en cours."
+        ],
+        [
+            "nom" => "Conférence sur l’innovation technologique en Afrique",
+            "desc" => "Un événement de haut niveau rassemblant chercheurs, entrepreneurs et étudiants autour des dernières avancées en matière de technologie et d’innovation."
+        ],
+        [
+            "nom" => "Atelier d’écriture professionnelle et administrative",
+            "desc" => "Une formation visant à améliorer la qualité rédactionnelle des documents administratifs et professionnels produits au sein des institutions."
+        ],
+        [
+            "nom" => "Formation en communication institutionnelle",
+            "desc" => "Une formation pratique sur la gestion de la communication interne et externe des structures publiques et privées."
+        ],
+        [
+            "nom" => "Séminaire de gestion des finances publiques",
+            "desc" => "Un séminaire destiné aux comptables et cadres financiers sur la planification budgétaire et la gestion transparente des ressources publiques."
+        ],
+        [
+            "nom" => "Atelier de planification stratégique des activités",
+            "desc" => "Une session pratique sur les méthodes modernes de planification et de suivi-évaluation des projets institutionnels."
+        ],
+        [
+            "nom" => "Formation en maintenance informatique",
+            "desc" => "Une formation technique sur la réparation, la configuration et l’entretien du matériel informatique dans les bureaux et centres de formation."
+        ],
+        [
+            "nom" => "Atelier de gestion de crise et de communication",
+            "desc" => "Une simulation d’intervention d’urgence visant à renforcer la capacité des cadres à gérer efficacement les situations de crise."
+        ],
+        [
+            "nom" => "Journée de réflexion sur l’entrepreneuriat féminin",
+            "desc" => "Un cadre d’échange favorisant le partage d’expériences et la valorisation des initiatives féminines dans le domaine de l’entrepreneuriat."
+        ],
+        [
+            "nom" => "Atelier de renforcement des capacités en comptabilité",
+            "desc" => "Une mise à jour sur les nouvelles normes comptables et les outils numériques de suivi budgétaire."
+        ],
+        [
+            "nom" => "Campagne de reboisement et de sensibilisation écologique",
+            "desc" => "Une action citoyenne visant à restaurer les zones dégradées et à sensibiliser les populations à la protection de l’environnement."
+        ],
+        [
+            "nom" => "Séminaire sur la gouvernance locale et décentralisation",
+            "desc" => "Une rencontre d’échanges sur les défis et perspectives de la gouvernance locale dans le cadre de la décentralisation au Bénin."
+        ]
+    ],
+    'titres' => [
+        'masculins' => [
+            "Directeur Général",
+            "Chef de Projet",
+            "Coordinateur National",
+            "Superviseur Régional",
+            "Consultant Senior",
+            "Responsable Technique",
+            "Chargé de Mission",
+            "Trésorier Général",
+            "Comptable Principal",
+            "Animateur de Programme",
+            "Formateur",
+            "Chef de Service",
+            "Responsable Logistique",
+            "Contrôleur Financier",
+            "Inspecteur",
+            "Planificateur",
+            "Responsable RH",
+            "Spécialiste en Communication",
+            "Auditeur Interne",
+            "Assistant de Projet"
+        ],
+        'feminins' => [
+            'Directrice Générale',
+            'Cheffe de Projet',
+            'Coordinatrice National',
+            'Superviseure Régional',
+            'Consultante Senior',
+            "Responsable Technique",
+            "Chargée de Mission",
+            "Trésorière Général",
+            "Comptable Principal",
+            "Animatrice de Programme",
+            "Formatrice",
+            "Cheffe de Service",
+            "Responsable Logistique",
+            "Contrôleure Financier",
+            "Inspectrice",
+            "Planificatrice",
+            "Responsable RH",
+            "Spécialiste en Communication",
+            "Auditrice Interne",
+            "Assistante de Projet"
+        ]
+
+    ],
+    'timbres' => [
+        "N° 0012/DEG/MAS/SAFM/SDDC/SEL/SEMC/SIS/SD",
+        "N° 0045/DEG/MAS/SAFM/SDDC/SEL/SIS/SD/SEMC",
+        "N° 0078/DEG/MAS/SEMC/SDDC/SAFM/SIS/SEL/SD",
+        "N° 0103/DEG/MAS/SIS/SEL/SD/SEMC/SDDC/SAFM",
+        "N° 0129/DEG/MAS/SAFM/SDDC/SEMC/SIS/SD/SEL",
+        "N° 0164/DEG/MAS/SDDC/SEMC/SD/SEL/SAFM/SIS",
+        "N° 0182/DEG/MAS/SDDC/SIS/SEMC/SD/SEL/SAFM",
+        "N° 0210/DEG/MAS/SAFM/SEMC/SEL/SIS/SDDC/SD",
+        "N° 0233/DEG/MAS/SIS/SEMC/SAFM/SEL/SD/SDDC",
+        "N° 0259/DEG/MAS/SDDC/SEL/SEMC/SIS/SAFM/SD",
+        "N° 0287/DEG/MAS/SEMC/SAFM/SIS/SD/SDDC/SEL",
+        "N° 0311/DEG/MAS/SEL/SDDC/SAFM/SIS/SD/SEMC",
+        "N° 0335/DEG/MAS/SD/SEMC/SIS/SAFM/SDDC/SEL",
+        "N° 0352/DEG/MAS/SEMC/SAFM/SD/SEL/SDDC/SIS",
+        "N° 0379/DEG/MAS/SIS/SEL/SDDC/SD/SEMC/SAFM",
+        "N° 0410/DEG/MAS/SAFM/SDDC/SIS/SEL/SEMC/SD",
+        "N° 0445/DEG/MAS/SIS/SEMC/SD/SEL/SAFM/SDDC",
+        "N° 0463/DEG/MAS/SDDC/SD/SAFM/SIS/SEMC/SEL",
+        "N° 0488/DEG/MAS/SEMC/SEL/SDDC/SAFM/SIS/SD",
+        "N° 0512/DEG/MAS/SAFM/SIS/SEMC/SEL/SDDC/SD",
+        "N° 0547/DEG/MAS/SD/SAFM/SDDC/SEMC/SIS/SEL",
+        "N° 0573/DEG/MAS/SDDC/SEMC/SIS/SD/SEL/SAFM",
+        "N° 0599/DEG/MAS/SAFM/SEMC/SIS/SEL/SD/SDDC",
+        "N° 0625/DEG/MAS/SIS/SEL/SAFM/SEMC/SD/SDDC",
+        "N° 0649/DEG/MAS/SEMC/SDDC/SAFM/SIS/SD/SEL",
+        "N° 0678/DEG/MAS/SDDC/SIS/SAFM/SD/SEMC/SEL",
+        "N° 0702/DEG/MAS/SEMC/SIS/SAFM/SDDC/SEL/SD",
+        "N° 0730/DEG/MAS/SEL/SAFM/SIS/SDDC/SEMC/SD",
+        "N° 0761/DEG/MAS/SDDC/SD/SEMC/SIS/SAFM/SEL",
+        "N° 0788/DEG/MAS/SAFM/SEMC/SEL/SIS/SDDC/SD",
+        "N° 0812/DEG/MAS/SIS/SDDC/SAFM/SD/SEMC/SEL",
+        "N° 0839/DEG/MAS/SEMC/SD/SAFM/SEL/SIS/SDDC",
+        "N° 0871/DEG/MAS/SDDC/SAFM/SEMC/SIS/SEL/SD",
+        "N° 0895/DEG/MAS/SIS/SEL/SEMC/SAFM/SD/SDDC",
+        "N° 0920/DEG/MAS/SDDC/SD/SEMC/SIS/SEL/SAFM",
+        "N° 0951/DEG/MAS/SEMC/SDDC/SAFM/SEL/SIS/SD",
+        "N° 0974/DEG/MAS/SEL/SAFM/SIS/SEMC/SDDC/SD",
+        "N° 0998/DEG/MAS/SAFM/SIS/SD/SEMC/SEL/SDDC",
+        "N° 1025/DEG/MAS/SIS/SEMC/SAFM/SEL/SDDC/SD",
+        "N° 1053/DEG/MAS/SDDC/SAFM/SIS/SEMC/SEL/SD",
+        "N° 1076/DEG/MAS/SD/SEL/SAFM/SDDC/SEMC/SIS",
+        "N° 1109/DEG/MAS/SIS/SAFM/SEMC/SD/SEL/SDDC",
+        "N° 1133/DEG/MAS/SEMC/SIS/SEL/SAFM/SD/SDDC",
+        "N° 1155/DEG/MAS/SEL/SD/SDDC/SIS/SEMC/SAFM",
+        "N° 1180/DEG/MAS/SD/SDDC/SIS/SEMC/SAFM/SEL",
+        "N° 1204/DEG/MAS/SAFM/SDDC/SEL/SIS/SD/SEMC",
+        "N° 1237/DEG/MAS/SDDC/SAFM/SIS/SEL/SD/SEMC",
+        "N° 1262/DEG/MAS/SAFM/SIS/SEMC/SD/SEL/SDDC",
+        "N° 1288/DEG/MAS/SIS/SEMC/SAFM/SEL/SDDC/SD",
+        "N° 1314/DEG/MAS/SEL/SAFM/SD/SDDC/SEMC/SIS",
+        "N° 1347/DEG/MAS/SDDC/SAFM/SEMC/SEL/SD/SIS",
+        "N° 1373/DEG/MAS/SD/SEMC/SIS/SEL/SDDC/SAFM",
+        "N° 1405/DEG/MAS/SAFM/SEMC/SIS/SDDC/SEL/SD",
+        "N° 1429/DEG/MAS/SIS/SEL/SDDC/SAFM/SD/SEMC",
+        "N° 1458/DEG/MAS/SDDC/SIS/SEMC/SAFM/SEL/SD",
+        "N° 1483/DEG/MAS/SAFM/SEL/SIS/SEMC/SDDC/SD",
+        "N° 1517/DEG/MAS/SEMC/SAFM/SEL/SIS/SD/SDDC",
+        "N° 1544/DEG/MAS/SD/SEMC/SIS/SEL/SAFM/SDDC",
+        "N° 1572/DEG/MAS/SAFM/SD/SEMC/SEL/SIS/SDDC",
+        "N° 1599/DEG/MAS/SDDC/SEMC/SIS/SD/SEL/SAFM"
+    ],
+    'centres' => [
+        "Cotonou",
+        "Porto-Novo",
+        "Parakou",
+        "Abomey",
+        "Natitingou",
+        "Ouidah",
+        "Bohicon",
+        "Djougou",
+        "Kandi",
+        "Lokossa",
+        "Malanville",
+        "Savalou",
+        "Comè",
+        "Covè",
+        "Sakété",
+        "Pobè",
+        "Dassa-Zoumè",
+        "Tchaourou",
+        "Banikoara",
+        "Dogbo"
+    ],
+    'references' => [
+        "NS N° 0012/MAS/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA du 24 août 2023",
+        "NS N° 0045/MEF/DC/DPP/DSI/DEC/SAFM/SEMC/SIS/SA du 10 janvier 2024",
+        "NS N° 0087/MESTFP/DC/SGM/DAF/DPAF/DEC/SAFM/SEMC/SIS du 3 février 2024",
+        "NS N° 0123/MAEP/DC/DRE/DPAF/DEC/SEMC/SIS/SA du 15 mars 2024",
+        "NS N° 0189/MIT/DC/DSI/DEC/DPAF/SAFM/SIS/SA du 7 avril 2024",
+        "NS N° 0225/MCOT/DC/SGM/DPAF/DSI/DEC/SAFM/SEMC/SIS/SA du 21 mai 2024",
+        "NS N° 0294/MJLDH/DC/DRE/DPAF/DEC/SIS/SA du 11 juin 2024",
+        "NS N° 0330/MINFI/DC/SGM/DPAF/DSI/DEC/SEMC/SIS du 19 juillet 2024",
+        "NS N° 0398/MS/DC/DPAF/DEC/DSI/SAFM/SEMC/SA du 9 août 2024",
+        "NS N° 0420/MIC/DC/DSI/DEC/DPAF/SEMC/SIS/SA du 23 septembre 2024",
+        "NS N° 0491/MTFP/DC/DPAF/DSI/DEC/SAFM/SIS du 10 octobre 2024",
+        "NS N° 0527/MCI/DC/SGM/DPAF/DEC/SIS/SAFM/SA du 5 novembre 2024",
+        "NS N° 0583/MDGL/DC/DRE/DSI/DEC/SAFM/SEMC/SIS du 15 décembre 2024",
+        "NS N° 0620/MESTFP/DC/DPAF/DEC/SAFM/SIS du 9 janvier 2025",
+        "NS N° 0688/MAE/DC/SGM/DPAF/DEC/SAFM/SIS du 2 février 2025",
+        "NS N° 0724/MAS/DC/DPAF/DEC/DSI/SIS/SA du 20 mars 2025",
+        "NS N° 0792/MEF/DC/DPAF/DEC/SEMC/SIS/SA du 10 avril 2025",
+        "NS N° 0833/MIT/DC/DPAF/DEC/SIS/SAFM/SEMC du 7 mai 2025",
+        "NS N° 0890/MCOT/DC/SGM/DPAF/DEC/SEMC/SIS/SA du 1er juin 2025",
+        "NS N° 0948/MJLDH/DC/DRE/DSI/DEC/SAFM/SIS du 8 juillet 2025",
+        "NS N° 1005/MINFI/DC/SGM/DPAF/DEC/SIS/SA du 19 août 2025",
+        "NS N° 1047/MS/DC/DPAF/DEC/SAFM/SIS/SA du 14 septembre 2025",
+        "NS N° 1109/MIC/DC/DSI/DEC/DPAF/SIS/SAFM/SEMC du 3 octobre 2025",
+        "NS N° 1172/MTFP/DC/DPAF/DEC/SAFM/SEMC/SIS du 28 octobre 2025",
+        "NS N° 1220/MCI/DC/SGM/DPAF/DEC/SEMC/SIS du 12 novembre 2025",
+        "NS N° 1277/MDGL/DC/DRE/DPAF/DEC/SAFM/SEMC/SA du 25 novembre 2025",
+        "NS N° 1333/MESTFP/DC/DPAF/DEC/SAFM/SEMC/SA du 8 décembre 2025",
+        "NS N° 1390/MAE/DC/SGM/DPAF/DEC/SAFM/SIS du 20 décembre 2025",
+        "NS N° 1445/MAS/DC/DPAF/DSI/DEC/SAFM/SEMC du 3 janvier 2024",
+        "NS N° 1508/MEF/DC/DPAF/DEC/SAFM/SIS/SA du 18 février 2024",
+        "NS N° 1563/MIT/DC/DPAF/DEC/SEMC/SIS/SAFM du 5 mars 2024",
+        "NS N° 1620/MCOT/DC/SGM/DPAF/DEC/SIS/SAFM du 19 avril 2024",
+        "NS N° 1687/MJLDH/DC/DRE/DPAF/DEC/SIS/SA du 1er mai 2024",
+        "NS N° 1725/MINFI/DC/SGM/DPAF/DEC/SEMC/SIS du 10 juin 2024",
+        "NS N° 1792/MS/DC/DPAF/DEC/SAFM/SIS/SA du 22 juillet 2024",
+        "NS N° 1859/MIC/DC/DSI/DEC/DPAF/SIS/SAFM du 30 août 2024",
+        "NS N° 1924/MTFP/DC/DPAF/DEC/SAFM/SIS/SA du 9 septembre 2024",
+        "NS N° 1982/MCI/DC/SGM/DPAF/DEC/SAFM/SIS du 17 octobre 2024",
+        "NS N° 2048/MDGL/DC/DRE/DSI/DEC/SIS/SAFM du 28 novembre 2024",
+        "NS N° 2101/MESTFP/DC/DPAF/DEC/SAFM/SIS du 9 décembre 2024",
+        "NS N° 2168/MAE/DC/SGM/DPAF/DEC/SAFM/SIS/SA du 15 janvier 2025",
+        "NS N° 2225/MAS/DC/DPAF/DEC/SAFM/SIS du 29 janvier 2025",
+        "NS N° 2282/MEF/DC/SGM/DPAF/DEC/SIS/SAFM du 10 février 2025",
+        "NS N° 2349/MIT/DC/DPAF/DEC/SAFM/SEMC/SIS du 21 mars 2025",
+        "NS N° 2415/MCOT/DC/SGM/DPAF/DEC/SAFM/SIS du 6 avril 2025",
+        "NS N° 2472/MJLDH/DC/DRE/DPAF/DEC/SAFM/SIS/SA du 15 mai 2025",
+        "NS N° 2538/MINFI/DC/SGM/DPAF/DEC/SEMC/SIS du 26 juin 2025",
+        "NS N° 2604/MS/DC/DPAF/DEC/SIS/SAFM/SA du 8 juillet 2025",
+        "NS N° 2662/MIC/DC/DSI/DEC/DPAF/SEMC/SIS/SA du 19 août 2025",
+        "NS N° 2728/MTFP/DC/DPAF/DEC/SAFM/SIS/SA du 1er septembre 2025",
+        "NS N° 2784/MCI/DC/SGM/DPAF/DEC/SAFM/SIS/SA du 15 octobre 2025",
+        "NS N° 2849/MDGL/DC/DRE/DPAF/DEC/SAFM/SIS/SA du 28 octobre 2025",
+        "NS N° 2916/MESTFP/DC/DPAF/DEC/SIS/SAFM/SA du 10 novembre 2025",
+        "NS N° 2980/MAE/DC/SGM/DPAF/DEC/SAFM/SIS/SA du 20 décembre 2025",
+        "NS N° 3045/MAS/DC/SGM/DPAF/DEC/SIS/SAFM du 29 décembre 2025",
+        "NS N° 3102/MEF/DC/SGM/DPAF/DEC/SEMC/SIS du 5 janvier 2025",
+        "NS N° 3168/MIT/DC/DPAF/DEC/SAFM/SIS/SA du 18 février 2025",
+        "NS N° 3224/MJLDH/DC/DRE/DPAF/DEC/SIS/SAFM du 3 mars 2025",
+        "NS N° 3290/MINFI/DC/SGM/DPAF/DEC/SAFM/SEMC du 21 mars 2025",
+        "NS N° 3355/MS/DC/DPAF/DEC/SEMC/SIS/SA du 8 avril 2025"
+    ]
+];
+const NOMBRE_ACTIVITES_DEFAUT = 6;
+const NOMBRE_TITRES_ACTIVITES_MAX = 10;
+const CSVActivites = __DIR__ . '/../parametres/donneesActivites.csv';
+
 /**Fonctions utilitaires */
 
 // Ces fonctions que nous avions créé au cours du développement mais quand en fin de compte n'ont plus servi
@@ -1344,9 +1705,8 @@ function arrangerRibs($id_participant)
 /**
  * Génère le fichier CSV qui est utilisé pour déterminer les noms, prénoms et autres informations aléatoires des acteurs
  */
-function genererCSVDemo($chemin_csv, $nbr_acteurs)
+function genererCSVActeurs()
 {
-
     function genererIFU()
     {
         // Format IFU : 13 chiffres (ex: 3202101234567)
@@ -1363,106 +1723,17 @@ function genererCSVDemo($chemin_csv, $nbr_acteurs)
     }
 
     // Données de base
-    $noms = [
-        "Ahouansou",
-        "Kouassi",
-        "Soglo",
-        "Zinsou",
-        "Agbangla",
-        "Chabi",
-        "Gnonlonfoun",
-        "Azon",
-        "Dossou",
-        "Houngbédji",
-        "Agbo",
-        "Kakaï",
-        "Yabi",
-        "Toko",
-        "Lawani",
-        "Boko",
-        "Allagbé",
-        "Assogba",
-        "Bio",
-        "Codjia"
-    ];
-
-    $prenoms_masculins = [
-        "Sébastien",
-        "Yves",
-        "Romuald",
-        "Blaise",
-        "Barnabé",
-        "Marcel",
-        "Ignace",
-        "Ulrich",
-        "Dona",
-        "Pascal",
-        "Andréas",
-        "Komi",
-        "Sylvestre",
-        "Ismaël",
-        "Ghislain"
-    ];
-
-    $prenoms_feminins = [
-        "Afi",
-        "Adjovi",
-        "Sophie",
-        "Clarisse",
-        "Edith",
-        "Brigitte",
-        "Reine",
-        "Arlette",
-        "Chantal",
-        "Séraphine",
-        "Tatiana",
-        "Nadine",
-        "Solange",
-        "Prisca",
-        "Eliane"
-    ];
-
-    $lieux = [
-        "Cotonou",
-        "Porto-Novo",
-        "Parakou",
-        "Abomey",
-        "Bohicon",
-        "Natitingou",
-        "Djougou",
-        "Ouidah",
-        "Lokossa",
-        "Kandi",
-        "Malanville",
-        "Savalou",
-        "Covè",
-        "Comè",
-        "Sakété"
-    ];
-
-    $diplomes = [
-        "CEP",
-        "BEPC",
-        "BAC",
-        "Licence en Informatique",
-        "Licence en Droit",
-        "Licence en Économie",
-        "Master en Finance",
-        "Master en Agronomie",
-        "Doctorat en Médecine",
-        "DUT en Génie Civil",
-        "BTS en Gestion Commerciale",
-        "Certificat en Programmation",
-        "Diplôme en Marketing Digital",
-        "Licence en Mathématiques",
-        "Master en Relations Internationales"
-    ];
+    $noms = DONNEES_BASE_ACTEURS['noms'];
+    $prenoms_masculins = DONNEES_BASE_ACTEURS['prenoms_masculins'];
+    $prenoms_feminins = DONNEES_BASE_ACTEURS['prenoms_feminins'];
+    $lieux = DONNEES_BASE_ACTEURS['lieux'];
+    $diplomes = DONNEES_BASE_ACTEURS['diplomes'];
 
     // Générer identités
-    $csvFile = fopen($chemin_csv, "w");
+    $csvFile = fopen(CSVActeurs, "w");
     fputcsv($csvFile, ["Nom", "Prénoms", "Date de Naissance", "Lieu de Naissance", "IFU", "Diplôme", "Référence"]);
 
-    for ($i = 0; $i < $nbr_acteurs; $i++) {
+    for ($i = 0; $i < NOMBRE_ACTEURS_DEFAUT; $i++) {
         $sexe = rand(0, 1) ? 'M' : 'F';
         $nom = $noms[array_rand($noms)];
         $sourcePrenoms = $sexe === 'M' ? $prenoms_masculins : $prenoms_feminins;
@@ -1478,6 +1749,121 @@ function genererCSVDemo($chemin_csv, $nbr_acteurs)
         $reference = genererNombreAleatoire(10);
 
         fputcsv($csvFile, [$nom, $prenoms, $dateNaissance, $lieuNaissance, $ifu, $diplome, $reference]);
+    }
+    fclose($csvFile);
+}
+
+/**
+ * Celle-ci va générer le CSV des activités
+ */
+function genererCSVActivites()
+{
+    function randomDate($start, $end)
+    {
+        $date_debut = rand(strtotime($start), strtotime($end));
+        $date_fin = $date_debut + rand(1, 365) * 86400;
+        return [date("Y/m/d", $date_debut), date('Y/m/d', $date_fin)];
+    }
+
+    function randomName($sexe)
+    {
+        return DONNEES_BASE_ACTEURS['noms'][array_rand(DONNEES_BASE_ACTEURS['noms'])] . ' ' . ($sexe ? DONNEES_BASE_ACTEURS['prenoms_masculins'][array_rand(DONNEES_BASE_ACTEURS['prenoms_masculins'])] : DONNEES_BASE_ACTEURS['prenoms_feminins'][array_rand(DONNEES_BASE_ACTEURS['prenoms_feminins'])]);
+    }
+
+    function randomTitle($sexe)
+    {
+        $titres = DONNEES_BASE_ACTIVITES['titres'];
+        return $sexe ? $titres['masculins'][array_rand($titres['masculins'])] : $titres['feminins'][array_rand($titres['feminins'])];
+    }
+
+    // Données de base
+
+    $activites = DONNEES_BASE_ACTIVITES['activites'];
+    $timbres = DONNEES_BASE_ACTIVITES['timbres'];
+    $references = DONNEES_BASE_ACTIVITES['references'];
+    $centres = DONNEES_BASE_ACTIVITES['centres'];
+
+    // Bien générons les informations comme cela se doit à présent
+    $csvFile = fopen(CSVActivites, 'w');
+    fputcsv($csvFile, ['TypeActivite', 'Nom', 'Description', 'DateDebut', 'DateFin', 'Centre', '1erResponsable', 'Titre_1erResponsable', 'Organisateur', 'Titre_Organisateur', 'Financier', 'Titre_Financier', 'Timbre', 'Taux journalier', 'Taux tâches', 'Frais de déplacement journalier', 'Reference', 'Titres', 'Indemnités forfaitaires', 'Mode payement']);
+
+    $nbr_act_type = NOMBRE_ACTIVITES_DEFAUT / 3;
+    $type_act = 1; // Type 1 de base
+    $j = 0; // un compteur pour que le type de l'activité change au fur et à mesure
+    $mode_pay = 1; // Le mode de payement
+
+    for ($i = 0; $i < NOMBRE_ACTIVITES_DEFAUT; $i++) {
+        // Type de l'activité
+        // Trois types distincts donc il doit y avoir un nombre égal d'activités de type différents. Dans le cas d'espèce nous voulons 6 activités donc 2 activités de chaque type
+        $j++;
+        if ($j == $nbr_act_type + 1) {
+            $j = 1;
+            $type_act++;
+        }
+
+        // Nom et description
+        $index_rand = array_rand($activites);
+        $nom = $activites[$index_rand]['nom'];
+        $description = $activites[$index_rand]['desc'];
+        // Il me faut à présent les bails associés aux responsables et ect. En principe actuellement le csv des acteurs est déjà généré donc je vais piocher là bas un nom aléatoire
+
+        // Période d'exécution
+        $dates = randomDate("2025-01-01", "2025-12-01");
+
+        // Centre d'exécution
+        $centre = $centres[array_rand($centres)];
+
+        $sexe = rand(0, 1);
+        // Premier responsable
+        $p_resp = randomName($sexe);
+        $t_p_resp = randomTitle($sexe);
+
+        // Organisateur
+        $org = randomName($sexe);
+        $t_org = randomTitle($sexe);
+
+        // Financier
+        $financier = randomName($sexe);
+        $t_financier = randomTitle($sexe);
+
+        // Timbre
+        $timbre = $timbres[array_rand($timbres)];
+
+        // Référence
+        $ref = $references[array_rand($references)];
+
+        // Taux journalier
+        $taux_journ = rand(1000, 5000);
+
+        // Taux par tâches
+        $taux_taches = rand(1000, 5000);
+
+        // Frais de déplacement par jour
+        $frais_journ = rand(1000, 5000);
+
+        // Titres associés à l'activité
+        $nombre_titres = rand(3, NOMBRE_TITRES_ACTIVITES_MAX);
+        $titres_act = '';
+        for ($k = 0; $k < $nombre_titres; $k++) {
+            $titre = randomTitle(rand(0, 1));
+            if ($k == 0) $titres_act .= $titre;
+            else $titres_act .= ' | ' . $titre;
+        }
+
+        // Indemnités forfaitaires
+        $indemnites_act = '';
+        for ($k = 0; $k < $nombre_titres; $k++) {
+            $indemnite = rand(1000, 5000);
+            if ($k == 0) $indemnites_act .= $indemnite;
+            else $indemnites_act .= ' | ' . $indemnite;
+        }
+
+        // Mode de payement
+        if ($mode_pay) $mode_pay = 0;
+        else $mode_pay = 1;
+
+        // On écrit dans le fichier
+        fputcsv($csvFile, [$type_act, $nom, $description, $dates[0], $dates[1], $centre, $p_resp, $t_p_resp, $org, $t_org, $financier, $t_financier, $timbre, $taux_journ, $taux_taches, $frais_journ, $ref, $titres_act, $indemnites_act, $mode_pay]);
     }
     fclose($csvFile);
 }
@@ -1579,25 +1965,80 @@ function creerActivitesDemo()
     ];
 }
 
-/**
- * Une fois les acteurs aléatoires et les activités de démonstration créés et insérés en bdd, cette fonction intervient pour réaliser les liaisons entre ces éléments
- */
-function ConfigurerInformationsDemo()
+function creerActivitesDemo2()
 {
     global $bdd;
+    $liste_acts = ''; // pour sauvegarder les ids des activités qui seront créées au cours du processus
 
-    // 1 ère étape : Génération des données associées aux 150 participants dans un fichier csv
-    $chemin_csv = __DIR__ . '/../parametres/donnees.csv';
-    $nbr_acteurs = 150; // C'est la valeur maximale utilisable. Au delà, le temps d'exécution va au delà des 30 secondes par défaut, le script est interrompu et il s'en suit une suite d'incohérences qu'on ne peut régler qu'en visant la base de données
-    genererCSVDemo($chemin_csv, $nbr_acteurs);
+    // Bien, on ouvre le csv et on récupère nos données pour insérer les activités en bdd. Du coup no stress, on reprend le même process que pour les actus et on évolue
+    if (($handle = fopen(CSVActivites, 'r')) !== false) $entetes = fgetcsv($handle); // Récupération des entêtes
 
-    // 2ème étape : je crée trois (03) activités l'un de type 1, le second de type 2 et le dernier de type 3
-    $infos_activites = creerActivitesDemo();
+    $i = 0; // un compteur
+    // Lecture des informations ligne par ligne
+    while (($ligne = fgetcsv($handle)) !== false) {
+        $act = array_combine($entetes, $ligne); // Bien, nous avons nos données. On les insert à présent en bdd
+        $type_act = $act['TypeActivite'];
 
-    // 3ème étape : je crée les participants avec des nombres de comptes bancaires aléatoires (insertions en bdd comprises)
+        $sql = "INSERT INTO activites(type_activite, id_user, nom, description, date_debut, date_fin, centre, premier_responsable, titre_responsable, organisateur, titre_organisateur, financier, titre_financier, timbre, taux_journalier, taux_taches, frais_deplacement_journalier, reference, mode_payement) VALUES (:type_activite,{$_SESSION['user_id']},:nom, :description, :date_debut, :date_fin, :centre, :p_resp, :t_p_resp, :org, :t_org, :financier, :t_financier, :timbre, :taux_journalier, :taux_taches, :frais_deplacement_journalier, :reference, :mode_pay)";
+        $stmt = $bdd->prepare($sql);
+
+        $stmt->execute([
+            'type_activite' => $type_act,
+            'nom' => $act['Nom'],
+            'description' => $act['Description'],
+            'date_debut' => $act['DateDebut'],
+            'date_fin' => $act['DateFin'],
+            'centre' => $act['Centre'],
+            'p_resp' => $act['1erResponsable'],
+            't_p_resp' => $act['Titre_1erResponsable'],
+            'org' => $act['Organisateur'],
+            't_org' => $act['Titre_Organisateur'],
+            'financier' => $act['Financier'],
+            't_financier' => $act['Titre_Financier'],
+            'timbre' => mb_strtoupper($act['Timbre'], 'UTF-8'),
+            'taux_journalier' => in_array($type_act, ['1', '2']) ? $act['Taux journalier'] : null,
+            'taux_taches' => $type_act == 3 ? $act['Taux tâches'] : null,
+            'frais_deplacement_journalier' => $type_act == 3 ? $act['Frais de déplacement journalier'] : null,
+            'reference' => $act['Reference'],
+            'mode_pay' => $act['Mode payement']
+        ]);
+
+        $id_act = $bdd->lastInsertId();
+        $ids_types_modes_acts[] = [$id_act, $type_act, $act['Mode payement']];
+
+        if (empty($liste_acts)) $liste_acts .= $id_act; // Nous sommes sur la première activité
+        else $liste_acts .= ',' . $id_act;
+
+        // On récupère les titres et les indemnités forfaitaires associées sous la forme d'un tableau puis on les insère en bdd
+        $titres = explode(' | ', $act['Titres']);
+        $indemnites = explode(' | ', $act['Indemnités forfaitaires']);
+        $sql = 'INSERT INTO titres(id_activite, nom, indemnite_forfaitaire) VALUES (:id_activite, :nom, :indemnite_forfaitaire)';
+        $stmt2 = $bdd->prepare($sql);
+        foreach ($titres as $j => $titre) {
+            $indemnite = $indemnites[$j];
+            $stmt2->execute([
+                'id_activite' => $id_act,
+                'nom' => $titre,
+                'indemnite_forfaitaire' => $type_act == 1 ? null : $indemnite
+            ]);
+            $ts[$i][] = $bdd->lastInsertId(); // On sauvegarde les ids des titres
+        }
+        $i++; // Une itération terminée
+    }
+
+    return [$ids_types_modes_acts, $ts, $liste_acts];
+}
+
+function creerActeurs()
+{
+    global $bdd;
+    /**
+     * Ici la création des acteurs sera quelque peu différente. Nous allons créer en premier lieu 10 acteurs avec uniquement des références et pas d'informations bancaires
+     */
+
     $banques = ['BOA', 'UBA', 'BIIC', 'ECOBANK', 'BSIC', 'ORABANK', 'NSIA', 'Coris Bank', 'Atlantique', 'CCP', 'SGB'];
 
-    if (($handle = fopen($chemin_csv, 'r')) !== false) {
+    if (($handle = fopen(CSVActeurs, 'r')) !== false) {
         // Lire les entêtes
         $entetes = fgetcsv($handle);
     }
@@ -1605,13 +2046,14 @@ function ConfigurerInformationsDemo()
     // Lire chaque ligne (les informations de chaque acteur généré de façon aléatoire)
     $ids_acteurs = [];
     $liste_acteurs = '';
-    $compteur = 0;
+    $compt = 0; // Ce sera mon compteur
 
     while (($ligne = fgetcsv($handle)) !== false) {
         // Associer les colonnes aux en-têtes
         $acteur = array_combine($entetes, $ligne);
 
         // Primo j'insère dans la table participants : j'ai tout ce qu'il faut comme information
+        // 16/10/2025 | 17H52 : Mais l'insertion sera quelque peu différente désormais. En effet je vais insérer d'abord 10 acteurs sans informations bancaires, puis les 130 restants auront des informations bancaires
         $stmt = "INSERT INTO participants(id_user, nom, prenoms, matricule_ifu, date_naissance, lieu_naissance, diplome_le_plus_eleve, reference_carte_identite) VALUES ({$_SESSION['user_id']}, :nom, :prenoms, :matricule_ifu, :date_naissance, :lieu_naissance, :diplome_le_plus_eleve, :reference)";
         $stmt = $bdd->prepare($stmt);
 
@@ -1624,108 +2066,134 @@ function ConfigurerInformationsDemo()
             'diplome_le_plus_eleve' => $acteur['Diplôme'],
             'reference' => $acteur['Référence']
         ]);
-
+        $compt++; // une insertion a été effectuée
         $id_acteur = $bdd->lastInsertId();
         $ids_acteurs[] = $id_acteur;
+        if ($compt == 1) $liste_acteurs .= $id_acteur; // première itération
+        else $liste_acteurs .= ',' . $id_acteur; // les autres itérations
 
-        if ($compteur == 0) {
-            $liste_acteurs .= $id_acteur;
-        } else {
-            $liste_acteurs .= ',' . $id_acteur;
-        }
 
-        $nbr_comptes = rand(1, NOMBRE_MAXIMAL_COMPTES); // En principe entre 1 et 3 puisqu'à l'heure où je conçois cette fonction le nombre maximal de comptes vaut 3
+        // Génération des informations bancaires après 10 itérations pour les acteurs sans informations bancaires
+        if ($compt > 10) {
+            $nbr_comptes = rand(1, NOMBRE_MAXIMAL_COMPTES); // En principe entre 1 et 3 puisqu'à l'heure où je conçois cette fonction le nombre maximal de comptes vaut 3
 
-        for ($i = 0; $i < $nbr_comptes; $i++) {
-            $banque = $banques[rand(0, count($banques) - 1)]; // On prend une banque de façon aléatoire
+            for ($i = 0; $i < $nbr_comptes; $i++) {
+                $banque = $banques[rand(0, count($banques) - 1)]; // On prend une banque de façon aléatoire
 
-            // Ici je crée le fichier pdf nécessaire
-            $pdf = new TCPDF('P', 'mm', 'A4');
-            $pdf->AddFont('trebucbd', '', 'trebucbd.php');
-            $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
-            configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Copie PDF RIB');
-            $pdf->setMargins(15, 25, 15, true);
-            $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
-            $pdf->AddPage();
+                // Ici je crée le fichier pdf nécessaire
+                $pdf = new TCPDF('P', 'mm', 'A4');
+                $pdf->AddFont('trebucbd', '', 'trebucbd.php');
+                $pdf->setPrintHeader(false); // Retrait de la ligne du haut qui s'affiche par défaut sur une page
+                configuration_pdf($pdf, $_SESSION['nom'] . ' ' . $_SESSION['prenoms'], 'Copie PDF RIB');
+                $pdf->setMargins(15, 25, 15, true);
+                $pdf->setAutoPageBreak(true, 25); // marge bas = 25 pour footer
+                $pdf->AddPage();
 
-            // Titre de la page
+                // Titre de la page
 
-            $pdf->setFont('trebucbd', '', 16);
-            $pdf->Cell(0, 10, mb_strtoupper('Copie PDF du RIB N°' . ($i + 1) . ' de ' . $acteur['Nom'] . ' ' . $acteur['Prénoms'], 'UTF-8'), 0, 1, 'C');
-            $pdf->Ln(2);
-            $pdf->setFont('trebucbd', '', 12);
-            // $pdf->Cell(0, 10, mb_strtoupper($acteur['Nom'] . ' ' . $acteur['Prénoms'], 'UTF-8'), 0, 1, 'C');
-            $numero_compte = mb_strtoupper($banque . rand(10000000, 19999999), 'UTF-8');
-            $pdf->Cell(0, 10, mb_strtoupper($banque . ' (' . $numero_compte . ')'), 0, 1, 'C');
-            $upload_path = creer_dossiers_upload() . 'demo/';
-            if (!is_dir($upload_path)) {
-                mkdir($upload_path, PERMISSIONS);
+                $pdf->setFont('trebucbd', '', 16);
+                $pdf->Cell(0, 10, mb_strtoupper('Copie PDF du RIB N°' . ($i + 1) . ' de ' . $acteur['Nom'] . ' ' . $acteur['Prénoms'], 'UTF-8'), 0, 1, 'C');
+                $pdf->Ln(2);
+                $pdf->setFont('trebucbd', '', 12);
+                // $pdf->Cell(0, 10, mb_strtoupper($acteur['Nom'] . ' ' . $acteur['Prénoms'], 'UTF-8'), 0, 1, 'C');
+                $numero_compte = mb_strtoupper($banque . rand(10000000, 19999999), 'UTF-8');
+                $pdf->Cell(0, 10, mb_strtoupper($banque . ' (' . $numero_compte . ')'), 0, 1, 'C');
+                $upload_path = creer_dossiers_upload() . 'demo/';
+                if (!is_dir($upload_path)) {
+                    mkdir($upload_path, PERMISSIONS);
+                }
+                $nom_fichier = $upload_path . 'pdf_' . $acteur['IFU'] . '_' . ($i + 1) . '.pdf';
+                $pdf->Output($nom_fichier, 'F');
+
+                // J'enregistre les informations en bdd
+
+                // On commence par la table fichiers
+                $stmt = $bdd->prepare('INSERT INTO fichiers(chemin_acces, nom_original, date_upload) VALUES (:chemin_acces, :nom_original, :date_upload)');
+                $stmt->execute([
+                    'chemin_acces' => $nom_fichier,
+                    'nom_original' => 'copie_pdf_demo.pdf',
+                    'date_upload' => date("Y-m-d H:i:s")
+                ]);
+                $id_fichier = $bdd->lastInsertId();
+
+                // Puis viens la table informations_bancaires
+
+                $stmt = $bdd->prepare('INSERT INTO informations_bancaires(id_participant, banque, numero_compte, id_rib) VALUES (:id_participant, :banque, :numero_compte, :id_rib)');
+                $stmt->execute([
+                    'id_participant' => $id_acteur,
+                    'banque' => $banque,
+                    'numero_compte' => $numero_compte,
+                    'id_rib' => $id_fichier
+                ]);
+
+                $id_compte = $bdd->lastInsertId();
+                $ids_comptes[count($ids_acteurs) - 1][] = $id_compte;
             }
-            $nom_fichier = $upload_path . 'pdf_' . $acteur['IFU'] . '_' . ($i + 1) . '.pdf';
-            $pdf->Output($nom_fichier, 'F');
-
-            // J'enregistre les informations en bdd
-
-            // On commence par la table fichiers
-            $stmt = $bdd->prepare('INSERT INTO fichiers(chemin_acces, nom_original, date_upload) VALUES (:chemin_acces, :nom_original, :date_upload)');
-            $stmt->execute([
-                'chemin_acces' => $nom_fichier,
-                'nom_original' => 'copie_pdf_demo.pdf',
-                'date_upload' => date("Y-m-d H:i:s")
-            ]);
-            $id_fichier = $bdd->lastInsertId();
-
-            // Puis viens la table informations_bancaires
-
-            $stmt = $bdd->prepare('INSERT INTO informations_bancaires(id_participant, banque, numero_compte, id_rib) VALUES (:id_participant, :banque, :numero_compte, :id_rib)');
-            $stmt->execute([
-                'id_participant' => $id_acteur,
-                'banque' => $banque,
-                'numero_compte' => $numero_compte,
-                'id_rib' => $id_fichier
-            ]);
-
-            $id_compte = $bdd->lastInsertId();
-            $ids_comptes[count($ids_acteurs) - 1][] = $id_compte;
         }
-        $compteur++;
+
         // Et c'est tout pour la création pseudo-aléatoire des acteurs
     }
     fclose($handle);
 
-    // 4ème étape : réaliser 50 liaisons par activités
+    return [$ids_acteurs, $ids_comptes, $liste_acteurs];
+}
 
-    $compteur = 0;
-    for ($i = 0; $i < count($infos_activites['ids_activites']); $i++) {
-        $id_activite = $infos_activites['ids_activites'][$i];
+/**
+ * Une fois les acteurs aléatoires et les activités de démonstration créés et insérés en bdd, cette fonction intervient pour réaliser les liaisons entre ces éléments
+ */
+function ConfigurerInformationsDemo()
+{
+    global $bdd;
 
-        for ($j = 0; $j < $nbr_acteurs / 3; $j++) {
+    // 1 ère étape : Génération des données associées aux 150 participants dans un fichier csv, s'il n'existe pas déjà
+    // if (!file_exists(CSVActeurs)) genererCSVActeurs();
+    // if (!file_exists(CSVActivites)) genererCSVActivites();
+
+    genererCSVActeurs();
+    genererCSVActivites();
+
+    // 2ème étape : je crée des activités
+    $infos_activites = creerActivitesDemo2();
+
+    // 3ème étape : je crée les participants avec des nombres de comptes bancaires aléatoires (insertions en bdd comprises)
+    $infos = creerActeurs();
+    $ids_acteurs = $infos[0];
+    $ids_comptes = $infos[1];
+    $liste_acteurs = $infos[2];
+
+    // 4ème étape : réaliser 20 liaisons par activités
+    $compt = 20; // 20 parce que c'est ce compteur qui servira d'index pour les liaisons or je veux que les 20 premiers acteurs créés (0 à 19) soient en l'air sans activités donc je commence les laisons à partir du 21 ième acteur qui correspond à l'index 20
+
+    for ($i = 0; $i < count($infos_activites[0]); $i++) {
+        $id_act = $infos_activites[0][$i][0];
+        $type_act = $infos_activites[0][$i][1];
+        $mode_act = $infos_activites[0][$i][2];
+
+        for ($j = 0; $j < (NOMBRE_ACTEURS_DEFAUT - 20) / 6; $j++) {
+            // En soit il y aura juste 20 itérations puisque le calcul au dessus donnera 20
             // Pour réaliser une liaison, il me faut l'id du participant, l'id de l'activité, l'id du titre, l'id du compte bancaire, le nombre de jours et le nombre de tâches
 
-            $id_acteur = $ids_acteurs[$compteur];
-            $titres = $infos_activites['titres_activites'][$i];
+            $id_acteur = $ids_acteurs[$compt];
+            $titres = $infos_activites[1][$i];
             $id_titre = $titres[rand(0, count($titres) - 1)];
-            $comptes = $ids_comptes[$compteur];
+            $comptes = $ids_comptes[$compt];
             $id_compte = $comptes[rand(0, count($comptes) - 1)];
             $nbr_jours = rand(1, 100);
 
-            if ($i == 2) {
-                // Activité de type 3
-                $nbr_taches = rand(1, 100);
-            } else {
-                $nbr_taches = null;
-            }
+            if ($type_act == 3) $nbr_taches = rand(1, 100); // Activité de type 3
+            else $nbr_taches = null;
 
             $stmt = $bdd->prepare('INSERT INTO participations(id_participant, id_activite, id_titre, id_compte_bancaire, nombre_jours, nombre_taches) VALUES (:id_participant, :id_activite, :id_titre, :id_compte_bancaire, :nbr_jours, :nbr_taches)');
             $stmt->execute([
                 'id_participant' => $id_acteur,
-                'id_activite' => $id_activite,
+                'id_activite' => $id_act,
                 'id_titre' => $id_titre,
-                'id_compte_bancaire' => $id_compte,
+                'id_compte_bancaire' => $mode_act ? $id_compte : null, // si c'est le nouveau mode de payement on garde les infos bancaires, si c'est l'ancien par-contre, on met null là parce qu'on a pas besoin des informations bancaires. A part cela je pense que tout le reste peut rester tel quel
                 'nbr_jours' => $nbr_jours,
                 'nbr_taches' => $nbr_taches
             ]);
-            $compteur++;
+
+            $compt++;
         }
     }
 
@@ -1733,7 +2201,7 @@ function ConfigurerInformationsDemo()
 
     $stmt = $bdd->prepare('INSERT INTO informations_demo(id_user, ids_activites, ids_participants) VALUES (' . $_SESSION['user_id'] . ', :ids_activites, :ids_participants)');
     $stmt->execute([
-        'ids_activites' => $infos_activites['liste_activites'],
+        'ids_activites' => $infos_activites[2],
         'ids_participants' => $liste_acteurs
     ]);
 

@@ -4,10 +4,12 @@ require_once(__DIR__ . '/../includes/header.php');
 
 $stmt = $bdd->query('SELECT * FROM connexion WHERE user_id=' . $_SESSION['user_id'] . ' AND demo=1');
 if ($stmt->rowCount() == 1) {
-    // L'utilisateur a déjà généré des informations de démo et voudrait les retirer
-    if (file_exists(__DIR__ . '/donnees.csv')) {
-        unlink(__DIR__ . '/donnees.csv');
+    // L'utilisateur a déjà généré des informations de démo et voudrait les retirer donc on les supprime
+    if (file_exists(CSVActeurs) && file_exists(CSVActivites)) {
+        unlink(CSVActeurs);
+        unlink(CSVActivites);
     }
+
     // Le travail se fera avec les tables activites, participants, fichiers et informations_demo
 
     // 1ère étape : Récupérer les ids des activités et les supprimer
